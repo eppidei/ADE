@@ -1,0 +1,276 @@
+# depslib dependency file v1.0
+1414164242 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/main.c
+	"my_defines.h"
+	<winsock2.h>
+	<windows.h>
+	<WinDef.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<unistd.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	"udp_receiver.h"
+	"my_typedefs.h"
+
+1414164242 fs.h"
+
+1414125255 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/my_defines.h
+
+1414125545 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/udp_receiver.h
+	"my_typedefs.h"
+	"my_defines.h"
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+
+1414125545 n.h>
+
+1414081822 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/my_typedefs.h
+	"my_defines.h"
+	<stdint.h>
+	<Windows.h>
+	<stdbool.h>
+
+1414081822 >
+
+1414163922 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/udp_receiver.c
+	"udp_receiver.h"
+	<stdio.h>
+	<string.h>
+	"my_defines.h"
+	"my_typedefs.h"
+	<winsock.h>
+	<windows.h>
+	<errno.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<sys/ioctl.h>
+	<arpa/inet.h>
+	<unistd.h>
+
+1414165951 
+
+1414165951 source:c:\scdf_host\codeblocks\test_udp_linux\udp_receiver.c
+	"udp_receiver.h"
+	<stdio.h>
+	<string.h>
+	"my_defines.h"
+	"my_typedefs.h"
+	<winsock2.h>
+	<windows.h>
+	<errno.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<sys/ioctl.h>
+	<arpa/inet.h>
+	<unistd.h>
+
+1414125545 c:\scdf_host\codeblocks\test_udp_linux\udp_receiver.h
+	"my_typedefs.h"
+	"my_defines.h"
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+
+1414081822 c:\scdf_host\codeblocks\test_udp_linux\my_typedefs.h
+	"my_defines.h"
+	<stdint.h>
+	<Windows.h>
+	<stdbool.h>
+
+1414165824 c:\scdf_host\codeblocks\test_udp_linux\my_defines.h
+
+1414164242 source:c:\scdf_host\codeblocks\test_udp_linux\main.c
+	"my_defines.h"
+	<winsock2.h>
+	<windows.h>
+	<WinDef.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<unistd.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	"udp_receiver.h"
+	"my_typedefs.h"
+
+1414165951 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/udp_receiver.c
+	"udp_receiver.h"
+	<stdio.h>
+	<string.h>
+	"my_defines.h"
+	"my_typedefs.h"
+	<winsock2.h>
+	<windows.h>
+	<errno.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<sys/ioctl.h>
+	<arpa/inet.h>
+	<unistd.h>
+
+1414125545 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/udp_receiver.h
+	"my_typedefs.h"
+	"my_defines.h"
+	<sys/types.h>
+	<sys/socket.h>
+	<netinet/in.h>
+
+1414081822 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/my_typedefs.h
+	"my_defines.h"
+	<stdint.h>
+	<Windows.h>
+	<stdbool.h>
+
+1414166894 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/my_defines.h
+
+1414170040 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/main.cpp
+	"my_defines.h"
+	<winsock2.h>
+	<windows.h>
+	<WinDef.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<unistd.h>
+	<netinet/in.h>
+	<stdlib.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	"udp_receiver.h"
+	"my_typedefs.h"
+	"osc/OscReceivedElements.h"
+	"osc/OscPacketListener.h"
+	"ip/UdpSocket.h"
+	"SCDF_OSCListener.h"
+
+1411002936 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/SCDF_OSCListener.h
+	<stdio.h>
+	<iostream>
+	"osc/OscReceivedElements.h"
+	"osc/OscPacketListener.h"
+	"ip/UdpSocket.h"
+	"my_defines.h"
+	"my_typedefs.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscReceivedElements.h
+	<cassert>
+	<cstddef>
+	<cstring>
+	"OscTypes.h"
+	"OscException.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscTypes.h
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscException.h
+	<exception>
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscPacketListener.h
+	"OscReceivedElements.h"
+	"../ip/PacketListener.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/ip/PacketListener.h
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/ip/UdpSocket.h
+	<cstring>
+	"NetworkingUtils.h"
+	"IpEndpointName.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/ip/NetworkingUtils.h
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/ip/IpEndpointName.h
+
+1408416871 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/ip/IpEndpointName.cpp
+	"IpEndpointName.h"
+	<cstdio>
+	"NetworkingUtils.h"
+
+1408543662 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/ip/posix/UdpSocket.cpp
+	"ip/UdpSocket.h"
+	<pthread.h>
+	<unistd.h>
+	<stdlib.h>
+	<stdio.h>
+	<netdb.h>
+	<sys/types.h>
+	<sys/socket.h>
+	<sys/time.h>
+	<netinet/in.h>
+	<signal.h>
+	<math.h>
+	<errno.h>
+	<string.h>
+	<algorithm>
+	<cassert>
+	<cstring>
+	<stdexcept>
+	<vector>
+	"ip/PacketListener.h"
+	"ip/TimerListener.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/Shared_C_funcs/ip/UdpSocket.h
+	<cstring>
+	"NetworkingUtils.h"
+	"IpEndpointName.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/Shared_C_funcs/ip/NetworkingUtils.h
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/Shared_C_funcs/ip/IpEndpointName.h
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/Shared_C_funcs/ip/PacketListener.h
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/Shared_C_funcs/ip/TimerListener.h
+
+1408416871 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscOutboundPacketStream.cpp
+	"OscOutboundPacketStream.h"
+	<malloc.h>
+	<stdlib.h>
+	<cassert>
+	<cstring>
+	<cstddef>
+	"OscHostEndianness.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscOutboundPacketStream.h
+	<cstring>
+	"OscTypes.h"
+	"OscException.h"
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscHostEndianness.h
+
+1408416871 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscPrintReceivedElements.cpp
+	"OscPrintReceivedElements.h"
+	<cstring>
+	<ctime>
+	<iostream>
+	<iomanip>
+
+1408416871 /home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscPrintReceivedElements.h
+	<iosfwd>
+	"OscReceivedElements.h"
+
+1408416871 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscReceivedElements.cpp
+	"OscReceivedElements.h"
+	"OscHostEndianness.h"
+	<cstddef>
+
+1408416871 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/osc/OscTypes.cpp
+	"OscTypes.h"
+
+1414172569 source:/home/leonardo/Windows_home/SCDF_Host/codeblocks/test_udp_linux/ip/posix/NetworkingUtils.cpp
+	"ip/NetworkingUtils.h"
+	<netdb.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<cstring>
+

@@ -1,0 +1,71 @@
+#ifndef _ADE_ERRORS_H
+#define _ADE_ERRORS_H
+
+/*************************** ERROR DEFINES ***************************/
+#define ADE_PRINT_ERRORS(error_type,var_name,var_format,fcn_name) fprintf(stderr, error_type " -> In fcn " #fcn_name #var_name " = " var_format " \n", var_name);
+#define ADE_PRINT_WARNINGS(error_type,var_name,var_format,fcn_name) fprintf(stdout, error_type " -> In fcn " #fcn_name #var_name " = " var_format " \n", var_name);
+
+#define ADE_NBITS_SIGN (1)
+#define ADE_NBITS_TYPES (10)
+#define ADE_NBITS_FRAMEWORK (4)
+#define ADE_NBITS_CLASS (8)
+#define ADE_NBITS_METHOD (8)
+
+//SHIFTS CALC
+
+#define ADE_NBITS_SIGN_SHIFT (32-ADE_NBITS_SIGN)
+#define ADE_NBITS_TYPES_SHIFT (ADE_NBITS_SIGN_SHIFT-ADE_NBITS_TYPES)
+#define ADE_NBITS_FRAMEWORK_SHIFT (ADE_NBITS_TYPES_SHIFT-ADE_NBITS_FRAMEWORK)
+#define ADE_NBITS_CLASS_SHIFT (ADE_NBITS_FRAMEWORK_SHIFT-ADE_NBITS_CLASS)
+#define ADE_NBITS_METHOD_SHIFT (ADE_NBITS_CLASS_SHIFT-ADE_NBITS_METHOD)
+
+/************************** SIGN ************************************/
+#define ADE_ERROR_SIGN (1) //Numero negativo
+#define ADE_WARNING_SIGN (0) //Numero positivo
+
+/*************************** ERROR TYPES ***************************/
+
+#define ADE_ERROR_GENERAL_TYPE (0)
+#define ADE_ERROR_INCHECKS_TYPE (1)
+
+/**************************** ERROR TYPES STRINGS************************/
+#define ADE_GENERAL "ADE General Error"
+#define ADE_INCHECKS "ADE Input Checks"
+#define ADE_BLAS_L1 "ADE Blas level 1"
+#define ADE_MEM "ADE Memory Allocation";
+
+/******************************* ERROR FRAMEWORK ***********************/
+#define ADE_FRAMEWORK_ADE (0)
+
+/*******************************ERROR ERROR CLASSES **************************/
+
+#define ADE_CLASS_BLAS_LEVEL1 (0)
+#define ADE_CLASS_IIR (1)
+
+/*****************************ERROR BLAS METHODS CODES **********************/
+
+#define ADE_ERROR_SAXPY_N (0)
+#define ADE_ERROR_SAXPY_SA (1)
+
+
+/******************************* ERRORS IIR **************************************/
+#define ADE_ERROR_ALLOCATION (0)
+#define FILT_IMPLEMENATION_NOT_EXISTENT (1)
+#define FILT_IMPLEMENATION_MISSING (2)
+#define MISSING_DENOMS (3)
+#define MISSING_NUMS (4)
+#define MISSING_GAINS (5)
+
+
+/********************************* ERROR CODES *****************************************/
+
+#define ADE_W0 (ADE_WARNING_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_BLAS_LEVEL1<<ADE_NBITS_CLASS_SHIFT || ADE_ERROR_SAXPY_N<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_W1 (ADE_WARNING_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_BLAS_LEVEL1<<ADE_NBITS_CLASS_SHIFT || ADE_ERROR_SAXPY_SA<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E3 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_IIR<<ADE_NBITS_CLASS_SHIFT || ADE_ERROR_ALLOCATION<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E4 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_IIR<<ADE_NBITS_CLASS_SHIFT || FILT_IMPLEMENATION_NOT_EXISTENT<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E5 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_IIR<<ADE_NBITS_CLASS_SHIFT || FILT_IMPLEMENATION_MISSING<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E6 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_IIR<<ADE_NBITS_CLASS_SHIFT || MISSING_DENOMS<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E7 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_IIR<<ADE_NBITS_CLASS_SHIFT || MISSING_NUMS<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E8 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT || ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT || ADE_CLASS_IIR<<ADE_NBITS_CLASS_SHIFT || MISSING_GAINS<<ADE_NBITS_METHOD_SHIFT)
+
+#endif

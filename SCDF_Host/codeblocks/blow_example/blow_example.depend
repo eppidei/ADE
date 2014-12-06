@@ -1,0 +1,23 @@
+# depslib dependency file v1.0
+1414032279 source:c:\scdf_host\codeblocks\blow_example\main.c
+	<stdio.h>
+	<stdlib.h>
+	"defines.h"
+	"typedef.h"
+	"blow_funcs.h"
+
+1414030630 c:\scdf_host\codeblocks\blow_example\defines.h
+
+1414030674 c:\scdf_host\codeblocks\blow_example\typedef.h
+
+1414032118 source:c:\scdf_host\codeblocks\blow_example\blow_funcs.c
+	"typedef.h"
+	"defines.h"
+	"blow_funcs.h"
+	<string.h>
+	<math.h>
+	<stdio.h>
+
+1414032436 c:\scdf_host\codeblocks\blow_example\blow_funcs.h
+	"typedef.h"
+
