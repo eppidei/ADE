@@ -158,9 +158,9 @@ for k=1:n_iterations
       normalized_pow_iir(idx) = run_pow_iir(idx)/max_pow;
       
       
-      [test(idx),state1]=filter(bbb_test,aaa_test,normalized_pow_iir(idx),state1);
-       [test(idx),state2]=filter(bbb_test2,aaa_test2,test(idx),state2);
-       [test(idx),state3]=filter(bbb_test3,aaa_test3,test(idx),state3);
+%       [test(idx),state1]=filter(bbb_test,aaa_test,normalized_pow_iir(idx),state1);
+%        [test(idx),state2]=filter(bbb_test2,aaa_test2,test(idx),state2);
+%        [test(idx),state3]=filter(bbb_test3,aaa_test3,test(idx),state3);
       
       [run_pow_iir_filt(idx)]=filter(IIR_pow_filt2,normalized_pow_iir(idx));
 
@@ -224,20 +224,20 @@ t_axe = 0: 1/Fs : (n_samples-1)/Fs;
     plot(t_axe,control_change);
     title('CONTROL CHANGE');
     
-blow_state = zeros(1,n_samples);%[zeros(1,frame_len/4),ones(1,frame_len/2),zeros(1,frame_len/4)];
-blow_amp = 1;
-blow_rate = 0.8;
-note_state =blow_plot;% [zeros(1,n_samples/4),ones(1,frame_len/2),zeros(1,frame_len/4)];
-note_on_freq = 440;
-note_on_amp = 0.9;
-cg_state = blow_state;
-cg_num = 128;
-cg_freq = 0.5;
-cg_val = control_change;
-% 
-    data_out = stk_debug(blow_state,blow_amp,blow_rate,note_state,note_on_freq,note_on_amp,cg_state,cg_num,cg_val,n_samples);
-    
-    
-p=audioplayer(data_out,Fs);
-play(p);
+% blow_state = zeros(1,n_samples);%[zeros(1,frame_len/4),ones(1,frame_len/2),zeros(1,frame_len/4)];
+% blow_amp = 1;
+% blow_rate = 0.8;
+% note_state =blow_plot;% [zeros(1,n_samples/4),ones(1,frame_len/2),zeros(1,frame_len/4)];
+% note_on_freq = 440;
+% note_on_amp = 0.9;
+% cg_state = blow_state;
+% cg_num = 128;
+% cg_freq = 0.5;
+% cg_val = control_change;
+% % 
+%     data_out = stk_debug(blow_state,blow_amp,blow_rate,note_state,note_on_freq,note_on_amp,cg_state,cg_num,cg_val,n_samples);
+%     
+%     
+% p=audioplayer(data_out,Fs);
+% play(p);
   
