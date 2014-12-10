@@ -32,4 +32,13 @@ typedef ADE_FLOATING_T* (*ADE_BLAS_LEVEL1_FCN_TYPE2_T)(ADE_blas_level1_T*);
 typedef struct ADE_IIR_S ADE_IIR_T;
 typedef ADE_API_RET_T (*ADE_FILTER_IMPLEMENTATION_T)(ADE_IIR_T*);
 typedef enum  {trasp_II,trasp_II_blas} ADE_FILTER_IMP_CHOICE_T;
+/******************************* FIR **************************/
+typedef struct ADE_FIR_S ADE_FIR_T;
+typedef ADE_API_RET_T (*ADE_FIR_FILTER_IMPLEMENTATION_T)(ADE_FIR_T*);
+/******************************* BLOW ***************************/
+typedef struct ADE_BLOW_S ADE_BLOW_T;
+typedef ADE_API_RET_T (*ADE_BLOW_FUNCS_T)(ADE_BLOW_T*);
+typedef enum  {waiting,evaluation,tracking} BLOW_SM_STATES_T;
+
+
 #endif //_ADE_TYPEDEFS_H
