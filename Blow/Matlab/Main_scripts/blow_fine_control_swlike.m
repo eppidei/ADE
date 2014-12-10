@@ -111,10 +111,10 @@ sat_detect_struct.n_pow_thres_release=n_pow_thres_release;
 sat_detect_struct.frame_len = Frame_len;
 
 sat_detect_struct.eval_time_samples = eval_time_samples;
- sat_detect_struct.eval_counter=zeros(1,Frame_len+1);%IL +1 È DOVUTO AL FATTO CHE PS STATE E NEXT STATE SONO INGLOBATI IN UNICA VARIABILE ALTRIMENTI CI
-    sat_detect_struct.eval_pow=zeros(1,Frame_len+1);% SAREBBERO STATI DUE ARRAY DI FRAME LEN
-    sat_detect_struct.eval_timer=zeros(1,Frame_len+1);
-    sat_detect_struct.state=ones(1,Frame_len+1);
+ sat_detect_struct.eval_counter=0;%zeros(1,Frame_len+1);%IL +1 È DOVUTO AL FATTO CHE PS STATE E NEXT STATE SONO INGLOBATI IN UNICA VARIABILE ALTRIMENTI CI
+    sat_detect_struct.eval_pow=0;%zeros(1,Frame_len+1);% SAREBBERO STATI DUE ARRAY DI FRAME LEN
+    sat_detect_struct.eval_timer=0;%zeros(1,Frame_len+1);
+    sat_detect_struct.state=1;%ones(1,Frame_len+1);
 for k=1:n_iterations
      idx = (k-1)*Frame_len+1:k*Frame_len;
      audio = audio_left(idx);
@@ -167,13 +167,13 @@ for k=1:n_iterations
 %         end
 %     end
 
-sat_detect_struct.eval_counter(1)=sat_detect_struct.eval_counter(Frame_len+1);
-sat_detect_struct.eval_pow(1)=sat_detect_struct.eval_pow(Frame_len+1);
-sat_detect_struct.eval_timer(1)=sat_detect_struct.eval_timer(Frame_len+1);
-sat_detect_struct.state(1)=sat_detect_struct.state(Frame_len+1);
+% sat_detect_struct.eval_counter(1)=sat_detect_struct.eval_counter(Frame_len+1);
+% sat_detect_struct.eval_pow(1)=sat_detect_struct.eval_pow(Frame_len+1);
+% sat_detect_struct.eval_timer(1)=sat_detect_struct.eval_timer(Frame_len+1);
+% sat_detect_struct.state(1)=sat_detect_struct.state(Frame_len+1);
 
 blow_plot(frame_idx)= sat_detect_struct.blow;
-state_plot(frame_idx)= sat_detect_struct.state(2:end);
+% state_plot(frame_idx)= sat_detect_struct.state(2:end);
 
       
 end

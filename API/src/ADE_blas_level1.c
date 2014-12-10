@@ -152,6 +152,13 @@ static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
 {
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
 
+    #if (ADE_CHECK_INPUTS==1)
+
+
+        printf("REMEMBER TO ADD CHECKS ADE_Blas_level1_launch_type1\n");
+
+    #endif
+
     ret = (p_blas_l1->blas_level1_fcn_type1)(p_blas_l1);
 
     #if (ADE_CHECK_RETURNS==1)

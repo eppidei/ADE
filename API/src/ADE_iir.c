@@ -16,6 +16,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
     ADE_FLOATING_T *p_sec_buff=NULL;
     ADE_FLOATING_T *p_states=NULL;
+
     ADE_FLOATING_T **dp_nums=NULL;
     ADE_FLOATING_T **dp_denoms=NULL;
     ADE_FLOATING_T **dp_sec_buff=NULL;
@@ -33,14 +34,72 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
         pthis->buff_size=buff_size;
 
         pthis->n_SOS_sections=n_SOS_sections;
+
+
+        /************ GAIN ALLOC ***************/
+        (pthis->p_gains) = calloc(n_SOS_sections,sizeof(ADE_FLOATING_T));
+
+        if (pthis->p_gains==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,pthis->p_gains,"%p",ADE_Iir_Init);
+               // #endif
+                return ADE_E3;
+        }
+
+        /************ NUMS ALLOC ***************/
 //
-//        dp_nums = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
-//
-//        (pthis->dp_nums)=dp_nums;
-//
-//        dp_denoms = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
-//
-//        (pthis->dp_denoms)=dp_denoms;
+        dp_nums = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
+
+        (pthis->dp_nums)=dp_nums;
+
+        if (pthis->dp_nums==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_nums,"%p",ADE_Iir_Init);
+               // #endif
+                return ADE_E3;
+        }
+
+
+        for (i=0;i<(n_SOS_sections);i++)
+        {
+            (pthis->dp_nums)[i] = calloc(1,(order+1)*sizeof(ADE_FLOATING_T));
+
+            if ( (pthis->dp_nums)[i]==NULL)
+            {
+            ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_nums)[i],"%p",ADE_Iir_Init);
+               // #endif
+                return ADE_E3;
+            }
+
+        }
+
+           /************ DENOMS ALLOC ***************/
+
+        dp_denoms = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
+
+        (pthis->dp_denoms)=dp_denoms;
+
+        if (pthis->dp_denoms==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_denoms,"%p",ADE_Iir_Init);
+               // #endif
+                return ADE_E3;
+        }
+
+        for (i=0;i<(n_SOS_sections);i++)
+        {
+            (pthis->dp_denoms)[i] = calloc(1,(order+1)*sizeof(ADE_FLOATING_T));
+
+             if ( (pthis->dp_denoms)[i]==NULL)
+            {
+            ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_denoms)[i],"%p",ADE_Iir_Init);
+               // #endif
+                return ADE_E3;
+            }
+
+        }
+
+        /************ SEC BUFF ALLOC ***************/
 
         dp_sec_buff = (ADE_FLOATING_T**)calloc(n_SOS_sections+1,sizeof(ADE_FLOATING_T*));
 
@@ -57,14 +116,16 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             }
             else
             {
-                #if (ADE_CHECK_RETURNS==1)
-                ADE_PRINT_ERRORS(ADE_MEM,p_sec_buff,"%d",ADE_Iir_Init);
-                #endif
+               // #if (ADE_CHECK_RETURNS==1)
+                ADE_PRINT_ERRORS(ADE_MEM,p_sec_buff,"%p",ADE_Iir_Init);
+               // #endif
                 return ADE_E3;
             }
 
 
         }
+
+        /************ STATES ALLOC ***************/
 
         dp_states = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
 
@@ -80,14 +141,15 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             }
             else
             {
-                #if (ADE_CHECK_RETURNS==1)
-                    ADE_PRINT_ERRORS(ADE_MEM,p_states,"%d",ADE_Iir_Init);
-                #endif
+               // #if (ADE_CHECK_RETURNS==1)
+                    ADE_PRINT_ERRORS(ADE_MEM,p_states,"%p",ADE_Iir_Init);
+               // #endif
                 return ADE_E3;
             }
 
         }
 
+        /************ BLAS ALLOC ***************/
 
         ADE_Blas_level1_Init(&p_Blas_L1);
         ADE_Blas_level1_setN(p_Blas_L1,order);
@@ -98,6 +160,8 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         pthis->section_order=order;
 
+        *dp_this=pthis;
+
     }
     else
     {
@@ -106,7 +170,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
         #endif
     }
 
-    *dp_this=pthis;
+
 
     return ADE_DEFAULT_RET;
 }
@@ -115,7 +179,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir)
 {
     ADE_UINT32_T i=0;
-    ADE_FLOATING_T *dummy_address = 1;
+    //ADE_FLOATING_T *dummy_address = 1;
 
     ADE_Blas_level1_Release(p_iir->p_Blas_L1);
     for (i=0;i<( p_iir->n_SOS_sections+1);i++)
@@ -126,33 +190,51 @@ ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir)
     {
       ADE_CHECKNFREE( (p_iir->dp_states)[i] );
     }
+    for (i=0;i<( p_iir->n_SOS_sections);i++)
+    {
+      ADE_CHECKNFREE( (p_iir->dp_nums)[i] );
+    }
+    for (i=0;i<( p_iir->n_SOS_sections);i++)
+    {
+      ADE_CHECKNFREE( (p_iir->dp_denoms)[i] );
+    }
     ADE_CHECKNFREE(p_iir->dp_states);
     ADE_CHECKNFREE(p_iir->dp_section_buffers);
+    ADE_CHECKNFREE(p_iir->dp_nums);
+    ADE_CHECKNFREE(p_iir->dp_denoms);
+    ADE_CHECKNFREE(p_iir->p_gains);
     ADE_CHECKNFREE(p_iir);
 }
 
 ADE_API_RET_T ADE_Iir_setGains(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_gains)
 {
-    ADE_UINT32_T i=0;
 
-
-        (p_iir->p_gains)=p_gains;
+        memcpy((p_iir->p_gains),p_gains,p_iir->n_SOS_sections*sizeof(ADE_FLOATING_T));
 
 
     return ADE_DEFAULT_RET;
 }
 ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums)
 {
+    ADE_UINT32_T i=0;
 
-    p_iir->dp_nums = dp_nums;
+    for (i=0;i<p_iir->n_SOS_sections;i++)
+    {
+        memcpy((p_iir->dp_nums)[i],dp_nums[i],(p_iir->section_order+1)*sizeof(ADE_FLOATING_T));
+    }
+
 
     return ADE_DEFAULT_RET;
 }
 
 ADE_API_RET_T ADE_Iir_setDenoms(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_denoms)
 {
+    ADE_UINT32_T i=0;
 
-    p_iir->dp_denoms = dp_denoms;
+    for (i=0;i<p_iir->n_SOS_sections;i++)
+    {
+        memcpy((p_iir->dp_denoms)[i], dp_denoms[i],(p_iir->section_order+1)*sizeof(ADE_FLOATING_T));
+    }
 
     return ADE_DEFAULT_RET;
 }
@@ -167,6 +249,18 @@ ADE_API_RET_T ADE_Iir_setInbuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 ADE_API_RET_T ADE_Iir_setOutbuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 {
     p_iir->p_out=p_buff;
+
+    return ADE_DEFAULT_RET;
+}
+
+ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir)
+{
+    ADE_UINT32_T i=0;
+
+    for(i=0;i<p_iir->n_SOS_sections;i++)
+    {
+        memset( (p_iir->dp_states)[i],0,(p_iir->section_order+1)*sizeof(ADE_FLOATING_T));
+    }
 
     return ADE_DEFAULT_RET;
 }
@@ -201,34 +295,53 @@ ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir)
     //ADE_FLOATING_T* p_in_buff;
    // ADE_FLOATING_T* p_out_buff;
 
-    memcpy( ((p_iir-> dp_section_buffers)[0]),p_iir->p_in,(p_iir->buff_size)*sizeof(ADE_FLOATING_T));
+
     /**** set static params blas ****/
 #if (ADE_CHECK_INPUTS==1)
 
 if ((p_iir->filter_func)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->filter_func),"%d",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->filter_func),"%p",ADE_Iir_Step);
     return ADE_E5;
 }
 
 if (*(p_iir->dp_denoms)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_denoms),"%d",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_denoms),"%p",ADE_Iir_Step);
     return ADE_E6;
 }
 if (*(p_iir->dp_nums)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_nums),"%d",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_nums),"%p",ADE_Iir_Step);
     return ADE_E7;
 }
 if ((p_iir->p_gains)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_gains),"%d",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_gains),"%p",ADE_Iir_Step);
     return ADE_E8;
+}
+
+if ((p_iir->p_in)==NULL)
+{
+        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_in),"%p",ADE_Iir_Step);
+    return ADE_E10;
+}
+
+if ((p_iir->p_out)==NULL)
+{
+        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_out),"%p",ADE_Iir_Step);
+    return ADE_E11;
+}
+
+if (*(p_iir->dp_states)==NULL)
+{
+        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_states),"%p",ADE_Iir_Step);
+    return ADE_E15;
 }
 
 #endif
 
+ memcpy( ((p_iir-> dp_section_buffers)[0]),p_iir->p_in,(p_iir->buff_size)*sizeof(ADE_FLOATING_T));
 
     for (i=0;i<p_iir->n_SOS_sections;i++)
 	{
@@ -287,6 +400,8 @@ if ((p_iir->p_gains)==NULL)
 //        }
 
     }
+
+    ADE_CHECKNFREE(temp_buffer);
 
     return ADE_DEFAULT_RET;
 

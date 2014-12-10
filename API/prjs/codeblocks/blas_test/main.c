@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "headers/ADE_blas_level1.h"
 #include "headers/ADE_iir.h"
 static ADE_API_RET_T filter(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame)
@@ -50,28 +51,38 @@ float b[3]={1,2,0.5};
 float gain[2] = {0.000134,0.000134};
 float *num[2] ={b,b};
 float *denom[2] ={a,a};
-//float *gains=&gain;
-//ADE_Blas_level1_Init(&p_Blas_L1);
-//
-//ADE_Blas_level1_setALPHA(p_Blas_L1,alpha);
-//ADE_Blas_level1_setN(p_Blas_L1,N);
-//ADE_Blas_level1_setINCX(p_Blas_L1,incx);
-//ADE_Blas_level1_setINCY(p_Blas_L1,incy);
-//ADE_Blas_level1_setX(p_Blas_L1,x);
-//ADE_Blas_level1_setY(p_Blas_L1,y);
-//
-//ADE_Blas_real_axpy(p_Blas_L1);
-//
-//ADE_Blas_level1_Release(p_Blas_L1);
-//
-//
-////ADE_blas_saxpy(&N,&a,x,&incx,y,&incy);
-//
-//for (i=0;i<N;i++)
-//{
-//    fprintf(stdout,"y[%d]=%f\n",i,y[i]);
-//}
+char test_case[20]="iir";
 
+if (!strcmp(test_case,"blas"))
+{
+
+
+ADE_Blas_level1_Init(&p_Blas_L1);
+
+ADE_Blas_level1_setALPHA(p_Blas_L1,alpha);
+ADE_Blas_level1_setN(p_Blas_L1,N);
+ADE_Blas_level1_setINCX(p_Blas_L1,incx);
+ADE_Blas_level1_setINCY(p_Blas_L1,incy);
+ADE_Blas_level1_setX(p_Blas_L1,x);
+ADE_Blas_level1_setY(p_Blas_L1,y);
+
+ADE_Blas_real_axpy(p_Blas_L1);
+
+ADE_Blas_level1_Release(p_Blas_L1);
+
+
+//ADE_blas_saxpy(&N,&a,x,&incx,y,&incy);
+
+
+PRINT_ARRAY(y,i,5,"%f");
+}
+else if  (!strcmp(test_case,"iir"))
+{
+
+
+
+
+//float *gains=&gain;
 
 
 
@@ -104,7 +115,12 @@ ADE_Iir_Step(p_iir);
 
 PRINT_ARRAY(p_iir->p_out,i,5,"%f");
 
-gently_closure : ADE_Iir_Release(p_iir);
+ADE_Iir_Release(p_iir);
+
+
+}
+
+
 
 return ret;
 
