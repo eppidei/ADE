@@ -130,12 +130,7 @@ for k=1:n_iterations
     
       normalized_pow_iir(idx) = run_pow_iir(idx)/max_pow;
      
-      %%%MORE POW FILTERING
-      
-      [run_pow_iir_filt(idx)]=filter(IIR_pow_filt2,normalized_pow_iir(idx));
-   %%%EXPANSION%%%%
-    expanded_pow_iir(idx)= memoryless_blow_expander(run_pow_iir_filt(idx),fitresult);
-    
+     
     frame_idx = (k-1)*Frame_len +1 : k*Frame_len;
     sat_detect_struct.audio_frame = audio;
     sat_detect_struct.run_pow_fast = run_pow_fast(frame_idx);
@@ -175,7 +170,14 @@ for k=1:n_iterations
 blow_plot(frame_idx)= sat_detect_struct.blow;
 % state_plot(frame_idx)= sat_detect_struct.state(2:end);
 
+%%%% POST PROCESSING %%%%%%%%%%
+
+       %%%MORE POW FILTERING
       
+      [run_pow_iir_filt(idx)]=filter(IIR_pow_filt2,normalized_pow_iir(idx));
+   %%%EXPANSION%%%%
+    expanded_pow_iir(idx)= memoryless_blow_expander(run_pow_iir_filt(idx),fitresult);
+    
 end
       
 n_sub_plots = 7;

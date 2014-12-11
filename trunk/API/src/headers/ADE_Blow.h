@@ -10,8 +10,13 @@ struct ADE_BLOW_S
     ADE_UINT32_T buff_size;
     ADE_FIR_T *p_fir;
     ADE_IIR_T *p_iir;
-    ADE_FLOATING_T *p_in;
-    ADE_FLOATING_T *p_out;
+    ADE_IIR_T *p_iir2;
+    ADE_FLOATING_T *p_in;//allocato fuori
+    ADE_FLOATING_T *p_in_squared;//allocato dentro
+    ADE_FLOATING_T *p_pow_fast;//allocato dentro
+    ADE_FLOATING_T *p_pow_slow;//allocato dentro
+    ADE_FLOATING_T *p_pow_slow_filtered;//allocato dentro
+    ADE_FLOATING_T *p_out;//allocato fuori
     ADE_FLOATING_T pow_thresh_high;
     ADE_FLOATING_T pow_thresh_low;
     ADE_FLOATING_T sat_thresh;
@@ -26,6 +31,10 @@ struct ADE_BLOW_S
     ADE_UINT32_T *p_eval_timer;
     BLOW_SM_STATES_T *p_blow_state;
     ADE_BLOW_FUNCS_T *p_blow_functions;
+    ADE_UINT32_T n_breaks;
+    ADE_FLOATING_T *breaks;
+    ADE_UINT32_T poly_order;
+    ADE_FLOATING_T *poly_coeffs;
 };
 
 
