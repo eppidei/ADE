@@ -116,24 +116,24 @@ ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_iir,ADE_FILTER_IMP_CHO
 
 ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir)
 {
-    ADE_UINT32_T i=0;
+//    ADE_UINT32_T i=0;
 
 #if (ADE_CHECK_INPUTS==1)
 
 if ((p_fir->p_state)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_fir->p_state,"%d",ADE_Fir_Step);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_fir->p_state,"%p",ADE_Fir_Step);
     return ADE_E14;
 }
 
 if ((p_fir->p_in)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->p_in),"%d",ADE_Fir_Step);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->p_in),"%p",ADE_Fir_Step);
     return ADE_E12;
 }
 if ((p_fir->p_out)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->p_out),"%d",ADE_Fir_Step);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->p_out),"%p",ADE_Fir_Step);
     return ADE_E13;
 }
 
@@ -153,6 +153,7 @@ static ADE_API_RET_T filter_DII_T_matrix(ADE_FIR_T* p_fir)
 {
     printf("TO BE IMPLEMENTED\n");
     //matrice order*len_frame di stati
+    return -1;
 
 }
 
@@ -160,6 +161,7 @@ static ADE_API_RET_T filter_DII_T_matrix_blas (ADE_FIR_T* p_fir)
 {
     printf("TO BE IMPLEMENTED\n");
     //matrice order*len_frame di stati
+    return -1;
 }
 
 static ADE_API_RET_T filter_DII_T_blas (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame,ADE_blas_level1_T *p_Blas_L1;)

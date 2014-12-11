@@ -29,4 +29,10 @@
 #define ADE_BLAS_IMPLEMENTATION (1) //0 Custom 1 Library
 #define ADE_CHECK_INPUTS (1) //1 true 0 false
 #define ADE_CHECK_RETURNS (0) //1 true 0 false
+
+/****************************** BLOW ***********************************/
+#define IIR1_SECTIONS (3)
+
+
+
 #endif //_ADE_DEFINES_H
