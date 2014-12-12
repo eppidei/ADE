@@ -2,30 +2,52 @@
 #include "headers/ADE_fir.h"
 #include "headers/ADE_iir.h"
 #include "headers/ADE_blas_level1.h"
+#include "headers/ADE_polyfit.h"
 #include <stddef.h>
 #include "headers/ADE_errors.h"
+#include "headers/ADE_defines.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 //#include <string.h>
 
 static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow);
-static ADE_API_RET_T saturation_detector_sm(ADE_BLOW_T* p_blow,ADE_FLOATING_T sample_i,ADE_FLOATING_T running_pow_fast_i,ADE_FLOATING_T running_pow_slow_i);
+static ADE_API_RET_T ADE_saturation_detector_sm(ADE_BLOW_T* p_blow,ADE_FLOATING_T sample_i,ADE_FLOATING_T running_pow_fast_i,ADE_FLOATING_T running_pow_slow_i);
 static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow);
+static ADE_VOID_T ADE_Blow_Static_Params(ADE_BLOW_T* p_blow);
+static ADE_VOID_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Set_SatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T nbit_i,ADE_FLOATING_T Margin_i);
+static ADE_API_RET_T ADE_Blow_Set_EvalTimesample(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i);
+static ADE_API_RET_T ADE_Blow_Set_NSatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T n_sat_thres_i);
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshHigh(ADE_BLOW_T* p_blow,ADE_FLOATING_T pow_thresh_high_i);
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshLow(ADE_BLOW_T* p_blow,ADE_FLOATING_T pow_thresh_low_i);
+//static ADE_API_RET_T ADE_Blow_Set_Fs(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i);
+static ADE_API_RET_T ADE_Blow_Set_RunPowWinFast(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T running_pow_win_time_fast_i);
+static ADE_API_RET_T ADE_Blow_Set_RunPowWinSlow(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T running_pow_win_time_slow_i);
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshAttack(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T time_pow_thresh_attack_i);
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshRelease(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T time_pow_thresh_release_i);
+static ADE_API_RET_T ADE_square_vector(ADE_FLOATING_T* in ,ADE_FLOATING_T* out ,ADE_UINT32_T len);
+static ADE_API_RET_T ADE_Blow_Set_Expander_static_params(ADE_BLOW_T* p_blow,ADE_UINT32_T n_breaks_i,ADE_UINT32_T poly_order_i);
+static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow);
 
-ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T n_functions,ADE_UINT32_T fir_order,ADE_UINT32_T iir_order,ADE_UINT32_T buff_size,ADE_UINT32_T n_breaks,ADE_UINT32_T poly_order)
+
+ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOATING_T Fs_i)
 {
      ADE_BLOW_T* pthis = calloc(1,sizeof(ADE_BLOW_T));
      ADE_API_RET_T ret = ADE_DEFAULT_RET;
-     ADE_UINT32_T n_sos_sections=(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir_order);
-     ADE_UINT32_T poly_pieces=0;
+     //ADE_UINT32_T sos_order = 2;
+     ADE_UINT32_T n_sos_sections_iir=IIR1_N_SECTIONS;//(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir_order/(ADE_FLOATING_DP_T)sos_order);
+     ADE_UINT32_T n_sos_sections_iir2=IIR1_N_SECTIONS;//(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir2_order/(ADE_FLOATING_DP_T)sos_order);
+     //ADE_UINT32_T poly_pieces=0;
 
      if (pthis!=NULL)
      {
-            pthis->n_registered_funcs=n_functions;
-            pthis->fir_order=fir_order;
-            pthis->iir_order=iir_order;
+            //pthis->n_registered_funcs=n_functions;
+            pthis->fir_order=0;
+           // pthis->iir_order=iir_order;
+            //pthis->iir2_order=iir2_order;
+            pthis->Fs=Fs_i;
             pthis->buff_size=buff_size;
             pthis->pow_thresh_high=0.0;
             pthis->pow_thresh_low=0.0;
@@ -36,26 +58,19 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T n_functions,ADE_UI
             pthis->n_pow_thres_attack=0;
             pthis->n_pow_thres_release=0;
             pthis->eval_time_samples=0;
+            pthis->Fs=Fs_i;
             *(pthis->p_eval_counter)=0;
             *(pthis->p_eval_pow)=0;
             *(pthis->p_eval_timer)=0;
             *(pthis->p_blow_state)=waiting;
-            pthis->n_breaks=n_breaks;
-            pthis->poly_order=poly_order;
+           // pthis->n_breaks=n_breaks;
+            //pthis->poly_order=poly_order;
 
-            /**************** FIR ALLOC *****************************/
 
-            ret = ADE_Fir_Init(&(pthis->p_fir), fir_order, buff_size);
-            if (ret<0)
-            {
-                ADE_PRINT_ERRORS(ADE_MEM,ret,"%d",ADE_Blow_Init);
-
-                return ADE_E16;
-            }
 
             /******************* IIR ALLOC **************************/
 
-            ret = ADE_Iir_Init(&(pthis->p_iir), n_sos_sections, buff_size);
+            ret = ADE_Iir_Init(&(pthis->p_iir), n_sos_sections_iir, buff_size);
 
             if (ret<0)
             {
@@ -65,7 +80,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T n_functions,ADE_UI
 
             /******************* IIR2 ALLOC **************************/
 
-            ret = ADE_Iir_Init(&(pthis->p_iir2), n_sos_sections, buff_size);
+            ret = ADE_Iir_Init(&(pthis->p_iir2), n_sos_sections_iir2, buff_size);
 
             if (ret<0)
             {
@@ -76,13 +91,13 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T n_functions,ADE_UI
             /****************** FUNCS ALLOC **************************/
 
 
-            pthis->p_blow_functions=calloc(n_functions,sizeof(ADE_BLOW_FUNCS_T));
-//
-            if (pthis->p_blow_functions==NULL)
-            {
-                ADE_PRINT_ERRORS(ADE_MEM,pthis->p_blow_functions,"%p",ADE_Blow_Init);
-                return ADE_E16;
-            }
+//            pthis->p_blow_functions=calloc(n_functions,sizeof(ADE_BLOW_FUNCS_T));
+////
+//            if (pthis->p_blow_functions==NULL)
+//            {
+//                ADE_PRINT_ERRORS(ADE_MEM,pthis->p_blow_functions,"%p",ADE_Blow_Init);
+//                return ADE_E16;
+//            }
 
             /********************* P_IN SQUARED ALLOC **********************************/
 
@@ -134,40 +149,81 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T n_functions,ADE_UI
 //                return ADE_E16;
 //            }
 
-            /*************************** BREAKS AND POLY EXP COEFFS ALLOC **********************/
-            pthis->breaks=calloc(n_breaks,sizeof(ADE_FLOATING_T));
-            if (pthis->breaks==NULL)
+
+            /*********  CONFIGURATION *********************/
+
+            ADE_Blow_Static_Params(pthis);
+            pthis->fir_order=pthis->running_pow_win_fast;
+
+             /**************** FIR ALLOC (depends on static params) *****************************/
+
+            ret = ADE_Fir_Init(&(pthis->p_fir), pthis->running_pow_win_fast, buff_size);
+            if (ret<0)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,pthis->breaks,"%p",ADE_Blow_Init);
+                ADE_PRINT_ERRORS(ADE_MEM,ret,"%d",ADE_Blow_Init);
+
                 return ADE_E16;
             }
 
+            /**************** POLYFIT ALLOC (depends on static params) *****************************/
 
-            poly_pieces = pthis->n_breaks-1;
-            if (poly_pieces<=0)
-            {
-                ADE_PRINT_ERRORS(ADE_INCHECKS,poly_pieces,"%d",ADE_Blow_Init);
-                return ADE_E20;
-            }
-            pthis->poly_coeffs=calloc(poly_pieces*poly_order,sizeof(ADE_FLOATING_T));
-            if (pthis->poly_coeffs==NULL)
-            {
-                ADE_PRINT_ERRORS(ADE_MEM,pthis->poly_coeffs,"%p",ADE_Blow_Init);
-                return ADE_E16;
-            }
+            ADE_Polyfit_Init (&(pthis->p_poly),pthis->poly_order,pthis->n_breaks);
 
+            ADE_Blow_Configuration(pthis);
 
-            *dp_this=pthis;
+              *dp_this=pthis;
 
-            /********* FILTER CONFIGURATION *********************/
-
-            ADE_Blow_Fir_Config(pthis);
-            ADE_Blow_Iir_Config(pthis);
-            ADE_Blow_Iir2_Config(pthis);
+     }
+     else
+     {
+          ADE_PRINT_ERRORS(ADE_MEM,pthis,"%p",ADE_Blow_Init);
+          return ADE_E16;
      }
 
 
      return ADE_DEFAULT_RET;
+
+}
+
+static ADE_VOID_T ADE_Blow_Static_Params(ADE_BLOW_T* p_blow)
+{
+
+    ADE_FLOATING_T nbit = 16;
+    ADE_FLOATING_T Margin = 0.3;
+    //ADE_FLOATING_T Fs = 44100.0;
+    ADE_FLOATING_T eval_time = 100e-3;
+    ADE_FLOATING_T Fs = p_blow->Fs;
+    ADE_FLOATING_T n_sat_thres = 20;
+    ADE_FLOATING_T running_pow_win_time_fast = 1.0e-3;
+    ADE_FLOATING_T running_pow_win_time_slow = 20.0e-3;
+    ADE_FLOATING_T time_pow_thresh_release = 2.0e-3;
+    ADE_FLOATING_T time_pow_thresh_attack = 1.0e-3;
+    ADE_FLOATING_T pow_thresh_low = 4e-3;
+    ADE_FLOATING_T pow_thresh_high = 0.25;
+    ADE_UINT32_T n_breaks = POLY_N_BREAKS;
+    ADE_UINT32_T poly_order = POLY_ORDER;
+
+    ADE_Blow_Set_SatThresh(p_blow,nbit,Margin);
+    //ADE_Blow_Set_Fs(p_blow->Fs,Fs);
+    ADE_Blow_Set_EvalTimesample(p_blow,Fs,eval_time);
+    ADE_Blow_Set_NSatThresh(p_blow,n_sat_thres);
+    ADE_Blow_Set_NPowThreshHigh(p_blow,pow_thresh_high);
+    ADE_Blow_Set_NPowThreshLow(p_blow,pow_thresh_low);
+    ADE_Blow_Set_RunPowWinFast(p_blow,Fs,running_pow_win_time_fast);
+    ADE_Blow_Set_RunPowWinSlow(p_blow,Fs,running_pow_win_time_slow);
+    ADE_Blow_Set_NPowThreshAttack(p_blow,Fs,time_pow_thresh_attack);
+    ADE_Blow_Set_NPowThreshRelease(p_blow,Fs,time_pow_thresh_release);
+    ADE_Blow_Set_Expander_static_params(p_blow,n_breaks,poly_order);
+
+}
+
+static ADE_VOID_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow)
+{
+
+    ADE_Blow_Fir_Config(p_blow);
+    ADE_Blow_Iir_Config(p_blow);
+    ADE_Blow_Iir2_Config(p_blow);
+    ADE_Blow_Expander_Config(p_blow);
 
 }
 
@@ -177,18 +233,19 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
     ADE_Iir_Release(p_blow->p_iir);
     ADE_Iir_Release(p_blow->p_iir2);
     ADE_Fir_Release(p_blow->p_fir);
+    ADE_Polyfit_Release(p_blow->p_poly);
     ADE_CHECKNFREE(p_blow->p_in_squared);
     ADE_CHECKNFREE(p_blow->p_pow_fast);
     ADE_CHECKNFREE(p_blow->p_pow_slow);
     ADE_CHECKNFREE(p_blow->p_pow_slow_filtered);
-    ADE_CHECKNFREE(p_blow->p_blow_functions);
-    ADE_CHECKNFREE(p_blow->poly_coeffs);
-    ADE_CHECKNFREE(p_blow->breaks);
+   // ADE_CHECKNFREE(p_blow->p_blow_functions);
+   // ADE_CHECKNFREE(p_blow->poly_coeffs);
+    //ADE_CHECKNFREE(p_blow->breaks);
     ADE_CHECKNFREE(p_blow);
 
 }
 
-ADE_API_RET_T ADE_Blow_Set_SatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T nbit_i,ADE_FLOATING_T Margin_i)//,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i,ADE_FLOATING_T running_pow_win_time_fast_i,ADE_FLOATING_T running_pow_win_time_slow_i,ADE_FLOATING_T time_pow_thresh_attack_i,ADE_FLOATING_T time_pow_thresh_release_i,ADE_UINT32_T n_sat_thres)
+static ADE_API_RET_T ADE_Blow_Set_SatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T nbit_i,ADE_FLOATING_T Margin_i)//,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i,ADE_FLOATING_T running_pow_win_time_fast_i,ADE_FLOATING_T running_pow_win_time_slow_i,ADE_FLOATING_T time_pow_thresh_attack_i,ADE_FLOATING_T time_pow_thresh_release_i,ADE_UINT32_T n_sat_thres)
 {
     ADE_FLOATING_T max_amp =0.0;
 
@@ -199,31 +256,60 @@ ADE_API_RET_T ADE_Blow_Set_SatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T nbit_i,AD
 
   return ADE_DEFAULT_RET;
 }
-ADE_API_RET_T ADE_Blow_Set_EvalTimesample_is(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i)
+static ADE_API_RET_T ADE_Blow_Set_EvalTimesample(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i)
 {
     p_blow->eval_time_samples = floor(eval_time_i*Fs_i+0.5)+1;
 
     return ADE_DEFAULT_RET;
 }
 
-ADE_API_RET_T ADE_Blow_Set_NSatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T n_sat_thres_i)
+static ADE_API_RET_T ADE_Blow_Set_Expander_static_params(ADE_BLOW_T* p_blow,ADE_UINT32_T n_breaks_i,ADE_UINT32_T poly_order_i)
+{
+
+    p_blow->poly_order = poly_order_i;
+    p_blow->n_breaks=n_breaks_i;
+
+    return ADE_DEFAULT_RET;
+
+}
+
+static ADE_API_RET_T ADE_Blow_Set_NSatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T n_sat_thres_i)
 {
     p_blow->n_sat_thres=n_sat_thres_i;
     return ADE_DEFAULT_RET;
 }
-ADE_API_RET_T ADE_Blow_Set_RunPowWinFast(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T running_pow_win_time_fast_i)
+
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshHigh(ADE_BLOW_T* p_blow,ADE_FLOATING_T pow_thresh_high_i)
+{
+    p_blow->pow_thresh_high=pow_thresh_high_i;
+    return ADE_DEFAULT_RET;
+}
+
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshLow(ADE_BLOW_T* p_blow,ADE_FLOATING_T pow_thresh_low_i)
+{
+    p_blow->pow_thresh_low=pow_thresh_low_i;
+    return ADE_DEFAULT_RET;
+}
+
+//static ADE_API_RET_T ADE_Blow_Set_Fs(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i)
+//{
+//    p_blow->Fs=Fs_i;
+//    return ADE_DEFAULT_RET;
+//}
+
+static ADE_API_RET_T ADE_Blow_Set_RunPowWinFast(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T running_pow_win_time_fast_i)
 {
      p_blow->running_pow_win_fast = floor(running_pow_win_time_fast_i*Fs_i+0.5)+1;
     return ADE_DEFAULT_RET;
 }
 
-ADE_API_RET_T ADE_Blow_Set_RunPowWinSlow(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T running_pow_win_time_slow_i)
+static ADE_API_RET_T ADE_Blow_Set_RunPowWinSlow(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T running_pow_win_time_slow_i)
 {
      p_blow->running_pow_win_slow = floor(running_pow_win_time_slow_i*Fs_i+0.5)+1;
     return ADE_DEFAULT_RET;
 }
 
-ADE_API_RET_T ADE_Blow_Set_NPowThreshAttack(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T time_pow_thresh_attack_i)
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshAttack(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T time_pow_thresh_attack_i)
 {
     ADE_FLOATING_T n_pow_thres_sample_is_attack=0.0;
 
@@ -233,7 +319,7 @@ ADE_API_RET_T ADE_Blow_Set_NPowThreshAttack(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs
   return ADE_DEFAULT_RET;
 }
 
-ADE_API_RET_T ADE_Blow_Set_NPowThreshRelease(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T time_pow_thresh_release_i)
+static ADE_API_RET_T ADE_Blow_Set_NPowThreshRelease(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T time_pow_thresh_release_i)
 {
     ADE_FLOATING_T n_pow_thres_sample_is_release=0.0;
 
@@ -244,7 +330,7 @@ ADE_API_RET_T ADE_Blow_Set_NPowThreshRelease(ADE_BLOW_T* p_blow,ADE_FLOATING_T F
 }
 
 
-static ADE_API_RET_T saturation_detector_sm(ADE_BLOW_T* p_blow,ADE_FLOATING_T sample_i,ADE_FLOATING_T running_pow_fast_i,ADE_FLOATING_T running_pow_slow_i)
+static ADE_API_RET_T ADE_saturation_detector_sm(ADE_BLOW_T* p_blow,ADE_FLOATING_T sample_i,ADE_FLOATING_T running_pow_fast_i,ADE_FLOATING_T running_pow_slow_i)
 {
 
 
@@ -377,7 +463,7 @@ static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
 
     if ((p_blow->running_pow_win_fast)==0.0)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_blow->running_pow_win_fast),"%f",ADE_Blow_Fir_Config);
+        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_blow->running_pow_win_fast),"%u",ADE_Blow_Fir_Config);
 
         return ADE_E18;
     }
@@ -397,11 +483,14 @@ static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
         return ADE_E16;
      }
 
+    /**FILL THE TAPS**/
 
      for(i=0;i<order;i++)
      {
          ((p_blow->p_fir)->p_num)[i]=moving_average_coeff;
      }
+
+     /** POINT INOUT BUFFS ***/
 
      ADE_Fir_setInbuff(p_blow->p_fir,p_blow->p_in_squared);
      ADE_Fir_setOutbuff(p_blow->p_fir,p_blow->p_pow_fast);
@@ -413,11 +502,11 @@ static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
 static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow)
 {
 
-    ADE_FLOATING_T iir_gains[IIR1_SECTIONS];
-    ADE_FLOATING_T bbslow[IIR1_SECTIONS],bbslow2[IIR1_SECTIONS],bbslow3[IIR1_SECTIONS];
-    ADE_FLOATING_T aaslow[IIR1_SECTIONS],aaslow2[IIR1_SECTIONS],aaslow3[IIR1_SECTIONS];
-    ADE_FLOATING_T *nums[IIR1_SECTIONS]={bbslow,bbslow2,bbslow3};
-    ADE_FLOATING_T *denoms[IIR1_SECTIONS]={aaslow,aaslow2,aaslow3};
+    ADE_FLOATING_T iir_gains[IIR1_N_SECTIONS];
+    ADE_FLOATING_T bbslow[IIR1_N_SECTIONS],bbslow2[IIR1_N_SECTIONS],bbslow3[IIR1_N_SECTIONS];
+    ADE_FLOATING_T aaslow[IIR1_N_SECTIONS],aaslow2[IIR1_N_SECTIONS],aaslow3[IIR1_N_SECTIONS];
+    ADE_FLOATING_T *nums[IIR1_N_SECTIONS]={bbslow,bbslow2,bbslow3};
+    ADE_FLOATING_T *denoms[IIR1_N_SECTIONS]={aaslow,aaslow2,aaslow3};
 
 iir_gains[0]=0.000003515544430;
 iir_gains[1]=0.000003508969011;
@@ -453,11 +542,11 @@ ADE_Iir_setOutbuff(p_blow->p_iir,p_blow->p_pow_slow);
 static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow)
 {
 
-    ADE_FLOATING_T iir_gains[IIR1_SECTIONS];
-    ADE_FLOATING_T bbslow[IIR1_SECTIONS],bbslow2[IIR1_SECTIONS],bbslow3[IIR1_SECTIONS];
-    ADE_FLOATING_T aaslow[IIR1_SECTIONS],aaslow2[IIR1_SECTIONS],aaslow3[IIR1_SECTIONS];
-    ADE_FLOATING_T *nums[IIR1_SECTIONS]={bbslow,bbslow2,bbslow3};
-    ADE_FLOATING_T *denoms[IIR1_SECTIONS]={aaslow,aaslow2,aaslow3};
+    ADE_FLOATING_T iir_gains[IIR1_N_SECTIONS];
+    ADE_FLOATING_T bbslow[IIR1_N_SECTIONS],bbslow2[IIR1_N_SECTIONS],bbslow3[IIR1_N_SECTIONS];
+    ADE_FLOATING_T aaslow[IIR1_N_SECTIONS],aaslow2[IIR1_N_SECTIONS],aaslow3[IIR1_N_SECTIONS];
+    ADE_FLOATING_T *nums[IIR1_N_SECTIONS]={bbslow,bbslow2,bbslow3};
+    ADE_FLOATING_T *denoms[IIR1_N_SECTIONS]={aaslow,aaslow2,aaslow3};
 
 iir_gains[0]=2.73316597838323e-08;
 iir_gains[1]=2.73276093372558e-08;
@@ -490,87 +579,35 @@ ADE_Iir_setOutbuff(p_blow->p_iir2,p_blow->p_pow_slow_filtered);
     return ADE_DEFAULT_RET;
 }
 
-static ADE_API_RET_T memoryless_blow_expander(ADE_BLOW_T* p_blow,ADE_FLOATING_T* frame_i,ADE_FLOATING_T* y_o)
 
+static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow)
 {
 
-  //  ADE_UINT32_T frame_size = p_blow->buff_size;
-    ADE_UINT32_T i=0, k=0,zz=0;
-    ADE_FLOATING_T data=0.0;
-    ADE_FLOATING_T* coeffs=p_blow->poly_coeffs;
-    ADE_UINT32_T n_pieces = p_blow->n_breaks-1;
-    ADE_FLOATING_T *x_breaks = p_blow->breaks;
-    ADE_UINT32_T coeffs_row_idx=0, coeffs_col_idx=0;
-    ADE_UINT32_T n_coeff_per_piece = p_blow->poly_order+1;
-
-    #if (ADE_CHECK_INPUTS==1)
-
-        printf("INPUT CHECKS STILL NOT IMPLEMENTED in memoryless_blow_expander\n");
-
-    #endif
-
-//for (i=0;i<frame_size;i++)
-//{
-    *y_o=0;
-    data = *frame_i;
-
-    if ( data>=0 )
+    ADE_FLOATING_T breaks[POLY_N_BREAKS]={0,0.05,0.1,0.3,0.5,1};
+    ADE_FLOATING_T coeffs[(POLY_N_BREAKS-1)*(POLY_ORDER+1)]={0.000000000000089,-0.000000000000009,1.000000000000000,0,
+                                                           0,0,1.000000000000000,0.050000000000000,
+                                                           8.333333333333334,-1.666666666666667,1.000000000000000,0.100000000000000,
+                                                           -21.505376344086020,7.634408602150536,1.333333333333333,0.300000000000000
+                                                           -0.317050691244241,-0.254377880184331,1.806451612903226,0.700000000000000};
+    if (p_blow->poly_order!=POLY_ORDER)
     {
-        for (k=0;k<n_pieces;k++)
-        {
-             if (k==0)
-             {
-                  if ( (data>=x_breaks[k]) && (data<x_breaks[k+1]) )
-                  {
-                      zz=k;
-                    break;
-                  }
-
-             }
-
-        else if (k==(n_pieces-1))
-        {
-             if ( (data>=x_breaks[k]) && (data<=x_breaks[k+1]) )
-             {
-                 zz=k;
-                 break;
-             }
-        }
-        else
-        {
-             if ( (data>=x_breaks[k]) && (data<x_breaks[k+1]) )
-             {
-                   zz=k;
-                    break;
-             }
-
-        }
-
-
-
-        }
-
-
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_blow->poly_order,"%u",ADE_Blow_Expander_Config);
+        return ADE_E20;
+    }
+    if (p_blow->n_breaks!=POLY_N_BREAKS)
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_blow->n_breaks,"%u",ADE_Blow_Expander_Config);
+        return ADE_E20;
     }
 
-
-    else
-    {
-        zz=0;
-        data = 0;
-    }
-
-    coeffs_row_idx=zz*n_coeff_per_piece;
-
-    for(i=0;i<n_coeff_per_piece;i++)
-    {
-        coeffs_col_idx = n_coeff_per_piece-1;
-       *y_o +=coeffs[coeffs_row_idx+coeffs_col_idx]*pow((data-x_breaks[zz]),i);
-    }
+    ADE_Polyfit_SetBreaks(p_blow->p_poly,breaks);
+    ADE_Polyfit_SetCoeffs(p_blow->p_poly,coeffs);
 
     return ADE_DEFAULT_RET;
 
 }
+
+
 
 static ADE_API_RET_T ADE_square_vector(ADE_FLOATING_T* in ,ADE_FLOATING_T* out ,ADE_UINT32_T len)
 {
@@ -593,7 +630,25 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     #if (ADE_CHECK_INPUTS==1)
 
-        printf("CHECKs INPUTS STILL NEED TO BE IMPLEMENTED in ADE_Blow_Step\n");
+    if (p_blow->p_in==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_blow->p_in,"%p",ADE_Blow_Step);
+        return ADE_E20;
+    }
+
+    if (p_blow->p_out==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_blow->p_out,"%p",ADE_Blow_Step);
+        return ADE_E20;
+    }
+
+    if (p_blow->p_in_squared==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_blow->p_in_squared,"%p",ADE_Blow_Step);
+        return ADE_E20;
+    }
+
+      //  printf("CHECKs INPUTS STILL NEED TO BE IMPLEMENTED in ADE_Blow_Step\n");
 
     #endif
 
@@ -603,7 +658,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     for (i=0;i<p_blow->buff_size;i++)
     {
-        saturation_detector_sm(p_blow,(p_blow->p_in)[i],((p_blow->p_fir)->p_out)[i],((p_blow->p_iir)->p_out)[i]);
+        ADE_saturation_detector_sm(p_blow,(p_blow->p_in)[i],((p_blow->p_fir)->p_out)[i],((p_blow->p_iir)->p_out)[i]);
     }
 
     p_iir2_int=p_blow->p_iir2;
@@ -612,7 +667,8 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     for (i=0;i<p_blow->buff_size;i++)
     {
-        memoryless_blow_expander(p_blow,&((p_iir2_int->p_out)[i]),&((p_blow->p_out)[i]));
+        ADE_memoryless_blow_expander(p_blow->p_poly,&((p_iir2_int->p_out)[i]),&((p_blow->p_out)[i]));
+        //memoryless_blow_expander(p_blow,&((p_iir2_int->p_out)[i]),&((p_blow->p_out)[i]));
     }
 
 

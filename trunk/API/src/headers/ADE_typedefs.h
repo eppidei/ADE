@@ -22,6 +22,9 @@ typedef ADE_FLOATING_SP_T ADE_FLOATING_T;
 typedef ADE_INT32_T ADE_API_RET_T ;
 typedef void ADE_VOID_T;
 
+/*********************************** ADE ENVIRONMENT ***********************************/
+typedef struct ADE_S ADE_T;
+
 
 /**************************** BLAS *********************/
 typedef struct ADE_blas_level1_S ADE_blas_level1_T;
@@ -35,6 +38,10 @@ typedef enum  {trasp_II,trasp_II_blas} ADE_FILTER_IMP_CHOICE_T;
 /******************************* FIR **************************/
 typedef struct ADE_FIR_S ADE_FIR_T;
 typedef ADE_API_RET_T (*ADE_FIR_FILTER_IMPLEMENTATION_T)(ADE_FIR_T*);
+
+/**************************** POLYFIT ****************************/
+typedef struct ADE_POLYFIT_S ADE_POLYFIT_T;
+
 /******************************* BLOW ***************************/
 typedef struct ADE_BLOW_S ADE_BLOW_T;
 typedef ADE_API_RET_T (*ADE_BLOW_FUNCS_T)(ADE_BLOW_T*);
