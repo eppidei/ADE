@@ -165,9 +165,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
     }
     else
     {
-        #if (ADE_CHECK_RETURNS==1)
-        ADE_PRINT_ERRORS(ADE_IIR,pthis,"%d",ADE_Iir_Init);
-        #endif
+
+        ADE_PRINT_ERRORS(ADE_MEM,pthis,"%p",ADE_Iir_Init);
+        return  ADE_E3;
+
     }
 
 

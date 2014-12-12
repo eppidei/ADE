@@ -3,6 +3,7 @@
 #include <string.h>
 #include "headers/ADE_blas_level1.h"
 #include "headers/ADE_iir.h"
+#include "headers/ADE.h"
 static ADE_API_RET_T filter(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame)
 {
     ADE_UINT32_T i=0,k=0;
@@ -42,16 +43,22 @@ static float x[5]={1.0,0.0,0.0,0.0,0.0};
 static float y[5]={1.0,2.0,3.0,4.0,5.0};
 static float out[5],out2[5],state[5],state2[5];
 int N=5;
-unsigned int i=0;
+
 ADE_blas_level1_T *p_Blas_L1;
 ADE_IIR_T *p_iir;
-ADE_API_RET_T ret = 0;
+
 float a[3]={1,-0.9,-0.97};
 float b[3]={1,2,0.5};
 float gain[2] = {0.000134,0.000134};
 float *num[2] ={b,b};
 float *denom[2] ={a,a};
-char test_case[20]="iir";
+char test_case[20]="ade";
+ ADE_HANDLE ADE = NULL;
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_FLOATING_T frame_in[512];
+    ADE_FLOATING_T frame_out[512];
+    ADE_UINT32_T i = 0;
+
 
 if (!strcmp(test_case,"blas"))
 {
@@ -116,6 +123,23 @@ ADE_Iir_Step(p_iir);
 PRINT_ARRAY(p_iir->p_out,i,5,"%f");
 
 ADE_Iir_Release(p_iir);
+
+
+}
+
+else if  (!strcmp(test_case,"ade"))
+{
+
+
+    ret =  ADE_Init(&ADE, BLOW_FLAG,512,44100);
+    ADE_SetInBuff(ADE,BLOW_FLAG,frame_in);
+    ADE_SetOutBuff(ADE,BLOW_FLAG,frame_out);
+    for(i=0;i<100;i++)
+    {
+        ret=ADE_Step(ADE,BLOW_FLAG);
+    }
+
+    ADE_Release(ADE, BLOW_FLAG);
 
 
 }

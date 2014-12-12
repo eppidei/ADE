@@ -25,7 +25,7 @@ ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num);
 ADE_API_RET_T ADE_Fir_ResetState(ADE_FIR_T* p_fir);
 ADE_API_RET_T ADE_Fir_setInbuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
 ADE_API_RET_T ADE_Fir_setOutbuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
-ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_iir,ADE_FILTER_IMP_CHOICE_T filt_imp_type);
+ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FILTER_IMP_CHOICE_T filt_imp_type);
 ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir);
 
 

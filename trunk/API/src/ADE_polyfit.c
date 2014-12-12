@@ -37,6 +37,8 @@ ADE_API_RET_T ADE_Polyfit_Init (ADE_POLYFIT_T **dp_poly,ADE_UINT32_T poly_order_
             ADE_PRINT_ERRORS(ADE_MEM,p_this->p_poly_coeffs,"%p",ADE_Polyfit_Init);
             return ADE_E21;
         }
+
+        *dp_poly=p_this;
     }
     else
     {
@@ -87,7 +89,17 @@ ADE_API_RET_T ADE_memoryless_blow_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T*
 
     #if (ADE_CHECK_INPUTS==1)
 
-        printf("INPUT CHECKS STILL NOT IMPLEMENTED in memoryless_blow_expander\n");
+        if (coeffs==NULL)
+        {
+           ADE_PRINT_ERRORS(ADE_INCHECKS,coeffs,"%p",ADE_memoryless_blow_expander);
+           return ADE_E22;
+        }
+
+        if (x_breaks==NULL)
+        {
+           ADE_PRINT_ERRORS(ADE_INCHECKS,x_breaks,"%p",ADE_memoryless_blow_expander);
+           return ADE_E22;
+        }
 
     #endif
 
