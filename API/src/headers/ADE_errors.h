@@ -2,8 +2,8 @@
 #define _ADE_ERRORS_H
 
 /*************************** ERROR DEFINES ***************************/
-#define ADE_PRINT_ERRORS(error_type,var_name,var_format,fcn_name) fprintf(stderr, error_type " -> In fcn " #fcn_name #var_name " = " var_format " \n", var_name);
-#define ADE_PRINT_WARNINGS(error_type,var_name,var_format,fcn_name) fprintf(stdout, error_type " -> In fcn " #fcn_name #var_name " = " var_format " \n", var_name);
+#define ADE_PRINT_ERRORS(error_type,var_name,var_format,fcn_name) fprintf(stderr, error_type " -> ERROR In fcn " #fcn_name " "#var_name " = " var_format " \n", var_name);
+#define ADE_PRINT_WARNINGS(error_type,var_name,var_format,fcn_name) fprintf(stdout, error_type " -> WARNING In fcn " #fcn_name " "#var_name " = " var_format " \n", var_name);
 
 #define ADE_NBITS_SIGN (1)
 #define ADE_NBITS_TYPES (10)
@@ -33,6 +33,7 @@
 #define ADE_INCHECKS "ADE Input Checks"
 #define ADE_BLAS_L1 "ADE Blas level 1"
 #define ADE_MEM "ADE Memory Allocation"
+#define ADE_RETCHECKS "ADE Return Checks"
 
 /******************************* ERROR FRAMEWORK ***********************/
 #define ADE_FRAMEWORK_ADE (0)
@@ -62,6 +63,7 @@
 #define ADE_MEMBER_NOT_SET (11)
 #define ADE_UNKNOWN_STATE (12)
 #define ADE_INVALID_PARAM (13)
+#define ADE_RET_ERROR (14)
 
 /********************************* ERROR CODES *****************************************/
 
@@ -89,9 +91,11 @@
 #define ADE_E18 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_BLOW<<ADE_NBITS_CLASS_SHIFT | ADE_MEMBER_NOT_SET<<ADE_NBITS_METHOD_SHIFT)
 #define ADE_E19 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_BLOW<<ADE_NBITS_CLASS_SHIFT | ADE_UNKNOWN_STATE<<ADE_NBITS_METHOD_SHIFT)
 #define ADE_E20 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_BLOW<<ADE_NBITS_CLASS_SHIFT | ADE_INVALID_PARAM<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E25 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_BLOW<<ADE_NBITS_CLASS_SHIFT | ADE_RET_ERROR<<ADE_NBITS_METHOD_SHIFT)
 /*********************************** ERRORS POLYFIT ************************************/
 #define ADE_E21 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_POLYFIT<<ADE_NBITS_CLASS_SHIFT | ADE_ERROR_ALLOCATION<<ADE_NBITS_METHOD_SHIFT)
 #define ADE_E22 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_POLYFIT<<ADE_NBITS_CLASS_SHIFT | ADE_INVALID_PARAM<<ADE_NBITS_METHOD_SHIFT)
 /*********************************** ERRORS ADE ************************************/
 #define ADE_E23 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_ADE<<ADE_NBITS_CLASS_SHIFT | ADE_ERROR_ALLOCATION<<ADE_NBITS_METHOD_SHIFT)
+#define ADE_E24 (ADE_ERROR_SIGN<<ADE_NBITS_SIGN_SHIFT | ADE_FRAMEWORK_ADE<<ADE_NBITS_FRAMEWORK_SHIFT | ADE_CLASS_ADE<<ADE_NBITS_CLASS_SHIFT | ADE_RET_ERROR<<ADE_NBITS_METHOD_SHIFT)
 #endif

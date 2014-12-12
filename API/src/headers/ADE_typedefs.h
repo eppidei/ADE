@@ -24,7 +24,7 @@ typedef void ADE_VOID_T;
 
 /*********************************** ADE ENVIRONMENT ***********************************/
 typedef struct ADE_S ADE_T;
-
+typedef struct ADE_S* ADE_HANDLE;
 
 /**************************** BLAS *********************/
 typedef struct ADE_blas_level1_S ADE_blas_level1_T;

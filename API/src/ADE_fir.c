@@ -91,16 +91,16 @@ ADE_API_RET_T ADE_Fir_setOutbuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
     return ADE_DEFAULT_RET;
 }
 
-ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_iir,ADE_FILTER_IMP_CHOICE_T filt_imp_type)
+ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FILTER_IMP_CHOICE_T filt_imp_type)
 {
 
     if (filt_imp_type==trasp_II)
    {
-       p_iir->filter_func=filter_DII_T;
+       p_fir->filter_func=filter_DII_T;
    }
    else if (filt_imp_type==trasp_II_blas)
    {
-     p_iir->filter_func=filter_DII_T_blas;
+     p_fir->filter_func=filter_DII_T_blas;
    }
    else
    {
@@ -137,6 +137,12 @@ if ((p_fir->p_out)==NULL)
     return ADE_E13;
 }
 
+if ((p_fir->filter_func)==NULL)
+{
+     ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->filter_func),"%p",ADE_Fir_Step);
+    return ADE_E13;
+
+}
 
 #endif
 

@@ -38,7 +38,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
      ADE_API_RET_T ret = ADE_DEFAULT_RET;
      //ADE_UINT32_T sos_order = 2;
      ADE_UINT32_T n_sos_sections_iir=IIR1_N_SECTIONS;//(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir_order/(ADE_FLOATING_DP_T)sos_order);
-     ADE_UINT32_T n_sos_sections_iir2=IIR1_N_SECTIONS;//(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir2_order/(ADE_FLOATING_DP_T)sos_order);
+     ADE_UINT32_T n_sos_sections_iir2=IIR2_N_SECTIONS;//(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir2_order/(ADE_FLOATING_DP_T)sos_order);
      //ADE_UINT32_T poly_pieces=0;
 
      if (pthis!=NULL)
@@ -58,10 +58,31 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
             pthis->n_pow_thres_attack=0;
             pthis->n_pow_thres_release=0;
             pthis->eval_time_samples=0;
-            pthis->Fs=Fs_i;
-            *(pthis->p_eval_counter)=0;
-            *(pthis->p_eval_pow)=0;
-            *(pthis->p_eval_timer)=0;
+            //pthis->Fs=Fs_i;
+            (pthis->p_eval_counter)=calloc(1,sizeof(ADE_UINT32_T));
+            if ((pthis->p_eval_counter)<0)
+            {
+                ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_eval_counter),"%p",ADE_Blow_Init);
+                return ADE_E16;
+            }
+            (pthis->p_eval_pow)=calloc(1,sizeof(ADE_UINT32_T));
+            if ((pthis->p_eval_pow)<0)
+            {
+                ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_eval_pow),"%p",ADE_Blow_Init);
+                return ADE_E16;
+            }
+            (pthis->p_eval_timer)=calloc(1,sizeof(ADE_UINT32_T));
+            if ((pthis->p_eval_timer)<0)
+            {
+                ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_eval_timer),"%p",ADE_Blow_Init);
+                return ADE_E16;
+            }
+            (pthis->p_blow_state)=calloc(1,sizeof(BLOW_SM_STATES_T));
+            if ((pthis->p_blow_state)<0)
+            {
+                ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_blow_state),"%p",ADE_Blow_Init);
+                return ADE_E16;
+            }
             *(pthis->p_blow_state)=waiting;
            // pthis->n_breaks=n_breaks;
             //pthis->poly_order=poly_order;
@@ -241,6 +262,11 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
    // ADE_CHECKNFREE(p_blow->p_blow_functions);
    // ADE_CHECKNFREE(p_blow->poly_coeffs);
     //ADE_CHECKNFREE(p_blow->breaks);
+
+    ADE_CHECKNFREE(p_blow->p_eval_counter);
+    ADE_CHECKNFREE(p_blow->p_eval_pow);
+    ADE_CHECKNFREE(p_blow->p_eval_timer);
+    ADE_CHECKNFREE(p_blow->p_blow_state);
     ADE_CHECKNFREE(p_blow);
 
 }
@@ -495,6 +521,10 @@ static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
      ADE_Fir_setInbuff(p_blow->p_fir,p_blow->p_in_squared);
      ADE_Fir_setOutbuff(p_blow->p_fir,p_blow->p_pow_fast);
 
+     /*** SET FILTER IMPLEMENTATION ***/
+
+     ADE_Fir_setFilt_Implementation(p_blow->p_fir,trasp_II);
+
 
     return ADE_DEFAULT_RET;
 }
@@ -536,17 +566,20 @@ ADE_Iir_setNums( p_blow->p_iir, &(*nums));
 ADE_Iir_setDenoms( p_blow->p_iir, &(*denoms));
 ADE_Iir_setInbuff(p_blow->p_iir,p_blow->p_in_squared);
 ADE_Iir_setOutbuff(p_blow->p_iir,p_blow->p_pow_slow);
+ADE_Iir_setFilt_Implementation(p_blow->p_iir,trasp_II);
+
+
     return ADE_DEFAULT_RET;
 }
 
 static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow)
 {
 
-    ADE_FLOATING_T iir_gains[IIR1_N_SECTIONS];
-    ADE_FLOATING_T bbslow[IIR1_N_SECTIONS],bbslow2[IIR1_N_SECTIONS],bbslow3[IIR1_N_SECTIONS];
-    ADE_FLOATING_T aaslow[IIR1_N_SECTIONS],aaslow2[IIR1_N_SECTIONS],aaslow3[IIR1_N_SECTIONS];
-    ADE_FLOATING_T *nums[IIR1_N_SECTIONS]={bbslow,bbslow2,bbslow3};
-    ADE_FLOATING_T *denoms[IIR1_N_SECTIONS]={aaslow,aaslow2,aaslow3};
+    ADE_FLOATING_T iir_gains[IIR2_N_SECTIONS];
+    ADE_FLOATING_T bbslow[IIR2_N_SECTIONS],bbslow2[IIR2_N_SECTIONS],bbslow3[IIR2_N_SECTIONS];
+    ADE_FLOATING_T aaslow[IIR2_N_SECTIONS],aaslow2[IIR2_N_SECTIONS],aaslow3[IIR2_N_SECTIONS];
+    ADE_FLOATING_T *nums[IIR2_N_SECTIONS]={bbslow,bbslow2,bbslow3};
+    ADE_FLOATING_T *denoms[IIR2_N_SECTIONS]={aaslow,aaslow2,aaslow3};
 
 iir_gains[0]=2.73316597838323e-08;
 iir_gains[1]=2.73276093372558e-08;
@@ -576,6 +609,7 @@ ADE_Iir_setNums( p_blow->p_iir2, &(*nums));
 ADE_Iir_setDenoms( p_blow->p_iir2, &(*denoms));
 ADE_Iir_setInbuff(p_blow->p_iir2,p_blow->p_pow_slow);
 ADE_Iir_setOutbuff(p_blow->p_iir2,p_blow->p_pow_slow_filtered);
+ADE_Iir_setFilt_Implementation(p_blow->p_iir2,trasp_II);
     return ADE_DEFAULT_RET;
 }
 
@@ -627,6 +661,8 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     ADE_UINT32_T i=0;
     ADE_IIR_T *p_iir2_int=NULL;
+    ADE_API_RET_T fir_step_ret = ADE_DEFAULT_RET;
+    ADE_API_RET_T iir_step_ret = ADE_DEFAULT_RET;
 
     #if (ADE_CHECK_INPUTS==1)
 
@@ -653,8 +689,28 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     #endif
 
     ADE_square_vector(p_blow->p_in,p_blow->p_in_squared,p_blow->buff_size);
-    ADE_Fir_Step(p_blow->p_fir);
-    ADE_Iir_Step(p_blow->p_iir);
+    fir_step_ret=ADE_Fir_Step(p_blow->p_fir);
+
+    #if ADE_CHECK_RETURNS==1
+
+    if (fir_step_ret<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,fir_step_ret,"%d",ADE_Blow_Step);
+        return ADE_E25;
+    }
+
+    #endif
+    iir_step_ret = ADE_Iir_Step(p_blow->p_iir);
+
+     #if ADE_CHECK_RETURNS==1
+
+    if (iir_step_ret<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,iir_step_ret,"%d",ADE_Blow_Step);
+        return ADE_E25;
+    }
+
+    #endif
 
     for (i=0;i<p_blow->buff_size;i++)
     {
@@ -663,7 +719,17 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     p_iir2_int=p_blow->p_iir2;
 
-    ADE_Iir_Step(p_iir2_int);
+    iir_step_ret=ADE_Iir_Step(p_iir2_int);
+
+    #if ADE_CHECK_RETURNS==1
+
+    if (iir_step_ret<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,iir_step_ret,"%d",ADE_Blow_Step);
+        return ADE_E25;
+    }
+
+    #endif
 
     for (i=0;i<p_blow->buff_size;i++)
     {
@@ -673,5 +739,21 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
 
     return ADE_DEFAULT_RET;
+}
+
+ADE_VOID_T ADE_Blow_SetInBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff)
+{
+
+    p_blow->p_in = p_buff;
+
+
+}
+
+ADE_VOID_T ADE_Blow_SetOutBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff)
+{
+
+    p_blow->p_out = p_buff;
+
+
 }
 
