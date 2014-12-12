@@ -31,7 +31,16 @@
 #define ADE_CHECK_RETURNS (0) //1 true 0 false
 
 /****************************** BLOW ***********************************/
-#define IIR1_SECTIONS (3)
+#define IIR1_N_SECTIONS (3)
+#define IIR2_N_SECTIONS (3)
+#define POLY_N_BREAKS (6)
+#define POLY_ORDER (3)
+/***************************** ENVIRONMENT *******************************/
+//ALG LIST
+#define BLOW_BIT (0)
+#define BLOW_FLAG (1<<BLOW_BIT)
+
+
 
 
 

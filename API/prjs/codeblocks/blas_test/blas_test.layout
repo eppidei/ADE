@@ -2,22 +2,31 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
 	<File name="main.c" open="1" top="0" tabpos="1">
-		<Cursor position="2135" topLine="78" />
+		<Cursor position="2135" topLine="35" />
 	</File>
-	<File name="../../../src/ADE_Blow.c" open="1" top="1" tabpos="9">
-		<Cursor position="17280" topLine="587" />
+	<File name="../../../src/ADE.c" open="1" top="0" tabpos="9">
+		<Cursor position="266" topLine="0" />
+	</File>
+	<File name="../../../src/ADE_Blow.c" open="1" top="0" tabpos="6">
+		<Cursor position="1325" topLine="0" />
 	</File>
 	<File name="../../../src/ADE_blas_level1.c" open="0" top="0" tabpos="7">
 		<Cursor position="3535" topLine="7" />
 	</File>
-	<File name="../../../src/ADE_fir.c" open="1" top="0" tabpos="6">
-		<Cursor position="3696" topLine="69" />
+	<File name="../../../src/ADE_fir.c" open="1" top="1" tabpos="12">
+		<Cursor position="3850" topLine="142" />
 	</File>
-	<File name="../../../src/ADE_iir.c" open="1" top="0" tabpos="7">
-		<Cursor position="6134" topLine="234" />
+	<File name="../../../src/ADE_iir.c" open="0" top="0" tabpos="7">
+		<Cursor position="5366" topLine="192" />
 	</File>
-	<File name="../../../src/headers/ADE_Blow.h" open="1" top="0" tabpos="10">
-		<Cursor position="513" topLine="9" />
+	<File name="../../../src/ADE_polyfit.c" open="1" top="0" tabpos="11">
+		<Cursor position="1968" topLine="52" />
+	</File>
+	<File name="../../../src/headers/ADE.h" open="1" top="0" tabpos="8">
+		<Cursor position="113" topLine="0" />
+	</File>
+	<File name="../../../src/headers/ADE_Blow.h" open="1" top="0" tabpos="7">
+		<Cursor position="1111" topLine="0" />
 	</File>
 	<File name="../../../src/headers/ADE_blas_level1.h" open="0" top="0" tabpos="4">
 		<Cursor position="2009" topLine="5" />
@@ -26,18 +35,21 @@
 		<Cursor position="171" topLine="0" />
 	</File>
 	<File name="../../../src/headers/ADE_defines.h" open="1" top="0" tabpos="4">
-		<Cursor position="1250" topLine="1" />
+		<Cursor position="1306" topLine="7" />
 	</File>
 	<File name="../../../src/headers/ADE_errors.h" open="1" top="0" tabpos="2">
-		<Cursor position="1390" topLine="30" />
+		<Cursor position="7111" topLine="63" />
 	</File>
 	<File name="../../../src/headers/ADE_fir.h" open="1" top="0" tabpos="5">
 		<Cursor position="1232" topLine="0" />
 	</File>
-	<File name="../../../src/headers/ADE_iir.h" open="1" top="0" tabpos="8">
+	<File name="../../../src/headers/ADE_iir.h" open="0" top="0" tabpos="8">
 		<Cursor position="0" topLine="0" />
 	</File>
+	<File name="../../../src/headers/ADE_polyfit.h" open="1" top="0" tabpos="10">
+		<Cursor position="566" topLine="0" />
+	</File>
 	<File name="../../../src/headers/ADE_typedefs.h" open="1" top="0" tabpos="3">
-		<Cursor position="1471" topLine="3" />
+		<Cursor position="1519" topLine="17" />
 	</File>
 </CodeBlocks_layout_file>

@@ -151,16 +151,16 @@
 1417718611 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_blas_level1.h
 	"headers/ADE_typedefs.h"
 
-1418211229 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_typedefs.h
+1418364698 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_typedefs.h
 	<stdint.h>
 	"headers/ADE_defines.h"
 
-1418264963 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_defines.h
+1418360872 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_defines.h
 
 1417571820 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_blas_wrapper.h
 	"headers/ADE_defines.h"
 
-1418256870 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_errors.h
+1418366163 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_errors.h
 
 1418220343 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_iir.c
 	"headers/ADE_iir.h"
@@ -193,17 +193,42 @@
 1418145810 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_fir.h
 	"headers/ADE_typedefs.h"
 
-1418220123 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_Blow.c
+1418365702 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_Blow.c
 	"headers/ADE_Blow.h"
 	"headers/ADE_fir.h"
 	"headers/ADE_iir.h"
 	"headers/ADE_blas_level1.h"
+	"headers/ADE_polyfit.h"
+	<stddef.h>
+	"headers/ADE_errors.h"
+	"headers/ADE_defines.h"
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+
+1418361532 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_Blow.h
+	"headers/ADE_typedefs.h"
+
+1418364766 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE.c
+	"headers/ADE.h"
+	"headers/ADE_Blow.h"
+	<stddef.h>
+	"headers/ADE_errors.h"
+	<stdio.h>
+	<stdlib.h>
+
+1418347876 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE.h
+	"headers/ADE_typedefs.h"
+
+1418365964 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_polyfit.h
+	"headers/ADE_typedefs.h"
+
+1418366030 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_polyfit.c
+	"headers/ADE_polyfit.h"
 	<stddef.h>
 	"headers/ADE_errors.h"
 	<stdio.h>
 	<stdlib.h>
 	<math.h>
-
-1418219210 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_Blow.h
-	"headers/ADE_typedefs.h"
+	<string.h>
 
