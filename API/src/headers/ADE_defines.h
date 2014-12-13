@@ -26,7 +26,7 @@
 #define FORTRAN_WRAPPER(x) x ## _
 #endif
 
-#define ADE_BLAS_IMPLEMENTATION (1) //0 Custom 1 Library
+#define ADE_BLAS_IMPLEMENTATION (0) //0 Custom 1 Library
 #define ADE_CHECK_INPUTS (1) //1 true 0 false
 #define ADE_CHECK_RETURNS (1) //1 true 0 false
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.c" open="1" top="1" tabpos="1">
+	<File name="main.c" open="1" top="0" tabpos="1">
 		<Cursor position="2666" topLine="113" />
 	</File>
 	<File name="../../../src/ADE.c" open="1" top="0" tabpos="9">
@@ -34,7 +34,7 @@
 	<File name="../../../src/headers/ADE_blas_wrapper.h" open="0" top="0" tabpos="6">
 		<Cursor position="171" topLine="0" />
 	</File>
-	<File name="../../../src/headers/ADE_defines.h" open="1" top="0" tabpos="4">
+	<File name="../../../src/headers/ADE_defines.h" open="1" top="1" tabpos="4">
 		<Cursor position="1132" topLine="0" />
 	</File>
 	<File name="../../../src/headers/ADE_errors.h" open="1" top="0" tabpos="2">
