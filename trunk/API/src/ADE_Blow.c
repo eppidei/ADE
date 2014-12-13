@@ -60,25 +60,25 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
             pthis->eval_time_samples=0;
             //pthis->Fs=Fs_i;
             (pthis->p_eval_counter)=calloc(1,sizeof(ADE_UINT32_T));
-            if ((pthis->p_eval_counter)<0)
+            if ((pthis->p_eval_counter)==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_eval_counter),"%p",ADE_Blow_Init);
                 return ADE_E16;
             }
             (pthis->p_eval_pow)=calloc(1,sizeof(ADE_UINT32_T));
-            if ((pthis->p_eval_pow)<0)
+            if ((pthis->p_eval_pow)==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_eval_pow),"%p",ADE_Blow_Init);
                 return ADE_E16;
             }
             (pthis->p_eval_timer)=calloc(1,sizeof(ADE_UINT32_T));
-            if ((pthis->p_eval_timer)<0)
+            if ((pthis->p_eval_timer)==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_eval_timer),"%p",ADE_Blow_Init);
                 return ADE_E16;
             }
             (pthis->p_blow_state)=calloc(1,sizeof(BLOW_SM_STATES_T));
-            if ((pthis->p_blow_state)<0)
+            if ((pthis->p_blow_state)==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_blow_state),"%p",ADE_Blow_Init);
                 return ADE_E16;
@@ -376,7 +376,7 @@ ADE_UINT32_T n_pow_thres_release=p_blow->n_pow_thres_release;
 ADE_UINT32_T eval_time_init=p_blow->eval_time_samples;
 ADE_UINT32_T *p_eval_pow=p_blow->p_eval_pow;
 ADE_UINT32_T *p_eval_counter=p_blow->p_eval_counter;
-ADE_UINT32_T *p_eval_timer=p_blow->p_eval_timer;
+ADE_INT32_T *p_eval_timer=p_blow->p_eval_timer;
 
 
     if (state_int==tracking)

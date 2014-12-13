@@ -30,7 +30,7 @@ struct ADE_BLOW_S
     ADE_UINT32_T eval_time_samples;
     ADE_UINT32_T *p_eval_counter;
     ADE_UINT32_T *p_eval_pow;
-    ADE_UINT32_T *p_eval_timer;
+    ADE_INT32_T *p_eval_timer;
     BLOW_SM_STATES_T *p_blow_state;
     ADE_POLYFIT_T *p_poly;
     //ADE_BLOW_FUNCS_T *p_blow_functions;
