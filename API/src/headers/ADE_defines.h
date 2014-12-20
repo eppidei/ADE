@@ -2,7 +2,10 @@
 #define _ADE_DEFINES_H
 
 #define ADE_DEFAULT_RET (0)
-#define ADE_FP_PRECISION (0) //O single 1 double
+
+#define ADE_USE_SINGLE_PREC (0)
+#define ADE_USE_DOUBLE_PREC (1)
+
 
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
 //#define ADE_GOTO_LABEL gently_closure :
@@ -26,7 +29,9 @@
 #define FORTRAN_WRAPPER(x) x ## _
 #endif
 
-#define ADE_BLAS_IMPLEMENTATION (0) //0 Custom 1 Library
+#define ADE_USE_BLAS_LIB (1)
+#define ADE_USE_BLAS_CUSTOM (0)
+
 #define ADE_CHECK_INPUTS (1) //1 true 0 false
 #define ADE_CHECK_RETURNS (1) //1 true 0 false
 
@@ -41,7 +46,16 @@
 #define BLOW_FLAG (1<<BLOW_BIT)
 
 
+/********************** CTRL DEFINES **********************************/
+#define ADE_MATLAB_DEBUG
 
+#ifdef ADE_MATLAB_DEBUG
+#define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
+#else
+#define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+#endif
+
+#define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB //0 Custom 1 Library
 
 
 #endif //_ADE_DEFINES_H

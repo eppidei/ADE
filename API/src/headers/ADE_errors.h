@@ -2,6 +2,8 @@
 #define _ADE_ERRORS_H
 
 /*************************** ERROR DEFINES ***************************/
+#define ADE_MISSING_IMPLEMENTATION(fcn_name) fprintf(stderr," MISSING IMPLEMENTATION IN fcn ->  " #fcn_name " \n");
+#define ADE_DEFINE_ERROR(define_name) fprintf(stderr, #define_name " DEFINE ERROR\n");
 #define ADE_PRINT_ERRORS(error_type,var_name,var_format,fcn_name) fprintf(stderr, error_type " -> ERROR In fcn " #fcn_name " "#var_name " = " var_format " \n", var_name);
 #define ADE_PRINT_WARNINGS(error_type,var_name,var_format,fcn_name) fprintf(stdout, error_type " -> WARNING In fcn " #fcn_name " "#var_name " = " var_format " \n", var_name);
 

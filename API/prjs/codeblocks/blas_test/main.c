@@ -52,7 +52,7 @@ float b[3]={1,2,0.5};
 float gain[2] = {0.000134,0.000134};
 float *num[2] ={b,b};
 float *denom[2] ={a,a};
-char test_case[20]="ade";
+char test_case[20]="iir";
  ADE_HANDLE ADE = NULL;
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     ADE_FLOATING_T frame_in[512];

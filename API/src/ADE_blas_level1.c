@@ -7,8 +7,13 @@
 #include <stdlib.h>
 
 static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1);
+#if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1);
-
+#elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+static ADE_API_RET_T ADE_Blas_level1_daxpy (ADE_blas_level1_T *p_blas_l1);
+#else
+ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+#endif
 
 
 ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this )
@@ -128,11 +133,13 @@ ADE_API_RET_T ADE_Blas_real_axpy(ADE_blas_level1_T* p_blas_l1)
 {
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
 
-    #if (ADE_FP_PRECISION==0)
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
         p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_saxpy;
-    #elif (ADE_FP_PRECISION==1)
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
      p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_daxpy;
-     #endif
+     #else
+        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+    #endif
 
      ret = ADE_Blas_level1_launch_type1(p_blas_l1);
 
@@ -172,11 +179,15 @@ static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
     return ret;
 }
 
+/*******************LIST of single precision blas*************************/
+
+#if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+
 
 static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
-    #if (ADE_BLAS_IMPLEMENTATION==0)
+    #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
 ADE_INT32_T M = 0, MP1 = 0, IX = 0, IY=0, N_int = p_blas_l1->N;
 ADE_UINT32_T i = 0;
@@ -255,9 +266,38 @@ ADE_INT32_T INCX_int = p_blas_l1->INCX , INCY_int = p_blas_l1->INCY;
 
 
 
-  #elif (ADE_BLAS_IMPLEMENTATION==1)
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
         saxpy(&(p_blas_l1->N),&(p_blas_l1->ALPHA),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+
+#else
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+#endif
+
+
+
+
+  return ADE_DEFAULT_RET;
+
+}
+
+/*******************LIST of double precision blas*************************/
+
+#elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+
+static ADE_API_RET_T ADE_Blas_level1_daxpy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+{
+
+    #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
+
+        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_daxpy);
+
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
+
+        daxpy(&(p_blas_l1->N),&(p_blas_l1->ALPHA),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+#else
+
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
 
 #endif
 
@@ -267,3 +307,7 @@ ADE_INT32_T INCX_int = p_blas_l1->INCX , INCY_int = p_blas_l1->INCY;
   return ADE_DEFAULT_RET;
 
 }
+
+#else
+ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+#endif
