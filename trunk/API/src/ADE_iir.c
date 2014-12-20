@@ -386,7 +386,7 @@ if (*(p_iir->dp_states)==NULL)
         /*************/
         ADE_Blas_level1_setY(p_Blas_L1,temp_buffer);
         ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
-        ADE_Blas_level1_setALPHA(p_Blas_L1,in[k]);
+        ADE_Blas_level1_setALPHA(p_Blas_L1,gain*in[k]);
         ADE_Blas_real_axpy(p_Blas_L1);
         /*****************/
         ADE_Blas_level1_setX(p_Blas_L1,&a[0+1]);
@@ -434,7 +434,7 @@ static ADE_API_RET_T filter_DII_T_b (ADE_IIR_T* p_iir)//(ADE_FLOATING_T *in, ADE
 
         for (i=0;i<(order);i++)// lostate deve essere inizializzato a 0 e lungo pari a order+1 (es. biquad ordine 2)
         {
-            state[i]=b[i+1]*(in[k])+state[i+1]-a[i+1]*(out[k]);
+            state[i]=gain*b[i+1]*(in[k])+state[i+1]-a[i+1]*(out[k]);
         }
 
     }

@@ -16,6 +16,16 @@ extern void saxpy(
     int    *incy
 );
 
+#define daxpy FORTRAN_WRAPPER(daxpy)
+extern void daxpy(
+    int    *n,
+    double  *sa,
+    double  *sx,
+    int    *incx,
+    double  *sy,
+    int    *incy
+);
+
 
 #ifdef __cplusplus
     }   /* extern "C" */
