@@ -15,10 +15,11 @@ MAIN:=main.c
 PROJECT_NAME:=iir_tb
 	
 OBJ=    $(PRJPATH)/obj/Debug/ADE_iir.o \
-	$(PRJPATH)/obj/Debug/ADE_blas_level1.o
+	$(PRJPATH)/obj/Debug/ADE_blas_level1.o \
+	$(PRJPATH)/obj/Debug/ADE_Matlab.o
 
 $(PRJPATH)/obj/Debug/%.o: $(adeinc)/%.c 
-	$(CC) $(CCFLAGS) -I$(adeinc) $< -o $@ -c
+	$(CC) $(CCFLAGS) -I$(adeinc) -I$(matinc) $< -o $@ -c
 create_dir_debug :
 	$(MKDIR) $(PRJPATH)/bin/Debug
 	$(MKDIR) $(PRJPATH)/obj/Debug
