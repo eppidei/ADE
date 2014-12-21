@@ -45,6 +45,12 @@
 #define BLOW_BIT (0)
 #define BLOW_FLAG (1<<BLOW_BIT)
 
+/*************************** MATLAB *******************************/
+#define ADE_MAX_CHARS (128)
+#define ADE_CPLX (0)
+#define ADE_REAL (1)
+#define ADE_MAT_WAIT printf("Hit return to continue\n\n");fgetc(stdin);
+
 
 /********************** CTRL DEFINES **********************************/
 #define ADE_MATLAB_DEBUG

@@ -14,9 +14,9 @@ typedef uint16_t ADE_UINT16_T ;
 typedef uint8_t  ADE_UCHAR_T ;
 typedef double ADE_FLOATING_DP_T;
 typedef float ADE_FLOATING_SP_T;
-#if (ADE_FP_PRECISION==1)
+#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef ADE_FLOATING_DP_T ADE_FLOATING_T;
-#elif (ADE_FP_PRECISION==0)
+#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 typedef ADE_FLOATING_SP_T ADE_FLOATING_T;
 #endif
 typedef ADE_INT32_T ADE_API_RET_T ;
@@ -46,6 +46,9 @@ typedef struct ADE_POLYFIT_S ADE_POLYFIT_T;
 typedef struct ADE_BLOW_S ADE_BLOW_T;
 typedef ADE_API_RET_T (*ADE_BLOW_FUNCS_T)(ADE_BLOW_T*);
 typedef enum  {waiting,evaluation,tracking} BLOW_SM_STATES_T;
+
+/******************************** MATLAB ***************************/
+typedef struct ADE_MATLAB_S ADE_MATLAB_T;
 
 
 #endif //_ADE_TYPEDEFS_H

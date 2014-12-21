@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.c" open="1" top="0" tabpos="1">
-		<Cursor position="4195" topLine="138" />
+	<File name="main.c" open="1" top="1" tabpos="1">
+		<Cursor position="810" topLine="44" />
 	</File>
-	<File name="../../../src/ADE_blas_level1.c" open="1" top="0" tabpos="2">
+	<File name="../../../src/ADE_Matlab.c" open="1" top="0" tabpos="3">
+		<Cursor position="7443" topLine="278" />
+	</File>
+	<File name="../../../src/ADE_blas_level1.c" open="0" top="0" tabpos="2">
 		<Cursor position="3239" topLine="96" />
 	</File>
-	<File name="../../../src/ADE_iir.c" open="1" top="0" tabpos="4">
-		<Cursor position="10522" topLine="377" />
+	<File name="../../../src/ADE_iir.c" open="1" top="0" tabpos="6">
+		<Cursor position="5553" topLine="202" />
 	</File>
-	<File name="../../../src/headers/ADE_defines.h" open="1" top="1" tabpos="3">
-		<Cursor position="1205" topLine="29" />
+	<File name="../../../src/headers/ADE_Matlab.h" open="1" top="0" tabpos="2">
+		<Cursor position="1282" topLine="0" />
+	</File>
+	<File name="../../../src/headers/ADE_defines.h" open="1" top="0" tabpos="7">
+		<Cursor position="1694" topLine="26" />
+	</File>
+	<File name="../../../src/headers/ADE_errors.h" open="1" top="0" tabpos="4">
+		<Cursor position="8293" topLine="68" />
+	</File>
+	<File name="../../../src/headers/ADE_typedefs.h" open="1" top="0" tabpos="5">
+		<Cursor position="1911" topLine="13" />
 	</File>
 </CodeBlocks_layout_file>
