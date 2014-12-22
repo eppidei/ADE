@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdio.h>
 
+
+
 ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_UINT32_T n_vars, Engine *p_mateng,char* filename, char *p_matpath)
 {
     ADE_MATLAB_T* p_this=NULL;
@@ -14,7 +16,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_U
 
     mxArray *p_mxarr=NULL;
     FILE *script_fid=NULL;
-     char temp_str[ADE_MAX_CHARS];
+
 
 
      if (!(p_mateng = engOpen(p_matpath))) {
@@ -22,27 +24,6 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_U
 		ADE_PRINT_ERRORS(ADE_RETCHECKS,p_mateng,"%p",ADE_Matlab_Init);
 	    return ADE_E27;
 	}
-
-    /******************LAUNCH SCRIPT ******************/
-
-    script_fid=fopen(filename,"r");
-
-	if (script_fid==NULL)
-	{
-
-	    ADE_PRINT_ERRORS(ADE_RETCHECKS,script_fid,"%p",ADE_Matlab_Init);
-	    return ADE_E27;
-	}
-
-	while(feof(script_fid)==0)
-	{
-	    fgets(temp_str,ADE_MAX_CHARS,script_fid);
-	    engEvalString(p_mateng,temp_str);
-	    memset(temp_str,'\0',sizeof(temp_str));
-
-	}
-
-	fclose(script_fid);
 
 
     p_this=calloc(1,sizeof(ADE_MATLAB_T));
@@ -52,8 +33,24 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_U
     if (p_this!=NULL)
     {
 
+         script_fid=fopen(filename,"r");
+
+            if (script_fid==NULL)
+            {
+
+                ADE_PRINT_ERRORS(ADE_RETCHECKS,script_fid,"%p",ADE_Matlab_Init);
+                return ADE_E27;
+            }
+
+
+
+        p_this->p_matscript=script_fid;
+        p_this->p_eng=p_mateng;
+
+        ADE_Matlab_launch_script_segment(p_this, "Configuration");
+
          p_this->n_vars=n_vars;
-         p_this->p_eng=p_mateng;
+
 
          /****************ALLOC VAR NAMES************/
 
@@ -148,6 +145,7 @@ ADE_VOID_T ADE_Matlab_Release(ADE_MATLAB_T* p_mat)
     ADE_CHECKNFREE(p_mat->n_col);
     ADE_CHECKNFREE(p_mat->data_size);
     engClose(p_mat->p_eng);
+    fclose(p_mat->p_matscript);
 
 
 
@@ -306,4 +304,34 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
 
     return ADE_DEFAULT_RET;
 }
+
+ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stopword)
+{
+    char temp_str[ADE_MAX_CHARS];
+    char *p_prefix="%end ";
+    char test_str[ADE_MAX_CHARS];
+
+    memset(temp_str,'\0',sizeof(temp_str));
+    memset(test_str,'\0',sizeof(test_str));
+    strcpy(test_str,p_prefix);
+    strcat(test_str,p_stopword);
+    strcat(test_str,"\n");
+
+    while(strcmp(temp_str,test_str) && !feof(p_mat->p_matscript))
+    {
+        fgets(temp_str,ADE_MAX_CHARS,p_mat->p_matscript);
+        engEvalString(p_mat->p_eng,temp_str);
+        memset(temp_str,'\0',sizeof(temp_str));
+
+    }
+
+    if (feof(p_mat->p_matscript))
+    {
+        fprintf(stderr,"REACHED EOF of SCRIPT\n");
+    }
+
+     return ADE_DEFAULT_RET;
+}
+
+
 
