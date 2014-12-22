@@ -3,9 +3,11 @@
 #include "headers/ADE_defines.h"
 #include "headers/ADE_typedefs.h"
 #include "engine.h"
+#include <stdio.h>
 
 struct ADE_MATLAB_S
 {
+    FILE* p_matscript;
     unsigned int n_vars;
     Engine *p_eng;
     char **dp_var_list;
@@ -28,6 +30,7 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
 ADE_API_RET_T ADE_Matlab_Evaluate_String(ADE_MATLAB_T* p_mat, char *matcode);
 ADE_API_RET_T ADE_Matlab_Evaluate_StringnWait(ADE_MATLAB_T* p_mat, char *matcode);
 ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir, char *sosmatrix_varname, char *scalevalues_varname);
+ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stopword);
 
 
 
