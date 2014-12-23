@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdio.h>
 
+static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols);
+static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols);
 
 
 ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_UINT32_T n_vars, Engine *p_mateng,char* filename, char *p_matpath)
@@ -107,7 +109,8 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_U
              }
 
              p_this->dp_vardouble[i]=calloc(1,p_this->data_size[i]);
-             memcpy(p_this->dp_vardouble[i],(double*)mxGetData(p_mxarr),p_this->data_size[i]);
+             //memcpy(p_this->dp_vardouble[i],(double*)mxGetData(p_mxarr),p_this->data_size[i]);
+             ADE_Matlab_Mat2C_copy(p_this->dp_vardouble[i], (double*)mxGetData(p_mxarr), p_this->n_row[i], p_this->n_col[i]);
          }
 
         mxDestroyArray(p_mxarr);
@@ -199,6 +202,12 @@ double* ADE_Matlab_GetDataPointer(ADE_MATLAB_T* p_mat, char *varname)
     return p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)];
 }
 
+double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname)
+{
+
+    return *(p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)]);
+}
+
 ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_UINT32_T comp_type)
 {
 
@@ -220,7 +229,8 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
 
     }
 
-    memcpy((void *)mxGetPr(p_tmp), (void *)p_var, var_rows*var_cols*sizeof(double));
+    //memcpy((void *)mxGetPr(p_tmp), (void *)p_var, var_rows*var_cols*sizeof(double));
+    ADE_Matlab_C2Mat_copy((void *)mxGetPr(p_tmp), p_var, var_rows, var_cols);
 
     ret_engPutVariable=engPutVariable(p_mat->p_eng,var_matname, p_tmp);
 
@@ -311,17 +321,18 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
     char *p_prefix="%end ";
     char test_str[ADE_MAX_CHARS];
 
+
     memset(temp_str,'\0',sizeof(temp_str));
     memset(test_str,'\0',sizeof(test_str));
     strcpy(test_str,p_prefix);
     strcat(test_str,p_stopword);
     strcat(test_str,"\n");
 
-    while(strcmp(temp_str,test_str) && !feof(p_mat->p_matscript))
+    while( strcmp(temp_str,test_str) && (feof(p_mat->p_matscript)==0) )
     {
+        memset(temp_str,'\0',sizeof(temp_str));
         fgets(temp_str,ADE_MAX_CHARS,p_mat->p_matscript);
         engEvalString(p_mat->p_eng,temp_str);
-        memset(temp_str,'\0',sizeof(temp_str));
 
     }
 
@@ -331,6 +342,38 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
     }
 
      return ADE_DEFAULT_RET;
+}
+
+static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols)
+{
+    unsigned int i=0,k=0,idx_dst=0,idx_src=0;
+
+    for (i=0;i<n_rows;i++)
+    {
+        for (k=0;k<n_cols;k++)
+        {
+            idx_src=i+k*n_rows;
+            idx_dst=k+i*n_cols;
+            p_dst[idx_dst]=p_src[idx_src];
+        }
+    }
+
+}
+
+static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols)
+{
+    unsigned int i=0,k=0,idx_dst=0,idx_src=0;
+
+    for (i=0;i<n_rows;i++)
+    {
+        for (k=0;k<n_cols;k++)
+        {
+            idx_dst=i+k*n_rows;
+            idx_src=k+i*n_cols;
+            p_dst[idx_dst]=p_src[idx_src];
+        }
+    }
+
 }
 
 

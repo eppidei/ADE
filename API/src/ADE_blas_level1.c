@@ -158,11 +158,16 @@ ADE_API_RET_T ADE_Blas_real_axpy(ADE_blas_level1_T* p_blas_l1)
 static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
 {
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    static unsigned short flag= 0;
 
     #if (ADE_CHECK_INPUTS==1)
 
+        if (flag==0)
+        {
+             printf("REMEMBER TO ADD CHECKS ADE_Blas_level1_launch_type1\n");
+             flag++;
+        }
 
-        printf("REMEMBER TO ADD CHECKS ADE_Blas_level1_launch_type1\n");
 
     #endif
 
