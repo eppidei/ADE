@@ -21,7 +21,7 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
 
     if (pthis!=NULL)
     {
-
+        pthis->buff_size=buff_size;
         pthis->gain=default_gain;
         pthis->filter_order = fir_order;
         p_state=calloc(fir_order+1,sizeof(ADE_FLOATING_T));
@@ -197,7 +197,7 @@ static ADE_API_RET_T filter_DII_T_blas (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, 
         /*************/
         ADE_Blas_level1_setY(p_Blas_L1,temp_buffer);
         ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
-        ADE_Blas_level1_setALPHA(p_Blas_L1,in[k]);
+        ADE_Blas_level1_setALPHA(p_Blas_L1,gain*in[k]);
         ADE_Blas_real_axpy(p_Blas_L1);
         /*****************/
         memcpy(&state[0],temp_buffer,temp_buff_size);
@@ -242,7 +242,7 @@ static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_F
 
         for (i=0;i<(order);i++)// lostate deve essere inizializzato a 0 e lungo pari a order+1 (es. biquad ordine 2)
         {
-            state[i]=b[i+1]*(in[k])+state[i+1];
+            state[i]=gain*b[i+1]*(in[k])+state[i+1];
         }
 
     }
