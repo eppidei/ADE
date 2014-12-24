@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1418489917 source:/home/leonardo/Windows_home/WCPYS_win/ADE/API/prjs/codeblocks/matlab_test/main.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"engine.h"
+
+1357932670 /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include/engine.h
+	"matrix.h"
+
+1357931738 /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include/matrix.h
+	<stddef.h>
+	<tmwtypes.h>
+	<stddef.h>
+	<stdlib.h>
+	<assert.h>
+	<stdlib.h>
+
+1357932678 /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include/tmwtypes.h
+	<limits.h>
+	<stdbool.h>
+	<float.h>
+	<stddef.h>
+
