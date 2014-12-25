@@ -6,6 +6,7 @@
 #include <math.h>
 #include <string.h>
 
+static ADE_VOID_T ADE_memoryless_blow_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T* frame_i,ADE_FLOATING_T* y_o);
 
 ADE_API_RET_T ADE_Polyfit_Init (ADE_POLYFIT_T **dp_poly,ADE_UINT32_T poly_order_i,ADE_UINT32_T n_breaks_i)
 {
@@ -75,7 +76,7 @@ ADE_API_RET_T ADE_Polyfit_SetCoeffs(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_coef
       return ADE_DEFAULT_RET;
 }
 
-ADE_API_RET_T ADE_memoryless_blow_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T* frame_i,ADE_FLOATING_T* y_o)
+static ADE_VOID_T ADE_memoryless_blow_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T* frame_i,ADE_FLOATING_T* y_o)
 {
 
   //  ADE_UINT32_T frame_size = p_blow->buff_size;
@@ -87,21 +88,7 @@ ADE_API_RET_T ADE_memoryless_blow_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T*
     ADE_UINT32_T coeffs_row_idx=0, coeffs_col_idx=0;
     ADE_UINT32_T n_coeff_per_piece = p_poly->poly_order+1;
 
-    #if (ADE_CHECK_INPUTS==1)
 
-        if (coeffs==NULL)
-        {
-           ADE_PRINT_ERRORS(ADE_INCHECKS,coeffs,"%p",ADE_memoryless_blow_expander);
-           return ADE_E22;
-        }
-
-        if (x_breaks==NULL)
-        {
-           ADE_PRINT_ERRORS(ADE_INCHECKS,x_breaks,"%p",ADE_memoryless_blow_expander);
-           return ADE_E22;
-        }
-
-    #endif
 
 //for (i=0;i<frame_size;i++)
 //{
@@ -158,12 +145,40 @@ ADE_API_RET_T ADE_memoryless_blow_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T*
 
     for(i=0;i<n_coeff_per_piece;i++)
     {
-        coeffs_col_idx = n_coeff_per_piece-1;
+        coeffs_col_idx = n_coeff_per_piece-1-i;
        *y_o +=coeffs[coeffs_row_idx+coeffs_col_idx]*pow((data-x_breaks[zz]),i);
     }
 
-    return ADE_DEFAULT_RET;
+}
 
+ADE_API_RET_T ADE_Polyfit_Step(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T* frame_i,ADE_FLOATING_T* y_o,ADE_UINT32_T frame_len_i)
+{
+
+    ADE_UINT32_T i=0;
+
+      #if (ADE_CHECK_INPUTS==1)
+
+        if (p_poly->p_poly_coeffs==NULL)
+        {
+           ADE_PRINT_ERRORS(ADE_INCHECKS,p_poly->p_poly_coeffs,"%p",ADE_Polyfit_Step);
+           return ADE_E22;
+        }
+
+        if (p_poly->p_breaks==NULL)
+        {
+           ADE_PRINT_ERRORS(ADE_INCHECKS,p_poly->p_breaks,"%p",ADE_Polyfit_Step);
+           return ADE_E22;
+        }
+
+    #endif
+
+    for (i=0;i<frame_len_i;i++)
+    {
+        ADE_memoryless_blow_expander(p_poly,&(frame_i[i]),&(y_o[i]));
+    }
+
+
+    return ADE_DEFAULT_RET;
 }
 
 

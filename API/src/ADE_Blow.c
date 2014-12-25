@@ -731,11 +731,11 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     #endif
 
-    for (i=0;i<p_blow->buff_size;i++)
-    {
-        ADE_memoryless_blow_expander(p_blow->p_poly,&((p_iir2_int->p_out)[i]),&((p_blow->p_out)[i]));
+   // for (i=0;i<p_blow->buff_size;i++)
+   // {
+        ADE_Polyfit_Step(p_blow->p_poly,p_iir2_int->p_out,p_blow->p_out);
         //memoryless_blow_expander(p_blow,&((p_iir2_int->p_out)[i]),&((p_blow->p_out)[i]));
-    }
+    //}
 
 
     return ADE_DEFAULT_RET;
