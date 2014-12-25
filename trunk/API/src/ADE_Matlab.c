@@ -190,6 +190,25 @@ ADE_UINT32_T ADE_Matlab_GetSize(ADE_MATLAB_T* p_mat, char *varname)
     return p_mat->data_size[ADE_Matlab_GetVarIndex(p_mat,varname)];
 }
 
+ADE_UINT32_T ADE_Matlab_GetLength(ADE_MATLAB_T* p_mat, char *varname)
+{
+    if (ADE_Matlab_GetNCols(p_mat,varname)==1)
+    {
+       return  ADE_Matlab_GetNRows(p_mat,varname);
+    }
+    else if (ADE_Matlab_GetNRows(p_mat,varname)==1)
+    {
+        return  ADE_Matlab_GetNCols(p_mat,varname);
+    }
+    else
+    {
+        fprintf(stderr,"ADE - > ADE_Matlab_GetLength array is a matrix and not a vector length=n_rows\n");
+        return  ADE_Matlab_GetNRows(p_mat,varname);
+    }
+
+
+}
+
 ADE_UINT32_T ADE_Matlab_GetNElements(ADE_MATLAB_T* p_mat, char *varname)
 {
 
@@ -320,6 +339,7 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
     char temp_str[ADE_MAX_CHARS];
     char *p_prefix="%end ";
     char test_str[ADE_MAX_CHARS];
+    unsigned int i=0;
 
 
     memset(temp_str,'\0',sizeof(temp_str));
@@ -333,12 +353,20 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
         memset(temp_str,'\0',sizeof(temp_str));
         fgets(temp_str,ADE_MAX_CHARS,p_mat->p_matscript);
         engEvalString(p_mat->p_eng,temp_str);
+        if (i==0)
+        {
+            fprintf(stdout,"Executed Segment %s\n",temp_str);
+            i++;
+
+        }
 
     }
 
+
+
     if (feof(p_mat->p_matscript))
     {
-        fprintf(stderr,"REACHED EOF of SCRIPT\n");
+        fprintf(stdout,"REACHED EOF of SCRIPT\n");
     }
 
      return ADE_DEFAULT_RET;
