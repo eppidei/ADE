@@ -48,13 +48,15 @@ int main()
 	char *p_matpath ="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab";
 	char *p_scriptpath="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/iir/";
 	char *p_script_name="iir_test.m";
-	char *var_list[]={"scaleval","sosmat","input_vector","input_vector2","frame_len"};
-	unsigned int n_var_list = 5;
+	char *p_mat_name="iir_test_ws.mat";
+//	char *var_list[]={"scaleval","sosmat","input_vector","input_vector2","frame_len"};
+//	unsigned int n_var_list = 5;
 	ADE_MATLAB_T *p_mat;
 	ADE_Uut_params_T p_add_params;
 
 
 	char filename[MAXCHAR];
+	char matfilename[MAXCHAR];
 
 
 	 ADE_IIR_T *p_iir;
@@ -64,18 +66,23 @@ int main()
 
 
 	memset(filename,'\0',sizeof(filename));
+	memset(matfilename,'\0',sizeof(matfilename));
 //
 	strcpy(filename,p_scriptpath);
 	strcat(filename,p_script_name);
+	strcpy(matfilename,"./");
+	strcat(matfilename,p_mat_name);
 
 /****** INITIALIZE MATLAB STRUCT AND LAUNCH CONFIGURATION SEGMENT ************/
 
-ADE_Matlab_Init(&p_mat,var_list,n_var_list, p_ep,filename,p_matpath);
+ADE_Matlab_Init(&p_mat, p_ep,filename,matfilename,p_matpath);
 
 /****** GET MAT VARIABLES *********/
 
 n_sos_sections=ADE_Matlab_GetNRows(p_mat,"sosmat");
+
 input_len = ADE_Matlab_GetNCols(p_mat,"input_vector");
+fprintf(stdout,"%d\n",input_len);
 input_len2 = ADE_Matlab_GetNCols(p_mat,"input_vector2");
 frame_len = (unsigned int)ADE_Matlab_GetScalar(p_mat,"frame_len");
 
@@ -90,7 +97,7 @@ ADE_Iir_setFilt_Implementation(p_iir,trasp_II_blas);
 /************ LAUNCH MATLAB AND C UNIT TEST 1*************/
 ADE_Matlab_launch_script_segment(p_mat,"Unit Test 1");
 p_add_params.uut_idx=1;
-p_add_params.input1=&(var_list[2][0]);
+p_add_params.input1="input_vector";
 p_add_params.output1=outbuff;
 UnitTest1_procedure(p_mat,p_iir,&p_add_params);
 
@@ -102,7 +109,7 @@ ADE_Matlab_Evaluate_StringnWait(p_mat, "plot(outt,'b+');hold off;");
 /************ LAUNCH MATLAB AND C UNIT TEST 2*************/
 ADE_Matlab_launch_script_segment(p_mat,"Unit Test 2");
 p_add_params.uut_idx=2;
-p_add_params.input1=&(var_list[3][0]);
+p_add_params.input1="input_vector2";
 p_add_params.output1=outbuff2;
 UnitTest1_procedure(p_mat,p_iir,&p_add_params);
 

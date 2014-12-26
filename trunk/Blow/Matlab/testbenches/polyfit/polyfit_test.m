@@ -18,6 +18,7 @@ test_inp = 0:1/255:1;
 breaks = fitresult.p.breaks;
 coeffs = fitresult.p.coefs;
 y = memoryless_blow_expander_fo(test_inp,fitresult);
+save('polyfit_test_ws');
 %end Configuration
 
 %% Unit Test 1

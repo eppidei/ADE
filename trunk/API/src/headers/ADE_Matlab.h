@@ -18,7 +18,7 @@ struct ADE_MATLAB_S
 
 };
 
-ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_UINT32_T n_vars,Engine *p_mateng,char* filename,char *p_matpath);
+ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* filename, char* p_matfname,char *p_matpath);
 ADE_VOID_T ADE_Matlab_Release(ADE_MATLAB_T* p_mat);
 ADE_UINT32_T ADE_Matlab_GetVarIndex(ADE_MATLAB_T* p_mat, char *varname);
 ADE_UINT32_T ADE_Matlab_GetNRows(ADE_MATLAB_T* p_mat, char *varname);

@@ -28,7 +28,7 @@ delete_dir_debug :
 	$(RM_DIR) $(PRJPATH)/bin/Debug
 	$(RM_DIR) $(PRJPATH)/obj/Debug
 go: $(OBJ)
-	$(CC) $(MAIN) $(CCFLAGS) -o $(PRJPATH)/bin/Debug/$(PROJECT_NAME) $^ -I$(matinc) -I$(adeinc) -lm -l:blas_LINUX.a -leng -lmx -Xlinker -rpath-link $(matdir) -L$(matdir) -L$(blasdir) 
+	$(CC) $(MAIN) $(CCFLAGS) -o $(PRJPATH)/bin/Debug/$(PROJECT_NAME) $^ -I$(matinc) -I$(adeinc) -lm -l:blas_LINUX.a -leng -lmx -lmat -Xlinker -rpath-link $(matdir) -L$(matdir) -L$(blasdir) 
 Debug: delete_dir_debug create_dir_debug go
 
 clean : delete_dir_debug

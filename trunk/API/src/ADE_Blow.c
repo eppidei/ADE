@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+
 //#include <string.h>
 
 static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow);
@@ -169,6 +171,14 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
 //                ADE_PRINT_ERRORS(ADE_MEM,pthis->p_blow_state,"%p",ADE_Blow_Init);
 //                return ADE_E16;
 //            }
+
+            /******** MATLAB ALLOC ********/
+
+            #ifdef ADE_CONFIGURATION_INTERACTIVE
+
+
+
+            #endif
 
 
             /*********  CONFIGURATION *********************/
@@ -733,7 +743,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
    // for (i=0;i<p_blow->buff_size;i++)
    // {
-        ADE_Polyfit_Step(p_blow->p_poly,p_iir2_int->p_out,p_blow->p_out);
+        ADE_Polyfit_Step(p_blow->p_poly,p_iir2_int->p_out,p_blow->p_out,p_blow->buff_size);
         //memoryless_blow_expander(p_blow,&((p_iir2_int->p_out)[i]),&((p_blow->p_out)[i]));
     //}
 

@@ -48,13 +48,15 @@ int main()
 	char *p_matpath ="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab";
 	char *p_scriptpath="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/fir/";
 	char *p_script_name="fir_test.m";
-	char *var_list[]={"fir_coeffs","input_vector","input_vector2","frame_len"};
-	unsigned int n_var_list = 4;
+	char *p_matfile_name="fir_test_ws.mat";
+	//char *var_list[]={"fir_coeffs","input_vector","input_vector2","frame_len"};
+	//unsigned int n_var_list = 4;
 	ADE_MATLAB_T *p_mat;
 	ADE_Uut_params_T p_add_params;
 
 
 	char filename[MAXCHAR];
+	char matfilename[MAXCHAR];
 
 
 	 ADE_FIR_T *p_fir;
@@ -68,9 +70,14 @@ int main()
 	strcpy(filename,p_scriptpath);
 	strcat(filename,p_script_name);
 
+
+memset(matfilename,'\0',sizeof(matfilename));
+//
+	strcpy(matfilename,"./");
+	strcat(matfilename,p_matfile_name);
 /****** INITIALIZE MATLAB STRUCT AND LAUNCH CONFIGURATION SEGMENT ************/
 
-ADE_Matlab_Init(&p_mat,var_list,n_var_list, p_ep,filename,p_matpath);
+ADE_Matlab_Init(&p_mat, p_ep,filename,matfilename,p_matpath);
 
 /****** GET MAT VARIABLES *********/
 
@@ -91,7 +98,7 @@ ADE_Fir_setFilt_Implementation(p_fir,trasp_II_blas);
 /************ LAUNCH MATLAB AND C UNIT TEST 1*************/
 ADE_Matlab_launch_script_segment(p_mat,"Unit Test 1");
 p_add_params.uut_idx=1;
-p_add_params.input1=&(var_list[1][0]);
+p_add_params.input1="input_vector";
 p_add_params.output1=outbuff;
 UnitTest1_procedure(p_mat,p_fir,&p_add_params);
 
@@ -103,7 +110,7 @@ ADE_Matlab_Evaluate_StringnWait(p_mat, "plot(outt,'b+');hold off;");
 /************ LAUNCH MATLAB AND C UNIT TEST 2*************/
 ADE_Matlab_launch_script_segment(p_mat,"Unit Test 2");
 p_add_params.uut_idx=2;
-p_add_params.input1=&(var_list[2][0]);
+p_add_params.input1="input_vector2";
 p_add_params.output1=outbuff2;
 UnitTest1_procedure(p_mat,p_fir,&p_add_params);
 
