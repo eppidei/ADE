@@ -15,6 +15,7 @@ input_vector=[1,zeros(1,input_len-1)];
 input_vector2=randn(1,input_len);
 scaleval=IIR_test.ScaleValues;
 sosmat=(IIR_test.sosMatrix);
+save('iir_test_ws');
 %end Configuration
 
 %% Unit Test 1

@@ -1,6 +1,11 @@
 #ifndef _ADE_BLOW_H
 #define _ADE_BLOW_H
 #include "headers/ADE_typedefs.h"
+#ifdef ADE_CONFIGURATION_INTERACTIVE
+#include "headers/ADE_Matlab.h"
+#include "matrix.h"
+#include "engine.h"
+#endif
 
 struct ADE_BLOW_S
 {
@@ -38,6 +43,9 @@ struct ADE_BLOW_S
     //ADE_FLOATING_T *breaks;
     ADE_UINT32_T poly_order;
     //ADE_FLOATING_T *poly_coeffs;
+    #ifdef ADE_CONFIGURATION_INTERACTIVE
+    ADE_MATLAB_T *p_mat;
+    #endif
 };
 
 ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOATING_T Fs_i);

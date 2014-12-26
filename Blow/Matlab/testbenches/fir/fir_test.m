@@ -12,6 +12,7 @@ frame_len = 2^8;
 input_vector=[1,zeros(1,input_len-1)];
 input_vector2=randn(1,input_len);
 fir_coeffs=FIR_test.Numerator;
+save('fir_test_ws');
 %end Configuration
 
 %% Unit Test 1

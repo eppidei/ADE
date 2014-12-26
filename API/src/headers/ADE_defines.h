@@ -12,6 +12,24 @@
 #define CHECK_RET_MAIN(s)  if(s<0) {goto gently_closure;}
 #define PRINT_ARRAY(x,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
 #define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
+/********************** CTRL DEFINES **********************************/
+#define ADE_RELEASE (0)
+#define ADE_DEBUG_NORMAL (1)
+#define ADE_DEBUG_MATLAB (2)
+
+#define ADE_TARGET ADE_DEBUG_MATLAB
+
+#if (ADE_TARGET==ADE_DEBUG_MATLAB)
+#define ADE_CONFIGURATION_INTERACTIVE
+#define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
+#elif (ADE_TARGET==ADE_DEBUG_NORMAL || ADE_TARGET==ADE_RELEASE)
+#undef ADE_CONFIGURATION_INTERACTIVE
+#define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+#endif
+
+#define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB //0 Custom 1 Library
+
+
 
 /*************************** VERBOSITY LEVELS ***********************/
 
@@ -40,6 +58,8 @@
 #define IIR2_N_SECTIONS (3)
 #define POLY_N_BREAKS (6)
 #define POLY_ORDER (3)
+#define ADE_BLOW_MATLAB_PATH "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts/"
+#define ADE_BLOW_MAT_SCRIPT "blow_fine_control_swlike.m"
 /***************************** ENVIRONMENT *******************************/
 //ALG LIST
 #define BLOW_BIT (0)
@@ -52,16 +72,6 @@
 #define ADE_MAT_WAIT printf("Hit return to continue\n\n");fgetc(stdin);
 
 
-/********************** CTRL DEFINES **********************************/
-#define ADE_MATLAB_DEBUG
-
-#ifdef ADE_MATLAB_DEBUG
-#define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
-#else
-#define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
-#endif
-
-#define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB //0 Custom 1 Library
 
 
 #endif //_ADE_DEFINES_H

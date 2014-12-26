@@ -14,9 +14,12 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="../../../src" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
 				</Compiler>
 				<Linker>
+					<Add option="-lmx -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -44,6 +47,9 @@
 		<Unit filename="../../../src/ADE_Blow.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_Matlab.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_blas_level1.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -58,6 +64,7 @@
 		</Unit>
 		<Unit filename="../../../src/headers/ADE.h" />
 		<Unit filename="../../../src/headers/ADE_Blow.h" />
+		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level1.h" />
 		<Unit filename="../../../src/headers/ADE_blas_wrapper.h" />
 		<Unit filename="../../../src/headers/ADE_defines.h" />

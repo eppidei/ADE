@@ -2,6 +2,7 @@
 #include "headers/ADE_iir.h"
 #include "headers/ADE_errors.h"
 #include "matrix.h"
+#include "mat.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -9,15 +10,24 @@ static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, double *p_src, unsigned i
 static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols);
 
 
-ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_UINT32_T n_vars, Engine *p_mateng,char* filename, char *p_matpath)
+ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* filename, char* p_matfname,char *p_matpath)
 {
     ADE_MATLAB_T* p_this=NULL;
-    ADE_UINT32_T i=0;
+    ADE_UINT32_T i=0,k=0;
     ADE_UINT32_T n_chars = 0;
 
 
     mxArray *p_mxarr=NULL;
+    mxArray **dp_mxarray=NULL;
     FILE *script_fid=NULL;
+    MATFile *p_matfile;
+    int n_arrays=0;
+    char **dp_dir=NULL;
+    char *array_name;
+    unsigned int k_valid_array=0;
+    unsigned int *p_valid_arr_idx=NULL;
+    char **dp_temp_names=NULL;
+
 
 
 
@@ -51,44 +61,84 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_U
 
         ADE_Matlab_launch_script_segment(p_this, "Configuration");
 
-         p_this->n_vars=n_vars;
+
 
 
          /****************ALLOC VAR NAMES************/
+          p_matfile = matOpen(p_matfname, "r");
+         dp_dir=matGetDir(p_matfile, &n_arrays);
+         mxFree(dp_dir);
+          matClose(p_matfile);
 
-         p_this->dp_var_list=(char**)calloc(n_vars,sizeof(char*));
+           dp_mxarray=(mxArray**)mxCalloc(n_arrays, sizeof(mxArray*));
+           dp_temp_names=(char**)calloc(n_arrays,sizeof(char*));
 
-         for (i=0;i<n_vars;i++)
+            /* Calcola il numero delle variabili double*/
+             p_matfile = matOpen(p_matfname, "r");
+              for (i=0;i<n_arrays;i++)
+              {
+                 // array_name=&(dp_dir[i][0]);
+                  dp_mxarray[i]=matGetNextVariable(p_matfile,(const char**) &array_name);
+                  dp_temp_names[i]=calloc(strlen(array_name)+1,sizeof(char));
+                  strcpy(dp_temp_names[i],array_name);
+                    if (!strcmp(mxGetClassName( dp_mxarray[i]),"double"))
+                    {
+                         k_valid_array++;
+                    }
+
+              }
+              //mxFree(array_name);
+            matClose(p_matfile);
+
+           p_this->n_vars=k_valid_array;
+           p_valid_arr_idx=calloc(k_valid_array,sizeof(unsigned int));
+           p_this->dp_var_list=(char**)calloc(k_valid_array,sizeof(char*));
+
+        k_valid_array=0;
+        /* Salva i nomi nella struttura interna  MECHANISM 2 IMPROVE */
+         for (i=0;i<n_arrays;i++)
          {
-             n_chars=strlen(dp_var_list[i])+1;
-             p_this->dp_var_list[i]=calloc(n_chars,sizeof(char));
-             strcpy(p_this->dp_var_list[i],dp_var_list[i]);
+
+                if (!strcmp(mxGetClassName(dp_mxarray[i]),"double"))
+                {
+                     n_chars=strlen(dp_temp_names[i])+1;//strlen(array_name)+1;
+                //      fprintf(stdout,"%d\n",n_chars);
+                     p_this->dp_var_list[k_valid_array]=calloc(n_chars,sizeof(char));
+                     strcpy(p_this->dp_var_list[k_valid_array],dp_temp_names[i]);
+                   //  fprintf(stdout,"%s\n",p_this->dp_var_list[k_valid_array]);
+                     p_valid_arr_idx[k_valid_array]=i;
+                      k_valid_array++;
+                }
          }
+//fprintf(stdout,"%d\n",k_valid_array);
+        // matClose(p_matfile);
+
 
          /****************ALLOC SIZES *****************************/
-         p_this->n_row      =calloc(n_vars,sizeof(unsigned int));
-         p_this->n_col      =calloc(n_vars,sizeof(unsigned int));
-         p_this->data_size  =calloc(n_vars,sizeof(size_t));
+         p_this->n_row      =calloc(k_valid_array,sizeof(unsigned int));
+         p_this->n_col      =calloc(k_valid_array,sizeof(unsigned int));
+         p_this->data_size  =calloc(k_valid_array,sizeof(size_t));
 
-         for (i=0;i<n_vars;i++)
+         for (i=0;i<k_valid_array;i++)
          {
-
-          p_mxarr=engGetVariable(p_mateng, p_this->dp_var_list[i]);
-           if (p_mxarr==NULL)
-             {
-                 ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
-                 return  ADE_E26;
-             }
-            p_this->n_row[i]=mxGetM(p_mxarr);
-          p_this->n_col[i]=mxGetN(p_mxarr);
-            if (!strcmp(mxGetClassName(p_mxarr),"double"))
+//
+//          p_mxarr=engGetVariable(p_mateng, p_this->dp_var_list[i]);
+//           if (p_mxarr==NULL)
+//             {
+//                 ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
+//                 return  ADE_E26;
+//             }
+            k=p_valid_arr_idx[i];
+            p_this->n_row[i]=mxGetM(dp_mxarray[k]);
+          p_this->n_col[i]=mxGetN(dp_mxarray[k]);
+            if (!strcmp(mxGetClassName(dp_mxarray[k]),"double"))
             {
                  p_this->data_size[i]=p_this->n_row[i]*p_this->n_col[i]*8;
             }
             else
             {
-                ADE_PRINT_ERRORS(ADE_INCHECKS,mxGetClassName(p_mxarr),"%s",ADE_Matlab_Init);
-                return ADE_E28;
+                ADE_PRINT_WARNINGS(ADE_INCHECKS,mxGetClassName(dp_mxarray[k]),"%s",ADE_Matlab_Init);
+                return ADE_W30;
             }
          }
 
@@ -96,24 +146,32 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, char ** dp_var_list, ADE_U
          /****************ALLOC VAR VALUES************/
 
 
-         p_this->dp_vardouble=(double**)calloc(n_vars,sizeof(double*));
+         p_this->dp_vardouble=(double**)calloc(k_valid_array,sizeof(double*));
 
-         for (i=0;i<n_vars;i++)
+         for (i=0;i<k_valid_array;i++)
          {
-             p_mxarr=engGetVariable(p_mateng,p_this->dp_var_list[i]);
-
-             if (p_mxarr==NULL)
-             {
-                 ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
-                 return  ADE_E26;
-             }
-
+//             p_mxarr=engGetVariable(p_mateng,p_this->dp_var_list[i]);
+//
+//             if (p_mxarr==NULL)
+//             {
+//                 ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
+//                 return  ADE_E26;
+//             }
+            k=p_valid_arr_idx[i];
              p_this->dp_vardouble[i]=calloc(1,p_this->data_size[i]);
              //memcpy(p_this->dp_vardouble[i],(double*)mxGetData(p_mxarr),p_this->data_size[i]);
-             ADE_Matlab_Mat2C_copy(p_this->dp_vardouble[i], (double*)mxGetData(p_mxarr), p_this->n_row[i], p_this->n_col[i]);
+             ADE_Matlab_Mat2C_copy(p_this->dp_vardouble[i], (double*)mxGetData(dp_mxarray[k]), p_this->n_row[i], p_this->n_col[i]);
          }
 
-        mxDestroyArray(p_mxarr);
+
+        for (i=0;i<n_arrays;i++)
+        {
+            mxDestroyArray(dp_mxarray[i]);
+            free(dp_temp_names[i]);
+        }
+        mxFree(dp_mxarray);
+        free(dp_temp_names);
+        free(p_valid_arr_idx);
         *dp_this=p_this;
     }
     else
@@ -132,6 +190,8 @@ ADE_VOID_T ADE_Matlab_Release(ADE_MATLAB_T* p_mat)
 {
 
     ADE_UINT32_T i = 0;
+
+
 
     for (i=0;i<p_mat->n_vars;i++)
     {
@@ -169,6 +229,7 @@ ADE_UINT32_T ADE_Matlab_GetVarIndex(ADE_MATLAB_T* p_mat, char *varname)
     }
 
 
+    fprintf(stderr,"WARNING - ADE_Matlab_GetVarIndex -> Variable \"%s\" not found \n",varname);
     return ADE_E29;
 }
 

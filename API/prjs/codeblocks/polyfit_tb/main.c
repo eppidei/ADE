@@ -31,13 +31,15 @@ int main()
 	char *p_matpath ="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab";
 	char *p_scriptpath="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/polyfit/";
 	char *p_script_name="polyfit_test.m";
-	char *var_list[]={"breaks","coeffs","test_inp"};
+	char *p_matf_name="polyfit_test_ws.mat";
+
 	unsigned int n_var_list = 3;
 	ADE_MATLAB_T *p_mat;
 	ADE_Uut_params_T p_add_params;
 
 
 	char filename[MAXCHAR];
+	char matfilename[MAXCHAR];
 
 
 	 ADE_POLYFIT_T *p_poly;
@@ -51,9 +53,14 @@ int main()
 	strcpy(filename,p_scriptpath);
 	strcat(filename,p_script_name);
 
+	memset(matfilename,'\0',sizeof(matfilename));
+//
+	strcpy(matfilename,"./");
+	strcat(matfilename,p_matf_name);
+
 /****** INITIALIZE MATLAB STRUCT AND LAUNCH CONFIGURATION SEGMENT ************/
 
-ADE_Matlab_Init(&p_mat,var_list,n_var_list, p_ep,filename,p_matpath);
+ADE_Matlab_Init(&p_mat, p_ep,filename,matfilename,p_matpath);
 
 /****** GET MAT VARIABLES *********/
 
@@ -73,7 +80,7 @@ ADE_Polyfit_SetCoeffs(p_poly,ADE_Matlab_GetDataPointer(p_mat,"coeffs"));
 /************ LAUNCH MATLAB AND C UNIT TEST 1*************/
 ADE_Matlab_launch_script_segment(p_mat,"Unit Test 1");
 p_add_params.uut_idx=1;
-p_add_params.input1=&(var_list[2][0]);
+p_add_params.input1="test_inp";
 p_add_params.output1=outbuff;
 UnitTest1_procedure(p_mat,p_poly, &p_add_params,input_len);
 
