@@ -17,7 +17,7 @@
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
 				</Compiler>
 				<Linker>
-					<Add option="-lmx -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add option="-lmx -lmat -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 				</Linker>

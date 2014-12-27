@@ -17,7 +17,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
     ADE_UINT32_T n_chars = 0;
 
 
-    mxArray *p_mxarr=NULL;
+    //mxArray *p_mxarr=NULL;
     mxArray **dp_mxarray=NULL;
     FILE *script_fid=NULL;
     MATFile *p_matfile;
@@ -397,14 +397,21 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
 
 ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stopword)
 {
-    char temp_str[ADE_MAX_CHARS];
+    char *temp_str;
     char *p_prefix="%end ";
-    char test_str[ADE_MAX_CHARS];
+    char *test_str;
+    char *segment_str;
     unsigned int i=0;
+    int ret_eng=0;
 
+    temp_str=calloc(ADE_MAX_CHARS,sizeof(char));
+    test_str=calloc(ADE_MAX_CHARS,sizeof(char));
+    segment_str=calloc(ADE_MAX_CHARS*ADE_MAX_SEGMENT_LINES,sizeof(char));
 
-    memset(temp_str,'\0',sizeof(temp_str));
-    memset(test_str,'\0',sizeof(test_str));
+    //memset(segment_str,'\0',sizeof(segment_str));
+
+    //memset(temp_str,'\0',sizeof(temp_str));
+    //memset(test_str,'\0',sizeof(test_str));
     strcpy(test_str,p_prefix);
     strcat(test_str,p_stopword);
     strcat(test_str,"\n");
@@ -413,15 +420,29 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
     {
         memset(temp_str,'\0',sizeof(temp_str));
         fgets(temp_str,ADE_MAX_CHARS,p_mat->p_matscript);
-        engEvalString(p_mat->p_eng,temp_str);
+        strcat(segment_str,temp_str);
         if (i==0)
         {
-            fprintf(stdout,"Executed Segment %s\n",temp_str);
-            i++;
+            fprintf(stdout,"Loading  Segment starting with -> %s\n",temp_str);
+
 
         }
+         i++;
 
     }
+
+     fprintf(stdout,"Loading  Segment ending with -> %s\n",temp_str);
+     if (i>ADE_MAX_SEGMENT_LINES)
+     {
+         fprintf(stderr,"WARNING SEGMENT MIGHT BE TOO LONG CONSIDER INCREASING ""ADE_MAX_SEGMENT_LINES"" \n");
+     }
+     ret_eng=engEvalString(p_mat->p_eng,segment_str);
+
+     if (ret_eng==1)
+     {
+         fprintf(stderr,"Invalid Matlab session Pointer or session no longer running!\n");
+         return ADE_E27;
+     }
 
 
 
@@ -429,6 +450,10 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
     {
         fprintf(stdout,"REACHED EOF of SCRIPT\n");
     }
+
+    free(temp_str);
+    free(test_str);
+    free(segment_str);
 
      return ADE_DEFAULT_RET;
 }

@@ -12,14 +12,17 @@ end
  this_dir =['.',separator];
  up_dir   =['..',separator];
  
-res_path = [up_dir,'resources'];
-funcs_path = [up_dir,'Alg_funcs'];
-mex_exec_path = [up_dir,'Mex',separator,'exec'];
+ pat='/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts';
+ 
+res_path = [pat,separator,up_dir,'resources'];
+funcs_path = [pat,separator,up_dir,'Alg_funcs'];
+mex_exec_path = [pat,separator,up_dir,'Mex',separator,'exec'];
 test_file ='increasing_blow.wav';
  file_path=[res_path,separator,test_file];
 
 addpath(funcs_path)
 addpath(mex_exec_path)
+%% Configuration
 Frame_len = 256;
 %%%
   
@@ -55,9 +58,13 @@ band_stop_rej_db2 = 40;
 
 IIR_pow_filt = Iir_butterwoth_generator(1e-3,3e-3,1,band_stop_rej_db);
  IIR_pow_filt.PersistentMemory=true;
+ iir_scaleval=IIR_pow_filt.ScaleValues;
+ iir_sosmatrix=IIR_pow_filt.sosMatrix;
 
  IIR_pow_filt2 = Iir_butterwoth_generator(freq_pass2/(Fs/2),freq_stop2/(Fs/2),1,band_stop_rej_db2);
  IIR_pow_filt2.PersistentMemory=true;
+  iir2_scaleval=IIR_pow_filt2.ScaleValues;
+ iir2_sosmatrix=IIR_pow_filt2.sosMatrix;
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%expander setup%%%%%%%%%%%
  fit_desiderata_x=[0,0.05,0.1,0.3,0.5,1];
@@ -73,6 +80,9 @@ opts = fitoptions( ft );
 test_inp = 0:1/255:1;
 y = memoryless_blow_expander_fo(test_inp,fitresult);
 y2 = memoryless_blow_expander(test_inp,fitresult);
+
+breaks = fitresult.p.breaks;
+coeffs = fitresult.p.coefs;
 
 figure('Name','Non linearity')
 plot(test_inp,test_inp,test_inp,y,'or',test_inp,y2,'+b');
@@ -115,6 +125,8 @@ sat_detect_struct.eval_time_samples = eval_time_samples;
     sat_detect_struct.eval_pow=0;%zeros(1,Frame_len+1);% SAREBBERO STATI DUE ARRAY DI FRAME LEN
     sat_detect_struct.eval_timer=0;%zeros(1,Frame_len+1);
     sat_detect_struct.state=1;%ones(1,Frame_len+1);
+    save('blow_config_ws');
+%end Configuration
 for k=1:n_iterations
      idx = (k-1)*Frame_len+1:k*Frame_len;
      audio = audio_left(idx);

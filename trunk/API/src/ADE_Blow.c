@@ -42,6 +42,14 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
      ADE_UINT32_T n_sos_sections_iir=IIR1_N_SECTIONS;//(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir_order/(ADE_FLOATING_DP_T)sos_order);
      ADE_UINT32_T n_sos_sections_iir2=IIR2_N_SECTIONS;//(ADE_UINT32_T)ceil((ADE_FLOATING_DP_T)iir2_order/(ADE_FLOATING_DP_T)sos_order);
      //ADE_UINT32_T poly_pieces=0;
+     #ifdef ADE_CONFIGURATION_INTERACTIVE
+     char *p_matpath ="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab";
+	 char *p_scriptpath="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts/blow_fine_control_swlike.m";
+	 char *p_matfilepath="./blow_config_ws.mat";
+	 ADE_API_RET_T mat_ret=0;
+	// ADE_MATLAB_T* p_mat=NULL;
+     Engine *p_mateng=NULL;
+	#endif
 
      if (pthis!=NULL)
      {
@@ -176,7 +184,13 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
 
             #ifdef ADE_CONFIGURATION_INTERACTIVE
 
+            mat_ret = ADE_Matlab_Init(&(pthis->p_mat),p_mateng,p_scriptpath, p_matfilepath,p_matpath);
 
+            if (mat_ret<0)
+            {
+                ADE_PRINT_ERRORS(ADE_RETCHECKS,mat_ret,"%d",ADE_Blow_Init);
+                return ADE_E25;
+            }
 
             #endif
 
@@ -202,6 +216,9 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
 
             ADE_Blow_Configuration(pthis);
 
+
+
+
               *dp_this=pthis;
 
      }
@@ -219,20 +236,51 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOA
 static ADE_VOID_T ADE_Blow_Static_Params(ADE_BLOW_T* p_blow)
 {
 
-    ADE_FLOATING_T nbit = 16;
-    ADE_FLOATING_T Margin = 0.3;
-    //ADE_FLOATING_T Fs = 44100.0;
-    ADE_FLOATING_T eval_time = 100e-3;
-    ADE_FLOATING_T Fs = p_blow->Fs;
-    ADE_FLOATING_T n_sat_thres = 20;
-    ADE_FLOATING_T running_pow_win_time_fast = 1.0e-3;
-    ADE_FLOATING_T running_pow_win_time_slow = 20.0e-3;
-    ADE_FLOATING_T time_pow_thresh_release = 2.0e-3;
-    ADE_FLOATING_T time_pow_thresh_attack = 1.0e-3;
-    ADE_FLOATING_T pow_thresh_low = 4e-3;
-    ADE_FLOATING_T pow_thresh_high = 0.25;
-    ADE_UINT32_T n_breaks = POLY_N_BREAKS;
-    ADE_UINT32_T poly_order = POLY_ORDER;
+    ADE_FLOATING_T nbit = 0;
+    ADE_FLOATING_T Margin = 0;
+    ADE_FLOATING_T eval_time = 0;
+    ADE_FLOATING_T Fs = 0;
+    ADE_FLOATING_T n_sat_thres = 0;
+    ADE_FLOATING_T running_pow_win_time_fast =0;
+    ADE_FLOATING_T running_pow_win_time_slow = 0;
+    ADE_FLOATING_T time_pow_thresh_release = 0;
+    ADE_FLOATING_T time_pow_thresh_attack = 0;
+    ADE_FLOATING_T pow_thresh_low = 0;
+    ADE_FLOATING_T pow_thresh_high = 0;
+    ADE_UINT32_T n_breaks = 0;
+    ADE_UINT32_T poly_order = 0;
+
+    Fs = p_blow->Fs;
+
+    #ifdef ADE_CONFIGURATION_INTERACTIVE
+    nbit=ADE_Matlab_GetScalar(p_blow->p_mat,"nbit");
+    Margin=ADE_Matlab_GetScalar(p_blow->p_mat,"Margin");
+    eval_time=ADE_Matlab_GetScalar(p_blow->p_mat,"eval_time");
+    n_sat_thres=ADE_Matlab_GetScalar(p_blow->p_mat,"n_sat_thres");
+    running_pow_win_time_fast=ADE_Matlab_GetScalar(p_blow->p_mat,"running_pow_win_time_fast");
+    running_pow_win_time_slow=ADE_Matlab_GetScalar(p_blow->p_mat,"running_pow_win_time_slow");
+    time_pow_thresh_release=ADE_Matlab_GetScalar(p_blow->p_mat,"time_pow_thresh_release");
+    time_pow_thresh_attack=ADE_Matlab_GetScalar(p_blow->p_mat,"time_pow_thresh_attack");
+    pow_thresh_low=ADE_Matlab_GetScalar(p_blow->p_mat,"pow_thresh_low");
+    pow_thresh_high=ADE_Matlab_GetScalar(p_blow->p_mat,"pow_thresh_high");
+    n_breaks=ADE_Matlab_GetLength(p_blow->p_mat,"breaks");
+    poly_order=ADE_Matlab_GetNCols(p_blow->p_mat,"coeffs")-1;
+
+
+    #else
+    nbit=16;
+    Margin = 0.3;
+    eval_time = 100e-3;
+    n_sat_thres = 20;
+    running_pow_win_time_fast = 1.0e-3;
+    running_pow_win_time_slow = 20.0e-3;
+    time_pow_thresh_release = 2.0e-3;
+    time_pow_thresh_attack = 1.0e-3;
+    pow_thresh_low = 4e-3;
+    pow_thresh_high = 0.25;
+    n_breaks = POLY_N_BREAKS;
+    poly_order = POLY_ORDER;
+    #endif
 
     ADE_Blow_Set_SatThresh(p_blow,nbit,Margin);
     //ADE_Blow_Set_Fs(p_blow->Fs,Fs);
@@ -278,6 +326,7 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
     ADE_CHECKNFREE(p_blow->p_eval_timer);
     ADE_CHECKNFREE(p_blow->p_blow_state);
     ADE_CHECKNFREE(p_blow);
+    ADE_Matlab_Release(p_blow->p_mat);
 
 }
 
@@ -548,6 +597,11 @@ static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow)
     ADE_FLOATING_T *nums[IIR1_N_SECTIONS]={bbslow,bbslow2,bbslow3};
     ADE_FLOATING_T *denoms[IIR1_N_SECTIONS]={aaslow,aaslow2,aaslow3};
 
+
+#ifdef ADE_CONFIGURATION_INTERACTIVE
+ADE_Matlab_Configure_Iir_sos(p_blow->p_mat,p_blow->p_iir, "iir_sosmatrix", "iir_scaleval");
+
+#else
 iir_gains[0]=0.000003515544430;
 iir_gains[1]=0.000003508969011;
 iir_gains[2]=0.001872555449701;
@@ -574,6 +628,9 @@ aaslow3[2]=0.0;
 ADE_Iir_setGains( p_blow->p_iir, iir_gains);
 ADE_Iir_setNums( p_blow->p_iir, &(*nums));
 ADE_Iir_setDenoms( p_blow->p_iir, &(*denoms));
+
+#endif
+
 ADE_Iir_setInbuff(p_blow->p_iir,p_blow->p_in_squared);
 ADE_Iir_setOutbuff(p_blow->p_iir,p_blow->p_pow_slow);
 ADE_Iir_setFilt_Implementation(p_blow->p_iir,trasp_II);
@@ -590,6 +647,10 @@ static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow)
     ADE_FLOATING_T aaslow[IIR2_N_SECTIONS],aaslow2[IIR2_N_SECTIONS],aaslow3[IIR2_N_SECTIONS];
     ADE_FLOATING_T *nums[IIR2_N_SECTIONS]={bbslow,bbslow2,bbslow3};
     ADE_FLOATING_T *denoms[IIR2_N_SECTIONS]={aaslow,aaslow2,aaslow3};
+
+  #ifdef ADE_CONFIGURATION_INTERACTIVE
+    ADE_Matlab_Configure_Iir_sos(p_blow->p_mat,p_blow->p_iir2, "iir2_sosmatrix", "iir2_scaleval");
+#else
 
 iir_gains[0]=2.73316597838323e-08;
 iir_gains[1]=2.73276093372558e-08;
@@ -617,6 +678,9 @@ aaslow3[2]= 0.999361418017236;
 ADE_Iir_setGains( p_blow->p_iir2, iir_gains);
 ADE_Iir_setNums( p_blow->p_iir2, &(*nums));
 ADE_Iir_setDenoms( p_blow->p_iir2, &(*denoms));
+
+
+#endif
 ADE_Iir_setInbuff(p_blow->p_iir2,p_blow->p_pow_slow);
 ADE_Iir_setOutbuff(p_blow->p_iir2,p_blow->p_pow_slow_filtered);
 ADE_Iir_setFilt_Implementation(p_blow->p_iir2,trasp_II);
@@ -633,6 +697,11 @@ static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow)
                                                            8.333333333333334,-1.666666666666667,1.000000000000000,0.100000000000000,
                                                            -21.505376344086020,7.634408602150536,1.333333333333333,0.300000000000000
                                                            -0.317050691244241,-0.254377880184331,1.806451612903226,0.700000000000000};
+
+   #ifdef ADE_CONFIGURATION_INTERACTIVE
+ADE_Polyfit_SetBreaks(p_blow->p_poly,ADE_Matlab_GetDataPointer(p_blow->p_mat,"breaks"));
+ADE_Polyfit_SetCoeffs(p_blow->p_poly,ADE_Matlab_GetDataPointer(p_blow->p_mat,"coeffs"));
+#else
     if (p_blow->poly_order!=POLY_ORDER)
     {
         ADE_PRINT_ERRORS(ADE_INCHECKS,p_blow->poly_order,"%u",ADE_Blow_Expander_Config);
@@ -646,6 +715,7 @@ static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow)
 
     ADE_Polyfit_SetBreaks(p_blow->p_poly,breaks);
     ADE_Polyfit_SetCoeffs(p_blow->p_poly,coeffs);
+    #endif
 
     return ADE_DEFAULT_RET;
 
