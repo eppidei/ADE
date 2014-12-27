@@ -71,8 +71,6 @@
 /*************************** MATLAB *******************************/
 #define ADE_MAX_CHARS (128)
 #define ADE_MAX_SEGMENT_LINES (256)
-#define ADE_CPLX (0)
-#define ADE_REAL (1)
 #define ADE_MAT_WAIT printf("Hit return to continue\n\n");fgetc(stdin);
 
 

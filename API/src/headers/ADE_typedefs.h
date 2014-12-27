@@ -49,6 +49,8 @@ typedef enum  {waiting,evaluation,tracking} BLOW_SM_STATES_T;
 
 /******************************** MATLAB ***************************/
 typedef struct ADE_MATLAB_S ADE_MATLAB_T;
+typedef enum {ADE_CPLX,ADE_REAL} ADE_MATLAB_WS_T;
+
 
 
 #endif //_ADE_TYPEDEFS_H
