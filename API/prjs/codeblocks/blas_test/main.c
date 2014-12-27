@@ -31,28 +31,28 @@ static ADE_API_RET_T filter(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATIN
 
 int main()
 {
-//    float h=1.1;
+//    double h=1.1;
 //    ADE_PRINT_ERRORS(Ciccio,h,"%f");
 //    return 0;
 
 
 int incx = 1;
 int incy = 1;
-float alpha= 1.0;
-static float x[5]={1.0,0.0,0.0,0.0,0.0};
-static float y[5]={1.0,2.0,3.0,4.0,5.0};
-static float out[5],out2[5],state[5],state2[5];
+double alpha= 1.0;
+static double x[5]={1.0,0.0,0.0,0.0,0.0};
+static double y[5]={1.0,2.0,3.0,4.0,5.0};
+static double out[5],out2[5],state[5],state2[5];
 int N=5;
 
 ADE_blas_level1_T *p_Blas_L1;
 ADE_IIR_T *p_iir;
 
-float a[3]={1,-0.9,-0.97};
-float b[3]={1,2,0.5};
-float gain[2] = {0.000134,0.000134};
-float *num[2] ={b,b};
-float *denom[2] ={a,a};
-char test_case[20]="iir";
+double a[3]={1,-0.9,-0.97};
+double b[3]={1,2,0.5};
+double gain[2] = {0.000134,0.000134};
+double *num[2] ={b,b};
+double *denom[2] ={a,a};
+char test_case[20]="ade";
  ADE_HANDLE ADE = NULL;
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     ADE_FLOATING_T frame_in[512];
@@ -89,7 +89,7 @@ else if  (!strcmp(test_case,"iir"))
 
 
 
-//float *gains=&gain;
+//double *gains=&gain;
 
 
 
