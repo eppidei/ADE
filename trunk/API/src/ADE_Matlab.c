@@ -288,7 +288,7 @@ double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname)
     return *(p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)]);
 }
 
-ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_UINT32_T comp_type)
+ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_MATLAB_WS_T comp_type)
 {
 
     mxArray *p_tmp=NULL;

@@ -127,6 +127,8 @@ sat_detect_struct.eval_time_samples = eval_time_samples;
     sat_detect_struct.state=1;%ones(1,Frame_len+1);
     save('blow_config_ws');
 %end Configuration
+
+%% Blow
 for k=1:n_iterations
      idx = (k-1)*Frame_len+1:k*Frame_len;
      audio = audio_left(idx);
@@ -191,6 +193,7 @@ blow_plot(frame_idx)= sat_detect_struct.blow;
     expanded_pow_iir(idx)= memoryless_blow_expander(run_pow_iir_filt(idx),fitresult);
     
 end
+%end Blow
       
 n_sub_plots = 7;
 t_axe = 0: 1/Fs : (n_samples-1)/Fs;

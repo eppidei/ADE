@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="blow_tb" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/blow_tb" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../../src" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
+				</Compiler>
+				<Linker>
+					<Add option="-lmx -lmat -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/blow_tb" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g -O2" />
+					<Add directory="../../../src" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s -lmx -lmat -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall -Wextra" />
+		</Compiler>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_Blow.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_Matlab.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_blas_level1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_fir.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_iir.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_polyfit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/headers/ADE.h" />
+		<Unit filename="../../../src/headers/ADE_Blow.h" />
+		<Unit filename="../../../src/headers/ADE_Matlab.h" />
+		<Unit filename="../../../src/headers/ADE_blas_level1.h" />
+		<Unit filename="../../../src/headers/ADE_blas_wrapper.h" />
+		<Unit filename="../../../src/headers/ADE_defines.h" />
+		<Unit filename="../../../src/headers/ADE_errors.h" />
+		<Unit filename="../../../src/headers/ADE_fir.h" />
+		<Unit filename="../../../src/headers/ADE_iir.h" />
+		<Unit filename="../../../src/headers/ADE_polyfit.h" />
+		<Unit filename="../../../src/headers/ADE_typedefs.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
