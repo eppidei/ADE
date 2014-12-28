@@ -4,7 +4,7 @@
 
 struct ADE_IIR_S
 {
-    ADE_UINT32_T buff_size;
+    ADE_UINT32_T buff_len;
     ADE_FLOATING_T *p_in;//allocati fuori
     ADE_FLOATING_T *p_out;//allocati fuori
     ADE_UINT32_T n_SOS_sections;
@@ -19,7 +19,8 @@ struct ADE_IIR_S
     ADE_FILTER_IMPLEMENTATION_T filter_func;
 };
 
-ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_UINT32_T buff_size);
+
+ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_UINT32_T buff_len);
 ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir);
 ADE_API_RET_T ADE_Iir_setGains(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_gains);
 ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums);

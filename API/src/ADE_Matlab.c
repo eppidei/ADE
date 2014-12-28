@@ -6,8 +6,10 @@
 #include <string.h>
 #include <stdio.h>
 
-static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols);
-static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols);
+
+
+static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned int n_rows, unsigned int n_cols);
+static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type);
 
 
 ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* filename, char* p_matfname,char *p_matpath)
@@ -27,6 +29,9 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
     unsigned int k_valid_array=0;
     unsigned int *p_valid_arr_idx=NULL;
     char **dp_temp_names=NULL;
+    double *p_temp,*p_temp2;
+   // char *ArrayClassName=NULL;
+  //  size_t Arraysize=0;
 
 
 
@@ -81,7 +86,8 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
                   dp_mxarray[i]=matGetNextVariable(p_matfile,(const char**) &array_name);
                   dp_temp_names[i]=calloc(strlen(array_name)+1,sizeof(char));
                   strcpy(dp_temp_names[i],array_name);
-                    if (!strcmp(mxGetClassName( dp_mxarray[i]),"double"))
+
+                    if (mxIsDouble(dp_mxarray[i]) )
                     {
                          k_valid_array++;
                     }
@@ -99,7 +105,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
          for (i=0;i<n_arrays;i++)
          {
 
-                if (!strcmp(mxGetClassName(dp_mxarray[i]),"double"))
+                if (mxIsDouble(dp_mxarray[i]) )
                 {
                      n_chars=strlen(dp_temp_names[i])+1;//strlen(array_name)+1;
                 //      fprintf(stdout,"%d\n",n_chars);
@@ -114,10 +120,11 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
         // matClose(p_matfile);
 
 
-         /****************ALLOC SIZES *****************************/
+         /****************ALLOC SIZES AND TYPE*****************************/
          p_this->n_row      =calloc(k_valid_array,sizeof(unsigned int));
          p_this->n_col      =calloc(k_valid_array,sizeof(unsigned int));
          p_this->data_size  =calloc(k_valid_array,sizeof(size_t));
+         p_this->p_vartype =calloc(k_valid_array,sizeof(ADE_MATLAB_WS_T));
 
          for (i=0;i<k_valid_array;i++)
          {
@@ -131,9 +138,20 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
             k=p_valid_arr_idx[i];
             p_this->n_row[i]=mxGetM(dp_mxarray[k]);
           p_this->n_col[i]=mxGetN(dp_mxarray[k]);
-            if (!strcmp(mxGetClassName(dp_mxarray[k]),"double"))
+            if (mxIsDouble(dp_mxarray[k]) )
             {
-                 p_this->data_size[i]=p_this->n_row[i]*p_this->n_col[i]*8;
+
+                if (mxIsComplex(dp_mxarray[k]))
+                {
+                     p_this->data_size[i]=2*p_this->n_row[i]*p_this->n_col[i]*8;
+                     p_this->p_vartype[i]=ADE_CPLX;
+                }
+                else
+                {
+                    p_this->data_size[i]=p_this->n_row[i]*p_this->n_col[i]*8;
+                     p_this->p_vartype[i]=ADE_REAL;
+                }
+
             }
             else
             {
@@ -160,7 +178,17 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
             k=p_valid_arr_idx[i];
              p_this->dp_vardouble[i]=calloc(1,p_this->data_size[i]);
              //memcpy(p_this->dp_vardouble[i],(double*)mxGetData(p_mxarr),p_this->data_size[i]);
-             ADE_Matlab_Mat2C_copy(p_this->dp_vardouble[i], (double*)mxGetData(dp_mxarray[k]), p_this->n_row[i], p_this->n_col[i]);
+             if (mxIsComplex(dp_mxarray[k]))
+             {
+                 p_temp=(double*)mxGetImagData(dp_mxarray[k]);
+                 p_temp2=(double*)mxGetData(dp_mxarray[k]);
+                 ADE_Matlab_Mat2C_copy(p_this->dp_vardouble[i], (dp_mxarray[k]), p_this->n_row[i], p_this->n_col[i]);
+             }
+             else
+             {
+                 ADE_Matlab_Mat2C_copy(p_this->dp_vardouble[i],(dp_mxarray[k]), p_this->n_row[i], p_this->n_col[i]);
+             }
+
          }
 
 
@@ -202,6 +230,7 @@ ADE_VOID_T ADE_Matlab_Release(ADE_MATLAB_T* p_mat)
 
     ADE_CHECKNFREE(p_mat->dp_vardouble);
     ADE_CHECKNFREE(p_mat->dp_var_list);
+    ADE_CHECKNFREE(p_mat->p_vartype);
 
 
     ADE_CHECKNFREE(p_mat->n_row);
@@ -310,7 +339,7 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
     }
 
     //memcpy((void *)mxGetPr(p_tmp), (void *)p_var, var_rows*var_cols*sizeof(double));
-    ADE_Matlab_C2Mat_copy((void *)mxGetPr(p_tmp), p_var, var_rows, var_cols);
+    ADE_Matlab_C2Mat_copy((void *)mxGetPr(p_tmp), p_var, var_rows, var_cols, comp_type);
 
     ret_engPutVariable=engPutVariable(p_mat->p_eng,var_matname, p_tmp);
 
@@ -458,35 +487,170 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
      return ADE_DEFAULT_RET;
 }
 
-static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols)
+static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned int n_rows, unsigned int n_cols)
 {
     unsigned int i=0,k=0,idx_dst=0,idx_src=0;
+    double *p_src_r = NULL;
+    double *p_src_i = NULL;
 
-    for (i=0;i<n_rows;i++)
+    if (mxIsComplex(p_mx))
     {
-        for (k=0;k<n_cols;k++)
+        p_src_r=(double*)mxGetData(p_mx);
+        p_src_i=(double*)mxGetImagData(p_mx);
+
+        for (i=0;i<n_rows;i++)
         {
-            idx_src=i+k*n_rows;
-            idx_dst=k+i*n_cols;
-            p_dst[idx_dst]=p_src[idx_src];
+            for (k=0;k<n_cols;k++)
+            {
+                idx_src=i+k*n_rows;
+                idx_dst=k+i*n_cols;
+                p_dst[2*idx_dst]=p_src_r[idx_src];
+                p_dst[2*idx_dst+1]=p_src_i[idx_src];
+            }
         }
+
     }
+    else
+    {
+        p_src_r=(double*)mxGetData(p_mx);
+
+        for (i=0;i<n_rows;i++)
+        {
+            for (k=0;k<n_cols;k++)
+            {
+                idx_src=i+k*n_rows;
+                idx_dst=k+i*n_cols;
+                p_dst[idx_dst]=p_src_r[idx_src];
+            }
+        }
+
+    }
+
+
 
 }
 
-static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols)
+static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type)
 {
     unsigned int i=0,k=0,idx_dst=0,idx_src=0;
 
-    for (i=0;i<n_rows;i++)
+    if (comp_type==ADE_REAL)
     {
-        for (k=0;k<n_cols;k++)
-        {
-            idx_dst=i+k*n_rows;
-            idx_src=k+i*n_cols;
-            p_dst[idx_dst]=p_src[idx_src];
-        }
+         for (i=0;i<n_rows;i++)
+            {
+                for (k=0;k<n_cols;k++)
+                {
+                    idx_dst=i+k*n_rows;
+                    idx_src=k+i*n_cols;
+                    p_dst[idx_dst]=p_src[idx_src];
+                }
+            }
+
     }
+    else if (comp_type==ADE_CPLX)
+    {
+
+        for (i=0;i<n_rows;i++)
+            {
+                for (k=0;k<n_cols;k++)
+                {
+                    idx_dst=i+k*n_rows;
+                    idx_src=k+i*n_cols;
+                    p_dst[2*idx_dst]=p_src[2*idx_src];
+                    p_dst[2*idx_dst+1]=p_src[2*idx_src+1];
+                }
+            }
+
+
+    }
+    else
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,comp_type,"%d",ADE_Matlab_C2Mat_copy);
+        return ADE_E28;
+    }
+
+
+
+}
+
+ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
+{
+    FILE *p_fid;
+    ADE_UINT32_T i=0,k=0,j=0;
+    ADE_UINT32_T n_vars=p_mat->n_vars;
+    ADE_CHAR_T *p_varname=NULL;
+    ADE_FLOATING_T *p_data=NULL;
+    ADE_MATLAB_WS_T var_type;
+
+
+    p_fid=fopen("./mat_variables.txt","w");
+
+    if (p_fid!=NULL)
+    {
+
+        for (i=0;i<n_vars;i++)
+        {
+            p_varname=p_mat->dp_var_list[i];
+            p_data = p_mat->dp_vardouble[i];
+            var_type = p_mat->p_vartype[i];
+
+            if (var_type==ADE_REAL)
+            {
+
+                if (p_mat->n_row[i]==1 )
+                {
+
+                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_col[i],"%lf",p_fid)
+                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_col[i],"%lf",stdout)
+                }
+                else if (p_mat->n_col[i]==1 )
+                {
+                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_row[i],"%lf",p_fid)
+                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_row[i],"%lf",stdout)
+                }
+                else
+                {
+                    PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,p_mat->n_col[i],"%lf",p_fid)
+                   PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,p_mat->n_col[i],"%lf",stdout)
+                }
+            }
+            else if (var_type==ADE_CPLX)
+            {
+
+                if (p_mat->n_row[i]==1 )
+                {
+
+                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_col[i],"%lf",p_fid)
+                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_col[i],"%lf",stdout)
+                }
+                else if (p_mat->n_col[i]==1 )
+                {
+                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_row[i],"%lf",p_fid)
+                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_row[i],"%lf",stdout)
+                }
+                else
+                {
+                    PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,2*p_mat->n_col[i],"%lf",p_fid)
+                   PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,2*p_mat->n_col[i],"%lf",stdout)
+                }
+
+            }
+
+        }
+
+        fclose(p_fid);
+
+        return ADE_DEFAULT_RET;
+    }
+
+    else
+    {
+
+        return ADE_E27;
+    }
+
+
+
 
 }
 

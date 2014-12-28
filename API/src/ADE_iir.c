@@ -6,11 +6,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+
 static ADE_API_RET_T filter_DII_T_b (ADE_IIR_T* p_iir);
 static ADE_API_RET_T filter_DII_T_b_blas (ADE_IIR_T* p_iir);
 
 
-ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_UINT32_T buff_size)
+ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_UINT32_T buff_len)
 {
 
 
@@ -31,7 +33,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
     if (pthis!=NULL)
     {
-        pthis->buff_size=buff_size;
+        pthis->buff_len=buff_len;
 
         pthis->n_SOS_sections=n_SOS_sections;
 
@@ -108,7 +110,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
         for (i=0;i<(n_SOS_sections+1);i++)
         {
 
-            p_sec_buff = calloc(1,buff_size*sizeof(ADE_FLOATING_T));
+            p_sec_buff = calloc(1,buff_len*sizeof(ADE_FLOATING_T));
 
             if (p_sec_buff!=NULL)
             {
@@ -342,18 +344,18 @@ if (*(p_iir->dp_states)==NULL)
 
 #endif
 
- memcpy( ((p_iir-> dp_section_buffers)[0]),p_iir->p_in,(p_iir->buff_size)*sizeof(ADE_FLOATING_T));
+ memcpy( ((p_iir-> dp_section_buffers)[0]),p_iir->p_in,(p_iir->buff_len)*sizeof(ADE_FLOATING_T));
 
     for (i=0;i<p_iir->n_SOS_sections;i++)
 	{
 	    /*** set dynamic params blas ***/
        p_iir->active_section = i;
-       (p_iir->filter_func)(p_iir);//(p_iir-> dp_section_buffers)[i], (p_iir-> dp_section_buffers)[i+1], (p_iir-> dp_denoms)[i], order, (p_iir-> dp_nums)[i], (p_iir-> p_gains)[i],(p_iir-> dp_states)[i],p_iir->buff_size,p_iir->p_Blas_L1);
+       (p_iir->filter_func)(p_iir);//(p_iir-> dp_section_buffers)[i], (p_iir-> dp_section_buffers)[i+1], (p_iir-> dp_denoms)[i], order, (p_iir-> dp_nums)[i], (p_iir-> p_gains)[i],(p_iir-> dp_states)[i],p_iir->buff_len,p_iir->p_Blas_L1);
 
 
 	}
 
-	memcpy(p_iir->p_out ,(p_iir-> dp_section_buffers)[p_iir->n_SOS_sections],p_iir->buff_size*sizeof(ADE_FLOATING_T));
+	memcpy(p_iir->p_out ,(p_iir-> dp_section_buffers)[p_iir->n_SOS_sections],p_iir->buff_len*sizeof(ADE_FLOATING_T));
 
 	return ADE_DEFAULT_RET;
 
@@ -371,7 +373,7 @@ if (*(p_iir->dp_states)==NULL)
     ADE_FLOATING_T *b = (p_iir-> dp_nums)[active_section];
     ADE_FLOATING_T gain = (p_iir-> p_gains)[active_section];
     ADE_FLOATING_T *state = (p_iir-> dp_states)[active_section];
-    ADE_UINT32_T len_frame = p_iir->buff_size;
+    ADE_UINT32_T len_frame = p_iir->buff_len;
     ADE_blas_level1_T *p_Blas_L1 = p_iir->p_Blas_L1;
     ADE_FLOATING_T *temp_buffer = calloc(order,sizeof(ADE_FLOATING_T));
     ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
@@ -419,7 +421,7 @@ static ADE_API_RET_T filter_DII_T_b (ADE_IIR_T* p_iir)//(ADE_FLOATING_T *in, ADE
     ADE_FLOATING_T *b = (p_iir-> dp_nums)[active_section];
     ADE_FLOATING_T gain = (p_iir-> p_gains)[active_section];
     ADE_FLOATING_T *state = (p_iir-> dp_states)[active_section];
-    ADE_UINT32_T len_frame = p_iir->buff_size;
+    ADE_UINT32_T len_frame = p_iir->buff_len;
 
 
 

@@ -10,6 +10,7 @@ struct ADE_MATLAB_S
     FILE* p_matscript;
     unsigned int n_vars;
     Engine *p_eng;
+    ADE_MATLAB_WS_T *p_vartype;
     char **dp_var_list;
     double **dp_vardouble;
     unsigned int *n_row;
@@ -33,6 +34,7 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
 ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stopword);
 double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname);
 ADE_UINT32_T ADE_Matlab_GetLength(ADE_MATLAB_T* p_mat, char *varname);
+ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat);
 
 
 

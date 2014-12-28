@@ -4,7 +4,7 @@
 
 struct ADE_FIR_S
 {
-    ADE_UINT32_T buff_size;
+    ADE_UINT32_T buff_len;
     ADE_FLOATING_T *p_in;//allocati fuori
     ADE_FLOATING_T *p_out;//allocati fuori
     //ADE_UINT32_T n_SOS_sections;
@@ -19,7 +19,7 @@ struct ADE_FIR_S
     ADE_FIR_FILTER_IMPLEMENTATION_T filter_func;
 };
 
-ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT32_T buff_size);
+ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT32_T buff_len);
 ADE_VOID_T ADE_Fir_Release(ADE_FIR_T* p_fir);
 ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num);
 ADE_API_RET_T ADE_Fir_ResetState(ADE_FIR_T* p_fir);
