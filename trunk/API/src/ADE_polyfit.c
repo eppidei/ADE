@@ -6,6 +6,10 @@
 #include <math.h>
 #include <string.h>
 
+
+
+
+
 static ADE_VOID_T ADE_memoryless_blow_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T* frame_i,ADE_FLOATING_T* y_o);
 
 ADE_API_RET_T ADE_Polyfit_Init (ADE_POLYFIT_T **dp_poly,ADE_UINT32_T poly_order_i,ADE_UINT32_T n_breaks_i)

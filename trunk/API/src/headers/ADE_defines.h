@@ -11,13 +11,17 @@
 //#define ADE_GOTO_LABEL gently_closure :
 #define CHECK_RET_MAIN(s)  if(s<0) {goto gently_closure;}
 #define PRINT_ARRAY(x,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
+#define PRINT_ARRAY2(x,xname,idx,len,format,stream) fprintf(stream,"\n"); for(idx=0;idx<len;idx++) { fprintf(stream, " %s [%u] =" format "\n",xname,idx,x[idx]); };
+#define PRINT_MATRIX(x,xname,row_idx,row_len,col_idx,col_len,format,stream) fprintf(stream,"\n"); for (row_idx=0;row_idx<row_len;row_idx++) { for (col_idx=0;col_idx<col_len;col_idx++) {fprintf(stream, " %s [%u][%u] =" format "\n",xname,row_idx,col_idx,x[col_idx+row_idx*col_len]); } };
 #define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
 #define ADE_RELEASE (0)
 #define ADE_DEBUG_NORMAL (1)
 #define ADE_DEBUG_MATLAB (2)
+#define ADE_USE_FFTW (0)
 
 #define ADE_TARGET ADE_DEBUG_MATLAB
+#define ADE_FFT_IMP ADE_USE_FFTW
 
 #if (ADE_TARGET==ADE_DEBUG_MATLAB)
 #define ADE_CONFIGURATION_INTERACTIVE
@@ -72,6 +76,8 @@
 #define ADE_MAX_CHARS (128)
 #define ADE_MAX_SEGMENT_LINES (256)
 #define ADE_MAT_WAIT printf("Hit return to continue\n\n");fgetc(stdin);
+/**************************** FFTW **********************************/
+#define ADE_FFTW_PLAN_FLAGS FFTW_MEASURE //read manual pg.18
 
 
 

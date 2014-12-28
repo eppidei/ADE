@@ -6,12 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+
 static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir);
 static ADE_API_RET_T filter_DII_T_blas (ADE_FIR_T* p_fir);
 static ADE_API_RET_T filter_DII_T_matrix(ADE_FIR_T* p_fir);
 static ADE_API_RET_T filter_DII_T_matrix_blas (ADE_FIR_T* p_fir);
 
-ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT32_T buff_size)
+ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT32_T buff_len)
 {
     ADE_blas_level1_T *p_Blas_L1;
     ADE_FLOATING_T default_gain = 1.0;
@@ -21,7 +23,7 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
 
     if (pthis!=NULL)
     {
-        pthis->buff_size=buff_size;
+        pthis->buff_len=buff_len;
         pthis->gain=default_gain;
         pthis->filter_order = fir_order;
         p_state=calloc(fir_order+1,sizeof(ADE_FLOATING_T));
@@ -47,6 +49,12 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
 
          *dp_this=pthis;
     }
+    else
+    {
+        ADE_PRINT_ERRORS(ADE_MEM,pthis,"%p",ADE_Fir_Init);
+        return ADE_E17;
+    }
+
 
 
 
@@ -147,9 +155,9 @@ if ((p_fir->filter_func)==NULL)
 #endif
 
 
-       (p_fir->filter_func)(p_fir);//(p_iir-> dp_section_buffers)[i], (p_iir-> dp_section_buffers)[i+1], (p_iir-> dp_denoms)[i], order, (p_iir-> dp_nums)[i], (p_iir-> p_gains)[i],(p_iir-> dp_states)[i],p_iir->buff_size,p_iir->p_Blas_L1);
+       (p_fir->filter_func)(p_fir);//(p_iir-> dp_section_buffers)[i], (p_iir-> dp_section_buffers)[i+1], (p_iir-> dp_denoms)[i], order, (p_iir-> dp_nums)[i], (p_iir-> p_gains)[i],(p_iir-> dp_states)[i],p_iir->buff_len,p_iir->p_Blas_L1);
 
-	//memcpy(p_fir->p_out ,(p_fir-> dp_section_buffers)[p_fir->n_SOS_sections],p_fir->buff_size*sizeof(ADE_FLOATING_T));
+	//memcpy(p_fir->p_out ,(p_fir-> dp_section_buffers)[p_fir->n_SOS_sections],p_fir->buff_len*sizeof(ADE_FLOATING_T));
 
 	return ADE_DEFAULT_RET;
 
@@ -181,7 +189,7 @@ static ADE_API_RET_T filter_DII_T_blas (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, 
     ADE_FLOATING_T *b = (p_fir-> p_num);
     ADE_FLOATING_T gain = (p_fir-> gain);
     ADE_FLOATING_T *state = (p_fir-> p_state);
-    ADE_UINT32_T len_frame = p_fir->buff_size;
+    ADE_UINT32_T len_frame = p_fir->buff_len;
 
     ADE_blas_level1_T *p_Blas_L1 = p_fir->p_Blas_L1;
     ADE_FLOATING_T *temp_buffer = calloc(order,sizeof(ADE_FLOATING_T));
@@ -227,7 +235,7 @@ static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_F
     ADE_FLOATING_T *b = (p_fir-> p_num);
     ADE_FLOATING_T gain = (p_fir-> gain);
     ADE_FLOATING_T *state = (p_fir-> p_state);
-    ADE_UINT32_T len_frame = p_fir->buff_size;
+    ADE_UINT32_T len_frame = p_fir->buff_len;
 
 
 
