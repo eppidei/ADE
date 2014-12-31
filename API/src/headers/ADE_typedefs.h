@@ -71,6 +71,8 @@ typedef enum {ADE_CPLX,ADE_REAL} ADE_MATLAB_WS_T;
 typedef struct ADE_FFT_S ADE_FFT_T;
 typedef enum {ADE_FFT_C2C,ADE_FFT_R2C,ADE_FFT_C2R,ADE_FFT_R2R} ADE_FFT_TYPE_T;
 typedef enum {ADE_FFT_FORWARD,ADE_FFT_BACKWARD} ADE_FFT_DIRECTION_T;
+/**************************** UTILS *************************/
+typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_ROW_INFO_T;
 
 
 
