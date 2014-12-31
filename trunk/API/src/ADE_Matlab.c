@@ -1,6 +1,7 @@
 #include "headers/ADE_Matlab.h"
 #include "headers/ADE_iir.h"
 #include "headers/ADE_errors.h"
+#include "headers/ADE_Utils.h"
 #include "matrix.h"
 #include "mat.h"
 #include <string.h>
@@ -9,7 +10,7 @@
 
 
 static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned int n_rows, unsigned int n_cols);
-static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type);
+static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type);
 
 
 ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* filename, char* p_matfname,char *p_matpath)
@@ -530,7 +531,7 @@ static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned i
 
 }
 
-static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type)
+static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type)
 {
     unsigned int i=0,k=0,idx_dst=0,idx_src=0;
 
@@ -570,6 +571,8 @@ static ADE_VOID_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned i
     }
 
 
+return ADE_DEFAULT_RET;
+
 
 }
 
@@ -579,11 +582,13 @@ ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
     ADE_UINT32_T i=0,k=0,j=0;
     ADE_UINT32_T n_vars=p_mat->n_vars;
     ADE_CHAR_T *p_varname=NULL;
-    ADE_FLOATING_T *p_data=NULL;
+    double *p_data=NULL;
     ADE_MATLAB_WS_T var_type;
+    //ADE_UINT32_T n_var_per_printrow = 1;
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_UINT32_T n_row=0,n_col=0;
 
-
-    p_fid=fopen("./mat_variables.txt","w");
+    p_fid=fopen("./mat2C_variables.txt","w");
 
     if (p_fid!=NULL)
     {
@@ -593,48 +598,16 @@ ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
             p_varname=p_mat->dp_var_list[i];
             p_data = p_mat->dp_vardouble[i];
             var_type = p_mat->p_vartype[i];
+            n_row = p_mat->n_row[i];
+            n_col=p_mat->n_col[i];
 
-            if (var_type==ADE_REAL)
-            {
+          ret = ADE_Utils_PrintArray(p_data,0,(n_row-1),0,(n_col-1) , p_varname, stdout,var_type);
 
-                if (p_mat->n_row[i]==1 )
-                {
-
-                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_col[i],"%lf",p_fid)
-                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_col[i],"%lf",stdout)
-                }
-                else if (p_mat->n_col[i]==1 )
-                {
-                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_row[i],"%lf",p_fid)
-                    PRINT_ARRAY2(p_data,p_varname,j,p_mat->n_row[i],"%lf",stdout)
-                }
-                else
-                {
-                    PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,p_mat->n_col[i],"%lf",p_fid)
-                   PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,p_mat->n_col[i],"%lf",stdout)
-                }
-            }
-            else if (var_type==ADE_CPLX)
-            {
-
-                if (p_mat->n_row[i]==1 )
-                {
-
-                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_col[i],"%lf",p_fid)
-                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_col[i],"%lf",stdout)
-                }
-                else if (p_mat->n_col[i]==1 )
-                {
-                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_row[i],"%lf",p_fid)
-                    PRINT_ARRAY2(p_data,p_varname,j,2*p_mat->n_row[i],"%lf",stdout)
-                }
-                else
-                {
-                    PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,2*p_mat->n_col[i],"%lf",p_fid)
-                   PRINT_MATRIX(p_data,p_varname,j,p_mat->n_row[i],k,2*p_mat->n_col[i],"%lf",stdout)
-                }
-
-            }
+          if (ret<0)
+          {
+              ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Matlab_Print);
+                return ADE_E27;
+          }
 
         }
 

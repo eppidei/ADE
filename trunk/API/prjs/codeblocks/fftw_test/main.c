@@ -22,6 +22,9 @@ Engine *p_eng;
 ADE_FFT_TYPE_T fft_type=ADE_FFT_C2C;
 ADE_CPLX_T *p_in;
 ADE_CPLX_T *p_out;
+ADE_CPLX_T test_cplx[2]={1+3*I,2+5*I};
+ADE_UINT32_T i=0;
+ADE_INT32_T lin,col;
 
 
 ADE_Matlab_Init(&p_mat, p_eng,"/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/fft/fft_test.m", "./fft_test_ws.mat","/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab");
@@ -100,7 +103,14 @@ ADE_Matlab_Print(p_mat);
 //ADE_Fft_Configure(p_fft,ADE_FFT_C2C, ADE_FFT_FORWARD,p_in,p_out);
 //ADE_Fft_Step(p_fft);
 //ADE_Fft_Release(p_fft);
-ADE_Matlab_Release(p_mat);
+//for (i=0;i<2;i++)
+//{
+//    fprintf(stdout,"%f+i%f\n",creal(test_cplx[i]),cimag(test_cplx[i]));
+//}
+//ADE_Matlab_Release(p_mat);
+
+ADE_Get_Terminal_size(&lin ,&col  );
+//fprintf(stdout,"%lin=d col=%d\n",lin,col);
 
 return EXIT_SUCCESS;
 }
