@@ -38,6 +38,7 @@ typedef ADE_CPLX_SP_T ADE_CPLX_T;
 
 typedef ADE_INT32_T ADE_API_RET_T ;
 typedef void ADE_VOID_T;
+typedef size_t ADE_SIZE_T;
 
 /*********************************** ADE ENVIRONMENT ***********************************/
 typedef struct ADE_S ADE_T;

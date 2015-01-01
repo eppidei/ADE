@@ -145,23 +145,55 @@ static ADE_VOID_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
 static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FFT_DIRECTION_T fft_dir)
 {
 
+
+
       #if (ADE_FFT_IMP==ADE_USE_FFTW)
         if (fft_type==ADE_FFT_C2C)
         {
             if (fft_dir==ADE_FFT_FORWARD)
             {
-                 p_fft->plan = fftw_plan_dft_1d(p_fft->buff_len,(fftw_complex*)p_fft->p_in,(fftw_complex*)p_fft->p_out,FFTW_FORWARD,ADE_FFTW_PLAN_FLAGS);
+
+                    p_fft->plan = fftw_plan_dft_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,FFTW_FORWARD,ADE_FFTW_PLAN_FLAGS);
+
+
             }
             else if (fft_dir==ADE_FFT_BACKWARD)
             {
-                 p_fft->plan = fftw_plan_dft_1d(p_fft->buff_len,(fftw_complex*)p_fft->p_in,(fftw_complex*)p_fft->p_out,FFTW_BACKWARD,ADE_FFTW_PLAN_FLAGS);
+
+                     p_fft->plan = fftw_plan_dft_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,FFTW_BACKWARD,ADE_FFTW_PLAN_FLAGS);
+
             }
             else
             {
-                ADE_PRINT_ERRORS(ADE_INCHECKS,fft_type,"%d",ADE_Fft_SetPlan);
+                ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetPlan);
                 return ADE_E32;
             }
 
+        }
+        else if (fft_type==ADE_FFT_R2C)
+        {
+            if (fft_dir==ADE_FFT_FORWARD)
+            {
+
+                    p_fft->plan = fftw_plan_dft_r2c_1d(p_fft->buff_len,(ADE_FLOATING_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
+
+            }
+            else if (fft_dir==ADE_FFT_BACKWARD)
+            {
+                 ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetPlan);
+                return ADE_E32;
+            }
+            else
+            {
+                ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetPlan);
+                return ADE_E32;
+            }
+
+        }
+        else
+        {
+            ADE_PRINT_ERRORS(ADE_INCHECKS,fft_type,"%d",ADE_Fft_SetPlan);
+            return ADE_E32;
         }
 
 

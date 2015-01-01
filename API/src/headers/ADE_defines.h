@@ -22,6 +22,7 @@
 #define ADE_TARGET ADE_DEBUG_MATLAB
 #define ADE_FFT_IMP ADE_USE_FFTW
 
+
 #if (ADE_TARGET==ADE_DEBUG_MATLAB)
 #define ADE_CONFIGURATION_INTERACTIVE
 #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
@@ -77,6 +78,8 @@
 #define ADE_MAT_WAIT printf("Hit return to continue\n\n");fgetc(stdin);
 /**************************** FFTW **********************************/
 #define ADE_FFTW_PLAN_FLAGS FFTW_MEASURE //read manual pg.18
+#define ADE_FLOAT_SIZE (4)
+#define ADE_DOUBLE_SIZE (8)
 /******************************* UTILS ******************************/
 #define PLUS_ONE(x) (x+1)
 #define PRINT_IDX(x) PLUS_ONE(x)
