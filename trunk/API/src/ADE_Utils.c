@@ -96,7 +96,11 @@ static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT3
              {
                  if (row_info==ADE_UTILS_FIRST_PRINT_ROW)
                  {
-                     fprintf(p_stream,"\nColumns from %u to %u\n",start_0based_col_idx+(k-1)*n_var_per_printrow+1,start_0based_col_idx+k*n_var_per_printrow);
+                     if (len>1 && start_0based_col_idx==0)
+                     {
+                         fprintf(p_stream,"\nColumns from %u to %u\n",start_0based_col_idx+(k-1)*n_var_per_printrow+1,start_0based_col_idx+k*n_var_per_printrow);
+                     }
+
                  }
                     fprintf(p_stream,"%*.*lf",ADE_UTILS_PRINTF_FLOAT_WIDTH,ADE_UTILS_PRINTF_FLOAT_PRECISION,(p_var[i]));
              }
@@ -104,7 +108,10 @@ static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT3
              {
                  if (row_info==ADE_UTILS_FIRST_PRINT_ROW)
                  {
-                     fprintf(p_stream,"\nColumns from %u to %u\n",start_0based_col_idx+(k-1)*n_var_per_printrow+1,stop_0based_col_idx+1);
+                     if (len>1 && start_0based_col_idx==0)
+                     {
+                        fprintf(p_stream,"\nColumns from %u to %u\n",start_0based_col_idx+(k-1)*n_var_per_printrow+1,stop_0based_col_idx+1);
+                     }
                      if (i==stop_0based_col_idx)
                      {
                          fprintf(p_stream,"%*.*lf\n",ADE_UTILS_PRINTF_FLOAT_WIDTH,ADE_UTILS_PRINTF_FLOAT_PRECISION,(p_var[i]));
@@ -179,7 +186,10 @@ static ADE_API_RET_T ADE_Utils_PrintRowArrayCplx(ADE_CPLX_T *p_var,ADE_UINT32_T 
              {
                  if (row_info==ADE_UTILS_FIRST_PRINT_ROW)
                  {
+                     if (len>1 && start_0based_col_idx==0)
+                     {
                      fprintf(p_stream,"\nColumns from %u to %u\n",start_0based_col_idx+(k-1)*n_var_per_printrow+1,start_0based_col_idx+k*n_var_per_printrow);
+                     }
                  }
                     fprintf(p_stream,"%*.*lf%+*.*lfi",ADE_UTILS_PRINTF_FLOAT_WIDTH,ADE_UTILS_PRINTF_FLOAT_PRECISION,creal(p_var[i]),ADE_UTILS_PRINTF_FLOAT_WIDTH,ADE_UTILS_PRINTF_FLOAT_PRECISION,cimag(p_var[i]));
              }
@@ -187,7 +197,10 @@ static ADE_API_RET_T ADE_Utils_PrintRowArrayCplx(ADE_CPLX_T *p_var,ADE_UINT32_T 
              {
                  if (row_info==ADE_UTILS_FIRST_PRINT_ROW)
                  {
+                     if (len>1 && start_0based_col_idx==0)
+                     {
                      fprintf(p_stream,"\nColumns from %u to %u\n",start_0based_col_idx+(k-1)*n_var_per_printrow+1,stop_0based_col_idx+1);
+                     }
                      if (i==stop_0based_col_idx)
                      {
                          fprintf(p_stream,"%*.*lf%+*.*lfi\n",ADE_UTILS_PRINTF_FLOAT_WIDTH,ADE_UTILS_PRINTF_FLOAT_PRECISION,creal(p_var[i]),ADE_UTILS_PRINTF_FLOAT_WIDTH,ADE_UTILS_PRINTF_FLOAT_PRECISION,cimag(p_var[i]));
@@ -279,6 +292,7 @@ static ADE_API_RET_T ADE_Utils_PrintRowArray(ADE_VOID_T *p_var,ADE_UINT32_T star
     ADE_INT32_T lines=0,columns=0;
     ADE_UINT32_T n_var_per_printrow=0;
 ADE_UTILS_ROW_INFO_T row_info=ADE_UTILS_FIRST_PRINT_ROW;
+ADE_UINT32_T len = stop_0based_col_idx-start_0based_col_idx+1;
 
      ADE_Get_Terminal_size(&lines ,&columns);
 
@@ -286,13 +300,29 @@ ADE_UTILS_ROW_INFO_T row_info=ADE_UTILS_FIRST_PRINT_ROW;
     if (math_type==ADE_REAL)
     {
          n_var_per_printrow=floor(columns/ADE_UTILS_PRINTF_FLOAT_WIDTH);
-        fprintf(p_stream,"\n%s(1,%u:%u) =\n",p_varname,start_0based_col_idx+1,stop_0based_col_idx+1);
+         if (len==1)
+         {
+             fprintf(p_stream,"\n%s =\n",p_varname);
+         }
+         else
+         {
+              fprintf(p_stream,"\n%s(1,%u:%u) =\n",p_varname,start_0based_col_idx+1,stop_0based_col_idx+1);
+         }
+
         ADE_Utils_PrintRowArrayReal((ADE_FLOATING_T*)p_var, start_0based_col_idx,stop_0based_col_idx,n_var_per_printrow,row_info,p_stream);
     }
     else if(math_type==ADE_CPLX)
     {
           n_var_per_printrow=floor(columns/(ADE_UTILS_PRINTF_FLOAT_WIDTH+ADE_UTILS_PRINTF_FLOAT_WIDTH+2));
-         fprintf(p_stream,"\n%s(1,%u:%u) =\n",p_varname,start_0based_col_idx+1,stop_0based_col_idx+1);
+          if (len==1)
+         {
+             fprintf(p_stream,"\n%s =\n",p_varname);
+         }
+         else
+         {
+             fprintf(p_stream,"\n%s(1,%u:%u) =\n",p_varname,start_0based_col_idx+1,stop_0based_col_idx+1);
+         }
+
         ADE_Utils_PrintRowArrayCplx((ADE_CPLX_T*)p_var,start_0based_col_idx, stop_0based_col_idx,n_var_per_printrow,row_info,p_stream);
     }
     else
@@ -307,14 +337,32 @@ ADE_UTILS_ROW_INFO_T row_info=ADE_UTILS_FIRST_PRINT_ROW;
 
 static ADE_API_RET_T ADE_Utils_PrintColArray(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATLAB_WS_T math_type)
 {
+    ADE_UINT32_T len = stop_0based_row_idx-start_0based_row_idx+1;
+
     if (math_type==ADE_REAL)
     {
-        fprintf(p_stream,"\n%s(%u:%u,1) =\n\n",p_varname,start_0based_row_idx+1,stop_0based_row_idx+1);
+        if (len==1)
+        {
+            fprintf(p_stream,"\n%s =\n\n",p_varname);
+        }
+        else
+        {
+            fprintf(p_stream,"\n%s(%u:%u,1) =\n\n",p_varname,start_0based_row_idx+1,stop_0based_row_idx+1);
+        }
+
         ADE_Utils_PrintColArrayReal((ADE_FLOATING_T*)p_var, start_0based_row_idx,stop_0based_row_idx,p_stream);
     }
     else if(math_type==ADE_CPLX)
     {
-         fprintf(p_stream,"\n%s(%u:%u,1) =\n\n",p_varname,start_0based_row_idx+1,stop_0based_row_idx+1);
+        if (len==1)
+        {
+            fprintf(p_stream,"\n%s =\n\n",p_varname);
+        }
+        else
+        {
+            fprintf(p_stream,"\n%s(%u:%u,1) =\n\n",p_varname,start_0based_row_idx+1,stop_0based_row_idx+1);
+        }
+
         ADE_Utils_PrintColArrayCplx((ADE_CPLX_T*)p_var, start_0based_row_idx,stop_0based_row_idx,p_stream);
     }
     else

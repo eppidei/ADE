@@ -579,7 +579,7 @@ return ADE_DEFAULT_RET;
 ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
 {
     FILE *p_fid;
-    ADE_UINT32_T i=0,k=0,j=0;
+    ADE_UINT32_T i=0;
     ADE_UINT32_T n_vars=p_mat->n_vars;
     ADE_CHAR_T *p_varname=NULL;
     double *p_data=NULL;
