@@ -50,6 +50,9 @@
 		<Unit filename="../../../src/ADE_Matlab.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_Utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_blas_level1.c">
 			<Option compilerVar="CC" />
 		</Unit>

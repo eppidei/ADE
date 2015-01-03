@@ -1,5 +1,7 @@
 clear all; close all;clc
 
+addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Main_scripts/
+
 sim_mat_common_params
 
 nbit = 16;

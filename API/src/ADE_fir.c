@@ -40,7 +40,7 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
 //            return ADE_E17;
 //        }
 
-        ADE_Blas_level1_Init(&p_Blas_L1);
+        ADE_Blas_level1_Init(&p_Blas_L1,ADE_REAL);
         ADE_Blas_level1_setN(p_Blas_L1,fir_order);
         ADE_Blas_level1_setINCX(p_Blas_L1,1);
         ADE_Blas_level1_setINCY(p_Blas_L1,1);
@@ -194,6 +194,7 @@ static ADE_API_RET_T filter_DII_T_blas (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, 
     ADE_blas_level1_T *p_Blas_L1 = p_fir->p_Blas_L1;
     ADE_FLOATING_T *temp_buffer = calloc(order,sizeof(ADE_FLOATING_T));
     ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
+    ADE_FLOATING_T ALPHA=0;
 
 
 
@@ -205,7 +206,8 @@ static ADE_API_RET_T filter_DII_T_blas (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, 
         /*************/
         ADE_Blas_level1_setY(p_Blas_L1,temp_buffer);
         ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
-        ADE_Blas_level1_setALPHA(p_Blas_L1,gain*in[k]);
+        ALPHA=gain*in[k];
+        ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
         ADE_Blas_real_axpy(p_Blas_L1);
         /*****************/
         memcpy(&state[0],temp_buffer,temp_buff_size);

@@ -52,7 +52,7 @@ double b[3]={1,2,0.5};
 double gain[2] = {0.000134,0.000134};
 double *num[2] ={b,b};
 double *denom[2] ={a,a};
-char test_case[20]="ade";
+char test_case[20]="blas";
  ADE_HANDLE ADE = NULL;
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     ADE_FLOATING_T frame_in[512];
@@ -64,9 +64,9 @@ if (!strcmp(test_case,"blas"))
 {
 
 
-ADE_Blas_level1_Init(&p_Blas_L1);
+ADE_Blas_level1_Init(&p_Blas_L1,ADE_REAL);
 
-ADE_Blas_level1_setALPHA(p_Blas_L1,alpha);
+ADE_Blas_level1_setALPHA(p_Blas_L1,&alpha);
 ADE_Blas_level1_setN(p_Blas_L1,N);
 ADE_Blas_level1_setINCX(p_Blas_L1,incx);
 ADE_Blas_level1_setINCY(p_Blas_L1,incy);

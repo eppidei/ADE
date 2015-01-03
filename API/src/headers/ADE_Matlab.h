@@ -10,7 +10,7 @@ struct ADE_MATLAB_S
     FILE* p_matscript;
     unsigned int n_vars;
     Engine *p_eng;
-    ADE_MATLAB_WS_T *p_vartype;
+    ADE_MATH_ATTRIBUTE_T *p_vartype;
     char **dp_var_list;
     double **dp_vardouble;
     unsigned int *n_row;
@@ -27,7 +27,7 @@ ADE_UINT32_T ADE_Matlab_GetNCols(ADE_MATLAB_T* p_mat, char *varname);
 ADE_UINT32_T ADE_Matlab_GetSize(ADE_MATLAB_T* p_mat, char *varname);
 ADE_UINT32_T ADE_Matlab_GetNElements(ADE_MATLAB_T* p_mat, char *varname);
 double* ADE_Matlab_GetDataPointer(ADE_MATLAB_T* p_mat, char *varname);
-ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_MATLAB_WS_T comp_type);
+ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_MATH_ATTRIBUTE_T comp_type);
 ADE_API_RET_T ADE_Matlab_Evaluate_String(ADE_MATLAB_T* p_mat, char *matcode);
 ADE_API_RET_T ADE_Matlab_Evaluate_StringnWait(ADE_MATLAB_T* p_mat, char *matcode);
 ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir, char *sosmatrix_varname, char *scalevalues_varname);

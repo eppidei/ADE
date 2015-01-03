@@ -2,7 +2,8 @@ clear all; close all;clc
 
 sim_mat_common_params
 
-%   addpath ../smacks
+  addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/resources/
+  addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Alg_funcs/
 % 
    file_name='samples.wav';
 

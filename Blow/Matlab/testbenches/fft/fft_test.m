@@ -6,7 +6,7 @@ clear all;close all;clc
 
 
 
-  out_r2c = fft(real_input);
+  out_c2c = fft(real_input);
 %  out_c2c_forward = fft(cplx_input);
 %   out_c2c_back = ifft(cplx_input);
 %  out_real = ifft(out_cplx);

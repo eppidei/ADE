@@ -21,9 +21,10 @@ ADE_MATLAB_T *p_mat;
 ADE_UINT32_T buff_len;
 ADE_SIZE_T size_fft_in,size_fft_out;
 Engine *p_eng;
-ADE_FFT_TYPE_T fft_type=ADE_FFT_R2C;
+ADE_FFT_TYPE_T fft_type=ADE_FFT_C2C;
 ADE_VOID_T *p_in;
 ADE_VOID_T *p_out;
+double *p_matdata;
 ADE_CPLX_T test_cplx[2]={1+3*I,2+5*I};
 ADE_UINT32_T i=0;
 ADE_INT32_T lin,col;
@@ -120,8 +121,14 @@ ret=ADE_Fft_Init(&p_fft, buff_len);
 ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
 if (fft_type==ADE_FFT_C2C)
 {
+    p_matdata=ADE_Matlab_GetDataPointer(p_mat,"real_input");
 
-   memcpy(p_in,ADE_Matlab_GetDataPointer(p_mat,"cplx_input"),size_fft_in);
+    for(i=0;i<buff_len;i++)
+    {
+        ((ADE_FLOATING_T*)p_in)[2*i]=p_matdata[i];
+         ((ADE_FLOATING_T*)p_in)[2*i+1]=0.0;
+    }
+
 }
 else if (fft_type==ADE_FFT_R2C)
 {
@@ -142,7 +149,7 @@ else if (fft_type==ADE_FFT_R2C)
 //{
 //    fprintf(stdout,"%f+i%f\n",creal(test_cplx[i]),cimag(test_cplx[i]));
 //}
-//ADE_Matlab_Release(p_mat);
+ADE_Matlab_Release(p_mat);
 
 //ADE_Get_Terminal_size(&lin ,&col  );
 //fprintf(stdout,"%lin=d col=%d\n",lin,col);
