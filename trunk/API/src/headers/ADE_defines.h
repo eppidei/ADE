@@ -21,6 +21,7 @@
 
 #define ADE_TARGET ADE_DEBUG_MATLAB
 #define ADE_FFT_IMP ADE_USE_FFTW
+#define ADE_USE_FFTW_THREADS
 
 
 #if (ADE_TARGET==ADE_DEBUG_MATLAB)
@@ -77,9 +78,14 @@
 #define ADE_MAX_SEGMENT_LINES (256)
 #define ADE_MAT_WAIT printf("Hit return to continue\n\n");fgetc(stdin);
 /**************************** FFTW **********************************/
-#define ADE_FFTW_PLAN_FLAGS FFTW_MEASURE //read manual pg.18
+#define ADE_FFTW_PLAN_FLAGS FFTW_MEASURE //FFTW_PATIENT //FFTW_ESTIMATE //read manual pg.18
 #define ADE_FLOAT_SIZE (4)
 #define ADE_DOUBLE_SIZE (8)
+#ifdef ADE_USE_FFTW_THREADS
+#define ADE_FFTW_NTHREADS (2)
+#else
+#define ADE_FFTW_NTHREADS (0)
+#endif
 /******************************* UTILS ******************************/
 #define PLUS_ONE(x) (x+1)
 #define PRINT_IDX(x) PLUS_ONE(x)

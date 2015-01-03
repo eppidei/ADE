@@ -10,7 +10,7 @@
 
 
 static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned int n_rows, unsigned int n_cols);
-static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type);
+static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATH_ATTRIBUTE_T comp_type);
 
 
 ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* filename, char* p_matfname,char *p_matpath)
@@ -125,7 +125,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
          p_this->n_row      =calloc(k_valid_array,sizeof(unsigned int));
          p_this->n_col      =calloc(k_valid_array,sizeof(unsigned int));
          p_this->data_size  =calloc(k_valid_array,sizeof(size_t));
-         p_this->p_vartype =calloc(k_valid_array,sizeof(ADE_MATLAB_WS_T));
+         p_this->p_vartype =calloc(k_valid_array,sizeof(ADE_MATH_ATTRIBUTE_T));
 
          for (i=0;i<k_valid_array;i++)
          {
@@ -318,7 +318,7 @@ double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname)
     return *(p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)]);
 }
 
-ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_MATLAB_WS_T comp_type)
+ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_MATH_ATTRIBUTE_T comp_type)
 {
 
     mxArray *p_tmp=NULL;
@@ -531,7 +531,7 @@ static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned i
 
 }
 
-static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATLAB_WS_T comp_type)
+static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigned int n_rows, unsigned int n_cols,ADE_MATH_ATTRIBUTE_T comp_type)
 {
     unsigned int i=0,k=0,idx_dst=0,idx_src=0;
 
@@ -583,7 +583,7 @@ ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
     ADE_UINT32_T n_vars=p_mat->n_vars;
     ADE_CHAR_T *p_varname=NULL;
     double *p_data=NULL;
-    ADE_MATLAB_WS_T var_type;
+    ADE_MATH_ATTRIBUTE_T var_type;
     //ADE_UINT32_T n_var_per_printrow = 1;
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     ADE_UINT32_T n_row=0,n_col=0;

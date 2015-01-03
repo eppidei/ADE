@@ -16,12 +16,25 @@ static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, A
 ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 {
     ADE_FFT_T *p_this=NULL;
+    ADE_INT32_T ret_fftw = ADE_DEFAULT_RET;
 
     p_this=calloc(1,sizeof(ADE_FFT_T));
 
     if (p_this!=NULL)
     {
         p_this->buff_len=buff_len;
+
+        #if (ADE_FFTW_NTHREADS>0)
+
+            ret_fftw=fftw_init_threads();
+
+            if (ret_fftw<0)
+            {
+                ADE_PRINT_ERRORS(ADE_INCHECKS,ret_fftw,"%d",ADE_Fft_Init);
+                return ADE_E33;
+            }
+
+        #endif
 
 
 
@@ -116,6 +129,13 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
 
      ADE_Fft_SetInBuff(p_fft,p_inbuff);
      ADE_Fft_SetOutBuff(p_fft,p_outbuff);
+
+      #if (ADE_FFTW_NTHREADS>0)
+
+            fftw_plan_with_nthreads(ADE_FFTW_NTHREADS);
+      #endif
+
+
      plan_ret=ADE_Fft_SetPlan(p_fft,fft_type,fft_dir);
 
      if (plan_ret<0)
@@ -190,6 +210,27 @@ static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, A
             }
 
         }
+        else if (fft_type==ADE_FFT_C2R)
+        {
+            if (fft_dir==ADE_FFT_FORWARD)
+            {
+
+                   ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetPlan);
+                return ADE_E32;
+
+            }
+            else if (fft_dir==ADE_FFT_BACKWARD)
+            {
+
+                 p_fft->plan = fftw_plan_dft_c2r_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FLOATING_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
+            }
+            else
+            {
+                ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetPlan);
+                return ADE_E32;
+            }
+
+        }
         else
         {
             ADE_PRINT_ERRORS(ADE_INCHECKS,fft_type,"%d",ADE_Fft_SetPlan);
@@ -253,9 +294,12 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 
 ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
 {
-    #if (ADE_FFT_IMP==ADE_USE_FFTW) /** CHECK IF fftwf_free needed ***/
+    #if (ADE_FFT_IMP==ADE_USE_FFTW)
         fftw_free(p_fft->p_in);
         fftw_free(p_fft->p_out);
+           #if (ADE_FFTW_NTHREADS>0)
+            fftw_cleanup_threads();
+           #endif
         fftw_destroy_plan(p_fft->plan);
         fftw_cleanup();
     #else

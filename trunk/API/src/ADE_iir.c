@@ -153,7 +153,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         /************ BLAS ALLOC ***************/
 
-        ADE_Blas_level1_Init(&p_Blas_L1);
+        ADE_Blas_level1_Init(&p_Blas_L1,ADE_REAL);
         ADE_Blas_level1_setN(p_Blas_L1,order);
         ADE_Blas_level1_setINCX(p_Blas_L1,1);
         ADE_Blas_level1_setINCY(p_Blas_L1,1);
@@ -377,7 +377,7 @@ if (*(p_iir->dp_states)==NULL)
     ADE_blas_level1_T *p_Blas_L1 = p_iir->p_Blas_L1;
     ADE_FLOATING_T *temp_buffer = calloc(order,sizeof(ADE_FLOATING_T));
     ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
-
+    ADE_FLOATING_T ALPHA=0.0;
 
 
     for (k=0;k<len_frame;k++)
@@ -388,11 +388,13 @@ if (*(p_iir->dp_states)==NULL)
         /*************/
         ADE_Blas_level1_setY(p_Blas_L1,temp_buffer);
         ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
-        ADE_Blas_level1_setALPHA(p_Blas_L1,gain*in[k]);
+        ALPHA=gain*in[k];
+        ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
         ADE_Blas_real_axpy(p_Blas_L1);
         /*****************/
         ADE_Blas_level1_setX(p_Blas_L1,&a[0+1]);
-        ADE_Blas_level1_setALPHA(p_Blas_L1,-out[k]);
+        ALPHA=-out[k];
+        ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
         ADE_Blas_real_axpy(p_Blas_L1);
         memcpy(&state[0],temp_buffer,temp_buff_size);
         memset(temp_buffer,0,temp_buff_size);
