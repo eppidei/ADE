@@ -73,7 +73,7 @@ ADE_Blas_level1_setINCY(p_Blas_L1,incy);
 ADE_Blas_level1_setX(p_Blas_L1,x);
 ADE_Blas_level1_setY(p_Blas_L1,y);
 
-ADE_Blas_real_axpy(p_Blas_L1);
+ADE_Blas_axpy(p_Blas_L1);
 
 ADE_Blas_level1_Release(p_Blas_L1);
 

@@ -208,7 +208,7 @@ static ADE_API_RET_T filter_DII_T_blas (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, 
         ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
         ALPHA=gain*in[k];
         ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
-        ADE_Blas_real_axpy(p_Blas_L1);
+        ADE_Blas_axpy(p_Blas_L1);
         /*****************/
         memcpy(&state[0],temp_buffer,temp_buff_size);
         memset(temp_buffer,0,temp_buff_size);

@@ -19,6 +19,7 @@
 #define ADE_DEBUG_MATLAB (2)
 #define ADE_USE_FFTW (0)
 
+
 #define ADE_TARGET ADE_DEBUG_MATLAB
 #define ADE_FFT_IMP ADE_USE_FFTW
 #define ADE_USE_FFTW_THREADS
@@ -34,8 +35,12 @@
 
 #define ADE_USE_BLAS_CUSTOM (0)
 #define ADE_USE_BLAS_LIB (1)
+#define ADE_USE_CBLAS_LIB (2)
 
 #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB //0 Custom 1 Library
+
+#define ADE_CHECK_INPUTS (1) //1 true 0 false
+#define ADE_CHECK_RETURNS (1) //1 true 0 false
 
 
 
@@ -58,8 +63,7 @@
 #define ADE_USE_BLAS_LIB (1)
 #define ADE_USE_BLAS_CUSTOM (0)
 
-#define ADE_CHECK_INPUTS (1) //1 true 0 false
-#define ADE_CHECK_RETURNS (1) //1 true 0 false
+
 
 /****************************** BLOW ***********************************/
 #define IIR1_N_SECTIONS (3)

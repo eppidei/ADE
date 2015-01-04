@@ -139,32 +139,33 @@
 1417800424 /home/leonardo/Windows_home/WCPYS_win/ADE/API/src/headers/ADE_iir.h
 	"headers/ADE_typedefs.h"
 
-1420293089 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_blas_level1.c
+1420386197 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_blas_level1.c
 	"headers/ADE_blas_level1.h"
 	"headers/ADE_blas_wrapper.h"
 	"headers/ADE_defines.h"
 	"headers/ADE_errors.h"
+	"headers/cblas.h"
 	<stddef.h>
 	<stdio.h>
 	<stdlib.h>
 
-1420293010 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_blas_level1.h
+1420309142 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_blas_level1.h
 	"headers/ADE_typedefs.h"
 
-1420290582 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_typedefs.h
+1420406834 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_typedefs.h
 	<stdint.h>
 	"headers/ADE_defines.h"
 	<complex.h>
 	"fftw3.h"
 
-1420209733 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_defines.h
+1420412993 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_defines.h
 
-1419079696 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_blas_wrapper.h
+1420411986 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_blas_wrapper.h
 	"headers/ADE_defines.h"
 
-1420291200 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_errors.h
+1420407012 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_errors.h
 
-1420293273 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_iir.c
+1420309172 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_iir.c
 	"headers/ADE_iir.h"
 	"headers/ADE_blas_level1.h"
 	<stddef.h>
@@ -176,7 +177,7 @@
 1419792581 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_iir.h
 	"headers/ADE_typedefs.h"
 
-1420292982 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/prjs/codeblocks/blas_test/main.c
+1420309149 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/prjs/codeblocks/blas_test/main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -184,7 +185,7 @@
 	"headers/ADE_iir.h"
 	"headers/ADE.h"
 
-1420293200 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_fir.c
+1420309172 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_fir.c
 	"headers/ADE_fir.h"
 	"headers/ADE_blas_level1.h"
 	<stddef.h>
@@ -276,5 +277,27 @@
 	"matrix.h"
 
 1420293046 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_Utils.h
+	"headers/ADE_typedefs.h"
+
+1420293348 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_Utils.c
+	"headers/ADE_Utils.h"
+	"headers/ADE_errors.h"
+	<sys/ioctl.h>
+	<math.h>
+
+1267739504 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/cblas.h
+	<stddef.h>
+
+1420412786 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/ADE_blas_level2.c
+	"headers/ADE_blas_level2.h"
+	"headers/ADE_blas_wrapper.h"
+	"headers/ADE_defines.h"
+	"headers/ADE_errors.h"
+	"headers/cblas.h"
+	<stddef.h>
+	<stdio.h>
+	<stdlib.h>
+
+1420412139 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/src/headers/ADE_blas_level2.h
 	"headers/ADE_typedefs.h"
 
