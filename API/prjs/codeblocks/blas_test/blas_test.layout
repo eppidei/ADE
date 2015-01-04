@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.c" open="1" top="0" tabpos="7">
-		<Cursor position="1401" topLine="52" />
+	<File name="main.c" open="0" top="0" tabpos="7">
+		<Cursor position="2731" topLine="47" />
 	</File>
 	<File name="../../../src/ADE.c" open="0" top="0" tabpos="9">
 		<Cursor position="766" topLine="6" />
@@ -10,20 +10,23 @@
 	<File name="../../../src/ADE_Blow.c" open="0" top="0" tabpos="2">
 		<Cursor position="22576" topLine="666" />
 	</File>
-	<File name="../../../src/ADE_Matlab.c" open="1" top="0" tabpos="4">
+	<File name="../../../src/ADE_Matlab.c" open="0" top="0" tabpos="4">
 		<Cursor position="16204" topLine="581" />
 	</File>
-	<File name="../../../src/ADE_Utils.c" open="1" top="0" tabpos="11">
+	<File name="../../../src/ADE_Utils.c" open="0" top="0" tabpos="10">
 		<Cursor position="19133" topLine="470" />
 	</File>
-	<File name="../../../src/ADE_blas_level1.c" open="1" top="0" tabpos="2">
-		<Cursor position="14853" topLine="618" />
+	<File name="../../../src/ADE_blas_level1.c" open="1" top="0" tabpos="3">
+		<Cursor position="18591" topLine="486" />
 	</File>
-	<File name="../../../src/ADE_fir.c" open="1" top="0" tabpos="9">
-		<Cursor position="5523" topLine="187" />
+	<File name="../../../src/ADE_blas_level2.c" open="1" top="0" tabpos="4">
+		<Cursor position="7098" topLine="296" />
 	</File>
-	<File name="../../../src/ADE_iir.c" open="1" top="0" tabpos="10">
-		<Cursor position="10775" topLine="376" />
+	<File name="../../../src/ADE_fir.c" open="0" top="0" tabpos="8">
+		<Cursor position="5599" topLine="187" />
+	</File>
+	<File name="../../../src/ADE_iir.c" open="0" top="0" tabpos="9">
+		<Cursor position="10795" topLine="376" />
 	</File>
 	<File name="../../../src/ADE_polyfit.c" open="0" top="0" tabpos="11">
 		<Cursor position="2587" topLine="59" />
@@ -34,20 +37,23 @@
 	<File name="../../../src/headers/ADE_Blow.h" open="0" top="0" tabpos="4">
 		<Cursor position="1431" topLine="18" />
 	</File>
-	<File name="../../../src/headers/ADE_Matlab.h" open="1" top="0" tabpos="5">
+	<File name="../../../src/headers/ADE_Matlab.h" open="0" top="0" tabpos="5">
 		<Cursor position="1173" topLine="0" />
 	</File>
-	<File name="../../../src/headers/ADE_blas_level1.h" open="1" top="0" tabpos="1">
-		<Cursor position="729" topLine="17" />
+	<File name="../../../src/headers/ADE_blas_level1.h" open="1" top="0" tabpos="2">
+		<Cursor position="604" topLine="0" />
 	</File>
-	<File name="../../../src/headers/ADE_blas_wrapper.h" open="0" top="0" tabpos="16">
-		<Cursor position="329" topLine="4" />
+	<File name="../../../src/headers/ADE_blas_level2.h" open="1" top="0" tabpos="1">
+		<Cursor position="496" topLine="0" />
 	</File>
-	<File name="../../../src/headers/ADE_defines.h" open="0" top="0" tabpos="3">
-		<Cursor position="2453" topLine="48" />
+	<File name="../../../src/headers/ADE_blas_wrapper.h" open="1" top="0" tabpos="9">
+		<Cursor position="1006" topLine="42" />
+	</File>
+	<File name="../../../src/headers/ADE_defines.h" open="1" top="1" tabpos="7">
+		<Cursor position="1252" topLine="15" />
 	</File>
 	<File name="../../../src/headers/ADE_errors.h" open="1" top="0" tabpos="6">
-		<Cursor position="3532" topLine="76" />
+		<Cursor position="2217" topLine="30" />
 	</File>
 	<File name="../../../src/headers/ADE_fir.h" open="0" top="0" tabpos="5">
 		<Cursor position="1118" topLine="0" />
@@ -58,7 +64,10 @@
 	<File name="../../../src/headers/ADE_polyfit.h" open="0" top="0" tabpos="10">
 		<Cursor position="566" topLine="0" />
 	</File>
-	<File name="../../../src/headers/ADE_typedefs.h" open="1" top="1" tabpos="3">
-		<Cursor position="2461" topLine="51" />
+	<File name="../../../src/headers/ADE_typedefs.h" open="1" top="0" tabpos="5">
+		<Cursor position="1869" topLine="45" />
+	</File>
+	<File name="../../../src/headers/cblas.h" open="1" top="0" tabpos="8">
+		<Cursor position="15375" topLine="280" />
 	</File>
 </CodeBlocks_layout_file>

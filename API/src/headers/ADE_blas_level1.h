@@ -42,6 +42,6 @@ ADE_API_RET_T ADE_Blas_level1_setX(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
 ADE_API_RET_T ADE_Blas_level1_setY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
 ADE_API_RET_T ADE_Blas_level1_set_pOut(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
 ADE_API_RET_T ADE_Blas_level1_setPARAM(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_val);
-ADE_API_RET_T ADE_Blas_real_axpy(ADE_blas_level1_T* p_blas_l1);
+ADE_API_RET_T ADE_Blas_axpy(ADE_blas_level1_T* p_blas_l1);
 
 #endif //_ADE_BLAS_LEVEL1_H
