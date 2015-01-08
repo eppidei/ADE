@@ -390,12 +390,12 @@ if (*(p_iir->dp_states)==NULL)
         ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
         ALPHA=gain*in[k];
         ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
-        ADE_Blas_axpy(p_Blas_L1);
+        ADE_Blas_level1_axpy(p_Blas_L1);
         /*****************/
         ADE_Blas_level1_setX(p_Blas_L1,&a[0+1]);
         ALPHA=-out[k];
         ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
-        ADE_Blas_axpy(p_Blas_L1);
+        ADE_Blas_level1_axpy(p_Blas_L1);
         memcpy(&state[0],temp_buffer,temp_buff_size);
         memset(temp_buffer,0,temp_buff_size);
 

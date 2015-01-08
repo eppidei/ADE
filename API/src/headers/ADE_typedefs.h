@@ -9,11 +9,13 @@
 typedef int64_t ADE_INT64_T ;
 typedef int32_t ADE_INT32_T ;
 typedef int16_t ADE_INT16_T ;
-typedef int8_t  ADE_CHAR_T;
+typedef int8_t ADE_INT8_T ;
+typedef char ADE_CHAR_T;
 typedef uint64_t ADE_UINT64_T ;
 typedef uint32_t ADE_UINT32_T ;
 typedef uint16_t ADE_UINT16_T ;
-typedef uint8_t  ADE_UCHAR_T ;
+typedef uint8_t ADE_UINT8_T ;
+typedef unsigned char  ADE_UCHAR_T ;
 typedef double ADE_FLOATING_DP_T;
 typedef float ADE_FLOATING_SP_T;
 typedef double complex ADE_CPLX_DP_T;

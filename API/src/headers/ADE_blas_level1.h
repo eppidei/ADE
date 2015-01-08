@@ -19,7 +19,7 @@ struct ADE_blas_level1_S
     ADE_FLOATING_T *p_C;
     ADE_FLOATING_T *p_S;
     ADE_FLOATING_T *p_PARAM;
-    ADE_FLOATING_T *p_out;
+    //ADE_FLOATING_T *p_out;
     ADE_BLAS_LEVEL1_FCN_TYPE1_T blas_level1_fcn_type1;
     ADE_BLAS_LEVEL1_FCN_TYPE2_T blas_level1_fcn_type2;
 };
@@ -40,8 +40,9 @@ ADE_API_RET_T ADE_Blas_level1_setINCX(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T v
 ADE_API_RET_T ADE_Blas_level1_setINCY(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T val);
 ADE_API_RET_T ADE_Blas_level1_setX(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
 ADE_API_RET_T ADE_Blas_level1_setY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
-ADE_API_RET_T ADE_Blas_level1_set_pOut(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
+//ADE_API_RET_T ADE_Blas_level1_set_pOut(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
 ADE_API_RET_T ADE_Blas_level1_setPARAM(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_val);
-ADE_API_RET_T ADE_Blas_axpy(ADE_blas_level1_T* p_blas_l1);
+ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1);
+ADE_API_RET_T ADE_Blas_level1_Print(ADE_blas_level1_T *p_blas_l1);
 
 #endif //_ADE_BLAS_LEVEL1_H

@@ -1,0 +1,2 @@
+1) During initialization all input params must be checked
+2) Input checks in processing methods shall be optional

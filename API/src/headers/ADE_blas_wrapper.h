@@ -50,31 +50,58 @@ extern void zaxpy(
 );
 
 /********************************* LEVEL 2 **************************************/
+#define ssbmv FORTRAN_WRAPPER(ssbmv)
+extern void ssbmv(
+        char *uplo,
+        int *n,
+        int *k,
+        float *alpha,
+        float *a,
+        int *lda,
+        float *x,
+        int *incx,
+        float *beta,
+        float *y,
+        int* incy
+                  );
+#define dsbmv FORTRAN_WRAPPER(dsbmv)
+extern void dsbmv(
+        char *uplo,
+        int *n,
+        int *k,
+        double *alpha,
+        double *a,
+        int *lda,
+        double *x,
+        int *incx,
+        double *beta,
+        double *y,
+        int* incy
+                  );
 #define sger FORTRAN_WRAPPER(sger)
 extern void sger(
-        int *M,
-        int *N,
+        int *m,
+        int *n,
         float *alpha,
-        float *X,
-        int *incX,
-        float *Y,
-        int *incY,
-        float *A,
+        float *x,
+        int *incx,
+        float *y,
+        int *incy,
+        float *a,
         int *lda
         );
 #define dger FORTRAN_WRAPPER(dger)
 extern void dger(
-        int *M,
-        int *N,
+        int *m,
+        int *n,
         double *alpha,
-        double *X,
-        int *incX,
-        double *Y,
-        int *incY,
-        double *A,
+        double *x,
+        int *incx,
+        double *y,
+        int *incy,
+        double *a,
         int *lda
         );
-
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif
