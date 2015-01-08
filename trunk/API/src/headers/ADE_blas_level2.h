@@ -42,4 +42,7 @@ ADE_API_RET_T ADE_Blas_level2_SetBeta(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_
 ADE_API_RET_T ADE_Blas_level2_SetA(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff);
 ADE_API_RET_T ADE_Blas_level2_SetY(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff);
 ADE_API_RET_T ADE_Blas_level2_SetX(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff);
+ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_blas_l2);
+ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_blas_l2);
+ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_blas_l2);
 #endif

@@ -446,12 +446,12 @@ ADE_API_RET_T ADE_Blas_level1_setY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
 
 }
 
-ADE_API_RET_T ADE_Blas_level1_set_pOut(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf)
-{
-    p_blas_l1->p_out=p_buf;
-     return ADE_DEFAULT_RET;
-
-}
+//ADE_API_RET_T ADE_Blas_level1_set_pOut(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf)
+//{
+//    p_blas_l1->p_out=p_buf;
+//     return ADE_DEFAULT_RET;
+//
+//}
 
 
 
@@ -483,7 +483,7 @@ ADE_API_RET_T ADE_Blas_level1_setPARAM(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING
 
 }
 
-ADE_API_RET_T ADE_Blas_axpy(ADE_blas_level1_T* p_blas_l1)
+ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 {
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
 
@@ -533,6 +533,54 @@ ADE_API_RET_T ADE_Blas_axpy(ADE_blas_level1_T* p_blas_l1)
 
 }
 
+
+ADE_API_RET_T ADE_Blas_level1_Print(ADE_blas_level1_T *p_blas_l1)
+{
+    FILE *p_fid=stdout;
+
+
+   // p_fid=fopen(p_name,"w");
+
+    if (p_fid!=NULL)
+    {
+
+
+        fprintf(p_fid,"p_blas_l1->math_type = %d\n",p_blas_l1->math_type);
+        fprintf(p_fid,"p_blas_l1->N = %d\n",p_blas_l1->N);
+        fprintf(p_fid,"p_blas_l1->p_ALPHA = %p(%lf)\n",p_blas_l1->p_ALPHA,*(p_blas_l1->p_ALPHA));
+        fprintf(p_fid,"p_blas_l1->p_X = %p(%lf)\n",p_blas_l1->p_X,(p_blas_l1->p_X)[0]);
+        fprintf(p_fid,"p_blas_l1->INCX = %d\n",p_blas_l1->INCX);
+        fprintf(p_fid,"p_blas_l1->p_Y = %p(%lf)\n",p_blas_l1->p_Y,(p_blas_l1->p_Y)[0]);
+        fprintf(p_fid,"p_blas_l1->INCY = %d\n",p_blas_l1->INCY);
+        fprintf(p_fid,"p_blas_l1->p_D1 = %p(%lf)\n",p_blas_l1->p_D1,*(p_blas_l1->p_D1));
+        fprintf(p_fid,"p_blas_l1->p_D2 = %p(%lf)\n",p_blas_l1->p_D2,*(p_blas_l1->p_D2));
+        fprintf(p_fid,"p_blas_l1->p_A = %p(%lf)\n",p_blas_l1->p_A,*(p_blas_l1->p_A));
+        fprintf(p_fid,"p_blas_l1->p_B = %p(%lf)\n",p_blas_l1->p_B,*(p_blas_l1->p_B));
+        fprintf(p_fid,"p_blas_l1->p_C = %p(%lf)\n",p_blas_l1->p_C,*(p_blas_l1->p_C));
+        fprintf(p_fid,"p_blas_l1->p_S = %p(%lf)\n",p_blas_l1->p_S,*(p_blas_l1->p_S));
+        fprintf(p_fid,"p_blas_l1->p_PARAM = %p\n",p_blas_l1->p_PARAM);
+       //fprintf(p_fid,"p_blas_l1->p_out = %p(%lf)\n",p_blas_l1->p_out,(p_blas_l1->p_out)[0]);
+        fprintf(p_fid,"p_blas_l1->blas_level1_fcn_type1 = %p\n",p_blas_l1->blas_level1_fcn_type1);
+        fprintf(p_fid,"p_blas_l1->blas_level1_fcn_type2 = %p\n",p_blas_l1->blas_level1_fcn_type2);
+        fprintf(p_fid,"\n");
+      //  fclose(p_fid);
+
+        return ADE_DEFAULT_RET;
+    }
+
+    else
+    {
+
+        return ADE_E39;
+    }
+
+
+
+
+}
+
+
+/******************* private methods ***************************/
 
 static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
 {
