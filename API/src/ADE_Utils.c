@@ -16,7 +16,7 @@ static ADE_VOID_T ADE_Utils_PrintMatrixCplx(ADE_CPLX_T *p_var,ADE_UINT32_T start
 
 static ADE_API_RET_T ADE_Utils_PrintMatrix(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATH_ATTRIBUTE_T math_type);
 
-ADE_VOID_T ADE_Get_Terminal_size(ADE_INT32_T *lines ,ADE_INT32_T *columns  )
+ADE_VOID_T ADE_Utils_Get_Terminal_size(ADE_INT32_T *lines ,ADE_INT32_T *columns  )
 {
   //  char *temp=NULL;
    // int line_int=0;
@@ -294,7 +294,7 @@ static ADE_API_RET_T ADE_Utils_PrintRowArray(ADE_VOID_T *p_var,ADE_UINT32_T star
 ADE_UTILS_ROW_INFO_T row_info=ADE_UTILS_FIRST_PRINT_ROW;
 ADE_UINT32_T len = stop_0based_col_idx-start_0based_col_idx+1;
 
-     ADE_Get_Terminal_size(&lines ,&columns);
+     ADE_Utils_Get_Terminal_size(&lines ,&columns);
 
 
     if (math_type==ADE_REAL)
@@ -388,7 +388,7 @@ static ADE_VOID_T ADE_Utils_PrintMatrixReal(ADE_FLOATING_T *p_var,ADE_UINT32_T s
       ADE_INT32_T check_col=0;
       ADE_UTILS_ROW_INFO_T row_info;
 
-     ADE_Get_Terminal_size(&lines ,&columns  );
+     ADE_Utils_Get_Terminal_size(&lines ,&columns  );
 
     n_col=stop_0based_col_idx-start_0based_col_idx+1;
      n_var_per_printrow=floor(columns/ADE_UTILS_PRINTF_FLOAT_WIDTH);
@@ -437,7 +437,7 @@ static ADE_VOID_T ADE_Utils_PrintMatrixCplx(ADE_CPLX_T *p_var,ADE_UINT32_T start
       ADE_INT32_T check_col=0;
       ADE_UTILS_ROW_INFO_T row_info;
 
-     ADE_Get_Terminal_size(&lines ,&columns  );
+     ADE_Utils_Get_Terminal_size(&lines ,&columns  );
 
     n_col=stop_0based_col_idx-start_0based_col_idx+1;
      n_var_per_printrow=floor(columns/(ADE_UTILS_PRINTF_FLOAT_WIDTH+ADE_UTILS_PRINTF_FLOAT_WIDTH+2));
@@ -528,4 +528,5 @@ ADE_API_RET_T ADE_Utils_PrintArray(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_r
         return ADE_DEFAULT_RET;
     }
 }
+
 

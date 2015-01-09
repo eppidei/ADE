@@ -19,7 +19,8 @@
 				</Compiler>
 				<Linker>
 					<Add option="-lmx -lmat -lfftw3 -lfftw3_threads -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
-					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS/blas_LINUX.a" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 				</Linker>
 			</Target>
@@ -36,7 +37,8 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s -lmx -lmat -lfftw3 -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
-					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS/blas_LINUX.a" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 				</Linker>
 			</Target>
