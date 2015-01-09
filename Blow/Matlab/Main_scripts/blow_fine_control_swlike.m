@@ -190,7 +190,14 @@ blow_plot(frame_idx)= sat_detect_struct.blow;
       
       [run_pow_iir_filt(idx)]=filter(IIR_pow_filt2,normalized_pow_iir(idx));
    %%%EXPANSION%%%%
+   tic
     expanded_pow_iir(idx)= memoryless_blow_expander(run_pow_iir_filt(idx),fitresult);
+    toc
+    tic
+    testtt= memoryless_blow_expander_matrix(run_pow_iir_filt(idx),fitresult);
+    toc
+    
+%     sum(abs(expanded_pow_iir(idx)-testtt'))
     
 end
 %end Blow
