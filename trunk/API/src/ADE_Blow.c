@@ -726,15 +726,24 @@ ADE_Polyfit_SetCoeffs(p_blow->p_poly,ADE_Matlab_GetDataPointer(p_blow->p_mat,"co
 
 
 
-static ADE_API_RET_T ADE_square_vector(ADE_FLOATING_T* in ,ADE_FLOATING_T* out ,ADE_UINT32_T len)
+static ADE_API_RET_T ADE_square_vector(ADE_FLOATING_T* p_in ,ADE_FLOATING_T* p_out ,ADE_UINT32_T len)
 {
     ADE_UINT32_T i=0;
 
+//    #if (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_CUSTOM)
+//
+//    ADE_Utils_EleWise_Mult(p_in,p_in,p_out,len);
+//
     for (i=0;i<len;i++)
     {
-        out[i]=in[i]*in[i];
+        p_out[i]=p_in[i]*p_in[i];
     }
-
+//     #elif (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_BLAS)
+//
+//     #else
+//     ADE_DEFINE_ERROR(ADE_LIN_ALG_IMP)
+//
+//     #endif
     return ADE_DEFAULT_RET;
 }
 

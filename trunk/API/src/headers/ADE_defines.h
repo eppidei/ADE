@@ -14,14 +14,24 @@
 
 #define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
+/* Parameters */
 #define ADE_RELEASE (0)
 #define ADE_DEBUG_NORMAL (1)
 #define ADE_DEBUG_MATLAB (2)
+
 #define ADE_USE_FFTW (0)
 
+#define ADE_USE_LIN_ALG_BLAS (0)
+#define ADE_USE_LIN_ALG_CUSTOM (1)
 
+#define ADE_USE_BLAS_CUSTOM (0)
+#define ADE_USE_BLAS_LIB (1)
+#define ADE_USE_CBLAS_LIB (2)
+
+/* Control */
 #define ADE_TARGET ADE_DEBUG_MATLAB
 #define ADE_FFT_IMP ADE_USE_FFTW
+#define ADE_LIN_ALG_IMP ADE_USE_LIN_ALG_BLAS
 #define ADE_USE_FFTW_THREADS
 
 
@@ -33,11 +43,8 @@
 #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
 #endif
 
-#define ADE_USE_BLAS_CUSTOM (0)
-#define ADE_USE_BLAS_LIB (1)
-#define ADE_USE_CBLAS_LIB (2)
 
-#define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB //0 Custom 1 Library
+#define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
 
 #define ADE_CHECK_INPUTS (1) //1 true 0 false
 #define ADE_CHECK_RETURNS (1) //1 true 0 false
