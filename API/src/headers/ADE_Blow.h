@@ -14,7 +14,7 @@ struct ADE_BLOW_S
     ADE_UINT32_T fir_order;
     //ADE_UINT32_T iir_order;
     //ADE_UINT32_T iir2_order;
-    ADE_UINT32_T buff_size;
+    ADE_UINT32_T buff_len;
     ADE_FIR_T *p_fir;
     ADE_IIR_T *p_iir;
     ADE_IIR_T *p_iir2;
@@ -43,6 +43,7 @@ struct ADE_BLOW_S
     //ADE_FLOATING_T *breaks;
     ADE_UINT32_T poly_order;
     //ADE_FLOATING_T *poly_coeffs;
+    ADE_blas_level2_T *p_blas_l2;
     #ifdef ADE_CONFIGURATION_INTERACTIVE
     ADE_MATLAB_T *p_mat;
     #endif
