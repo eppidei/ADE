@@ -54,7 +54,7 @@ for i=1:length(inp_frame)
        
         if (data<data_saved)
             data_saved=data;
-             warning('input data negative %f\n',data_saved);
+%              warning('input data negative %f\n',data_saved);
         end
         zz=1;
         data = 0;
