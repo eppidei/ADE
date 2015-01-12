@@ -3,8 +3,7 @@
 
 #define ADE_DEFAULT_RET (0)
 
-#define ADE_USE_SINGLE_PREC (0)
-#define ADE_USE_DOUBLE_PREC (1)
+
 
 
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
@@ -15,6 +14,9 @@
 #define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
 /* Parameters */
+#define ADE_USE_SINGLE_PREC (0)
+#define ADE_USE_DOUBLE_PREC (1)
+
 #define ADE_RELEASE (0)
 #define ADE_DEBUG_NORMAL (1)
 #define ADE_DEBUG_MATLAB (2)

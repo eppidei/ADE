@@ -2,7 +2,7 @@
 #include "headers/ADE_blas_wrapper.h"
 #include "headers/ADE_defines.h"
 #include "headers/ADE_errors.h"
-#include "headers/cblas.h"
+#include "headers/ADE_cblas.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -341,7 +341,7 @@ ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
      #if (ADE_CHECK_RETURNS==1)
     if (ret<0)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_ger);
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_ger);
     }
     #endif
 

@@ -2,7 +2,7 @@
 #include "headers/ADE_blas_wrapper.h"
 #include "headers/ADE_defines.h"
 #include "headers/ADE_errors.h"
-#include "headers/cblas.h"
+#include "headers/ADE_cblas.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>

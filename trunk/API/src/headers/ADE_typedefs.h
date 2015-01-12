@@ -54,6 +54,17 @@ typedef ADE_FLOATING_T* (*ADE_BLAS_LEVEL1_FCN_TYPE2_T)(ADE_blas_level1_T*);
 /*Level2*/
 typedef struct ADE_blas_level2_S ADE_blas_level2_T;
 typedef ADE_API_RET_T (*ADE_BLAS_LEVEL2_FCN_TYPE1_T)(ADE_blas_level2_T*);
+/*Level3*/
+typedef struct ADE_blas_level3_S ADE_blas_level3_T;
+typedef ADE_API_RET_T (*ADE_BLAS_LEVEL3_FCN_TYPE1_T)(ADE_blas_level3_T*);
+
+#define CBLAS_INDEX size_t  /* this may vary between platforms */
+
+typedef enum CBLAS_ORDER {CblasRowMajor=101, CblasColMajor=102} ADE_CBLAS_ORDER_T;
+typedef enum CBLAS_TRANSPOSE {CblasNoTrans=111, CblasTrans=112, CblasConjTrans=113} ADE_CBLAS_TRANSPOSE_T;
+typedef enum CBLAS_UPLO {CblasUpper=121, CblasLower=122} ADE_CBLAS_UPLO_T;
+typedef enum CBLAS_DIAG {CblasNonUnit=131, CblasUnit=132} ADE_CBLAS_DIAG_T;
+typedef enum CBLAS_SIDE {CblasLeft=141, CblasRight=142} ADE_CBLAS_SIDE_T;
 
 /******************************* IIR **************************/
 typedef struct ADE_IIR_S ADE_IIR_T;
