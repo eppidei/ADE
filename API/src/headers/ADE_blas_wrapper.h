@@ -102,6 +102,71 @@ extern void dger(
         double *a,
         int *lda
         );
+
+/********************************* LEVEL 3 **************************************/
+#define sgemm FORTRAN_WRAPPER(sgemm)
+extern void sgemm(
+        char *transa,
+        char *transb,
+        int *m,
+        int *n,
+        int *k,
+        float *alpha,
+        float *a,
+        int *lda,
+        float *b,
+        int *ldb,
+        float *beta,
+        float *c,
+        int *ldc
+                  );
+#define cgemm FORTRAN_WRAPPER(cgemm)
+extern void cgemm(
+        char *transa,
+        char *transb,
+        int *m,
+        int *n,
+        int *k,
+        complex *alpha,
+        complex *a,
+        int *lda,
+        complex *b,
+        int *ldb,
+        complex *beta,
+        complex *c,
+        int *ldc
+                  );
+#define dgemm FORTRAN_WRAPPER(dgemm)
+extern void dgemm(
+        char *transa,
+        char *transb,
+        int *m,
+        int *n,
+        int *k,
+        double *alpha,
+        double *a,
+        int *lda,
+        double *b,
+        int *ldb,
+        double *beta,
+        double *c,
+        int *ldc
+                  );
+extern void zgemm(
+        char *transa,
+        char *transb,
+        int *m,
+        int *n,
+        int *k,
+        double complex*alpha,
+        double complex*a,
+        int *lda,
+        double complex*b,
+        int *ldb,
+        double complex*beta,
+        double complex*c,
+        int *ldc
+                  );
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

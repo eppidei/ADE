@@ -60,6 +60,9 @@
 		<Unit filename="../../../src/ADE_blas_level2.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_blas_level3.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_fir.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -74,14 +77,15 @@
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level1.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level2.h" />
+		<Unit filename="../../../src/headers/ADE_blas_level3.h" />
 		<Unit filename="../../../src/headers/ADE_blas_wrapper.h" />
+		<Unit filename="../../../src/headers/ADE_cblas.h" />
 		<Unit filename="../../../src/headers/ADE_defines.h" />
 		<Unit filename="../../../src/headers/ADE_errors.h" />
 		<Unit filename="../../../src/headers/ADE_fir.h" />
 		<Unit filename="../../../src/headers/ADE_iir.h" />
 		<Unit filename="../../../src/headers/ADE_polyfit.h" />
 		<Unit filename="../../../src/headers/ADE_typedefs.h" />
-		<Unit filename="../../../src/headers/cblas.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
