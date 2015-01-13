@@ -10,10 +10,14 @@
 static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1);
+static ADE_API_RET_T ADE_Blas_level1_scopy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_caxpy (ADE_blas_level1_T *p_blas_l1);
+static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1);
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 static ADE_API_RET_T ADE_Blas_level1_daxpy (ADE_blas_level1_T *p_blas_l1);
+static ADE_API_RET_T ADE_Blas_level1_dcopy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_zaxpy (ADE_blas_level1_T *p_blas_l1);
+static ADE_API_RET_T ADE_Blas_level1_zcopy (ADE_blas_level1_T *p_blas_l1);
 #else
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);
 #endif
@@ -483,6 +487,8 @@ ADE_API_RET_T ADE_Blas_level1_setPARAM(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING
 
 }
 
+/**************** Operative Methods ****************************/
+
 ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 {
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
@@ -533,6 +539,55 @@ ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 
 }
 
+ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
+{
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+    if(p_blas_l1->math_type==ADE_REAL)
+    {
+        p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_scopy;
+    }
+    else if (p_blas_l1->math_type==ADE_CPLX)
+    {
+        p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_ccopy;
+    }
+    else
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_blas_l1->math_type,"%d",ADE_Blas_copy);
+        return ADE_E36;
+    }
+
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+    if(p_blas_l1->math_type==ADE_REAL)
+    {
+     p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_dcopy;
+     }
+    else if (p_blas_l1->math_type==ADE_CPLX)
+    {
+        p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_zcopy;
+    }
+    else
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_blas_l1->math_type,"%d",ADE_Blas_copy);
+        return ADE_E36;
+    }
+     #else
+        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+    #endif
+
+     ret = ADE_Blas_level1_launch_type1(p_blas_l1);
+
+     #if (ADE_CHECK_RETURNS==1)
+    if (ret<0)
+    {
+        ADE_PRINT_ERRORS(ADE_BLAS_L1,ret,"%d",ADE_Blas_copy);
+    }
+    #endif
+
+    return ret;
+
+}
 
 ADE_API_RET_T ADE_Blas_level1_Print(ADE_blas_level1_T *p_blas_l1)
 {
@@ -716,12 +771,40 @@ ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
 
 }
 
+static ADE_API_RET_T ADE_Blas_level1_scopy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+{
+
+    #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
+
+        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_scopy);
+
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
+
+        scopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+
+        cblas_scopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+#else
+
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+
+#endif
+
+
+
+
+  return ADE_DEFAULT_RET;
+
+}
+
+
 static ADE_API_RET_T ADE_Blas_level1_caxpy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
-        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_daxpy);
+        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_caxpy);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
@@ -730,6 +813,32 @@ static ADE_API_RET_T ADE_Blas_level1_caxpy (ADE_blas_level1_T *p_blas_l1)// (ADE
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
         cblas_caxpy(p_blas_l1->N,(ADE_CPLX_T*)p_blas_l1->p_ALPHA,(ADE_CPLX_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_CPLX_T*)p_blas_l1->p_Y,p_blas_l1->INCY );
+#else
+
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+
+#endif
+
+
+
+
+  return ADE_DEFAULT_RET;
+
+}
+static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+{
+
+    #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
+
+        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_ccopy);
+
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
+
+        ccopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+
+        cblas_ccopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
 ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
@@ -772,7 +881,32 @@ ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
   return ADE_DEFAULT_RET;
 
 }
+static ADE_API_RET_T ADE_Blas_level1_dcopy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+{
 
+    #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
+
+        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_dcopy);
+
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
+
+        dcopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+
+        cblas_dcopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+#else
+
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+
+#endif
+
+
+
+
+  return ADE_DEFAULT_RET;
+
+}
 static ADE_API_RET_T ADE_Blas_level1_zaxpy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
@@ -798,7 +932,32 @@ ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
   return ADE_DEFAULT_RET;
 
 }
+static ADE_API_RET_T ADE_Blas_level1_zcopy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+{
 
+    #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
+
+        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_zcopy);
+
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
+
+        zcopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+
+        cblas_zcopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+#else
+
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+
+#endif
+
+
+
+
+  return ADE_DEFAULT_RET;
+
+}
 #else
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);
 #endif

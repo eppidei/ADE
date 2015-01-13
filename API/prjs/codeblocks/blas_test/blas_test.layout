@@ -7,7 +7,7 @@
 	<File name="../../../src/ADE.c" open="0" top="0" tabpos="9">
 		<Cursor position="766" topLine="6" />
 	</File>
-	<File name="../../../src/ADE_Blow.c" open="0" top="0" tabpos="15">
+	<File name="../../../src/ADE_Blow.c" open="1" top="0" tabpos="12">
 		<Cursor position="22576" topLine="717" />
 	</File>
 	<File name="../../../src/ADE_Matlab.c" open="0" top="0" tabpos="9">
@@ -17,7 +17,7 @@
 		<Cursor position="2040" topLine="1" />
 	</File>
 	<File name="../../../src/ADE_blas_level1.c" open="1" top="0" tabpos="8">
-		<Cursor position="190" topLine="0" />
+		<Cursor position="1002" topLine="0" />
 	</File>
 	<File name="../../../src/ADE_blas_level2.c" open="1" top="0" tabpos="4">
 		<Cursor position="162" topLine="0" />
@@ -31,8 +31,8 @@
 	<File name="../../../src/ADE_iir.c" open="0" top="0" tabpos="12">
 		<Cursor position="10229" topLine="378" />
 	</File>
-	<File name="../../../src/ADE_polyfit.c" open="0" top="0" tabpos="11">
-		<Cursor position="2587" topLine="59" />
+	<File name="../../../src/ADE_polyfit.c" open="1" top="1" tabpos="13">
+		<Cursor position="3638" topLine="105" />
 	</File>
 	<File name="../../../src/headers/ADE.h" open="0" top="0" tabpos="8">
 		<Cursor position="558" topLine="0" />
@@ -44,21 +44,21 @@
 		<Cursor position="1173" topLine="0" />
 	</File>
 	<File name="../../../src/headers/ADE_blas_level1.h" open="1" top="0" tabpos="11">
-		<Cursor position="1362" topLine="19" />
+		<Cursor position="1362" topLine="6" />
 	</File>
 	<File name="../../../src/headers/ADE_blas_level2.h" open="1" top="0" tabpos="7">
 		<Cursor position="54" topLine="0" />
 	</File>
 	<File name="../../../src/headers/ADE_blas_level3.h" open="1" top="0" tabpos="5">
-		<Cursor position="488" topLine="14" />
+		<Cursor position="488" topLine="1" />
 	</File>
 	<File name="../../../src/headers/ADE_blas_wrapper.h" open="1" top="0" tabpos="6">
-		<Cursor position="3332" topLine="142" />
+		<Cursor position="3332" topLine="133" />
 	</File>
 	<File name="../../../src/headers/ADE_cblas.h" open="1" top="0" tabpos="9">
 		<Cursor position="28232" topLine="486" />
 	</File>
-	<File name="../../../src/headers/ADE_defines.h" open="1" top="1" tabpos="10">
+	<File name="../../../src/headers/ADE_defines.h" open="1" top="0" tabpos="10">
 		<Cursor position="1256" topLine="21" />
 	</File>
 	<File name="../../../src/headers/ADE_errors.h" open="1" top="0" tabpos="3">
