@@ -1,10 +1,10 @@
 #include "my_defines.h"
-#if (_OS_==1)
+#if (_OS_==WIN_OS)
 #include <winsock2.h>
 #include <windows.h>
 #include <WinDef.h>
 static SOCKET SOCK_sd2;
-#else
+#elif (_OS_==LINUX_OS)
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -119,7 +119,7 @@ unsigned int remote_ip1;
 	remote_ip3=(unsigned int)(*remote_ip3_from_mat);
 	remote_ip4=(unsigned int)(*remote_ip4_from_mat);
 	
-	 sprintf(remote_IP,"%3.3d.%3.3d.%2.2d.%2.2d",remote_ip1,remote_ip2,remote_ip3,remote_ip4);
+	 sprintf(remote_IP,"%3.3d.%3.3d.%3.3d.%3.3d",remote_ip1,remote_ip2,remote_ip3,remote_ip4);
 	//mexPrintf("local_IP %s\n",local_IP);
 	//mexPrintf("remote_IP %s\n",remote_IP);
 
@@ -130,7 +130,7 @@ unsigned int remote_ip1;
 	//mexPrintf("Port number %d\n",port);
 
 	 if (port>65536)
-	 mexWarnMsgTxt("port number not valid");
+	 //mexWarnMsgTxt("port number not valid");
 
 	 mrows = 1;
 	 ncols_audio = MAX_AUDIO_FLOAT;
@@ -200,6 +200,7 @@ unsigned int remote_ip1;
 			mexPrintf("Closing socket at init\n");
 		}
 		SCDF_Init(local_IP,remote_IP,port,&SOCK_sd,&localport_info);
+        mexPrintf("******** Remeber to check firewall rules on port %d ************\n",port);
 		memset(&SCDF_rx_pkt,0,sizeof(SCDF_rx_pkt));
 		init=1;
 	}
@@ -216,7 +217,7 @@ unsigned int remote_ip1;
 	Test_endpoint.address=( (remote_ip1 & 0xFF) <<24) | ( (remote_ip2 & 0xFF) <<16) | ( (remote_ip3 & 0xFF) <<8) | ( (remote_ip4 & 0xFF) <<0) ;//(remote_IP);
 		Test_endpoint.port=port;
 		
-		/*mexPrintf("receive_ret_val %d\n",receive_ret_val);*/
+		//mexPrintf("receive_ret_val %d\n",receive_ret_val);
 	if (	receive_ret_val>0)
 	{
 		Test_Listener.ProcessPacket(char_buff,receive_ret_val,Test_endpoint);

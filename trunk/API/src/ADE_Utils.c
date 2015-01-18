@@ -3,6 +3,8 @@
 #include <sys/ioctl.h>
 #include <math.h>
 
+/**************************** Private prototypes *********************************/
+
 static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,ADE_UINT32_T n_var_per_printrow,ADE_UTILS_ROW_INFO_T row_info, FILE *p_stream);
 static ADE_API_RET_T ADE_Utils_PrintRowArrayCplx(ADE_CPLX_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx, ADE_UINT32_T n_var_per_printrow, ADE_UTILS_ROW_INFO_T row_info, FILE *p_stream);
 static ADE_API_RET_T ADE_Utils_PrintColArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx,   FILE *p_stream);
@@ -15,6 +17,8 @@ static ADE_VOID_T ADE_Utils_PrintMatrixReal(ADE_FLOATING_T *p_var,ADE_UINT32_T s
 static ADE_VOID_T ADE_Utils_PrintMatrixCplx(ADE_CPLX_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,  FILE *p_stream);
 
 static ADE_API_RET_T ADE_Utils_PrintMatrix(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATH_ATTRIBUTE_T math_type);
+
+/********************* Functions ***********************************/
 
 ADE_VOID_T ADE_Utils_Get_Terminal_size(ADE_INT32_T *lines ,ADE_INT32_T *columns  )
 {
@@ -68,6 +72,113 @@ ADE_VOID_T ADE_Utils_Get_Terminal_size(ADE_INT32_T *lines ,ADE_INT32_T *columns 
 
 //     return ADE_DEFAULT_RET;
 }
+
+ADE_API_RET_T ADE_Utils_PrintArray(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATH_ATTRIBUTE_T math_type)
+{
+
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_UINT32_T n_row=stop_0based_row_idx-start_0based_row_idx+1;
+    ADE_UINT32_T n_col=stop_0based_col_idx-start_0based_col_idx+1;
+
+    if (n_row==1)
+    {
+        ret = ADE_Utils_PrintRowArray(p_var,start_0based_col_idx, stop_0based_col_idx,p_varname, p_stream,math_type);
+    }
+    else if (n_col==1)
+    {
+         ret = ADE_Utils_PrintColArray(p_var,start_0based_row_idx,stop_0based_row_idx, p_varname, p_stream,math_type);
+    }
+    else
+    {
+        ret = ADE_Utils_PrintMatrix(p_var,start_0based_row_idx,stop_0based_row_idx, start_0based_col_idx, stop_0based_col_idx, p_varname,p_stream,math_type);
+    }
+
+    if (ret<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Utils_PrintArray);
+        return ADE_E35;
+
+    }
+    else
+    {
+        return ADE_DEFAULT_RET;
+    }
+}
+
+ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_len ,ADE_FLOATING_T *indexes_o,ADE_FLOATING_T *n_indexes_o, ADE_FLOATING_T threshold,ADE_UTILS_CONDITION_T condition)
+{
+    ADE_UINT32_T i=0,idx=0;
+
+    if (condition==ADE_UTILS_MAJOR)
+    {
+        for(i=0;i<frame_len;i++)
+        {
+            if (frame_i[i]>threshold)
+            {
+                indexes_o[idx]=i;
+                idx++;
+            }
+        }
+
+    }
+    else if (condition==ADE_UTILS_MINOR)
+    {
+        for(i=0;i<frame_len;i++)
+        {
+            if (frame_i[i]<threshold)
+            {
+                indexes_o[idx]=i;
+                idx++;
+            }
+        }
+    }
+    else if (condition==ADE_UTILS_EQUAL)
+    {
+        for(i=0;i<frame_len;i++)
+        {
+            if (frame_i[i]==threshold)
+            {
+                indexes_o[idx]=i;
+                idx++;
+            }
+        }
+
+    }
+    else if (condition==ADE_UTILS_MAJEQUAL)
+    {
+        for(i=0;i<frame_len;i++)
+        {
+            if (frame_i[i]>=threshold)
+            {
+                indexes_o[idx]=i;
+                idx++;
+            }
+        }
+
+    }
+    else if (condition==ADE_UTILS_MINEQUAL)
+    {
+        for(i=0;i<frame_len;i++)
+        {
+            if (frame_i[i]<=threshold)
+            {
+                indexes_o[idx]=i;
+                idx++;
+            }
+        }
+
+    }
+    else
+    {
+        return ADE_E34;
+    }
+
+    *n_indexes_o=idx;
+
+    return ADE_DEFAULT_RET;
+
+}
+/*********************** Private Functions ******************************/
 
 static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,ADE_UINT32_T n_var_per_printrow, ADE_UTILS_ROW_INFO_T row_info,FILE *p_stream)
 {
@@ -497,36 +608,5 @@ static ADE_API_RET_T ADE_Utils_PrintMatrix(ADE_VOID_T *p_var,ADE_UINT32_T start_
 }
 
 
-ADE_API_RET_T ADE_Utils_PrintArray(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATH_ATTRIBUTE_T math_type)
-{
-
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
-    ADE_UINT32_T n_row=stop_0based_row_idx-start_0based_row_idx+1;
-    ADE_UINT32_T n_col=stop_0based_col_idx-start_0based_col_idx+1;
-
-    if (n_row==1)
-    {
-        ret = ADE_Utils_PrintRowArray(p_var,start_0based_col_idx, stop_0based_col_idx,p_varname, p_stream,math_type);
-    }
-    else if (n_col==1)
-    {
-         ret = ADE_Utils_PrintColArray(p_var,start_0based_row_idx,stop_0based_row_idx, p_varname, p_stream,math_type);
-    }
-    else
-    {
-        ret = ADE_Utils_PrintMatrix(p_var,start_0based_row_idx,stop_0based_row_idx, start_0based_col_idx, stop_0based_col_idx, p_varname,p_stream,math_type);
-    }
-
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Utils_PrintArray);
-        return ADE_E35;
-
-    }
-    else
-    {
-        return ADE_DEFAULT_RET;
-    }
-}
 
 

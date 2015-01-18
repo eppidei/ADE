@@ -80,7 +80,7 @@ typedef struct ADE_POLYFIT_S ADE_POLYFIT_T;
 /******************************* BLOW ***************************/
 typedef struct ADE_BLOW_S ADE_BLOW_T;
 typedef ADE_API_RET_T (*ADE_BLOW_FUNCS_T)(ADE_BLOW_T*);
-typedef enum  {waiting,evaluation,tracking} BLOW_SM_STATES_T;
+typedef enum  {ADE_BLOW_WAITING,ADE_BLOW_EVALUATION,ADE_BLOW_TRACKING} BLOW_SM_STATES_T;
 
 /******************************** MATLAB ***************************/
 typedef struct ADE_MATLAB_S ADE_MATLAB_T;
@@ -91,6 +91,7 @@ typedef enum {ADE_FFT_C2C,ADE_FFT_R2C,ADE_FFT_C2R,ADE_FFT_R2R} ADE_FFT_TYPE_T;
 typedef enum {ADE_FFT_FORWARD,ADE_FFT_BACKWARD} ADE_FFT_DIRECTION_T;
 /**************************** UTILS *************************/
 typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_ROW_INFO_T;
+typedef enum {ADE_UTILS_MAJOR,ADE_UTILS_MINOR,ADE_UTILS_EQUAL,ADE_UTILS_MAJEQUAL,ADE_UTILS_MINEQUAL} ADE_UTILS_CONDITION_T;
 /******************************* BLOW ***************************/
 typedef struct ADE_SNAP_S ADE_SNAP_T;
 

@@ -20,23 +20,27 @@ test_file ='testaudio_soffiodistante.wav';
 addpath(funcs_path)
 addpath(mex_exec_path)
 
+%%%%%%%%%MAIN VARIABLES%%%%%%%%%
+frame_len = 256;
+plot_approx_duration = 10;
+refresh_rate=100;%in frame_len*Fs units
 
 
 %%%%%% devel type %%%%%%%
 
 devel_type='online';
-frame_len = 512;
+
 
 if strcmp(devel_type,'online')
-    local_ip = '10.12.209.56';
-    remote_ip1 = 10;
-    remote_ip2 =12;
-    remote_ip3 =209;
-    remote_ip4 =116';
-    port = 55555;
-    Fs = 48000;
+    local_ip = '192.168.1.52';
+    remote_ip1 = 192;
+    remote_ip2 =168;
+    remote_ip3 =1;
+    remote_ip4 =37;
+    port = 50000;
+    Fs = 44100;
     nbit = 16;
-    n_iterations = Inf;
+    n_iterations = 2^32-1;
 elseif strcmp(devel_type,'offline')
     file_path=[res_path,separator,test_file];
     [samples,Fs,nbit]=wavread(file_path);
@@ -61,7 +65,7 @@ h1=figure('Name','Data Plot');
 %  set(h1,'OuterPosition',[800 520 1000 520]);
 
 sample_time=1/Fs;
-plot_approx_duration = 10;
+
 
 plot_duration =fix(plot_approx_duration/((frame_len)*sample_time))*(frame_len)*sample_time;
 t_axe = 0 : sample_time : plot_duration-sample_time;
@@ -89,7 +93,7 @@ udp_buff_plot=zeros(1,(len_plot));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % i=1;
-refresh_rate=100;
+
 kmax=len_plot/frame_len;
 if refresh_rate>=kmax
     
