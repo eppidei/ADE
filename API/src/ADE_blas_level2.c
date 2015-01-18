@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/***************** Private methods prototypes *********************/
+
 static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -18,7 +20,7 @@ static ADE_VOID_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2);
 #else
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);
 #endif
-
+/***************** Init methods  *********************/
 ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type )
 {
     ADE_blas_level2_T* p_this = calloc(1,sizeof(ADE_blas_level2_T));
@@ -93,7 +95,7 @@ ADE_VOID_T ADE_Blas_level2_Release (ADE_blas_level2_T* p_Blas_l2)
      ADE_CHECKNFREE(p_Blas_l2->p_BETA);
     ADE_CHECKNFREE(p_Blas_l2);
 }
-
+/***************** Configuration methods  *********************/
 ADE_API_RET_T ADE_Blas_Level2_SetUplo(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T UPLO)
 {
     if (UPLO!='U' && UPLO!='u' && UPLO!='L' && UPLO!='l')
@@ -319,65 +321,8 @@ ADE_API_RET_T ADE_Blas_level2_SetX(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *
     }
 
 }
-ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
-{
 
-
-
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
-
-    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-
-        p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_sger;
-
-    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-     p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dger;
-     #else
-        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
-    #endif
-
-     ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
-
-     #if (ADE_CHECK_RETURNS==1)
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_ger);
-    }
-    #endif
-
-    return ret;
-
-}
-
-ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
-{
-
-
-
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
-
-    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-
-        p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_ssbmv;
-
-    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-     p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dsbmv;
-     #else
-        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
-    #endif
-
-     ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
-
-     #if (ADE_CHECK_RETURNS==1)
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_sbmv);
-    }
-    #endif
-
-    return ret;
-
-}
+/***************** Operative methods  *********************/
 
 ADE_API_RET_T ADE_Blas_level2_Elewise_Config(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len)
 {
@@ -447,6 +392,67 @@ ADE_API_RET_T ADE_Blas_level2_Elewise_Config(ADE_blas_level2_T* p_Blas_l2,ADE_FL
 
     return ADE_DEFAULT_RET;
 }
+
+ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
+{
+
+
+
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+
+        p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_sger;
+
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+     p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dger;
+     #else
+        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+    #endif
+
+     ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
+
+     #if (ADE_CHECK_RETURNS==1)
+    if (ret<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_ger);
+    }
+    #endif
+
+    return ret;
+
+}
+
+ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
+{
+
+
+
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+
+        p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_ssbmv;
+
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+     p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dsbmv;
+     #else
+        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+    #endif
+
+     ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
+
+     #if (ADE_CHECK_RETURNS==1)
+    if (ret<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_sbmv);
+    }
+    #endif
+
+    return ret;
+
+}
+
 
 ADE_API_RET_T ADE_Blas_level2_Elewise(ADE_blas_level2_T* p_Blas_l2)
 {

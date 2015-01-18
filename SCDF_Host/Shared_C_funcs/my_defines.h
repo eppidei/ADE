@@ -1,11 +1,14 @@
 #ifndef MY_DEFINES_H
 #define MY_DEFINES_H
 
+#define LINUX_OS (0)
+#define WIN_OS (1)
+
 
 #define SCDF_OK_RETURN (0)
 #undef _MIDI_ 
 #define _STK_
-#define _OS_ (0) /*choose beetwen linux 0 and windows 1*/
+#define _OS_ LINUX_OS /*choose beetwen linux 0 and windows 1*/
 
 
 /********************** UDP RECEIVER DEFINES ***********************************/

@@ -1,2 +1,7 @@
 1) During initialization all input params must be checked
-2) Input checks in processing methods shall be optional
+2) Input checks in operative methods shall be optional (define based)
+3) Return checks in operative methods shall be optional (define based)
+4) Input and return checks in init and configuration methods is mandatory
+5) le blas allocano solo i parametri interni quindi conviene cmq allocarne tante quante
+    sono le operazioni che le coinvolgono così da configurarle  a tempo zero, la scelta sui buffer 
+    se preallocarli tutti o no meglio lasciarla indipendente.

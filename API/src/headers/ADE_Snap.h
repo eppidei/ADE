@@ -11,14 +11,18 @@ struct ADE_SNAP_S
 {
     ADE_FLOATING_T Fs;
     ADE_UINT32_T buff_len;
+    ADE_UINT32_T n_threshold_slots;
     /*in out buffers*/ //allocati fuori
     ADE_FLOATING_T *p_in;
     ADE_FLOATING_T *p_out;
     /*Internal buffers*/ //allocati internamente
+    ADE_FLOATING_T *p_pow_est;
     ADE_FLOATING_T *p_tgk;
+    ADE_FLOATING_T *p_indexes;
   //  ADE_FLOATING_T *p_tgk_temp;
     /*Friend Classes*/
     ADE_IIR_T *p_iir;
+    ADE_blas_level2_T **p_blas_l2_threshold;
     ADE_blas_level2_T *p_blas_l2_tgk1;
     ADE_blas_level2_T *p_blas_l2_tgk2;
     #ifdef ADE_CONFIGURATION_INTERACTIVE

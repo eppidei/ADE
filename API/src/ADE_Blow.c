@@ -97,7 +97,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOAT
                 ADE_PRINT_ERRORS(ADE_MEM,(pthis->p_blow_state),"%p",ADE_Blow_Init);
                 return ADE_E16;
             }
-            *(pthis->p_blow_state)=waiting;
+            *(pthis->p_blow_state)=ADE_BLOW_WAITING;
            // pthis->n_breaks=n_breaks;
             //pthis->poly_order=poly_order;
 
@@ -456,7 +456,7 @@ ADE_UINT32_T *p_eval_counter=p_blow->p_eval_counter;
 ADE_INT32_T *p_eval_timer=p_blow->p_eval_timer;
 
 
-    if (state_int==tracking)
+    if (state_int==ADE_BLOW_TRACKING)
 	{
 
         if (running_pow_slow_i<=pow_thresh_low)
@@ -470,7 +470,7 @@ ADE_INT32_T *p_eval_timer=p_blow->p_eval_timer;
 
        if (*p_eval_pow>n_pow_thres_release)
 	   {
-            *p_state=waiting;
+            *p_state=ADE_BLOW_WAITING;
 	   }
        else
 	   {
@@ -481,7 +481,7 @@ ADE_INT32_T *p_eval_timer=p_blow->p_eval_timer;
        *p_eval_timer=0;
 
 	}
-    else if (state_int==evaluation)
+    else if (state_int==ADE_BLOW_EVALUATION)
 	{
         *p_eval_timer=eval_timer_int-1;
 
@@ -505,21 +505,21 @@ ADE_INT32_T *p_eval_timer=p_blow->p_eval_timer;
 
         if (*p_eval_counter>n_sat_thres && *p_eval_timer>=0 && *p_eval_pow>=n_pow_thres_attack)
 		{
-            *p_state=tracking;
+            *p_state=ADE_BLOW_TRACKING;
             *p_eval_pow=0;
 		}
         else if (*p_eval_timer==0)
 		{
-            *p_state=waiting;
+            *p_state=ADE_BLOW_WAITING;
 		}
         else
 		{
-            *p_state=evaluation;
+            *p_state=ADE_BLOW_EVALUATION;
 		}
 
 	}
 
-    else if (state_int==waiting)
+    else if (state_int==ADE_BLOW_WAITING)
 
 
         if (abs_sample_i>sat_thresh)
@@ -528,14 +528,14 @@ ADE_INT32_T *p_eval_timer=p_blow->p_eval_timer;
             *p_eval_counter=0;
             *p_eval_pow= 0;
 
-            *p_state=evaluation;
+            *p_state=ADE_BLOW_EVALUATION;
 		}
         else
 		{
             *p_eval_timer=eval_timer_int;
              *p_eval_counter= eval_counter_int;
              *p_eval_pow=0;
-            *p_state=waiting;
+            *p_state=ADE_BLOW_WAITING;
 
 		}
 

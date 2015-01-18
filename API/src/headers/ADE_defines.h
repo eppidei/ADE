@@ -3,9 +3,7 @@
 
 #define ADE_DEFAULT_RET (0)
 
-
-
-
+/****************** Macros **************************/
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
 //#define ADE_GOTO_LABEL gently_closure :
 #define CHECK_RET_MAIN(s)  if(s<0) {goto gently_closure;}
@@ -30,6 +28,12 @@
 #define ADE_USE_BLAS_LIB (1)
 #define ADE_USE_CBLAS_LIB (2)
 
+#define ADE_CHECK_INPUTS_TRUE (1)
+#define ADE_CHECK_INPUTS_FALSE (0)
+
+#define ADE_CHECK_RETURNS_TRUE (1)
+#define ADE_CHECK_RETURNS_FALSE (0)
+
 /* Control */
 #define ADE_TARGET ADE_DEBUG_MATLAB
 #define ADE_FFT_IMP ADE_USE_FFTW
@@ -48,8 +52,8 @@
 
 #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
 
-#define ADE_CHECK_INPUTS (1) //1 true 0 false
-#define ADE_CHECK_RETURNS (1) //1 true 0 false
+#define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_TRUE //1 true 0 false
+#define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_TRUE //1 true 0 false
 
 
 
