@@ -10,6 +10,7 @@ static SOCKET SOCK_sd2;
 #include <unistd.h>
 #include <netinet/in.h>
 #include <stdlib.h>
+#include <pthread.h>
 static int SOCK_sd2;
 #endif
 #include <stdio.h>
@@ -21,9 +22,91 @@ static int SOCK_sd2;
 #include "osc/OscPacketListener.h"
 #include "ip/UdpSocket.h"
 #include "SCDF_OSCListener.h"
+#include "UDPSendersManager.h"
+
+/******************RECEIVER DATA STRUCT******************/
+typedef struct RX_S
+{
+  unsigned int remote_ip1;
+	unsigned int remote_ip2;
+	unsigned int remote_ip3;
+	unsigned int remote_ip4;
+	unsigned int local_ip1;
+	unsigned int local_ip2;
+	unsigned int local_ip3;
+	unsigned int local_ip4;
+    int port;
+    fd_set *p_fds;
+    sockaddr_in *p_localport_info;
+    int *p_sock;
+    char *p_buff;
+    unsigned int buff_len;
+    int start;
+}RX_T;
+
+
+void* rx_thread(void *p_params)
+{
+    RX_T *p_rxdata=(RX_T*)p_params;
+    unsigned long n_data_buffer;
+    char local_IP[40], remote_IP[40];
+    SCDFPacketListener Test_Listener(MAX_SENSOR_FLOATS,MAX_AUDIO_FLOAT);
+	IpEndpointName Test_endpoint;
+	int receive_ret_val;
+
+    memset(local_IP,'\0',sizeof(local_IP));
+
+    memset(remote_IP,'\0',sizeof(remote_IP));
+
+    sprintf(remote_IP,"%3.3d.%3.3d.%1.1d.%2.2d",p_rxdata->remote_ip1,p_rxdata->remote_ip2,p_rxdata->remote_ip3,p_rxdata->remote_ip4);
+    sprintf(local_IP,"%3.3d.%3.3d.%1.1d.%2.2d",p_rxdata->local_ip1,p_rxdata->local_ip2,p_rxdata->local_ip3,p_rxdata->local_ip4);
+
+
+    SCDF_Init(local_IP,remote_IP,p_rxdata->port,p_rxdata->p_sock,p_rxdata->p_localport_info);
+
+	while(p_rxdata->start)
+	{
+	     receive_ret_val=SCDF_receive(p_rxdata->p_buff,p_rxdata->buff_len*sizeof(char),local_IP,remote_IP,p_rxdata->port,p_rxdata->p_sock,p_rxdata->p_fds,p_rxdata->p_localport_info,&n_data_buffer);
+
+        if (receive_ret_val>0)
+        {
+
+
+        Test_endpoint.address=( (p_rxdata->remote_ip1 & 0xFF) <<24) | ( (p_rxdata->remote_ip2 & 0xFF) <<16) | ( (p_rxdata->remote_ip3 & 0xFF) <<8) | ( (p_rxdata->remote_ip4 & 0xFF) <<0) ;//(remote_IP);
+		Test_endpoint.port=p_rxdata->port;
+
+		Test_Listener.ProcessPacket(p_rxdata->p_buff,receive_ret_val,Test_endpoint);
+		  }
 
 
 
+
+	}
+
+	close(*(p_rxdata->p_sock));
+	pthread_exit(NULL);
+}
+
+
+//void* tx_thread(void *p_params)
+//{
+//    scdf::UDPSendersManager *p_sendmanager;
+//
+//
+//     p_sendmanager->InitSender(55000, "127.0.0.1");
+//     p_sendmanager->SetOutputPort(55000);
+//    p_sendmanager->SetOutputAddress("127.0.0.1");
+//    p_sendmanager->SetMultiOutput(false);
+//    p_sendmanager->SetUseOSCPackaging(true);
+//
+//    while (1)
+//    {
+//        p_sendmanager->senderHelper::SendData(tx_buffer);
+//    }
+//
+//
+//
+//}
 
 
 
@@ -38,87 +121,52 @@ static int SOCK_sd;
 	static fd_set fds;
     static struct sockaddr_in localport_info;		/* Information about the local part */
 
-	char local_IP[40], remote_IP[40];
-	int port=50000;
 
-	int receive_ret_val;
-	//double out_samples[N_SAMPLES];
-	//int buff_size;
-
+pthread_t thread1;
+int tret;
 
     static char char_buff[MAX_CHAR_BUFF_LEN];
-	//static int init=0;
+     scdf::UDPSendersManager *p_sendmanager= scdf::UDPSendersManager::Instance();
 
-	SCDFPacketListener Test_Listener(MAX_SENSOR_FLOATS,MAX_AUDIO_FLOAT);
-	IpEndpointName Test_endpoint;
+	RX_T rx_data;
 
-unsigned int remote_ip1=192;
-	unsigned int remote_ip2=168;
-	unsigned int remote_ip3=1;
-	unsigned int remote_ip4=30;
-	unsigned int local_ip1=192;
-	unsigned int local_ip2=168;
-	unsigned int local_ip3=1;
-	unsigned int local_ip4=52;
-	unsigned long n_data_buffer;
-	// if(nrhs!=3)
-    // mexErrMsgTxt("Three inputs required.");
-   // if(nlhs!=3)
-     // mexErrMsgTxt("3 outputs required.");
+    rx_data.port=50000;
+    rx_data.p_fds=&fds;
+    rx_data.p_localport_info=&localport_info;
+    rx_data.p_sock=&SOCK_sd;
+    rx_data.p_buff=&(char_buff[0]);
+    rx_data.buff_len=MAX_CHAR_BUFF_LEN;
+    rx_data.remote_ip1=192;
+	rx_data.remote_ip2=168;
+	rx_data.remote_ip3=1;
+	rx_data.remote_ip4=30;
+	rx_data.local_ip1=192;
+	rx_data.local_ip2=168;
+	rx_data.local_ip3=1;
+	rx_data.local_ip4=52;
+	rx_data.start=1;
 
+	tret = pthread_create(&thread1, NULL, rx_thread, (void *)&rx_data);
 
-memset(local_IP,'\0',sizeof(local_IP));
-
-memset(remote_IP,'\0',sizeof(remote_IP));
-
-	 sprintf(remote_IP,"%3.3d.%3.3d.%1.1d.%2.2d",remote_ip1,remote_ip2,remote_ip3,remote_ip4);
-	 sprintf(local_IP,"%3.3d.%3.3d.%1.1d.%2.2d",local_ip1,local_ip2,local_ip3,local_ip4);
-	//mexPrintf("local_IP %s\n",local_IP);
-	//mexPrintf("remote_IP %s\n",remote_IP);
-
-
-
-SCDF_Init(local_IP,remote_IP,port,&SOCK_sd,&localport_info);
-
-
-	//mexPrintf("Port number %d\n",port);
-
-	while(1)
+	if(tret!=0)
 	{
-	     receive_ret_val=SCDF_receive(char_buff,sizeof(char_buff),local_IP,remote_IP,port,&SOCK_sd,&fds,&localport_info,&n_data_buffer);
-	//mexPrintf("return_value %d , expected size of message %d, expected size of beamdata_pack %d\n",receive_ret_val,sizeof(t_usp_c1_data_msg),sizeof(t_usp_c1_beamforming_data));
-
-        Test_endpoint.address=( (remote_ip1 & 0xFF) <<24) | ( (remote_ip2 & 0xFF) <<16) | ( (remote_ip3 & 0xFF) <<8) | ( (remote_ip4 & 0xFF) <<0) ;//(remote_IP);
-		Test_endpoint.port=port;
-
-		Test_Listener.ProcessPacket(char_buff,receive_ret_val,Test_endpoint);
-
-//		double_convert_matlab (audio_matlab, Test_Listener.audio_data_buff_p,Test_Listener.n_audio_data);
-//
-//
-//		double_convert_matlab (accel_matlab, Test_Listener.accel_data_buff_p,Test_Listener.n_accel_data);
-//
-//
-//		double_convert_matlab (gyro_matlab, Test_Listener.gyro_data_buff_p,Test_Listener.n_gyro_data);
-//
-//
-//		double_convert_matlab (magneto_matlab, Test_Listener.magneto_data_buff_p,Test_Listener.n_magneto_data);
-//
-//
-//		double_convert_matlab (proxy_matlab, Test_Listener.proxy_data_buff_p,Test_Listener.n_proxy_data);
-//
-//
-//		double_convert_matlab (light_matlab, Test_Listener.light_data_buff_p,Test_Listener.n_light_data);
-//
-//
-//		double_convert_matlab2(audio_timestamps, Test_Listener.audio_timestamps_buff_p,2);
-
+	    printf("error creating threads\n");
 	}
 
 
-	//receive_ret_val=SCDF_receive((char*)&SCDF_rx_pkt,sizeof(SCDF_rx_pkt),local_IP,remote_IP,port,&n_data_buffer);
+   p_sendmanager->SetOutputPort(55000);
+    p_sendmanager->SetOutputAddress("192.168.1.44");
+    p_sendmanager->SetMultiOutput(false);
+    p_sendmanager->SetUseOSCPackaging(true);
 
-	close(SOCK_sd);
+  //  p_sendmanager->InitSender(55000, "192.168.1.44");
+
+
+pthread_join(thread1, NULL);
+
+
+
+
 
 	return 0;
 

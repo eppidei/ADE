@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="ip/IpEndpointName.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="1790" topLine="17" />
+	<File name="../../Shared_C_funcs/Sensor.h" open="1" top="0" tabpos="4">
+		<Cursor position="949" topLine="21" />
 	</File>
-	<File name="ip/posix/NetworkingUtils.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="1706" topLine="32" />
+	<File name="../../Shared_C_funcs/ThreadUtils.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="877" topLine="0" />
 	</File>
-	<File name="ip/posix/UdpSocket.cpp" open="1" top="1" tabpos="4">
+	<File name="../../Shared_C_funcs/UDPSender.cpp" open="1" top="1" tabpos="3">
+		<Cursor position="7956" topLine="242" />
+	</File>
+	<File name="../../Shared_C_funcs/UDPSender.h" open="1" top="0" tabpos="7">
 		<Cursor position="0" topLine="9" />
 	</File>
+	<File name="../../Shared_C_funcs/UDPSendersManager.cpp" open="1" top="0" tabpos="8">
+		<Cursor position="727" topLine="17" />
+	</File>
+	<File name="../../Shared_C_funcs/UDPSendersManager.h" open="1" top="0" tabpos="6">
+		<Cursor position="506" topLine="4" />
+	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="242" topLine="0" />
+		<Cursor position="3963" topLine="130" />
 	</File>
-	<File name="my_defines.h" open="0" top="0" tabpos="4">
-		<Cursor position="121" topLine="3" />
-	</File>
-	<File name="my_typedefs.h" open="0" top="0" tabpos="5">
-		<Cursor position="0" topLine="101" />
-	</File>
-	<File name="udp_receiver.c" open="0" top="0" tabpos="2">
-		<Cursor position="733" topLine="5" />
-	</File>
-	<File name="udp_receiver.h" open="0" top="0" tabpos="3">
-		<Cursor position="558" topLine="0" />
+	<File name="udp_receiver.c" open="1" top="0" tabpos="5">
+		<Cursor position="4962" topLine="336" />
 	</File>
 </CodeBlocks_layout_file>

@@ -34,7 +34,7 @@ typedef s_float dsp_float_t;
 
 /*typedef  s_int32 SensorType;*/
 
-typedef enum SensorType{
+typedef enum SensorTypeLeo{
     Invalid=-1,
     Accelerometer,
     Gyroscope,
@@ -42,28 +42,28 @@ typedef enum SensorType{
     Proximity,
     Light,
     AudioInput,
-    NumTypes }SensorType_T ;
+    NumTypes }SensorTypeLeo_T ;
 
 
 #pragma pack(push)  /* push current alignment to stack */
 #pragma pack(1)     /* set alignment to 1 byte boundary */
-typedef struct SensorData {
-        SensorType_T type;
+typedef struct SensorDataLeo {
+        SensorTypeLeo_T type;
         s_int32 rate;           /* time of the sensor reading as reported by the sensor*/
         s_uint64 timeid;                /* will be the same for all data harvested in the same call*/
         s_int32 num_frames;
         s_int32 numChannels;
-        s_uint64 *ptimestamp; 
+        s_uint64 *ptimestamp;
         s_sample *pdata;
         s_sample data[MAX_BUFFER_LEN]; /*uint32 per nthol*/
         s_uint64 timestamp[MAX_BUFFER_TIMESTAMP];
-    } SensorData_T;
+    } SensorDataLeo_T;
 
 #pragma pack(pop)
 
 
 /*********************************** MIDI***************************************/
-#if (_OS_==1) 
+#if (_OS_==1)
 
 typedef  union
 {
@@ -130,5 +130,8 @@ unsigned int  n_pow_thres_attack;
 unsigned int  n_pow_thres_release;
 }Blowargs_T;
 
- 
+
+
+
+
 #endif

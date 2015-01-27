@@ -221,7 +221,7 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,int* SOCK_sd,struct so
 
 
 	/* Setting reception buffer */
-	iOptVal_pkt= RECEPTION_MAX_BUFFER_LEN*sizeof(SensorData_T);/*100 è per non perdere i pacchetti maybe to fix //10 * sizeof(t_usp_c1_data_msg);*/
+	iOptVal_pkt= RECEPTION_MAX_BUFFER_LEN*sizeof(SensorDataLeo_T);/*100 è per non perdere i pacchetti maybe to fix //10 * sizeof(t_usp_c1_data_msg);*/
 	if ( setsockopt( *SOCK_sd, SOL_SOCKET, SO_RCVBUF, (char*)&iOptVal_pkt, sizeof(iOptVal_pkt))== -1 ){
 
 		printf("SCDF-> Error on port %d at setsockopt(): %d\n",port_id, errno);
@@ -274,7 +274,7 @@ int SCDF_receive(char* line, int maxsize,char* ip_local_init,char* ip_remote_ini
 
         if ( (ret>0 && stopped==true) || (ret>0 && ret!=last_byte_received) )
         {
-            printf("SCDF(%d)-> %d bytes received, local structurs size is %d bytes\n\n", ntohs(localport_info->sin_port), ret ,sizeof(SensorData_T));
+            printf("SCDF(%d)-> %d bytes received, local structurs size is %d bytes\n\n", ntohs(localport_info->sin_port), ret ,sizeof(SensorDataLeo_T));
             stopped = false;
         }
         else if (ret<=0)
@@ -306,7 +306,7 @@ int SCDF_receive(char* line, int maxsize,char* ip_local_init,char* ip_remote_ini
 
 
 
-void Parse_audio_data(SensorData_T *pkt, char *char_buff, s_float *matarray, s_uint64 *time_id,s_uint32 *n_samples)
+void Parse_audio_data(SensorDataLeo_T *pkt, char *char_buff, s_float *matarray, s_uint64 *time_id,s_uint32 *n_samples)
 {
 
 	unsigned int i=0;
@@ -341,7 +341,7 @@ void Parse_audio_data(SensorData_T *pkt, char *char_buff, s_float *matarray, s_u
 
 }
 
-void Parse_audio_data_double(SensorData_T *pkt, char *char_buff, s_double *matarray, s_uint64 *time_id,s_uint32 *n_samples)
+void Parse_audio_data_double(SensorDataLeo_T *pkt, char *char_buff, s_double *matarray, s_uint64 *time_id,s_uint32 *n_samples)
 {
 
 	unsigned int i=0;
