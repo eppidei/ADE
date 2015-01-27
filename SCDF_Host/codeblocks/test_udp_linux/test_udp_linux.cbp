@@ -13,10 +13,12 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-DLINUX" />
 					<Add directory="../../Shared_C_funcs" />
+					<Add directory="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Shared_C_funcs/ip" />
 				</Compiler>
 				<Linker>
-					<Add library="../../../Program Files/Microsoft SDKs/Windows/v7.1/Lib/WS2_32.Lib" />
+					<Add option="-lpthread" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -35,16 +37,31 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="ip/IpEndpointName.cpp" />
-		<Unit filename="ip/posix/NetworkingUtils.cpp" />
-		<Unit filename="ip/posix/UdpSocket.cpp" />
+		<Unit filename="../../Shared_C_funcs/Sensor.h" />
+		<Unit filename="../../Shared_C_funcs/ThreadUtils.cpp" />
+		<Unit filename="../../Shared_C_funcs/ThreadUtils.h" />
+		<Unit filename="../../Shared_C_funcs/UDPSender.cpp" />
+		<Unit filename="../../Shared_C_funcs/UDPSender.h" />
+		<Unit filename="../../Shared_C_funcs/UDPSendersManager.cpp" />
+		<Unit filename="../../Shared_C_funcs/UDPSendersManager.h" />
+		<Unit filename="../../Shared_C_funcs/ip/IpEndpointName.cpp" />
+		<Unit filename="../../Shared_C_funcs/ip/posix/NetworkingUtils.cpp" />
+		<Unit filename="../../Shared_C_funcs/ip/posix/UdpSocket.cpp" />
+		<Unit filename="../../Shared_C_funcs/osc/MessageMappingOscPacketListener.h" />
+		<Unit filename="../../Shared_C_funcs/osc/OscException.h" />
+		<Unit filename="../../Shared_C_funcs/osc/OscHostEndianness.h" />
+		<Unit filename="../../Shared_C_funcs/osc/OscOutboundPacketStream.cpp" />
+		<Unit filename="../../Shared_C_funcs/osc/OscOutboundPacketStream.h" />
+		<Unit filename="../../Shared_C_funcs/osc/OscPacketListener.h" />
+		<Unit filename="../../Shared_C_funcs/osc/OscPrintReceivedElements.cpp" />
+		<Unit filename="../../Shared_C_funcs/osc/OscPrintReceivedElements.h" />
+		<Unit filename="../../Shared_C_funcs/osc/OscReceivedElements.cpp" />
+		<Unit filename="../../Shared_C_funcs/osc/OscReceivedElements.h" />
+		<Unit filename="../../Shared_C_funcs/osc/OscTypes.cpp" />
+		<Unit filename="../../Shared_C_funcs/osc/OscTypes.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="my_defines.h" />
 		<Unit filename="my_typedefs.h" />
-		<Unit filename="osc/OscOutboundPacketStream.cpp" />
-		<Unit filename="osc/OscPrintReceivedElements.cpp" />
-		<Unit filename="osc/OscReceivedElements.cpp" />
-		<Unit filename="osc/OscTypes.cpp" />
 		<Unit filename="udp_receiver.c">
 			<Option compilerVar="CC" />
 		</Unit>
