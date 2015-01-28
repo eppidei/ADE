@@ -21,7 +21,8 @@ funcs_path = [up_dir,'Alg_funcs'];
 addpath(funcs_path)
 addpath(res_path)
 
- load('dump_slow_rotation_yaw_body_ontable_ipad');
+%   load('dump_slow_rotation_yaw_body_ontable_ipad');
+ load('dump_0_45_slow2fast');
 
 Fs = 50; 
 
@@ -36,16 +37,21 @@ Fs = 50;
 % 
 % 
 grav=-1;%9.80665;
-h1=figure;
+% h1=figure;
 downsamp=256;
 accel_x_body=downsample(accel_x_data_plot,downsamp,1);
 accel_y_body=downsample(accel_y_data_plot,downsamp,1);
 accel_z_body=downsample(accel_z_data_plot,downsamp,1);
-magneto_x_body=downsample(magneto_x_data_plot,downsamp,1);
-magneto_y_body=downsample(magneto_y_data_plot,downsamp,1);
-magneto_z_body=downsample(magneto_z_data_plot,downsamp,1);
+magneto_x_body=downsample(magneto_x_data_plot,downsamp,1)*pi/180;
+magneto_y_body=downsample(magneto_y_data_plot,downsamp,1)*pi/180;
+magneto_z_body=downsample(magneto_z_data_plot,downsamp,1)*pi/180;
+cycle_len = fix(len_data/downsamp);
+%-71,18,-46 magneto init
 
-for i=1:len_data
+%  h1=figure('Name','Earth frame evo');
+
+
+for i=1:cycle_len
 
     %true in static condition
     pitch=asin(accel_x_body(i)/grav);
@@ -59,19 +65,20 @@ for i=1:len_data
     State(:,i)=[yaw;pitch;roll];
     
    
-    R=update_rotation_matrix_earth2body(yaw,pitch,roll);
-    evolution(:,:,i)=R*ipad_vertex;
-    toc
-    figure(h1)
+%      R=update_rotation_matrix_earth2body(yaw,pitch,roll);
+%      evolution(:,:,i)=R*ipad_vertex;
 
-     plot3(evolution(:,1,i),evolution(:,2,i),evolution(:,3,i));
-     toc
+if (mod(i,4)==0)
+  MobileViewer([0;0;0],[roll,pitch,yaw],37,55);
+end
+  
+ 
    
 
  
 end
 
-State_degree=State*180;
+% State_degree=State*180;
 
 
 
