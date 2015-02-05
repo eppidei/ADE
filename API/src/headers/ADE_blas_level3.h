@@ -42,9 +42,9 @@ ADE_VOID_T ADE_Blas_Level3_SetLdc(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val
 ADE_API_RET_T ADE_Blas_Level3_SetA(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T * p_data);
 ADE_API_RET_T ADE_Blas_Level3_SetB(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T * p_data);
 ADE_API_RET_T ADE_Blas_Level3_SetC(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T * p_data);
-ADE_VOID_T ADE_Blas_Level3_SetAlpha(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val);
-ADE_VOID_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val);
+ADE_API_RET_T ADE_Blas_Level3_SetAlpha(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val);
+ADE_API_RET_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val);
 /***************************** Operative Methods ************************/
 ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3);
-ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3);
+ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid);
 #endif //_ADE_BLAS_LEVEL3_H

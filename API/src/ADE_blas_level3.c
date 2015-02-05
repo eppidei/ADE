@@ -301,16 +301,57 @@ ADE_API_RET_T ADE_Blas_Level3_SetC(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T 
     return ADE_DEFAULT_RET;
 }
 
-ADE_VOID_T ADE_Blas_Level3_SetAlpha(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val)
+ADE_API_RET_T ADE_Blas_Level3_SetAlpha(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val)
 {
-    *(p_Blas_l3->p_ALPHA)=*p_val;
+      ADE_UINT32_T n_elements = 0;
+     ADE_UINT32_T i = 0;
+
+    if (p_Blas_l3->math_type==ADE_REAL)
+    {
+        n_elements=1;
+    }
+    else if (p_Blas_l3->math_type==ADE_CPLX)
+    {
+         n_elements=2;
+    }
+    else
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_Blas_l3->math_type,"%d",ADE_Blas_level3_SetAlpha);
+        return ADE_E42;
+    }
+
+    for (i=0;i<n_elements;i++)
+    {
+        (p_Blas_l3->p_ALPHA)[i]=p_val[i];
+    }
+     return ADE_DEFAULT_RET;
 }
 
-ADE_VOID_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val)
+ADE_API_RET_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val)
 {
-    *(p_Blas_l3->p_BETA)=*p_val;
-}
+     ADE_UINT32_T n_elements = 0;
+     ADE_UINT32_T i = 0;
 
+    if (p_Blas_l3->math_type==ADE_REAL)
+    {
+        n_elements=1;
+    }
+    else if (p_Blas_l3->math_type==ADE_CPLX)
+    {
+         n_elements=2;
+    }
+    else
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_Blas_l3->math_type,"%d",ADE_Blas_Level3_SetBeta);
+        return ADE_E42;
+    }
+
+    for (i=0;i<n_elements;i++)
+    {
+        (p_Blas_l3->p_BETA)[i]=p_val[i];
+    }
+     return ADE_DEFAULT_RET;
+}
 /**************** Operative methods *************************/
 
 ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
@@ -359,9 +400,9 @@ ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
 }
 
 
-ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3)
+ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid)
 {
-    FILE *p_fid=stdout;
+
 
 
    // p_fid=fopen(p_name,"w");
@@ -379,14 +420,32 @@ ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3)
         fprintf(p_fid,"p_Blas_l3->M = %d\n",p_Blas_l3->M);
         fprintf(p_fid,"p_Blas_l3->N = %d\n",p_Blas_l3->N);
         fprintf(p_fid,"p_Blas_l3->K = %d\n",p_Blas_l3->K);
-        fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf)\n",p_Blas_l3->p_ALPHA,*(p_Blas_l3->p_ALPHA));
-        fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf)\n",p_Blas_l3->p_A,(p_Blas_l3->p_A)[0]);
-        fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf)\n",p_Blas_l3->p_B,(p_Blas_l3->p_B)[0]);
-        fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf)\n",p_Blas_l3->p_C,(p_Blas_l3->p_C)[0]);
+        if (p_Blas_l3->math_type==ADE_REAL)
+        {
+            fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf)\n",p_Blas_l3->p_ALPHA,*(p_Blas_l3->p_ALPHA));
+            fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf)\n",p_Blas_l3->p_BETA,*(p_Blas_l3->p_BETA));
+            fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf)\n",p_Blas_l3->p_A,(p_Blas_l3->p_A)[0]);
+            fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf)\n",p_Blas_l3->p_B,(p_Blas_l3->p_B)[0]);
+            fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf)\n",p_Blas_l3->p_C,(p_Blas_l3->p_C)[0]);
+        }
+        else if (p_Blas_l3->math_type==ADE_CPLX)
+        {
+            fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf+%lfi)\n",p_Blas_l3->p_ALPHA,creal(*(p_Blas_l3->p_ALPHA)),cimag(*(p_Blas_l3->p_ALPHA)));
+            fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf+%lfi)\n",p_Blas_l3->p_BETA,creal(*(p_Blas_l3->p_BETA)),cimag(*(p_Blas_l3->p_BETA)));
+            fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf+%lfi)\n",p_Blas_l3->p_A,creal((p_Blas_l3->p_A)[0]),cimag((p_Blas_l3->p_A)[0]));
+            fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf+%lfi)\n",p_Blas_l3->p_B,creal((p_Blas_l3->p_B)[0]),cimag((p_Blas_l3->p_B)[0]));
+            fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf+%lfi)\n",p_Blas_l3->p_C,creal((p_Blas_l3->p_C)[0]),cimag((p_Blas_l3->p_C)[0]));
+        }
+        else
+        {
+            ADE_PRINT_ERRORS(ADE_INCHECKS,p_Blas_l3->math_type,"%d",ADE_Blas_level3_Print);
+            return ADE_E42;
+        }
+
         fprintf(p_fid,"p_Blas_l3->LDA = %d\n",p_Blas_l3->LDA);
         fprintf(p_fid,"p_Blas_l3->LDB = %d\n",p_Blas_l3->LDB);
         fprintf(p_fid,"p_Blas_l3->LDC = %d\n",p_Blas_l3->LDC);
-        fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf)\n",p_Blas_l3->p_BETA,*(p_Blas_l3->p_BETA));
+
         fprintf(p_fid,"p_Blas_l3->blas_level3_fcn_type1 = %p\n",p_Blas_l3->blas_level3_fcn_type1);
         fprintf(p_fid,"\n");
       //  fclose(p_fid);

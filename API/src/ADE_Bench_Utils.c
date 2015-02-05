@@ -5,12 +5,18 @@
 #include <math.h>
 #include <stdlib.h>
 
-void checker(ADE_VOID_T *p_mat,ADE_VOID_T *p_mat_custom,ADE_UINT32_T n_row,ADE_UINT32_T n_col,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,FILE* p_fid)
+void checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_UINT32_T n_row,ADE_UINT32_T n_col,ADE_UINT32_T n_row_col_int,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,FILE* p_fid)
 {
     ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
     double p_sum=0,result=0;
     double complex p_csum=0,cresult=0;
     ADE_MATH_ATTRIBUTE_T math_att;
+    ADE_VOID_T *p_alpha=p_blas_l3->p_ALPHA;
+    ADE_VOID_T *p_beta=p_blas_l3->p_BETA;
+    ADE_VOID_T *p_A=p_blas_l3->p_A;
+    ADE_VOID_T *p_B=p_blas_l3->p_B;
+    ADE_VOID_T *p_C=p_blas_l3->p_C;
+
 
     if (m_type==ADE_BENCH_REAL)
     {
@@ -19,7 +25,7 @@ void checker(ADE_VOID_T *p_mat,ADE_VOID_T *p_mat_custom,ADE_UINT32_T n_row,ADE_U
             for (col_idx=0;col_idx<n_col;col_idx++)
             {
                 lin_idx=row_idx*n_col+col_idx;
-                p_sum+=((ADE_FLOATING_T*)p_mat)[lin_idx]-((ADE_FLOATING_T*)p_mat_custom)[lin_idx];
+                p_sum+=((ADE_FLOATING_T*)p_C)[lin_idx]-((ADE_FLOATING_T*)p_C_custom)[lin_idx];
             }
         }
 result=fabs(p_sum);
@@ -32,7 +38,7 @@ result=fabs(p_sum);
             for (col_idx=0;col_idx<n_col;col_idx++)
             {
                 lin_idx=row_idx*n_col+col_idx;
-                p_csum+=((ADE_CPLX_T*)p_mat)[lin_idx]-((ADE_CPLX_T*)p_mat_custom)[lin_idx];
+                p_csum+=((ADE_CPLX_T*)p_C)[lin_idx]-((ADE_CPLX_T*)p_C_custom)[lin_idx];
             }
         }
         result=fabs(p_csum);
@@ -52,19 +58,25 @@ result=fabs(p_sum);
     else
     {
         fprintf(p_fid,"Test %d NOT PASSED with residue %f and tolerance %f\n",test_id,result,tol);
+
+        if (m_type==ADE_BENCH_REAL)
+        {
+            math_att=ADE_REAL;
+        }
+        else if (m_type==ADE_BENCH_CPLX)
+        {
+            math_att=ADE_CPLX;
+        }
+        ADE_Blas_level3_Print(p_blas_l3,p_fid);
+        ADE_Utils_PrintArray(p_alpha,0,2-1, 0,1-1, "Alpha", p_fid,math_att);
+        ADE_Utils_PrintArray(p_A,0,n_row-1, 0,n_row_col_int-1, "A", p_fid,math_att);
+        ADE_Utils_PrintArray(p_B,0,n_row_col_int-1, 0,n_col-1, "B", p_fid,math_att);
+        ADE_Utils_PrintArray(p_beta,0,2-1, 0,1-1, "Beta", p_fid,math_att);
+        ADE_Utils_PrintArray(p_C,0,n_row-1, 0,n_col-1, "Matrice BLAS", p_fid,math_att);
+        ADE_Utils_PrintArray(p_C_custom,0,n_row-1, 0,n_col-1, "Matrice Custom", p_fid,math_att);
     }
 
-if (m_type==ADE_BENCH_REAL)
-{
-    math_att=ADE_REAL;
-}
-else if (m_type==ADE_BENCH_CPLX)
-{
-    math_att=ADE_CPLX;
-}
 
-    ADE_Utils_PrintArray(p_mat,0,n_row-1, 0,n_col-1, "Matrice BLAS", p_fid,math_att);
-    ADE_Utils_PrintArray(p_mat_custom,0,n_row-1, 0,n_col-1, "Matrice Custom", p_fid,math_att);
 
 
 
@@ -191,7 +203,7 @@ ADE_Blas_Level3_SetBeta( p_Blas_l3, p_beta);
 return 0;
 }
 
-ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,ADE_BENCH_MAT_T *mat_type,ADE_UINT32_T n_types,ADE_INT32_T *n_rows_A,ADE_INT32_T *n_cols_A,ADE_INT32_T *n_cols_B,ADE_INT32_T n_dim_cases)
+ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,ADE_BENCH_MAT_T *mat_type,ADE_UINT32_T n_types,ADE_INT32_T *n_rows_A,ADE_INT32_T *n_cols_A,ADE_INT32_T *n_cols_B,ADE_INT32_T n_dim_cases,FILE* p_fid)
 {
     ADE_blas_level3_T *p_blas_l3=NULL;
     ADE_UINT32_T test_idx=0,type_idx=0,dim_cases_idx=0;
@@ -262,7 +274,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 
                           custom_faABpbC (ALPHA,BETA,(ADE_FLOATING_T*)p_A,(ADE_FLOATING_T*)p_B,(ADE_FLOATING_T*)p_C_custom,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
                         test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
-                        checker(p_C,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],tolerance,test_id,mat_type[type_idx],stdout);
+                        checker(p_blas_l3,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],n_cols_A[dim_cases_idx],tolerance,test_id,mat_type[type_idx],p_fid);
 
                             /**** freematrices****/
                             free(p_A);
@@ -318,13 +330,13 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                          load_cmatrix((ADE_CPLX_T*)p_A,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx]);
                          load_cmatrix((ADE_CPLX_T*)p_B,n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
 
-                         ADE_Blas_level3_Print(p_blas_l3);
+
 
                          ADE_Blas_level3_gemm (p_blas_l3);
 
                          custom_caABpbC ((ADE_CPLX_T*)ALPHA,(ADE_CPLX_T*)BETA,(ADE_CPLX_T*)p_A,(ADE_CPLX_T*)p_B,(ADE_CPLX_T*)p_C_custom,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
                              test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
-                            checker(p_C,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],tolerance,test_id,mat_type[type_idx],stdout);
+                            checker(p_blas_l3,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],n_cols_A[dim_cases_idx],tolerance,test_id,mat_type[type_idx],p_fid);
 
 
                             /**** freematrices****/
