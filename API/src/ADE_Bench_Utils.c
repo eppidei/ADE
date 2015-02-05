@@ -4,8 +4,10 @@
 #include "headers/ADE_Utils.h"
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
+#include <errno.h>
 
-void checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_UINT32_T n_row,ADE_UINT32_T n_col,ADE_UINT32_T n_row_col_int,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,FILE* p_fid)
+void checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,bench_times_T *bench_struct,FILE* p_fid)
 {
     ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
     double p_sum=0,result=0;
@@ -16,7 +18,11 @@ void checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_UINT32_T n_
     ADE_VOID_T *p_A=p_blas_l3->p_A;
     ADE_VOID_T *p_B=p_blas_l3->p_B;
     ADE_VOID_T *p_C=p_blas_l3->p_C;
-
+    ADE_UINT32_T n_row=p_blas_l3->M;
+    ADE_UINT32_T n_col=p_blas_l3->N;
+    ADE_UINT32_T n_row_col_int=p_blas_l3->K;
+    double time_sum1=0;
+    double time_sum2=0;
 
     if (m_type==ADE_BENCH_REAL)
     {
@@ -47,12 +53,18 @@ result=fabs(p_sum);
 
 
 
+time_sum1=(*(bench_struct->p_stop_1)).tv_nsec-(*(bench_struct->p_start_1)).tv_nsec;
+time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_nsec;
+
+
 
 
     if (result<tol)
     {
-
-            fprintf(p_fid,"Test %d passed with residue %f and tolerance %f\n",test_id,result,tol);
+            fprintf(p_fid,"\n");
+            fprintf(p_fid,"TEST %d passed with residue %f and tolerance %f\n",test_id,result,tol);
+            fprintf(p_fid,"Blas Implementation took  %lf ns \n",time_sum1);
+            fprintf(p_fid,"Custom Implementation took  %lf ns \n",time_sum1);
 
     }
     else
@@ -112,9 +124,15 @@ void load_cmatrix(ADE_CPLX_T *p_mat,ADE_UINT32_T n_row,ADE_UINT32_T n_col)
 
 }
 
-void custom_faABpbC (ADE_FLOATING_T *p_alpha,ADE_FLOATING_T *p_beta,ADE_FLOATING_T *p_A,ADE_FLOATING_T *p_B,ADE_FLOATING_T *p_C,ADE_UINT32_T n_row_A,ADE_UINT32_T n_col_A,ADE_UINT32_T n_col_B)
+void custom_faABpbC (ADE_blas_level3_T *p_blas_l3,ADE_FLOATING_T *p_C)
 {
-
+    ADE_FLOATING_T *p_alpha=p_blas_l3->p_ALPHA;
+    ADE_FLOATING_T *p_beta=p_blas_l3->p_BETA;
+    ADE_FLOATING_T *p_A=p_blas_l3->p_A;
+    ADE_FLOATING_T *p_B=p_blas_l3->p_B;
+    ADE_UINT32_T n_row_A=p_blas_l3->M;
+    ADE_UINT32_T n_col_A=p_blas_l3->K;
+    ADE_UINT32_T n_col_B=p_blas_l3->N;
     ADE_UINT32_T A_row_idx=0,A_col_idx=0,B_col_idx=0,B_row_idx=0,C_col_idx=0,C_row_idx=0;
     ADE_FLOATING_T parz_sum=0;
     ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0,Out_lin_idx;
@@ -146,14 +164,21 @@ void custom_faABpbC (ADE_FLOATING_T *p_alpha,ADE_FLOATING_T *p_beta,ADE_FLOATING
 
 }
 
-void custom_caABpbC (ADE_CPLX_T *p_alpha,ADE_CPLX_T *p_beta,ADE_CPLX_T *p_A,ADE_CPLX_T *p_B,ADE_CPLX_T *p_C,ADE_UINT32_T n_row_A,ADE_UINT32_T n_col_A,ADE_UINT32_T n_col_B)
+void custom_caABpbC (ADE_blas_level3_T *p_blas_l3,ADE_CPLX_T *p_C)
 {
 
+    ADE_CPLX_T *p_alpha=(ADE_CPLX_T *)p_blas_l3->p_ALPHA;
+    ADE_CPLX_T *p_beta=(ADE_CPLX_T *)p_blas_l3->p_BETA;
+    ADE_CPLX_T *p_A=(ADE_CPLX_T *)p_blas_l3->p_A;
+    ADE_CPLX_T *p_B=(ADE_CPLX_T *)p_blas_l3->p_B;
+    ADE_UINT32_T n_row_A=p_blas_l3->M;
+    ADE_UINT32_T n_col_A=p_blas_l3->K;
+    ADE_UINT32_T n_col_B=p_blas_l3->N;
     ADE_UINT32_T A_row_idx=0,A_col_idx=0,B_col_idx=0,B_row_idx=0,C_col_idx=0,C_row_idx=0;
     ADE_CPLX_T parz_sum=0+I*0;
     ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0,Out_lin_idx;
     ADE_CPLX_T alpha=*p_alpha;
-    ADE_CPLX_T beta=*p_beta;
+    ADE_CPLX_T beta=*p_alpha;
     ADE_UINT32_T n_col_C=0;
 
     for (A_row_idx=0;A_row_idx<n_row_A;A_row_idx++)
@@ -215,8 +240,29 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     ADE_INT32_T LDB=0;
     ADE_FLOATING_T BETA[2]={1.0,1.0};
     ADE_INT32_T LDC=0;
-    ADE_FLOATING_T tolerance=0.1;
+    ADE_FLOATING_T tolerance=1e-4;
     ADE_UINT32_T test_id=0;
+    struct timespec start_blas, stop_blas,start_cust, stop_cust,res;
+    int ret_time=0;
+    int err_code=0;
+    clockid_t clock_id=CLOCK_MONOTONIC;//CLOCK_REALTIME,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
+   bench_times_T bench_times_int;
+
+    bench_times_int.p_start_1=&start_blas;
+    bench_times_int.p_stop_1=&stop_blas;
+    bench_times_int.p_start_2=&start_cust;
+    bench_times_int.p_stop_2=&stop_cust;
+    bench_times_int.p_res=&res;
+
+    ret_time=clock_getres(clock_id,&res);
+    if (ret_time==-1)
+    {
+        err_code=errno;
+        fprintf(p_fid,"Failed setting clock %d : error %d\n",clock_id,err_code);
+        return -1;
+    }
+
+
 
 
 /*** cicla tests***/
@@ -269,12 +315,16 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                          load_fmatrix((ADE_FLOATING_T*)p_A,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx]);
                          load_fmatrix((ADE_FLOATING_T*)p_B,n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
 
-                         //  ADE_Blas_level3_Print(p_blas_l3);
+                         clock_gettime(clock_id,&start_blas);
                          ADE_Blas_level3_gemm (p_blas_l3);
+                          clock_gettime(clock_id,&stop_blas);
 
-                          custom_faABpbC (ALPHA,BETA,(ADE_FLOATING_T*)p_A,(ADE_FLOATING_T*)p_B,(ADE_FLOATING_T*)p_C_custom,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
+                          clock_gettime(clock_id,&start_cust);
+                          custom_faABpbC (p_blas_l3,(ADE_FLOATING_T*)p_C_custom);
+                        clock_gettime(clock_id,&stop_cust);
+
                         test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
-                        checker(p_blas_l3,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],n_cols_A[dim_cases_idx],tolerance,test_id,mat_type[type_idx],p_fid);
+                        checker(p_blas_l3,p_C_custom,tolerance,test_id,mat_type[type_idx],&bench_times_int,p_fid);
 
                             /**** freematrices****/
                             free(p_A);
@@ -334,9 +384,9 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 
                          ADE_Blas_level3_gemm (p_blas_l3);
 
-                         custom_caABpbC ((ADE_CPLX_T*)ALPHA,(ADE_CPLX_T*)BETA,(ADE_CPLX_T*)p_A,(ADE_CPLX_T*)p_B,(ADE_CPLX_T*)p_C_custom,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
+                         custom_caABpbC (p_blas_l3,(ADE_CPLX_T*)p_C_custom);
                              test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
-                            checker(p_blas_l3,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],n_cols_A[dim_cases_idx],tolerance,test_id,mat_type[type_idx],p_fid);
+                            checker(p_blas_l3,p_C_custom,tolerance,test_id,mat_type[type_idx],&bench_times_int,p_fid);
 
 
                             /**** freematrices****/
