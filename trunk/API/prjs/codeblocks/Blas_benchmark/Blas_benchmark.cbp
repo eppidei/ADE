@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Blas_benchmark" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Blas_benchmark" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../../../src" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
+					<Add directory="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/fftw-3.3.4/api" />
+				</Compiler>
+				<Linker>
+					<Add option="-lmx -lmat -lgfortran -lfftw3 -lfftw3_threads -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS/blas_LINUX.a" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Blas_benchmark" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g -O2" />
+					<Add directory="../../../src" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
+					<Add directory="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/fftw-3.3.4/api" />
+				</Compiler>
+				<Linker>
+					<Add option="-s -lmx -lmat -lfftw3 -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall -Wextra" />
+		</Compiler>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_Utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_blas_level1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_blas_level2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_blas_level3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/headers/ADE_Utils.h" />
+		<Unit filename="../../../src/headers/ADE_blas_level1.h" />
+		<Unit filename="../../../src/headers/ADE_blas_level2.h" />
+		<Unit filename="../../../src/headers/ADE_blas_level3.h" />
+		<Unit filename="../../../src/headers/ADE_blas_wrapper.h" />
+		<Unit filename="../../../src/headers/ADE_cblas.h" />
+		<Unit filename="../../../src/headers/ADE_defines.h" />
+		<Unit filename="../../../src/headers/ADE_errors.h" />
+		<Unit filename="../../../src/headers/ADE_typedefs.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

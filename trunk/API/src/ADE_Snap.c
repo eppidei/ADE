@@ -45,7 +45,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len)
         }
 
         /************** ALLOC Blas2********************/
-        p_this
+
 
         blas2_ret_threshold=ADE_Blas_level2_Init(&(p_this->p_blas_l2_threshold),ADE_REAL);
         if (blas2_ret_threshold<0)
@@ -130,20 +130,20 @@ ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap)
 }
 
 /************************* private methods ***********************/
-static ADE_API_RET_T ADE_Snap_ThresholdCreation(ADE_SNAP_T *p_snap)
-{
-    ADE_API_RET_T ret=ADE_DEFAULT_RET;
-
-    ret=ADE_Blas_level2_Elewise(p_snap->p_blas_l2_tgk1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Snap_TeagerKaiser);
-        return ADE_E45;
-    }
-
-}
+//static ADE_API_RET_T ADE_Snap_ThresholdCreation(ADE_SNAP_T *p_snap)
+//{
+//    ADE_API_RET_T ret=ADE_DEFAULT_RET;
+//
+//    ret=ADE_Blas_level2_Elewise(p_snap->p_blas_l2_tgk1);
+//    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+//
+//    if (ret<0)
+//    {
+//        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Snap_TeagerKaiser);
+//        return ADE_E45;
+//    }
+//
+//}
 
 static ADE_API_RET_T ADE_Snap_TeagerKaiser(ADE_SNAP_T *p_snap)
 {
@@ -208,6 +208,6 @@ static ADE_API_RET_T ADE_Snap_ThresholdDetection(ADE_SNAP_T *p_snap)
     #else
             ADE_DEFINE_ERROR(ADE_CHECK_RETURNS)
     #endif
-    ret=DE_Utils_FindIndexes(p_snap->p_tgk,p_snap->buff_len, p_snap->p_indexes, ADE_FLOATING_T threshold,ADE_UTILS_CONDITION_T condition);
+   // ret=DE_Utils_FindIndexes(p_snap->p_tgk,p_snap->buff_len, p_snap->p_indexes, ADE_FLOATING_T threshold,ADE_UTILS_CONDITION_T condition);
 
 }

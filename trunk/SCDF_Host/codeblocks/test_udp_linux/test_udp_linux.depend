@@ -326,7 +326,7 @@
 
 1408416871 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Shared_C_funcs/ip/TimerListener.h
 
-1422321785 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/codeblocks/test_udp_linux/main.cpp
+1423019811 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/codeblocks/test_udp_linux/main.cpp
 	"my_defines.h"
 	<winsock2.h>
 	<windows.h>
@@ -347,6 +347,8 @@
 	"ip/UdpSocket.h"
 	"SCDF_OSCListener.h"
 	"UDPSendersManager.h"
+	"UDPSender.h"
+	"ThreadUtils.h"
 
 1414166894 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/codeblocks/test_udp_linux/my_defines.h
 
@@ -475,12 +477,13 @@
 1422133434 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Shared_C_funcs/Logging.h
 	<android/log.h>
 
-1422308601 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Shared_C_funcs/UDPSender.cpp
+1423020088 source:/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Shared_C_funcs/UDPSender.cpp
 	"UdpSocket.h"
 	"UDPSender.h"
 	"osc/OscOutboundPacketStream.h"
+	<math.h>
 
-1422134510 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Shared_C_funcs/UDPSender.h
+1422571385 /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Shared_C_funcs/UDPSender.h
 	"ThreadUtils.h"
 	"Sensor.h"
 	<stdlib.h>

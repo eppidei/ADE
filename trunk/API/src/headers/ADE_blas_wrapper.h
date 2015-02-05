@@ -2,6 +2,7 @@
 #define _ADE_BLAS_WRAPPER_H
 #include "headers/ADE_defines.h"
 
+
 #ifdef __cplusplus
     extern "C" {
 #endif
@@ -21,10 +22,10 @@ extern void saxpy(
 #define caxpy FORTRAN_WRAPPER(caxpy)
 extern void caxpy(
     int    *n,
-    complex  *sa,
-    float  *sx,
+    float complex  *sa,
+    float complex  *sx,
     int    *incx,
-    complex  *sy,
+    float complex  *sy,
     int    *incy
 );
 
@@ -47,6 +48,39 @@ extern void zaxpy(
     int    *incx,
     double complex *sy,
     int    *incy
+);
+
+#define scopy FORTRAN_WRAPPER(scopy)
+extern void scopy(
+    int *n,
+    float  *cx,
+    int *incx,
+    float *cy,
+    int *incy
+);
+#define ccopy FORTRAN_WRAPPER(ccopy)
+extern void ccopy(
+    int *n,
+    float complex *cx,
+    int *incx,
+    float complex *cy,
+    int *incy
+);
+#define dcopy FORTRAN_WRAPPER(dcopy)
+extern void dcopy(
+    int *n,
+    double  *cx,
+    int *incx,
+    double *cy,
+    int *incy
+);
+#define zcopy FORTRAN_WRAPPER(zcopy)
+extern void zcopy(
+    int *n,
+    double complex *cx,
+    int *incx,
+    double complex *cy,
+    int *incy
 );
 
 /********************************* LEVEL 2 **************************************/
@@ -127,13 +161,13 @@ extern void cgemm(
         int *m,
         int *n,
         int *k,
-        complex *alpha,
-        complex *a,
+        float complex *alpha,
+        float complex *a,
         int *lda,
-        complex *b,
+        float complex *b,
         int *ldb,
-        complex *beta,
-        complex *c,
+        float complex *beta,
+        float complex *c,
         int *ldc
                   );
 #define dgemm FORTRAN_WRAPPER(dgemm)

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.c" open="0" top="0" tabpos="8">
-		<Cursor position="1553" topLine="55" />
+	<File name="main.c" open="1" top="1" tabpos="14">
+		<Cursor position="1553" topLine="30" />
 	</File>
 	<File name="../../../src/ADE.c" open="0" top="0" tabpos="9">
 		<Cursor position="766" topLine="6" />
@@ -31,8 +31,8 @@
 	<File name="../../../src/ADE_iir.c" open="0" top="0" tabpos="12">
 		<Cursor position="10229" topLine="378" />
 	</File>
-	<File name="../../../src/ADE_polyfit.c" open="1" top="1" tabpos="13">
-		<Cursor position="3638" topLine="105" />
+	<File name="../../../src/ADE_polyfit.c" open="1" top="0" tabpos="13">
+		<Cursor position="3638" topLine="0" />
 	</File>
 	<File name="../../../src/headers/ADE.h" open="0" top="0" tabpos="8">
 		<Cursor position="558" topLine="0" />

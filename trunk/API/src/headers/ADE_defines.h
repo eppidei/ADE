@@ -1,6 +1,8 @@
 #ifndef _ADE_DEFINES_H
 #define _ADE_DEFINES_H
 
+#include "headers/ADE_errors.h"
+
 #define ADE_DEFAULT_RET (0)
 
 /****************** Macros **************************/
@@ -18,6 +20,7 @@
 #define ADE_RELEASE (0)
 #define ADE_DEBUG_NORMAL (1)
 #define ADE_DEBUG_MATLAB (2)
+#define ADE_BENCH_ANDROID (3)
 
 #define ADE_USE_FFTW (0)
 
@@ -35,18 +38,21 @@
 #define ADE_CHECK_RETURNS_FALSE (0)
 
 /* Control */
-#define ADE_TARGET ADE_DEBUG_MATLAB
+#define ADE_TARGET ADE_BENCH_ANDROID
 #define ADE_FFT_IMP ADE_USE_FFTW
 #define ADE_LIN_ALG_IMP ADE_USE_LIN_ALG_BLAS
 #define ADE_USE_FFTW_THREADS
 
 
 #if (ADE_TARGET==ADE_DEBUG_MATLAB)
-#define ADE_CONFIGURATION_INTERACTIVE
-#define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
+    #define ADE_CONFIGURATION_INTERACTIVE
+    #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
 #elif (ADE_TARGET==ADE_DEBUG_NORMAL || ADE_TARGET==ADE_RELEASE)
-#undef ADE_CONFIGURATION_INTERACTIVE
-#define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #undef ADE_CONFIGURATION_INTERACTIVE
+    #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+#elif (ADE_TARGET==ADE_BENCH_ANDROID)
+    #undef ADE_CONFIGURATION_INTERACTIVE
+    #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
 #endif
 
 
@@ -73,8 +79,6 @@
 #define FORTRAN_WRAPPER(x) x ## _
 #endif
 
-#define ADE_USE_BLAS_LIB (1)
-#define ADE_USE_BLAS_CUSTOM (0)
 
 
 
@@ -108,6 +112,9 @@
 #define PRINT_IDX(x) PLUS_ONE(x)
 #define ADE_UTILS_PRINTF_FLOAT_WIDTH (10)
 #define ADE_UTILS_PRINTF_FLOAT_PRECISION (5)
+
+/****************************** BENCHMARKS *******************************/
+
 
 
 

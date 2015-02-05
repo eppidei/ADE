@@ -44,7 +44,7 @@ namespace scdf
         friend class UDPSendersManager;
         std::auto_ptr<UDPSender> sender;
         ThreadUtils::CustomMutex activator;
-        ThreadUtils::ThreadHandle handle;
+
         s_bool multiOutput, oscPackData;
 
         struct TempSensorData
@@ -73,6 +73,7 @@ namespace scdf
     public:
         void Activate(bool activate);
         void SendOnThread();
+        ThreadUtils::ThreadHandle handle;
     };
 }
 #endif /* defined(__SCDF_Test__UDPSender__) */
