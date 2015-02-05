@@ -342,7 +342,9 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
     ADE_CHECKNFREE(p_blow->p_eval_pow);
     ADE_CHECKNFREE(p_blow->p_eval_timer);
     ADE_CHECKNFREE(p_blow->p_blow_state);
+    #ifdef ADE_CONFIGURATION_INTERACTIVE
      ADE_Matlab_Release(p_blow->p_mat);
+     #endif
     ADE_CHECKNFREE(p_blow);
 
 

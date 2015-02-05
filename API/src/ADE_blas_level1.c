@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**********Private methods Interfaces ******************/
+
 static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1);
@@ -22,7 +24,7 @@ static ADE_API_RET_T ADE_Blas_level1_zcopy (ADE_blas_level1_T *p_blas_l1);
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);
 #endif
 
-
+/************ Init Methods ***********/
 ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type )
 {
     ADE_blas_level1_T* p_this = calloc(1,sizeof(ADE_blas_level1_T));
@@ -231,6 +233,8 @@ ADE_VOID_T ADE_Blas_level1_Release (ADE_blas_level1_T* p_blas_l1)
      ADE_CHECKNFREE(p_blas_l1->p_PARAM);
     ADE_CHECKNFREE(p_blas_l1);
 }
+
+/****************Set Methods *****************/
 
 ADE_API_RET_T ADE_Blas_level1_setA(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_val)
 {
@@ -758,7 +762,7 @@ ADE_INT32_T INCX_int = p_blas_l1->INCX , INCY_int = p_blas_l1->INCY;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_saxpy((p_blas_l1->N),*(p_blas_l1->p_ALPHA),p_blas_l1->p_X,(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        cblas_saxpy((p_blas_l1->N),*(p_blas_l1->p_ALPHA),p_blas_l1->p_X,(p_blas_l1->INCX),p_blas_l1->p_Y,p_blas_l1->INCY );
 
 #else
 ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
@@ -834,7 +838,7 @@ static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1)// (ADE
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ccopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ccopy(&(p_blas_l1->N),(ADE_CPLX_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_CPLX_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 

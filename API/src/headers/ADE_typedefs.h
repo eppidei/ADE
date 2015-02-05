@@ -56,7 +56,7 @@ typedef struct ADE_blas_level2_S ADE_blas_level2_T;
 typedef ADE_API_RET_T (*ADE_BLAS_LEVEL2_FCN_TYPE1_T)(ADE_blas_level2_T*);
 /*Level3*/
 typedef struct ADE_blas_level3_S ADE_blas_level3_T;
-typedef ADE_API_RET_T (*ADE_BLAS_LEVEL3_FCN_TYPE1_T)(ADE_blas_level3_T*);
+typedef ADE_VOID_T (*ADE_BLAS_LEVEL3_FCN_TYPE1_T)(ADE_blas_level3_T*);
 
 #define CBLAS_INDEX size_t  /* this may vary between platforms */
 
@@ -94,6 +94,10 @@ typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_
 typedef enum {ADE_UTILS_MAJOR,ADE_UTILS_MINOR,ADE_UTILS_EQUAL,ADE_UTILS_MAJEQUAL,ADE_UTILS_MINEQUAL} ADE_UTILS_CONDITION_T;
 /******************************* BLOW ***************************/
 typedef struct ADE_SNAP_S ADE_SNAP_T;
+
+/********************************* Benchmarks***************************/
+typedef enum {ADE_BLAS_L1_BM,ADE_BLAS_L2_BM,ADE_BLAS_L3_BM,ADE_FFTW_BM} ADE_BENCH_T;
+typedef enum {ADE_BENCH_REAL,ADE_BENCH_CPLX} ADE_BENCH_MAT_T;
 
 
 #endif //_ADE_TYPEDEFS_H

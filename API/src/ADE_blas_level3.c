@@ -6,6 +6,9 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+/*******************Private methods interface*******************************/
+
 static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -20,6 +23,8 @@ static ADE_VOID_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3);
 #else
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);
 #endif
+
+/**********************Init Methods************************************/
 
 ADE_API_RET_T ADE_Blas_level3_Init(ADE_blas_level3_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type )
 {
@@ -95,6 +100,8 @@ ADE_VOID_T ADE_Blas_level3_Release (ADE_blas_level3_T* p_Blas_l3)
      ADE_CHECKNFREE(p_Blas_l3->p_BETA);
     ADE_CHECKNFREE(p_Blas_l3);
 }
+
+/********************** Set Methods **************************************/
 
 ADE_API_RET_T ADE_Blas_Level3_SetTrans(ADE_blas_level3_T* p_Blas_l3, ADE_CHAR_T val)
 {
@@ -258,6 +265,54 @@ ADE_VOID_T ADE_Blas_Level3_SetLdc(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val
 
 }
 
+ADE_API_RET_T ADE_Blas_Level3_SetA(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T * p_data)
+{
+    if (p_data==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_data,"%p",ADE_Blas_Level3_SetA);
+        return ADE_E42;
+    }
+    p_Blas_l3->p_A=p_data;
+
+    return ADE_DEFAULT_RET;
+}
+
+ADE_API_RET_T ADE_Blas_Level3_SetB(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T * p_data)
+{
+    if (p_data==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_data,"%p",ADE_Blas_Level3_SetB);
+        return ADE_E42;
+    }
+    p_Blas_l3->p_B=p_data;
+
+    return ADE_DEFAULT_RET;
+}
+
+ADE_API_RET_T ADE_Blas_Level3_SetC(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T * p_data)
+{
+     if (p_data==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_data,"%p",ADE_Blas_Level3_SetC);
+        return ADE_E42;
+    }
+    p_Blas_l3->p_C=p_data;
+
+    return ADE_DEFAULT_RET;
+}
+
+ADE_VOID_T ADE_Blas_Level3_SetAlpha(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val)
+{
+    *(p_Blas_l3->p_ALPHA)=*p_val;
+}
+
+ADE_VOID_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING_T *p_val)
+{
+    *(p_Blas_l3->p_BETA)=*p_val;
+}
+
+/**************** Operative methods *************************/
+
 ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
 {
 
@@ -304,6 +359,53 @@ ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
 }
 
 
+ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3)
+{
+    FILE *p_fid=stdout;
+
+
+   // p_fid=fopen(p_name,"w");
+
+    if (p_fid!=NULL)
+    {
+
+        fprintf(p_fid,"p_Blas_l3->math_type = %d\n",p_Blas_l3->math_type);
+        fprintf(p_fid,"p_Blas_l3->SIDE = %c\n",p_Blas_l3->SIDE);
+        fprintf(p_fid,"p_Blas_l3->UPLO = %c\n",p_Blas_l3->UPLO);
+        fprintf(p_fid,"p_Blas_l3->TRANS = %c\n",p_Blas_l3->TRANS);
+        fprintf(p_fid,"p_Blas_l3->TRANSA = %c\n",p_Blas_l3->TRANSA);
+        fprintf(p_fid,"p_Blas_l3->TRANSB = %c\n",p_Blas_l3->TRANSB);
+        fprintf(p_fid,"p_Blas_l3->DIAG = %c\n",p_Blas_l3->DIAG);
+        fprintf(p_fid,"p_Blas_l3->M = %d\n",p_Blas_l3->M);
+        fprintf(p_fid,"p_Blas_l3->N = %d\n",p_Blas_l3->N);
+        fprintf(p_fid,"p_Blas_l3->K = %d\n",p_Blas_l3->K);
+        fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf)\n",p_Blas_l3->p_ALPHA,*(p_Blas_l3->p_ALPHA));
+        fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf)\n",p_Blas_l3->p_A,(p_Blas_l3->p_A)[0]);
+        fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf)\n",p_Blas_l3->p_B,(p_Blas_l3->p_B)[0]);
+        fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf)\n",p_Blas_l3->p_C,(p_Blas_l3->p_C)[0]);
+        fprintf(p_fid,"p_Blas_l3->LDA = %d\n",p_Blas_l3->LDA);
+        fprintf(p_fid,"p_Blas_l3->LDB = %d\n",p_Blas_l3->LDB);
+        fprintf(p_fid,"p_Blas_l3->LDC = %d\n",p_Blas_l3->LDC);
+        fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf)\n",p_Blas_l3->p_BETA,*(p_Blas_l3->p_BETA));
+        fprintf(p_fid,"p_Blas_l3->blas_level3_fcn_type1 = %p\n",p_Blas_l3->blas_level3_fcn_type1);
+        fprintf(p_fid,"\n");
+      //  fclose(p_fid);
+
+        return ADE_DEFAULT_RET;
+    }
+
+    else
+    {
+
+        return ADE_E40;
+    }
+
+
+
+
+}
+
+/***************** Private methods implementations ********************/
 static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3)
 {
 
@@ -320,19 +422,21 @@ static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3)
 
 
     #endif
-
-    ret = (p_Blas_l3->blas_level3_fcn_type1)(p_Blas_l3);
-
-    #if (ADE_CHECK_RETURNS==1)
-
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level3_launch_type1)
-    }
-    #endif
+    (p_Blas_l3->blas_level3_fcn_type1)(p_Blas_l3);
+//    ret = (p_Blas_l3->blas_level3_fcn_type1)(p_Blas_l3);
+//
+//    #if (ADE_CHECK_RETURNS==1)
+//
+//    if (ret<0)
+//    {
+//        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level3_launch_type1)
+//    }
+//    #endif
 
     return ret;
 }
+
+
 
 
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
@@ -347,7 +451,7 @@ static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    sgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),p_Blas_l3->p_Alpha,p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_Beta,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    sgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
@@ -395,7 +499,7 @@ static ADE_VOID_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    cgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    cgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),(ADE_CPLX_T*)p_Blas_l3->p_ALPHA,(ADE_CPLX_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_CPLX_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_CPLX_T*)p_Blas_l3->p_BETA,(ADE_CPLX_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)

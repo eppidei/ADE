@@ -208,12 +208,28 @@ void UDPSenderHelperBase::SendOnThread()
     unsigned int i,k;
     float freq=440;
     float phase=0,last_phase=0;
+    // SensorData pippo(AudioInput);
 
-    if(false == onetime)
-    {
-        onetime = true;
-        for(i = 0; i < NUM_BUFFERS_SENSOR_DATA; i++)
+
+     ThreadUtils::AutoLock kk(&activator);
+
+//    if(false == onetime)
+//    {
+//        onetime = true;
+
+   // }
+
+
+	//LOGD("UDP SENDER - UDPSenderHElperBase::SendOnThread() - acquiring lock...");
+
+    //LOGD("UDP SENDER - UDPSenderHElperBase::SendOnThread() - ACQUIRED LOCK, wait for harvest...");
+
+    //Harvester::Instance()->WaitForHarvest();
+
+    try{
+         for(i = 0; i < NUM_BUFFERS_SENSOR_DATA; i++)
         {
+
             tx_buffer[i] = new SensorData(AudioInput);
             tx_buffer[i]->rate=44100;
             tx_buffer[i]->num_channels=1;
@@ -232,16 +248,6 @@ void UDPSenderHelperBase::SendOnThread()
 
             sensdata_vec.push_back(tx_buffer[i]);
         }
-    }
-
-
-	//LOGD("UDP SENDER - UDPSenderHElperBase::SendOnThread() - acquiring lock...");
-    ThreadUtils::AutoLock kk(&activator);
-    //LOGD("UDP SENDER - UDPSenderHElperBase::SendOnThread() - ACQUIRED LOCK, wait for harvest...");
-
-    //Harvester::Instance()->WaitForHarvest();
-
-    try{
 
     	//LOGD("UDP SENDER - UDPSenderHelperBase - SendOnThread()");
 
@@ -258,13 +264,14 @@ void UDPSenderHelperBase::SendOnThread()
 
          if (NULL==&sensdata_vec) return;
         SendData(sensdata_vec);
-        for(int i=0;i<sensdata_vec.size();++i)
+        for( i=0;i<sensdata_vec.size();++i)
         {
-            free((sensdata_vec)[i]->data);
-            free((sensdata_vec)[i]->timestamp);
+           // free((sensdata_vec)[i]->data);
+            //free((sensdata_vec)[i]->timestamp);
             delete (sensdata_vec)[i];
 
         }
+        sensdata_vec.clear();
 
         //delete buffer;
     }
@@ -312,6 +319,23 @@ void UDPSenderHelperBase::Init(s_int32 udpPortBase, std::string address)
     sender->InitEndpoints(udpPortBase, NumTypes, address);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void UDPSenderHelperBase::OSCPackData(const std::vector<SensorData*> &sData, osc::OutboundPacketStream &oscData)
 {
     std::string rateTag("/Rate");
@@ -351,19 +375,19 @@ void UDPSenderHelperBase::OSCSinglePackData(SensorData *data, osc::OutboundPacke
     OSCPackData(tempData,oscData);
 }
 
-//void UDPSenderHelperBase::Activate(s_bool active)
-//{
-//	LOGD("UDP SENDER - UDPSenderHelperBase::Activate(%d)",active);
-//
-//    if (active){
-//    	//LOGD("UDP SENDER - Sender helper base activate: UNLOCKING activator...");
-//        activator.Unlock();
-//    }
-//    else{
-//        Harvester::Instance()->SendingQueuePushBuffer(NULL);
-//        //LOGD("UDP SENDER - Activate() : Activator LOCK...");
-//        activator.Lock();
-//    }
-//}
+void UDPSenderHelperBase::Activate(s_bool active)
+{
+	LOGD("UDP SENDER - UDPSenderHelperBase::Activate(%d)",active);
+
+    if (active){
+    	//LOGD("UDP SENDER - Sender helper base activate: UNLOCKING activator...");
+        activator.Unlock();
+    }
+    else{
+        //Harvester::Instance()->SendingQueuePushBuffer(NULL);
+        //LOGD("UDP SENDER - Activate() : Activator LOCK...");
+        activator.Lock();
+    }
+}
 
 

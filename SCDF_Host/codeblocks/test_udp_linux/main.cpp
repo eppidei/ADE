@@ -23,6 +23,8 @@ static int SOCK_sd2;
 #include "ip/UdpSocket.h"
 #include "SCDF_OSCListener.h"
 #include "UDPSendersManager.h"
+#include "UDPSender.h"
+#include "ThreadUtils.h"
 
 /******************RECEIVER DATA STRUCT******************/
 typedef struct RX_S
@@ -127,6 +129,7 @@ int tret;
 
     static char char_buff[MAX_CHAR_BUFF_LEN];
      scdf::UDPSendersManager *p_sendmanager= scdf::UDPSendersManager::Instance();
+     scdf::UDPSenderHelperBase *p_help;
 
 	RX_T rx_data;
 
@@ -139,7 +142,7 @@ int tret;
     rx_data.remote_ip1=192;
 	rx_data.remote_ip2=168;
 	rx_data.remote_ip3=1;
-	rx_data.remote_ip4=30;
+	rx_data.remote_ip4=47;
 	rx_data.local_ip1=192;
 	rx_data.local_ip2=168;
 	rx_data.local_ip3=1;
@@ -155,14 +158,18 @@ int tret;
 
 
    p_sendmanager->SetOutputPort(55000);
-    p_sendmanager->SetOutputAddress("192.168.1.44");
+    p_sendmanager->SetOutputAddress("192.168.1.92");
     p_sendmanager->SetMultiOutput(false);
     p_sendmanager->SetUseOSCPackaging(true);
 
-  //  p_sendmanager->InitSender(55000, "192.168.1.44");
-
-
+    //p_sendmanager->InitSender(55000, "192.168.1.75");
+//UDPSenderHelperBase *GetSender()
+ p_help=p_sendmanager->GetSender();
+ p_help->Activate(true);
+ scdf::ThreadUtils::JoinThread(p_help->handle);
 pthread_join(thread1, NULL);
+
+int vip=0;
 
 
 
