@@ -110,7 +110,7 @@
 /******************************* UTILS ******************************/
 #define PLUS_ONE(x) (x+1)
 #define PRINT_IDX(x) PLUS_ONE(x)
-#define ADE_UTILS_PRINTF_FLOAT_WIDTH (10)
+#define ADE_UTILS_PRINTF_FLOAT_WIDTH (14)
 #define ADE_UTILS_PRINTF_FLOAT_PRECISION (5)
 
 /****************************** BENCHMARKS *******************************/
