@@ -1,0 +1,359 @@
+#include "headers/ADE_Bench_Utils.h"
+#include "headers/ADE_errors.h"
+#include "headers/ADE_blas_level3.h"
+#include "headers/ADE_Utils.h"
+#include <math.h>
+#include <stdlib.h>
+
+void checker(ADE_VOID_T *p_mat,ADE_VOID_T *p_mat_custom,ADE_UINT32_T n_row,ADE_UINT32_T n_col,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,FILE* p_fid)
+{
+    ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
+    double p_sum=0,result=0;
+    double complex p_csum=0,cresult=0;
+    ADE_MATH_ATTRIBUTE_T math_att;
+
+    if (m_type==ADE_BENCH_REAL)
+    {
+        for (row_idx=0;row_idx<n_row;row_idx++)
+        {
+            for (col_idx=0;col_idx<n_col;col_idx++)
+            {
+                lin_idx=row_idx*n_col+col_idx;
+                p_sum+=((ADE_FLOATING_T*)p_mat)[lin_idx]-((ADE_FLOATING_T*)p_mat_custom)[lin_idx];
+            }
+        }
+result=fabs(p_sum);
+
+    }
+    else if (m_type==ADE_BENCH_CPLX)
+    {
+        for (row_idx=0;row_idx<n_row;row_idx++)
+        {
+            for (col_idx=0;col_idx<n_col;col_idx++)
+            {
+                lin_idx=row_idx*n_col+col_idx;
+                p_csum+=((ADE_CPLX_T*)p_mat)[lin_idx]-((ADE_CPLX_T*)p_mat_custom)[lin_idx];
+            }
+        }
+        result=fabs(p_csum);
+
+    }
+
+
+
+
+
+    if (result<tol)
+    {
+
+            fprintf(p_fid,"Test %d passed with residue %f and tolerance %f\n",test_id,result,tol);
+
+    }
+    else
+    {
+        fprintf(p_fid,"Test %d NOT PASSED with residue %f and tolerance %f\n",test_id,result,tol);
+    }
+
+if (m_type==ADE_BENCH_REAL)
+{
+    math_att=ADE_REAL;
+}
+else if (m_type==ADE_BENCH_CPLX)
+{
+    math_att=ADE_CPLX;
+}
+
+    ADE_Utils_PrintArray(p_mat,0,n_row-1, 0,n_col-1, "Matrice BLAS", p_fid,math_att);
+    ADE_Utils_PrintArray(p_mat_custom,0,n_row-1, 0,n_col-1, "Matrice Custom", p_fid,math_att);
+
+
+
+}
+
+void load_fmatrix(ADE_FLOATING_T *p_mat,ADE_UINT32_T n_row,ADE_UINT32_T n_col)
+{
+    ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
+
+    for (row_idx=0;row_idx<n_row;row_idx++)
+    {
+        for (col_idx=0;col_idx<n_col;col_idx++)
+        {
+            lin_idx=row_idx*n_col+col_idx;
+            p_mat[lin_idx]=(ADE_FLOATING_T)(rand()%10);
+        }
+    }
+
+}
+
+void load_cmatrix(ADE_CPLX_T *p_mat,ADE_UINT32_T n_row,ADE_UINT32_T n_col)
+{
+    ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
+
+    for (row_idx=0;row_idx<n_row;row_idx++)
+    {
+        for (col_idx=0;col_idx<n_col;col_idx++)
+        {
+            lin_idx=row_idx*n_col+col_idx;
+            p_mat[lin_idx]=(ADE_CPLX_T)((rand()%10)+ I *(rand()%10));
+        }
+    }
+
+}
+
+void custom_faABpbC (ADE_FLOATING_T *p_alpha,ADE_FLOATING_T *p_beta,ADE_FLOATING_T *p_A,ADE_FLOATING_T *p_B,ADE_FLOATING_T *p_C,ADE_UINT32_T n_row_A,ADE_UINT32_T n_col_A,ADE_UINT32_T n_col_B)
+{
+
+    ADE_UINT32_T A_row_idx=0,A_col_idx=0,B_col_idx=0,B_row_idx=0,C_col_idx=0,C_row_idx=0;
+    ADE_FLOATING_T parz_sum=0;
+    ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0,Out_lin_idx;
+    ADE_FLOATING_T alpha=*p_alpha;
+    ADE_FLOATING_T beta=*p_beta;
+    ADE_UINT32_T n_col_C=0;
+
+    for (A_row_idx=0;A_row_idx<n_row_A;A_row_idx++)
+    {
+        for (B_col_idx=0;B_col_idx<n_col_B;B_col_idx++)
+        {
+            for (A_col_idx=0;A_col_idx<n_col_A;A_col_idx++)
+            {
+                A_lin_idx=A_row_idx*n_col_A+A_col_idx;
+                B_row_idx=A_col_idx;
+                B_lin_idx=B_row_idx*n_col_B+B_col_idx;
+                parz_sum+=p_A[A_lin_idx]*p_B[B_lin_idx];
+            }
+            C_row_idx=A_row_idx;
+            C_col_idx=B_col_idx;
+            n_col_C=n_col_B;
+            C_lin_idx=C_row_idx*n_col_C+C_col_idx;
+            //Out_lin_idx=A_row_idx*n_col_A+B_col_idx;
+            p_C[C_lin_idx]=alpha*parz_sum+beta*p_C[C_lin_idx];
+            parz_sum=0;
+
+        }
+    }
+
+}
+
+void custom_caABpbC (ADE_CPLX_T *p_alpha,ADE_CPLX_T *p_beta,ADE_CPLX_T *p_A,ADE_CPLX_T *p_B,ADE_CPLX_T *p_C,ADE_UINT32_T n_row_A,ADE_UINT32_T n_col_A,ADE_UINT32_T n_col_B)
+{
+
+    ADE_UINT32_T A_row_idx=0,A_col_idx=0,B_col_idx=0,B_row_idx=0,C_col_idx=0,C_row_idx=0;
+    ADE_CPLX_T parz_sum=0+I*0;
+    ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0,Out_lin_idx;
+    ADE_CPLX_T alpha=*p_alpha;
+    ADE_CPLX_T beta=*p_beta;
+    ADE_UINT32_T n_col_C=0;
+
+    for (A_row_idx=0;A_row_idx<n_row_A;A_row_idx++)
+    {
+        for (B_col_idx=0;B_col_idx<n_col_B;B_col_idx++)
+        {
+            for (A_col_idx=0;A_col_idx<n_col_A;A_col_idx++)
+            {
+                A_lin_idx=A_row_idx*n_col_A+A_col_idx;
+                B_row_idx=A_col_idx;
+                B_lin_idx=B_row_idx*n_col_B+B_col_idx;
+                parz_sum+=p_A[A_lin_idx]*p_B[B_lin_idx];
+            }
+            C_row_idx=A_row_idx;
+            C_col_idx=B_col_idx;
+            n_col_C=n_col_B;
+            C_lin_idx=C_row_idx*n_col_C+C_col_idx;
+            //Out_lin_idx=A_row_idx*n_col_A+B_col_idx;
+            p_C[C_lin_idx]=alpha*parz_sum+beta*p_C[C_lin_idx];
+            parz_sum=0;
+
+        }
+    }
+
+}
+
+int blas3_configuration(ADE_blas_level3_T* p_Blas_l3,ADE_CHAR_T TRANSA,ADE_CHAR_T TRANSB,ADE_INT32_T M,
+                         ADE_INT32_T N,ADE_INT32_T K,ADE_INT32_T LDA,ADE_INT32_T LDB,ADE_INT32_T LDC,
+                         ADE_FLOATING_T *p_alpha,ADE_FLOATING_T *p_beta,ADE_FLOATING_T *p_A,ADE_FLOATING_T *p_B,ADE_FLOATING_T *p_C)
+{
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+
+    ret= ADE_Blas_Level3_SetTransA(p_Blas_l3, TRANSA);
+ret= ADE_Blas_Level3_SetTransB(p_Blas_l3, TRANSB);
+ADE_Blas_Level3_SetM(p_Blas_l3, M);
+ADE_Blas_Level3_SetN( p_Blas_l3, N);
+ADE_Blas_Level3_SetK( p_Blas_l3, K);
+ADE_Blas_Level3_SetLda(p_Blas_l3, LDA);
+ADE_Blas_Level3_SetLdb(p_Blas_l3, LDB);
+ADE_Blas_Level3_SetLdc(p_Blas_l3, LDC);
+ret= ADE_Blas_Level3_SetA(p_Blas_l3, p_A);
+ret= ADE_Blas_Level3_SetB( p_Blas_l3, p_B);
+ret= ADE_Blas_Level3_SetC( p_Blas_l3, p_C);
+ADE_Blas_Level3_SetAlpha( p_Blas_l3, p_alpha);
+ADE_Blas_Level3_SetBeta( p_Blas_l3, p_beta);
+
+return 0;
+}
+
+ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,ADE_BENCH_MAT_T *mat_type,ADE_UINT32_T n_types,ADE_INT32_T *n_rows_A,ADE_INT32_T *n_cols_A,ADE_INT32_T *n_cols_B,ADE_INT32_T n_dim_cases)
+{
+    ADE_blas_level3_T *p_blas_l3=NULL;
+    ADE_UINT32_T test_idx=0,type_idx=0,dim_cases_idx=0;
+    ADE_VOID_T *p_A=NULL,*p_B=NULL,*p_C=NULL,*p_C_custom=NULL;
+    ADE_CHAR_T TRANSA='N';
+    ADE_CHAR_T TRANSB='N';
+    ADE_FLOATING_T ALPHA[2]={1.0,1.0};
+    ADE_INT32_T LDA=0;
+    ADE_INT32_T LDB=0;
+    ADE_FLOATING_T BETA[2]={1.0,1.0};
+    ADE_INT32_T LDC=0;
+    ADE_FLOATING_T tolerance=0.1;
+    ADE_UINT32_T test_id=0;
+
+
+/*** cicla tests***/
+    for (test_idx=0;test_idx<n_tests;test_idx++)
+    {
+        if (test_cases[test_idx]==ADE_BLAS_L3_BM)
+        {
+            /*** cicla real/cplx***/
+            for (type_idx=0;type_idx<n_types;type_idx++)
+            {
+                if (mat_type[type_idx]==ADE_BENCH_REAL)
+                {
+                     ADE_Blas_level3_Init(&p_blas_l3,ADE_REAL );
+                     /*** cicla dimensioni***/
+                        for (dim_cases_idx=0;dim_cases_idx<n_dim_cases;dim_cases_idx++)
+                        {
+
+                            /**** matrix alloc********/
+                            p_A=calloc(1,n_rows_A[dim_cases_idx]*n_cols_A[dim_cases_idx]*sizeof(ADE_FLOATING_T));
+                            if (p_A==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            p_B=calloc(1,n_cols_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
+                             if (p_A==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            p_C=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
+                             if (p_C==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            p_C_custom=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
+                             if (p_C_custom==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            LDA=n_rows_A[dim_cases_idx];
+                            LDB=n_cols_A[dim_cases_idx];
+                            LDC=n_rows_A[dim_cases_idx];
+                            blas3_configuration(p_blas_l3,TRANSA,TRANSB,n_rows_A[dim_cases_idx],
+                         n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx],LDA, LDB,LDC,
+                         ALPHA,BETA,(ADE_FLOATING_T*)p_A,(ADE_FLOATING_T*)p_B,(ADE_FLOATING_T*)p_C);
+                         /**********load data *********/
+                         load_fmatrix((ADE_FLOATING_T*)p_A,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx]);
+                         load_fmatrix((ADE_FLOATING_T*)p_B,n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
+
+                         //  ADE_Blas_level3_Print(p_blas_l3);
+                         ADE_Blas_level3_gemm (p_blas_l3);
+
+                          custom_faABpbC (ALPHA,BETA,(ADE_FLOATING_T*)p_A,(ADE_FLOATING_T*)p_B,(ADE_FLOATING_T*)p_C_custom,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
+                        test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
+                        checker(p_C,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],tolerance,test_id,mat_type[type_idx],stdout);
+
+                            /**** freematrices****/
+                            free(p_A);
+                            free(p_B);
+                            free(p_C);
+                            free(p_C_custom);
+
+
+                        }
+                    ADE_Blas_level3_Release(p_blas_l3);
+                }
+
+                else if (mat_type[type_idx]==ADE_BENCH_CPLX)
+                {
+
+                    for (dim_cases_idx=0;dim_cases_idx<n_dim_cases;dim_cases_idx++)
+                    {
+                        ADE_Blas_level3_Init(&p_blas_l3,ADE_CPLX );
+
+                        /**** matrix alloc********/
+                            p_A=calloc(1,n_rows_A[dim_cases_idx]*n_cols_A[dim_cases_idx]*sizeof(ADE_CPLX_T));
+                            if (p_A==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            p_B=calloc(1,n_cols_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
+                             if (p_A==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            p_C=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
+                             if (p_C==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            p_C_custom=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
+                             if (p_C_custom==NULL)
+                            {
+                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                return -1;
+                            }
+                            LDA=n_rows_A[dim_cases_idx];
+                            LDB=n_cols_A[dim_cases_idx];
+                            LDC=n_rows_A[dim_cases_idx];
+                                blas3_configuration(p_blas_l3,TRANSA,TRANSB,n_rows_A[dim_cases_idx],
+                         n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx],LDA, LDB,LDC,
+                         ALPHA,BETA,(ADE_FLOATING_T*)p_A,(ADE_FLOATING_T*)p_B,(ADE_FLOATING_T*)p_C);
+
+                         /**********load data *********/
+                         load_cmatrix((ADE_CPLX_T*)p_A,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx]);
+                         load_cmatrix((ADE_CPLX_T*)p_B,n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
+
+                         ADE_Blas_level3_Print(p_blas_l3);
+
+                         ADE_Blas_level3_gemm (p_blas_l3);
+
+                         custom_caABpbC ((ADE_CPLX_T*)ALPHA,(ADE_CPLX_T*)BETA,(ADE_CPLX_T*)p_A,(ADE_CPLX_T*)p_B,(ADE_CPLX_T*)p_C_custom,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
+                             test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
+                            checker(p_C,p_C_custom,n_rows_A[dim_cases_idx],n_cols_B[dim_cases_idx],tolerance,test_id,mat_type[type_idx],stdout);
+
+
+                            /**** freematrices****/
+                            free(p_A);
+                            free(p_B);
+                            free(p_C);
+                            free(p_C_custom);
+
+                        ADE_Blas_level3_Release(p_blas_l3);
+                    }
+                }
+                else
+                {
+                    ADE_PRINT_ERRORS(ADE_INCHECKS,mat_type[type_idx],"%d",main);
+                    return -1;
+                }
+
+            }
+
+        }
+        else
+        {
+            ADE_PRINT_ERRORS(ADE_INCHECKS,test_cases[test_idx],"%d",main);
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+//int configure_blas_l3 ()
+// gemm=alpha*A*B+Beta*C
