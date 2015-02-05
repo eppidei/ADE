@@ -98,6 +98,13 @@ typedef struct ADE_SNAP_S ADE_SNAP_T;
 /********************************* Benchmarks***************************/
 typedef enum {ADE_BLAS_L1_BM,ADE_BLAS_L2_BM,ADE_BLAS_L3_BM,ADE_FFTW_BM} ADE_BENCH_T;
 typedef enum {ADE_BENCH_REAL,ADE_BENCH_CPLX} ADE_BENCH_MAT_T;
+ typedef struct bench_times {
+        struct timespec* p_start_1;
+        struct timespec* p_stop_1;
+        struct timespec* p_start_2;
+        struct timespec* p_stop_2;
+        struct timespec* p_res;
+    } bench_times_T;
 
 
 #endif //_ADE_TYPEDEFS_H
