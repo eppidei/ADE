@@ -15,12 +15,12 @@ int main()
     FILE* p_debug_out=stdout;
     ADE_INT32_T ret=0;
 
-    ADE_INT32_T n_rows_A[10]={2,10,50};//{2,10,50,100,500,1000,2000,3000,5000,10000};
-    ADE_INT32_T n_cols_A[10]={2,10,50};//{2,10,50,100,500,1000,2000,3000,5000,10000};
-    ADE_INT32_T n_cols_B[10]={2,10,50};//{2,10,50,100,500,1000,2000,3000,5000,10000};
+    ADE_INT32_T n_rows_A[10]={2};//{2,10,50,100,500,1000,2000,3000,5000,10000};
+    ADE_INT32_T n_cols_A[10]={2};//{2,10,50,100,500,1000,2000,3000,5000,10000};
+    ADE_INT32_T n_cols_B[10]={2};//{2,10,50,100,500,1000,2000,3000,5000,10000};
 
 
-ret=blas3_test_procedure(test_cases,1,mat_type,2,n_rows_A,n_cols_A,n_cols_B,3,p_debug_out);
+ret=blas3_test_procedure(test_cases,1,mat_type,2,n_rows_A,n_cols_A,n_cols_B,1,p_debug_out);
 
 
 
