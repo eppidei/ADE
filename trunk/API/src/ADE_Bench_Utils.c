@@ -80,10 +80,10 @@ time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_ns
             math_att=ADE_CPLX;
         }
         ADE_Blas_level3_Print(p_blas_l3,p_fid);
-        ADE_Utils_PrintArray(p_alpha,0,2-1, 0,1-1, "Alpha", p_fid,math_att);
+        ADE_Utils_PrintArray(p_alpha,0,1-1, 0,1-1, "Alpha", p_fid,math_att);
         ADE_Utils_PrintArray(p_A,0,n_row-1, 0,n_row_col_int-1, "A", p_fid,math_att);
         ADE_Utils_PrintArray(p_B,0,n_row_col_int-1, 0,n_col-1, "B", p_fid,math_att);
-        ADE_Utils_PrintArray(p_beta,0,2-1, 0,1-1, "Beta", p_fid,math_att);
+        ADE_Utils_PrintArray(p_beta,0,1-1, 0,1-1, "Beta", p_fid,math_att);
         ADE_Utils_PrintArray(p_C,0,n_row-1, 0,n_col-1, "Matrice BLAS", p_fid,math_att);
         ADE_Utils_PrintArray(p_C_custom,0,n_row-1, 0,n_col-1, "Matrice Custom", p_fid,math_att);
     }

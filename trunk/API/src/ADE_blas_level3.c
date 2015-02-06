@@ -509,8 +509,8 @@ static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
     ADE_MISSING_IMPLEMENTATION(ADE_Blas_level3_sgemm);
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
-
-    sgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+   /*** Att. blas have to invert inputs for Row major operations cinterface.pdf pgg.191****/
+    sgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
@@ -558,7 +558,7 @@ static ADE_VOID_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    cgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),(ADE_CPLX_T*)p_Blas_l3->p_ALPHA,(ADE_CPLX_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_CPLX_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_CPLX_T*)p_Blas_l3->p_BETA,(ADE_CPLX_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    cgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),(ADE_CPLX_T*)p_Blas_l3->p_ALPHA,(ADE_CPLX_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_CPLX_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_CPLX_T*)p_Blas_l3->p_BETA,(ADE_CPLX_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
@@ -610,7 +610,7 @@ static ADE_VOID_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    dgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    dgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
@@ -658,7 +658,7 @@ static ADE_VOID_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    zgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->M),&(p_Blas_l3->N),&(p_Blas_l3->K),p_Blas_l3->p_Alpha,p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_Beta,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    zgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),p_Blas_l3->p_Alpha,p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_Beta,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
