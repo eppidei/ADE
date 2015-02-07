@@ -1,5 +1,6 @@
 clear all; close all;clc
 
+
 %%%%path definition
 if (isunix || ismac)
     separator='/';
@@ -20,7 +21,7 @@ funcs_path = [up_dir,'Alg_funcs'];
 addpath(funcs_path)
 addpath(res_path)
 
-%     load('dump_slow_rotation_yaw_body_ontable_ipad');
+%      load('dump_slow_rotation_yaw_body_ontable_ipad');
 %    load('dump_0_45_slow2fast');
  load('dump_rotation_m90p90_ipad');
 
@@ -73,42 +74,48 @@ magneto_y_body_filt=filtfilt(Hd_magneto.SOSMatrix,Hd_magneto.ScaleValues,magneto
 magneto_z_body_filt=filtfilt(Hd_magneto.SOSMatrix,Hd_magneto.ScaleValues,magneto_z_body);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+cycle_len =length( accel_x_body_filt);
 
-yaw=zeros(1,cycle_len);
-pitch=zeros(1,cycle_len);
-roll=zeros(1,cycle_len);
+pitch=asin(accel_x_body_filt./grav);
+roll=atan(accel_y_body_filt./accel_z_body_filt);
+%%avoid imaginary%%
+% ind_rp1=find(roll>1);
+% ind_rm1=find(roll<-1);
+% roll(ind_rp1)=1;
+% roll(ind_rm1)=-1;
+%%%%%%%%%%%%%%%%%%%
 
+C=angle2dcm(zeros(1,cycle_len),pitch,roll);
+magneto_earth=zeros(3,cycle_len);
 for i=1:cycle_len
-
-    %true in static condition
-    pitch(i)=asin(accel_x_body_filt(i)/grav);
-    roll(i)=atan(accel_y_body_filt(i)/accel_z_body_filt(i));
-    %%%%%%%%
-    C=update_rotation_matrix_body2earth(0,pitch(i),roll(i));
-    
-    magneto_earth=C*[magneto_x_body_filt(i);magneto_y_body_filt(i);magneto_z_body_filt(i)];
-    yaw(i)=-atan(magneto_earth(2)/magneto_earth(1));
-    
-    State(:,i)=[yaw(i);pitch(i);roll(i)];
-    
-   
-%      R=update_rotation_matrix_earth2body(yaw,pitch,roll);
-%      evolution(:,:,i)=R*ipad_vertex;
-
-
-  MobileViewer([0;0;0],[roll(i),pitch(i),yaw(i)],37,55);
-
-  
- 
-   
-
- 
+magneto_earth(:,i)=transp(C(:,:,i))*[magneto_x_body_filt(i);magneto_y_body_filt(i);magneto_z_body_filt(i)];
 end
 
-% State_degree=State*180;
+yaw=-atan(magneto_earth(2,:)./magneto_earth(1,:));
+State=[roll;pitch;yaw];
+% for i=1:cycle_len
+%  MobileViewer([0;0;0],[roll(i),pitch(i),yaw(i)],37,55);
+% end
+%%%%% Animate %%%%%%%%%
 
+h=Aero.Animation;
+h.FramesPerSecond = Fs;
+ h.TimeScaling=1;
+idx1 = h.createBody('pa24-250_orange.ac','Ac3d');
 
+time_axe=0:1/Fs:1/Fs*(cycle_len-1);
+position = zeros(cycle_len,3);
+tsdata=[time_axe',position,State'];
+h.Bodies{1}.TimeseriesSource=tsdata;
+% h.Camera.ViewAngle=[45,45,45];
+% for i=1:cycle_len
+% h.move([0,0,0],[State(1,i),State(2,i),State(3,i)]);
+% % end
+% h.show();
 
-
-
-
+% h.play();
+% t = 0;
+% h.updateBodies(t);
+% h.updateCamera(t);
+h.Camera.PositionFcn = @staticCameraPosition;
+h.play();

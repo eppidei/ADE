@@ -199,7 +199,7 @@ void UDPSenderHelperBase::DoMultiSendData(std::vector<SensorData*> &senderData)
     }
 }
 
-#define NUM_BUFFERS_SENSOR_DATA (4U)
+#define NUM_BUFFERS_SENSOR_DATA (1U)
 void UDPSenderHelperBase::SendOnThread()
 {
     static SensorData* tx_buffer[NUM_BUFFERS_SENSOR_DATA] = {0,};
