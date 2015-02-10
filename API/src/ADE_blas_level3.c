@@ -1,11 +1,17 @@
 #include "headers/ADE_blas_level3.h"
-#include "headers/ADE_blas_wrapper.h"
 #include "headers/ADE_defines.h"
-#include "headers/ADE_errors.h"
+#if ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB
+#include "headers/ADE_blas_wrapper.h"
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 #include "headers/ADE_cblas.h"
+#else
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION)
+#endif
+#include "headers/ADE_complex.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "headers/ADE_errors.h"
 
 /*******************Private methods interface*******************************/
 
@@ -430,11 +436,11 @@ ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid)
         }
         else if (p_Blas_l3->math_type==ADE_CPLX)
         {
-            fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf+%lfi)\n",p_Blas_l3->p_ALPHA,creal(*(p_Blas_l3->p_ALPHA)),cimag(*(p_Blas_l3->p_ALPHA)));
-            fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf+%lfi)\n",p_Blas_l3->p_BETA,creal(*(p_Blas_l3->p_BETA)),cimag(*(p_Blas_l3->p_BETA)));
-            fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf+%lfi)\n",p_Blas_l3->p_A,creal((p_Blas_l3->p_A)[0]),cimag((p_Blas_l3->p_A)[0]));
-            fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf+%lfi)\n",p_Blas_l3->p_B,creal((p_Blas_l3->p_B)[0]),cimag((p_Blas_l3->p_B)[0]));
-            fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf+%lfi)\n",p_Blas_l3->p_C,creal((p_Blas_l3->p_C)[0]),cimag((p_Blas_l3->p_C)[0]));
+            fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf+%lfi)\n",p_Blas_l3->p_ALPHA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)));
+            fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf+%lfi)\n",p_Blas_l3->p_BETA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)));
+            fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf+%lfi)\n",p_Blas_l3->p_A,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_A)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_A)[0]));
+            fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf+%lfi)\n",p_Blas_l3->p_B,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_B)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_B)[0]));
+            fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf+%lfi)\n",p_Blas_l3->p_C,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_C)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_C)[0]));
         }
         else
         {
@@ -502,8 +508,7 @@ static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3)
 
 static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 {
-    ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
-    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
     ADE_MISSING_IMPLEMENTATION(ADE_Blas_level3_sgemm);
@@ -514,6 +519,8 @@ static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+    ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
+    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
    if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
     {
         cblas_transposea=CblasTrans;
@@ -550,8 +557,7 @@ static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 
 static ADE_VOID_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 {
-    ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
-    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
     ADE_MISSING_IMPLEMENTATION(ADE_Blas_level3_cgemm);
@@ -562,6 +568,8 @@ static ADE_VOID_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+     ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
+    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
     if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
     {
         cblas_transposea=CblasTrans;
@@ -650,8 +658,7 @@ if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
 
 static ADE_VOID_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3)
 {
-    ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
-    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
     ADE_MISSING_IMPLEMENTATION(ADE_Blas_level3_zgemm);
@@ -662,6 +669,10 @@ static ADE_VOID_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3)
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+
+    ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
+    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+
 if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
     {
         cblas_transposea=CblasTrans;

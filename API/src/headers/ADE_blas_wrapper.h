@@ -2,6 +2,8 @@
 #define _ADE_BLAS_WRAPPER_H
 #include "headers/ADE_defines.h"
 
+#if  (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+
 
 #ifdef __cplusplus
     extern "C" {
@@ -203,6 +205,10 @@ extern void zgemm(
                   );
 #ifdef __cplusplus
     }   /* extern "C" */
+#endif
+
+
+
 #endif
 
 
