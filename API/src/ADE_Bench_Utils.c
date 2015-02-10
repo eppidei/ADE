@@ -6,12 +6,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include <errno.h>
+#include "headers/ADE_complex.h"
 
 void checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,bench_times_T *bench_struct,FILE* p_fid)
 {
     ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
     double p_sum=0,result=0;
-    double complex p_csum=0,cresult=0;
+    ADE_CPLX_T p_csum=ADE_cset(0,0);
+    ADE_CPLX_T cresult=ADE_cset(0,0);
     ADE_MATH_ATTRIBUTE_T math_att;
     ADE_VOID_T *p_alpha=p_blas_l3->p_ALPHA;
     ADE_VOID_T *p_beta=p_blas_l3->p_BETA;
@@ -44,10 +46,10 @@ result=fabs(p_sum);
             for (col_idx=0;col_idx<n_col;col_idx++)
             {
                 lin_idx=row_idx*n_col+col_idx;
-                p_csum+=((ADE_CPLX_T*)p_C)[lin_idx]-((ADE_CPLX_T*)p_C_custom)[lin_idx];
+                p_csum=ADE_csum(ADE_cdiff(((ADE_CPLX_T*)p_C)[lin_idx],((ADE_CPLX_T*)p_C_custom)[lin_idx]),p_csum);
             }
         }
-        result=fabs(p_csum);
+        result=ADE_cabs(p_csum);
 
     }
 
@@ -118,7 +120,7 @@ void load_cmatrix(ADE_CPLX_T *p_mat,ADE_UINT32_T n_row,ADE_UINT32_T n_col)
         for (col_idx=0;col_idx<n_col;col_idx++)
         {
             lin_idx=row_idx*n_col+col_idx;
-            p_mat[lin_idx]=(ADE_CPLX_T)((rand()%10)+ I *(rand()%10));
+            p_mat[lin_idx]=ADE_cset((rand()%10),(rand()%10));
         }
     }
 
@@ -175,7 +177,7 @@ void custom_caABpbC (ADE_blas_level3_T *p_blas_l3,ADE_CPLX_T *p_C)
     ADE_UINT32_T n_col_A=p_blas_l3->K;
     ADE_UINT32_T n_col_B=p_blas_l3->N;
     ADE_UINT32_T A_row_idx=0,A_col_idx=0,B_col_idx=0,B_row_idx=0,C_col_idx=0,C_row_idx=0;
-    ADE_CPLX_T parz_sum=0+I*0;
+    ADE_CPLX_T parz_sum=ADE_cset(0,0);
     ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0,Out_lin_idx;
     ADE_CPLX_T alpha=*p_alpha;
     ADE_CPLX_T beta=*p_alpha;
@@ -190,15 +192,15 @@ void custom_caABpbC (ADE_blas_level3_T *p_blas_l3,ADE_CPLX_T *p_C)
                 A_lin_idx=A_row_idx*n_col_A+A_col_idx;
                 B_row_idx=A_col_idx;
                 B_lin_idx=B_row_idx*n_col_B+B_col_idx;
-                parz_sum+=p_A[A_lin_idx]*p_B[B_lin_idx];
+                parz_sum=ADE_csum(ADE_cmult(p_A[A_lin_idx],p_B[B_lin_idx]),parz_sum);
             }
             C_row_idx=A_row_idx;
             C_col_idx=B_col_idx;
             n_col_C=n_col_B;
             C_lin_idx=C_row_idx*n_col_C+C_col_idx;
             //Out_lin_idx=A_row_idx*n_col_A+B_col_idx;
-            p_C[C_lin_idx]=alpha*parz_sum+beta*p_C[C_lin_idx];
-            parz_sum=0;
+            p_C[C_lin_idx]=ADE_csum(ADE_cmult(alpha,parz_sum),ADE_cmult(beta,p_C[C_lin_idx]));
+            parz_sum=ADE_cset(0,0);
 
         }
     }

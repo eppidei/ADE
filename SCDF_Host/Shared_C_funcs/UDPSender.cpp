@@ -10,6 +10,7 @@
 #include "UDPSender.h"
 #include "osc/OscOutboundPacketStream.h"
 #include <math.h>
+#include <unistd.h>
 //#include "CustomPipe.h"
 //#include "PipesManager.h"
 //#include "Harvester.h"
@@ -272,6 +273,8 @@ void UDPSenderHelperBase::SendOnThread()
 
         }
         sensdata_vec.clear();
+
+        //sleep(100);
 
         //delete buffer;
     }

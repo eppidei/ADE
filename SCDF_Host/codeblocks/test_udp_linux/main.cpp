@@ -131,25 +131,25 @@ int tret;
      scdf::UDPSendersManager *p_sendmanager= scdf::UDPSendersManager::Instance();
      scdf::UDPSenderHelperBase *p_help;
 
-	RX_T rx_data;
+//	RX_T rx_data;
+//
+//    rx_data.port=50000;
+//    rx_data.p_fds=&fds;
+//    rx_data.p_localport_info=&localport_info;
+//    rx_data.p_sock=&SOCK_sd;
+//    rx_data.p_buff=&(char_buff[0]);
+//    rx_data.buff_len=MAX_CHAR_BUFF_LEN;
+//    rx_data.remote_ip1=192;
+//	rx_data.remote_ip2=168;
+//	rx_data.remote_ip3=1;
+//	rx_data.remote_ip4=53;
+//	rx_data.local_ip1=192;
+//	rx_data.local_ip2=168;
+//	rx_data.local_ip3=1;
+//	rx_data.local_ip4=52;
+//	rx_data.start=1;
 
-    rx_data.port=55000;
-    rx_data.p_fds=&fds;
-    rx_data.p_localport_info=&localport_info;
-    rx_data.p_sock=&SOCK_sd;
-    rx_data.p_buff=&(char_buff[0]);
-    rx_data.buff_len=MAX_CHAR_BUFF_LEN;
-    rx_data.remote_ip1=127;
-	rx_data.remote_ip2=0;
-	rx_data.remote_ip3=0;
-	rx_data.remote_ip4=1;
-	rx_data.local_ip1=127;
-	rx_data.local_ip2=0;
-	rx_data.local_ip3=0;
-	rx_data.local_ip4=1;
-	rx_data.start=1;
-
-	tret = pthread_create(&thread1, NULL, rx_thread, (void *)&rx_data);
+	//tret = pthread_create(&thread1, NULL, rx_thread, (void *)&rx_data);
 
 	if(tret!=0)
 	{
@@ -157,7 +157,7 @@ int tret;
 	}
 
 
-   p_sendmanager->SetOutputPort(55000);
+   p_sendmanager->SetOutputPort(51000);
     p_sendmanager->SetOutputAddress("127.0.0.1");
     p_sendmanager->SetMultiOutput(false);
     p_sendmanager->SetUseOSCPackaging(true);
@@ -166,9 +166,8 @@ int tret;
  p_help=p_sendmanager->GetSender();
  p_help->Activate(true);
  scdf::ThreadUtils::JoinThread(p_help->handle);
-pthread_join(thread1, NULL);
+//pthread_join(thread1, NULL);
 
-int vip=0;
 
 
 

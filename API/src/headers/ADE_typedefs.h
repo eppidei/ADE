@@ -2,7 +2,7 @@
 #define _ADE_TYPEDEFS_H
 #include <stdint.h>
 #include "headers/ADE_defines.h"
-#include <complex.h>
+//#include <complex.h>
 #include "fftw3.h"
 
 
@@ -18,8 +18,16 @@ typedef uint8_t ADE_UINT8_T ;
 typedef unsigned char  ADE_UCHAR_T ;
 typedef double ADE_FLOATING_DP_T;
 typedef float ADE_FLOATING_SP_T;
-typedef double complex ADE_CPLX_DP_T;
-typedef float complex ADE_CPLX_SP_T;
+typedef struct fcomplex_S
+{
+    float realpart;
+    float imagpart;
+} ADE_CPLX_SP_T;
+typedef struct dcomplex_S
+{
+    double realpart;
+    double imagpart;
+}ADE_CPLX_DP_T;
 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef ADE_FLOATING_DP_T ADE_FLOATING_T;
 typedef ADE_CPLX_DP_T ADE_CPLX_T;

@@ -10,8 +10,8 @@
 	<File name="../../Shared_C_funcs/ThreadUtils.h" open="1" top="0" tabpos="9">
 		<Cursor position="1358" topLine="25" />
 	</File>
-	<File name="../../Shared_C_funcs/UDPSender.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="7301" topLine="109" />
+	<File name="../../Shared_C_funcs/UDPSender.cpp" open="1" top="1" tabpos="3">
+		<Cursor position="7404" topLine="369" />
 	</File>
 	<File name="../../Shared_C_funcs/UDPSender.h" open="1" top="0" tabpos="7">
 		<Cursor position="2456" topLine="40" />
@@ -28,10 +28,10 @@
 	<File name="../../Shared_C_funcs/osc/OscOutboundPacketStream.cpp" open="1" top="0" tabpos="10">
 		<Cursor position="7998" topLine="267" />
 	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="1">
-		<Cursor position="1830" topLine="119" />
+	<File name="main.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="3764" topLine="139" />
 	</File>
 	<File name="udp_receiver.c" open="1" top="0" tabpos="5">
-		<Cursor position="3975" topLine="351" />
+		<Cursor position="3975" topLine="346" />
 	</File>
 </CodeBlocks_layout_file>
