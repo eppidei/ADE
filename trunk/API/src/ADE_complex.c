@@ -1,4 +1,5 @@
 #include "headers/ADE_complex.h"
+#include <math.h>
 
 ADE_CPLX_T ADE_csum(ADE_CPLX_T add1,ADE_CPLX_T add2)
 {

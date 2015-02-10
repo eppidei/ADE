@@ -1,8 +1,13 @@
 #include "headers/ADE_blas_level1.h"
-#include "headers/ADE_blas_wrapper.h"
 #include "headers/ADE_defines.h"
-#include "headers/ADE_errors.h"
+#if ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB
+#include "headers/ADE_blas_wrapper.h"
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 #include "headers/ADE_cblas.h"
+#else
+ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION)
+#endif
+#include "headers/ADE_errors.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
