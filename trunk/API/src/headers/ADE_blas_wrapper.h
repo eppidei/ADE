@@ -12,20 +12,20 @@
 #define saxpy FORTRAN_WRAPPER(saxpy)
 extern void saxpy(
     int    *n,
-    float  *sa,
-    float  *sx,
+    void  *sa,
+    void  *sx,
     int    *incx,
-    float  *sy,
+    void  *sy,
     int    *incy
 );
 
 #define caxpy FORTRAN_WRAPPER(caxpy)
 extern void caxpy(
     int    *n,
-    float complex  *sa,
-    float complex  *sx,
+    void  *sa,
+    void  *sx,
     int    *incx,
-    float complex  *sy,
+    void  *sy,
     int    *incy
 );
 
@@ -33,53 +33,53 @@ extern void caxpy(
 #define daxpy FORTRAN_WRAPPER(daxpy)
 extern void daxpy(
     int    *n,
-    double  *sa,
-    double  *sx,
+    void  *sa,
+    void  *sx,
     int    *incx,
-    double  *sy,
+    void  *sy,
     int    *incy
 );
 
 #define zaxpy FORTRAN_WRAPPER(zaxpy)
 extern void zaxpy(
     int    *n,
-    double complex *sa,
-    double complex *sx,
+    void *sa,
+    void *sx,
     int    *incx,
-    double complex *sy,
+    void *sy,
     int    *incy
 );
 
 #define scopy FORTRAN_WRAPPER(scopy)
 extern void scopy(
     int *n,
-    float  *cx,
+    void  *cx,
     int *incx,
-    float *cy,
+    void *cy,
     int *incy
 );
 #define ccopy FORTRAN_WRAPPER(ccopy)
 extern void ccopy(
     int *n,
-    float complex *cx,
+    void *cx,
     int *incx,
-    float complex *cy,
+    void *cy,
     int *incy
 );
 #define dcopy FORTRAN_WRAPPER(dcopy)
 extern void dcopy(
     int *n,
-    double  *cx,
+    void  *cx,
     int *incx,
-    double *cy,
+    void *cy,
     int *incy
 );
 #define zcopy FORTRAN_WRAPPER(zcopy)
 extern void zcopy(
     int *n,
-    double complex *cx,
+    void *cx,
     int *incx,
-    double complex *cy,
+    void *cy,
     int *incy
 );
 
@@ -89,13 +89,13 @@ extern void ssbmv(
         char *uplo,
         int *n,
         int *k,
-        float *alpha,
-        float *a,
+        void *alpha,
+        void *a,
         int *lda,
-        float *x,
+        void *x,
         int *incx,
-        float *beta,
-        float *y,
+        void *beta,
+        void *y,
         int* incy
                   );
 #define dsbmv FORTRAN_WRAPPER(dsbmv)
@@ -103,37 +103,37 @@ extern void dsbmv(
         char *uplo,
         int *n,
         int *k,
-        double *alpha,
-        double *a,
+        void *alpha,
+        void *a,
         int *lda,
-        double *x,
+        void *x,
         int *incx,
-        double *beta,
-        double *y,
+        void *beta,
+        void *y,
         int* incy
                   );
 #define sger FORTRAN_WRAPPER(sger)
 extern void sger(
         int *m,
         int *n,
-        float *alpha,
-        float *x,
+        void *alpha,
+        void *x,
         int *incx,
-        float *y,
+        void *y,
         int *incy,
-        float *a,
+        void *a,
         int *lda
         );
 #define dger FORTRAN_WRAPPER(dger)
 extern void dger(
         int *m,
         int *n,
-        double *alpha,
-        double *x,
+        void *alpha,
+        void *x,
         int *incx,
-        double *y,
+        void *y,
         int *incy,
-        double *a,
+        void *a,
         int *lda
         );
 
@@ -145,13 +145,13 @@ extern void sgemm(
         int *m,
         int *n,
         int *k,
-        float *alpha,
-        float *a,
+        void *alpha,
+        void *a,
         int *lda,
-        float *b,
+        void *b,
         int *ldb,
-        float *beta,
-        float *c,
+        void *beta,
+        void *c,
         int *ldc
                   );
 #define cgemm FORTRAN_WRAPPER(cgemm)
@@ -161,13 +161,13 @@ extern void cgemm(
         int *m,
         int *n,
         int *k,
-        float complex *alpha,
-        float complex *a,
+        void *alpha,
+        void *a,
         int *lda,
-        float complex *b,
+        void *b,
         int *ldb,
-        float complex *beta,
-        float complex *c,
+        void *beta,
+        void *c,
         int *ldc
                   );
 #define dgemm FORTRAN_WRAPPER(dgemm)
@@ -177,13 +177,13 @@ extern void dgemm(
         int *m,
         int *n,
         int *k,
-        double *alpha,
-        double *a,
+        void *alpha,
+        void *a,
         int *lda,
-        double *b,
+        void *b,
         int *ldb,
-        double *beta,
-        double *c,
+        void *beta,
+        void *c,
         int *ldc
                   );
 extern void zgemm(
@@ -192,13 +192,13 @@ extern void zgemm(
         int *m,
         int *n,
         int *k,
-        double complex*alpha,
-        double complex*a,
+        void*alpha,
+        void*a,
         int *lda,
-        double complex*b,
+        void*b,
         int *ldb,
-        double complex*beta,
-        double complex*c,
+        void*beta,
+        void*c,
         int *ldc
                   );
 #ifdef __cplusplus

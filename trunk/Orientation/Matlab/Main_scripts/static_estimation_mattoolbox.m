@@ -101,7 +101,7 @@ State=[roll;pitch;yaw];
 h=Aero.Animation;
 h.FramesPerSecond = Fs;
  h.TimeScaling=1;
-idx1 = h.createBody('pa24-250_orange.ac','Ac3d');
+idx1 = h.createBody('ac3d_xyzisrgb.ac','Ac3d');
 
 time_axe=0:1/Fs:1/Fs*(cycle_len-1);
 position = zeros(cycle_len,3);
