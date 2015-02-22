@@ -38,6 +38,12 @@ public :
 		s_int64 proxy_timeid;
 		s_int64 light_timeid;
 		s_int64 audio_timeid;
+		int n_accel_rate;
+	int n_gyro_rate;
+	int n_magneto_rate;
+	int n_proxy_rate;
+	int n_light_rate;
+	int n_audio_rate;
 
 
 	SCDFPacketListener(int size, int size2)
@@ -59,21 +65,28 @@ public :
 
 		audio_data_buff_p = new float[size2];
 		audio_timestamps_buff_p = new s_uint64[size2];
-	
+
 		n_accel_data = 0;
 		n_gyro_data  = 0;
 		n_magneto_data = 0;
 		n_proxy_data= 0;
 		n_light_data= 0;
 		n_audio_data= 0;
-		
+
+		n_accel_rate = 0;
+		n_gyro_rate  = 0;
+		n_magneto_rate = 0;
+		n_proxy_rate= 0;
+		n_light_rate= 0;
+		n_audio_rate= 0;
+
 		accel_timeid = 0;
 		gyro_timeid  = 0;
 		magneto_timeid = 0;
 		proxy_timeid= 0;
 		light_timeid= 0;
 		audio_timeid= 0;
-	
+
 	}
 	~SCDFPacketListener()
 	{
@@ -93,20 +106,20 @@ public :
 protected:
 
 
-    virtual void ProcessMessage( const osc::ReceivedMessage& m, 
+    virtual void ProcessMessage( const osc::ReceivedMessage& m,
 				const IpEndpointName& remoteEndpoint )
     {
         (void) remoteEndpoint; // suppress unused parameter warning
 
-		
+
         try{
             // example of parsing single messages. osc::OsckPacketListener
             // handles the bundle traversal.
 			char *pch=NULL;
-			
+
 
 			pch = strtok ( (char*)m.AddressPattern(),"/");
-		
+
 			if (std::strcmp(pch,"Accelerometer")==0)
 			{
 				pch = strtok ( NULL,"/");
@@ -117,7 +130,7 @@ protected:
 				}
 				else if(std::strcmp(pch,"Rate")==0)
 				{
-					Get_sensor_Rate(m,remoteEndpoint);
+					Get_sensor_Rate(m,remoteEndpoint,&n_accel_rate);
 				}
 				else if(std::strcmp(pch,"Channels")==0)
 				{
@@ -157,7 +170,7 @@ protected:
 				}
 				else if(std::strcmp(pch,"Rate")==0)
 				{
-					Get_sensor_Rate(m,remoteEndpoint);
+					Get_sensor_Rate(m,remoteEndpoint,&n_gyro_rate);
 				}
 				else if(std::strcmp(pch,"Channels")==0)
 				{
@@ -196,7 +209,7 @@ protected:
 				}
 				else if(std::strcmp(pch,"Rate")==0)
 				{
-					Get_sensor_Rate(m,remoteEndpoint);
+					Get_sensor_Rate(m,remoteEndpoint,&n_magneto_rate);
 				}
 				else if(std::strcmp(pch,"Channels")==0)
 				{
@@ -235,7 +248,7 @@ protected:
 				}
 				else if(std::strcmp(pch,"Rate")==0)
 				{
-					Get_sensor_Rate(m,remoteEndpoint);
+					Get_sensor_Rate(m,remoteEndpoint,&n_proxy_rate);
 				}
 				else if(std::strcmp(pch,"Channels")==0)
 				{
@@ -274,7 +287,7 @@ protected:
 				}
 				else if(std::strcmp(pch,"Rate")==0)
 				{
-					Get_sensor_Rate(m,remoteEndpoint);
+					Get_sensor_Rate(m,remoteEndpoint,&n_light_rate);
 				}
 				else if(std::strcmp(pch,"Channels")==0)
 				{
@@ -313,7 +326,7 @@ protected:
 				}
 				else if(std::strcmp(pch,"Rate")==0)
 				{
-					Get_sensor_Rate(m,remoteEndpoint);
+					Get_sensor_Rate(m,remoteEndpoint,&n_audio_rate);
 				}
 				else if(std::strcmp(pch,"Channels")==0)
 				{
@@ -342,10 +355,10 @@ protected:
 #endif
 				}
 			}
-          
+
 		}
           catch( osc::Exception& e ){
-            // any parsing errors such as unexpected argument types, or 
+            // any parsing errors such as unexpected argument types, or
             // missing arguments get thrown as exceptions.
             std::cout << "error while parsing message with strtok: "
                 << m.AddressPattern() << ": " << e.what() << "\n";
@@ -360,14 +373,14 @@ private :
 			int  num_samples ;
 
 
-		void Get_sensor_Frame( const osc::ReceivedMessage& m, 
+		void Get_sensor_Frame( const osc::ReceivedMessage& m,
 				const IpEndpointName& remoteEndpoint, int *num_frames )
 
 	{
 
 		try
 		{
-			
+
                 osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 int a1 = (arg++)->AsInt32();
                 if( arg != m.ArgumentsEnd() )
@@ -378,10 +391,10 @@ private :
 #endif
 
 				*num_frames=a1;
- 
+
 		}
 		catch( osc::Exception& e ){
-            // any parsing errors such as unexpected argument types, or 
+            // any parsing errors such as unexpected argument types, or
             // missing arguments get thrown as exceptions.
             std::cout << "error while analyzing packet: "
                 << m.AddressPattern() << ": " << e.what() << "\n";
@@ -389,14 +402,14 @@ private :
 
 	}
 
-	void Get_sensor_Rate( const osc::ReceivedMessage& m, 
-				const IpEndpointName& remoteEndpoint )
+	void Get_sensor_Rate( const osc::ReceivedMessage& m,
+				const IpEndpointName& remoteEndpoint,int *rate_o )
 
 	{
 
 		try
 		{
-			
+
                 osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 int a1 = (arg++)->AsInt32();
                 if( arg != m.ArgumentsEnd() )
@@ -405,10 +418,11 @@ private :
                 std::cout << "received " << m.AddressPattern() << " message with arguments: "
                     << a1 <<  "\n";
 #endif
-				
+                *rate_o=a1;
+
 		}
 		catch( osc::Exception& e ){
-            // any parsing errors such as unexpected argument types, or 
+            // any parsing errors such as unexpected argument types, or
             // missing arguments get thrown as exceptions.
             std::cout << "error while analyzing packet: "
                 << m.AddressPattern() << ": " << e.what() << "\n";
@@ -416,14 +430,14 @@ private :
 
 	}
 
-	void Get_sensor_Channels( const osc::ReceivedMessage& m, 
+	void Get_sensor_Channels( const osc::ReceivedMessage& m,
 				const IpEndpointName& remoteEndpoint, int *num_channels )
 
 	{
 
 		try
 		{
-			
+
                 osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 int a1 = (arg++)->AsInt32();
                 if( arg != m.ArgumentsEnd() )
@@ -435,7 +449,7 @@ private :
 				*num_channels=a1;
 		}
 		catch( osc::Exception& e ){
-            // any parsing errors such as unexpected argument types, or 
+            // any parsing errors such as unexpected argument types, or
             // missing arguments get thrown as exceptions.
             std::cout << "error while analyzing packet: "
                 << m.AddressPattern() << ": " << e.what() << "\n";
@@ -443,14 +457,14 @@ private :
 
 	}
 
-	void Get_sensor_TimeID( const osc::ReceivedMessage& m, 
+	void Get_sensor_TimeID( const osc::ReceivedMessage& m,
 				const IpEndpointName& remoteEndpoint ,s_int64 *timeid)
 
 	{
 
 		try
 		{
-			
+
                 osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 s_int64 a1 = (arg++)->AsInt64();
                 if( arg != m.ArgumentsEnd() )
@@ -460,10 +474,10 @@ private :
                     << a1 <<  "\n";
 #endif
 				*timeid=a1;
- 
+
 		}
 		catch( osc::Exception& e ){
-            // any parsing errors such as unexpected argument types, or 
+            // any parsing errors such as unexpected argument types, or
             // missing arguments get thrown as exceptions.
             std::cout << "error while analyzing packet: "
                 << m.AddressPattern() << ": " << e.what() << "\n";
@@ -471,14 +485,14 @@ private :
 
 	}
 
-	void Get_sensor_Data( const osc::ReceivedMessage& m, 
+	void Get_sensor_Data( const osc::ReceivedMessage& m,
 				const IpEndpointName& remoteEndpoint,osc::osc_bundle_element_size_t *size ,float *float_data_buff)
 
 	{
 
 		try
 		{
-			
+
                 osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 const void *datap;
 
@@ -490,10 +504,10 @@ private :
                 std::cout << "received " << m.AddressPattern() << " message with first argument: "
                     << float_data_buff[0] <<  "\n";
 #endif
- 
+
 		}
 		catch( osc::Exception& e ){
-            // any parsing errors such as unexpected argument types, or 
+            // any parsing errors such as unexpected argument types, or
             // missing arguments get thrown as exceptions.
             std::cout << "error while analyzing packet: "
                 << m.AddressPattern() << ": " << e.what() << "\n";
@@ -501,14 +515,14 @@ private :
 
 	}
 
-	void Get_sensor_Timestamps( const osc::ReceivedMessage& m, 
+	void Get_sensor_Timestamps( const osc::ReceivedMessage& m,
 				const IpEndpointName& remoteEndpoint,osc::osc_bundle_element_size_t *size ,s_uint64 *int64_data_buff)
 
 	{
 
 		try
 		{
-			
+
                 osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
                 const void *datap;
 
@@ -520,10 +534,10 @@ private :
                 std::cout << "received " << m.AddressPattern() << " message with first argument: "
                     << int64_data_buff[0] <<  "\n";
 #endif
- 
+
 		}
 		catch( osc::Exception& e ){
-            // any parsing errors such as unexpected argument types, or 
+            // any parsing errors such as unexpected argument types, or
             // missing arguments get thrown as exceptions.
             std::cout << "error while analyzing packet: "
                 << m.AddressPattern() << ": " << e.what() << "\n";

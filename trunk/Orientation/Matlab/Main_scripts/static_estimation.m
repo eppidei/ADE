@@ -1,4 +1,4 @@
-clear all; close all;clc
+ close all;clc
 
 %%%%path definition
 if (isunix || ismac)
@@ -22,7 +22,8 @@ addpath(res_path)
 
 %     load('dump_slow_rotation_yaw_body_ontable_ipad');
 %    load('dump_0_45_slow2fast');
- load('dump_rotation_m90p90_ipad');
+%  load('dump_rotation_m90p90_ipad');
+ load('roll_p90_m90_various_headeings_const_pitch');
 
 Fs = 50; 
 
@@ -52,9 +53,9 @@ Hd_magneto = butterwoth_LP_design(5,10,1,50,Fsens);
 accel_x_body=resample(downsample(accel_x_data_plot,downsamp,1),N,D);
 accel_y_body=resample(downsample(accel_y_data_plot,downsamp,1),N,D);
 accel_z_body=resample(downsample(accel_z_data_plot,downsamp,1),N,D);
-magneto_x_body=resample(downsample(magneto_x_data_plot,downsamp,1),N,D)*pi/180;
-magneto_y_body=resample(downsample(magneto_y_data_plot,downsamp,1),N,D)*pi/180;
-magneto_z_body=resample(downsample(magneto_z_data_plot,downsamp,1),N,D)*pi/180;
+magneto_x_body=resample(downsample(magneto_x_data_plot,downsamp,1),N,D);
+magneto_y_body=resample(downsample(magneto_y_data_plot,downsamp,1),N,D);
+magneto_z_body=resample(downsample(magneto_z_data_plot,downsamp,1),N,D);
 cycle_len = length(accel_x_body);
 %-71,18,-46 magneto init
 
@@ -77,26 +78,33 @@ magneto_z_body_filt=filtfilt(Hd_magneto.SOSMatrix,Hd_magneto.ScaleValues,magneto
 yaw=zeros(1,cycle_len);
 pitch=zeros(1,cycle_len);
 roll=zeros(1,cycle_len);
+magneto_neu=zeros(3,cycle_len);
 
 for i=1:cycle_len
 
-    %true in static condition
-    pitch(i)=asin(accel_x_body_filt(i)/grav);
-    roll(i)=atan(accel_y_body_filt(i)/accel_z_body_filt(i));
-    %%%%%%%%
-    C=update_rotation_matrix_body2earth(0,pitch(i),roll(i));
+%%%%%%%%%%%%%%%%%%%%% TRUE IN STATIC CONDITIONS%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%considering a local earth reference (x-y plane perpendicular to
+%%%%%gravity vector that points always down the surface)%%%%%
+%%% pitch and roll evaluated as the projection of gravity vector gives
+%%% pitch/roll related to local plane
+    pitch(i)=0;%asin(accel_x_body_filt(i))./grav;
+    roll(i)=atan2(accel_y_body_filt(i),accel_z_body_filt(i));
+%     %%%%%%%%
+%     C=update_rotation_matrix_body2earth(0,pitch(i),roll(i));
+%     C_NEU2body=angle2dcm(0,pitch(i),roll(i),'ZYX');
+%     
+%     magneto_neu(:,i)=transp(C_NEU2body)*[magneto_x_body_filt(i);magneto_y_body_filt(i);magneto_z_body_filt(i)];
+    yaw(i)=0;%-atan(magneto_neu(2,i)/magneto_neu(1,i));
     
-    magneto_earth=C*[magneto_x_body_filt(i);magneto_y_body_filt(i);magneto_z_body_filt(i)];
-    yaw(i)=-atan(magneto_earth(2)/magneto_earth(1));
-    
-    State(:,i)=[yaw(i);pitch(i);roll(i)];
+%     State(:,i)=[yaw(i);-pitch(i);roll(i)];
     
    
 %      R=update_rotation_matrix_earth2body(yaw,pitch,roll);
 %      evolution(:,:,i)=R*ipad_vertex;
 
 
-  MobileViewer([0;0;0],[roll(i),pitch(i),yaw(i)],37,55);
+  MobileViewer([0;0;0],yaw(i),pitch(i),-roll(i),37,55);
 
   
  

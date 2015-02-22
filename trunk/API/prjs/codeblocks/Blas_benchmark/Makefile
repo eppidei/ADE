@@ -1,4 +1,4 @@
-BLASSRC:=cblas
+BLASSRC:=openblas
 PRJPATH:=$(CURDIR)
 ifeq ($(BLASSRC),blas)
 	BLAS_LSEARCHDIR:=-L/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS
