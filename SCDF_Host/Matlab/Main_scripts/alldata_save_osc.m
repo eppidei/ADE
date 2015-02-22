@@ -21,7 +21,7 @@ addpath(funcs_path)
 addpath(mex_exec_path)
 
 %%%%%%%%%MAIN VARIABLES%%%%%%%%%
-save_ws_path=[res_path,separator,'dump_slow_rotation_yaw_body_ontable_ipad'];
+save_ws_path=[res_path,separator,'roll_p90_m90_various_headeings_const_pitch'];
 frame_len = 256;
 plot_approx_duration = 10;
 
@@ -37,7 +37,7 @@ if strcmp(devel_type,'online')
     remote_ip1 = 192;
     remote_ip2 =168;
     remote_ip3 =1;
-    remote_ip4 =61;
+    remote_ip4 =6;
     port = 50000;
     Fs = 44100;
     nbit = 16;
@@ -116,8 +116,9 @@ gyro_z=zeros(1,frame_len);
 n_gyro=zeros(1,frame_len);
 proxy=zeros(1,frame_len);
 light=zeros(1,frame_len);
+ fprintf('************Acquisition Started ********************\n');
 for i=1:kmax
-   
+  
     if strcmp(devel_type,'online')
         [audio_buff,audio_len,accel_buff,accel_len,gyro_buff,gyro_len,...
             magneto_buff,magneto_len,proxy_buff,proxy_len,light_buff,light_len,byte,buffer_counter,init_dbg,audio_timestamps,audio_timeid]=mex_udp_receiver_oneport_osc(local_ip,remote_ip1,remote_ip2,remote_ip3,remote_ip4,port);

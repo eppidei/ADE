@@ -6,12 +6,16 @@
 
 
 #define SCDF_OK_RETURN (0)
-#undef _MIDI_ 
+#undef _MIDI_
 #define _STK_
 #define _OS_ LINUX_OS /*choose beetwen linux 0 and windows 1*/
 
+#define ARTEMIDE_TEST
+
 
 /********************** UDP RECEIVER DEFINES ***********************************/
+
+#ifndef ARTEMIDE_TEST
 
 #define MAX_BUFFER_LEN (4096)
 #define MAX_BUFFER_TIMESTAMP (128)
@@ -22,6 +26,21 @@
 #undef VERBOSE_OSC
 #undef VERBOSE_UDP
 #undef VERBOSE_THREAD
+
+#else
+
+#define OSC_SIZE_256 (1314)
+#define MAX_BUFFER_LEN (4096)
+#define MAX_BUFFER_TIMESTAMP (128)
+#define RECEPTION_MAX_BUFFER_LEN (4)
+#define MAX_CHAR_BUFF_LEN OSC_SIZE_256
+#define MAX_SENSOR_FLOATS (64)
+#define MAX_AUDIO_FLOAT (256)
+#undef VERBOSE_OSC
+#undef VERBOSE_UDP
+#undef VERBOSE_THREAD
+
+#endif
 
 /*********************** DSP PARAMETERS ***************************************/
 

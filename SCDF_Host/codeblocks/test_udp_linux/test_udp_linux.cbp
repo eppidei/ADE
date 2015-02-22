@@ -37,6 +37,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../../Shared_C_funcs/Receiver.cpp" />
 		<Unit filename="../../Shared_C_funcs/Sensor.h" />
 		<Unit filename="../../Shared_C_funcs/ThreadUtils.cpp" />
 		<Unit filename="../../Shared_C_funcs/ThreadUtils.h" />
@@ -60,12 +61,6 @@
 		<Unit filename="../../Shared_C_funcs/osc/OscTypes.cpp" />
 		<Unit filename="../../Shared_C_funcs/osc/OscTypes.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="my_defines.h" />
-		<Unit filename="my_typedefs.h" />
-		<Unit filename="udp_receiver.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="udp_receiver.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

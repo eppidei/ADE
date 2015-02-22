@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="main.c" open="1" top="1" tabpos="14">
-		<Cursor position="1553" topLine="30" />
+	<File name="main.c" open="1" top="0" tabpos="14">
+		<Cursor position="1553" topLine="51" />
 	</File>
 	<File name="../../../src/ADE.c" open="0" top="0" tabpos="9">
 		<Cursor position="766" topLine="6" />
@@ -44,7 +44,7 @@
 		<Cursor position="1173" topLine="0" />
 	</File>
 	<File name="../../../src/headers/ADE_blas_level1.h" open="1" top="0" tabpos="11">
-		<Cursor position="1362" topLine="6" />
+		<Cursor position="1706" topLine="23" />
 	</File>
 	<File name="../../../src/headers/ADE_blas_level2.h" open="1" top="0" tabpos="7">
 		<Cursor position="54" topLine="0" />
@@ -58,8 +58,8 @@
 	<File name="../../../src/headers/ADE_cblas.h" open="1" top="0" tabpos="9">
 		<Cursor position="28232" topLine="486" />
 	</File>
-	<File name="../../../src/headers/ADE_defines.h" open="1" top="0" tabpos="10">
-		<Cursor position="1256" topLine="21" />
+	<File name="../../../src/headers/ADE_defines.h" open="1" top="1" tabpos="10">
+		<Cursor position="1973" topLine="42" />
 	</File>
 	<File name="../../../src/headers/ADE_errors.h" open="1" top="0" tabpos="3">
 		<Cursor position="4790" topLine="69" />

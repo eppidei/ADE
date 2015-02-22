@@ -200,15 +200,20 @@ void UDPSenderHelperBase::DoMultiSendData(std::vector<SensorData*> &senderData)
     }
 }
 
-#define NUM_BUFFERS_SENSOR_DATA (1U)
+//#define NUM_BUFFERS_SENSOR_DATA (1U)
 void UDPSenderHelperBase::SendOnThread()
 {
-    static SensorData* tx_buffer[NUM_BUFFERS_SENSOR_DATA] = {0,};
+    static SensorData* tx_audio_buffer[1] = {0,};
+//    static SensorData* tx_accel_buffer[1] = {0,};
+//    static SensorData* tx_gyro_buffer[1] = {0,};
+//    static SensorData* tx_magneto_buffer[1] = {0,};
+//    static SensorData* tx_proxy_buffer[1] = {0,};
     static std::vector<SensorData*> sensdata_vec;
     static bool onetime = false;
     unsigned int i,k;
     float freq=440;
     float phase=0,last_phase=0;
+    float sleep_time=0.0;
     // SensorData pippo(AudioInput);
 
 
@@ -228,31 +233,31 @@ void UDPSenderHelperBase::SendOnThread()
     //Harvester::Instance()->WaitForHarvest();
 
     try{
-         for(i = 0; i < NUM_BUFFERS_SENSOR_DATA; i++)
+         for(i = 0; i < 1; i++)
         {
 
-            tx_buffer[i] = new SensorData(AudioInput);
-            tx_buffer[i]->rate=44100;
-            tx_buffer[i]->num_channels=1;
-            tx_buffer[i]->num_frames=256;
-             tx_buffer[i]->data=(s_sample*)malloc((tx_buffer[i]->num_frames)*(tx_buffer[i]->num_channels)*sizeof(s_sample));
-             tx_buffer[i]->timestamp=(s_uint64*)malloc(2*sizeof(s_uint64));
-            for (k=0;k<(tx_buffer[i]->num_frames)*(tx_buffer[i]->num_channels);k++)
+            tx_audio_buffer[i] = new SensorData(AudioInput);
+            tx_audio_buffer[i]->rate=2048;
+            tx_audio_buffer[i]->num_channels=1;
+            tx_audio_buffer[i]->num_frames=256;
+             tx_audio_buffer[i]->data=(s_sample*)malloc((tx_audio_buffer[i]->num_frames)*(tx_audio_buffer[i]->num_channels)*sizeof(s_sample));
+             tx_audio_buffer[i]->timestamp=(s_uint64*)malloc(tx_audio_buffer[i]->num_frames*sizeof(s_uint64));
+            for (k=0;k<(tx_audio_buffer[i]->num_frames)*(tx_audio_buffer[i]->num_channels);k++)
             {
-                phase = fmod(freq/tx_buffer[i]->rate,1.0)*k+last_phase;
-                tx_buffer[i]->data[i]=sin(2*M_PI*phase);
-                if (k==(tx_buffer[i]->num_frames)*(tx_buffer[i]->num_channels)-1)
+                phase = fmod(freq/tx_audio_buffer[i]->rate,1.0)*k+last_phase;
+                tx_audio_buffer[i]->data[k]=sin(2*M_PI*phase);
+                if (k==(tx_audio_buffer[i]->num_frames)*(tx_audio_buffer[i]->num_channels)-1)
                 {
                     last_phase=phase;
                 }
             }
 
-            sensdata_vec.push_back(tx_buffer[i]);
+            sensdata_vec.push_back(tx_audio_buffer[i]);
         }
 
     	//LOGD("UDP SENDER - UDPSenderHelperBase - SendOnThread()");
 
-      //std::vector<SensorData*> *buffer=&tx_buffer;//Harvester::Instance()->syncDataQueue.front();
+      //std::vector<SensorData*> *buffer=&tx_audio_buffer;//Harvester::Instance()->syncDataQueue.front();
        // Harvester::Instance()->syncDataQueue.pop();
 #ifdef LOG_SEM
        // LOGD("Sender data queue size :%d\n",Harvester::Instance()->syncDataQueue.size());
@@ -273,8 +278,10 @@ void UDPSenderHelperBase::SendOnThread()
 
         }
         sensdata_vec.clear();
+        sleep_time=1*tx_audio_buffer[0]->num_frames/tx_audio_buffer[0]->rate;
 
-        //sleep(100);
+
+        sleep(sleep_time);
 
         //delete buffer;
     }
@@ -358,7 +365,7 @@ void UDPSenderHelperBase::OSCPackData(const std::vector<SensorData*> &sData, osc
         if (AudioInput!=data->type)
         	numTimestamps=data->num_frames;
 
-        std::string sensorTag=std::string("/") + SensorTypeString[i];
+        std::string sensorTag=std::string("/") + SensorTypeString[5];
 
         oscData << osc::BeginMessage( std::string(sensorTag+rateTag).c_str() ) << data->rate << osc::EndMessage
         << osc::BeginMessage( std::string(sensorTag+channelsTag).c_str() ) << data->num_channels << osc::EndMessage

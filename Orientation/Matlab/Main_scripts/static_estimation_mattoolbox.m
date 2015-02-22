@@ -53,10 +53,10 @@ Hd_magneto = butterwoth_LP_design(5,10,1,50,Fsens);
 accel_x_body=resample(downsample(accel_x_data_plot,downsamp,1),N,D);
 accel_y_body=resample(downsample(accel_y_data_plot,downsamp,1),N,D);
 accel_z_body=resample(downsample(accel_z_data_plot,downsamp,1),N,D);
-magneto_x_body=resample(downsample(magneto_x_data_plot,downsamp,1),N,D)*pi/180;
-magneto_y_body=resample(downsample(magneto_y_data_plot,downsamp,1),N,D)*pi/180;
-magneto_z_body=resample(downsample(magneto_z_data_plot,downsamp,1),N,D)*pi/180;
-cycle_len = length(accel_x_body);
+magneto_x_body=resample(downsample(magneto_x_data_plot,downsamp,1),N,D);
+magneto_y_body=resample(downsample(magneto_y_data_plot,downsamp,1),N,D);
+magneto_z_body=resample(downsample(magneto_z_data_plot,downsamp,1),N,D);
+
 %-71,18,-46 magneto init
 
 %  h1=figure('Name','Earth frame evo');
@@ -76,8 +76,8 @@ magneto_z_body_filt=filtfilt(Hd_magneto.SOSMatrix,Hd_magneto.ScaleValues,magneto
 
 cycle_len =length( accel_x_body_filt);
 
-pitch=asin(accel_x_body_filt./grav);
-roll=atan(accel_y_body_filt./accel_z_body_filt);
+pitch=asin(accel_x_body_filt)./grav;
+roll=atan2(accel_y_body_filt,accel_z_body_filt);
 %%avoid imaginary%%
 % ind_rp1=find(roll>1);
 % ind_rm1=find(roll<-1);
@@ -93,20 +93,20 @@ end
 
 yaw=-atan(magneto_earth(2,:)./magneto_earth(1,:));
 State=[roll;pitch;yaw];
-% for i=1:cycle_len
-%  MobileViewer([0;0;0],[roll(i),pitch(i),yaw(i)],37,55);
-% end
+ for i=1:cycle_len
+       MobileViewer([0;0;0],yaw(i),pitch(i),roll(i),37,55);
+ end
 %%%%% Animate %%%%%%%%%
 
-h=Aero.Animation;
-h.FramesPerSecond = Fs;
- h.TimeScaling=1;
-idx1 = h.createBody('ac3d_xyzisrgb.ac','Ac3d');
-
-time_axe=0:1/Fs:1/Fs*(cycle_len-1);
-position = zeros(cycle_len,3);
-tsdata=[time_axe',position,State'];
-h.Bodies{1}.TimeseriesSource=tsdata;
+% h=Aero.Animation;
+% h.FramesPerSecond = Fs;
+%  h.TimeScaling=1;
+% idx1 = h.createBody('ac3d_xyzisrgb.ac','Ac3d');
+% 
+% time_axe=0:1/Fs:1/Fs*(cycle_len-1);
+% position = zeros(cycle_len,3);
+% tsdata=[time_axe',position,State'];
+% h.Bodies{1}.TimeseriesSource=tsdata;
 % h.Camera.ViewAngle=[45,45,45];
 % for i=1:cycle_len
 % h.move([0,0,0],[State(1,i),State(2,i),State(3,i)]);
