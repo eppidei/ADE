@@ -27,7 +27,7 @@ RM:=rm -f
 MKDIR:=mkdir -p
 CC:=gcc
 CCFLAGS:=-g -Wall -Wextra
-MAIN:=main.c
+MAIN:=main.cpp
 PROJECT_NAME:=Blas_benchmark
 	
 OBJ=    $(PRJPATH)/obj/Debug/ADE_Bench_Utils.o \
