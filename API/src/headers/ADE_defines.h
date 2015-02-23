@@ -17,12 +17,14 @@
 #define ADE_USE_SINGLE_PREC (0)
 #define ADE_USE_DOUBLE_PREC (1)
 
-#define ADE_RELEASE (0)
-#define ADE_DEBUG_NORMAL (1)
-#define ADE_DEBUG_MATLAB (2)
-#define ADE_BENCH_ANDROID (3)
+#define ADE_PC_RELEASE (0)
+#define ADE_PC_DEBUG_NORMAL (1)
+#define ADE_PC_DEBUG_MATLAB (2)
+#define ADE_ANDROID (3)
+#define ADE_IOS (4)
 
 #define ADE_USE_FFTW (0)
+#define ADE_USE_ACCEL_FMW_FFT (1)
 
 #define ADE_USE_LIN_ALG_BLAS (0)
 #define ADE_USE_LIN_ALG_CUSTOM (1)
@@ -39,26 +41,45 @@
 #define ADE_CHECK_RETURNS_FALSE (0)
 
 /* Control */
+
+#ifndef ADE_TARGET
 #define ADE_TARGET ADE_BENCH_ANDROID
-#define ADE_FFT_IMP ADE_USE_FFTW
+#endif //ADE_TARGET
+
+
 #define ADE_LIN_ALG_IMP ADE_USE_LIN_ALG_BLAS
-#define ADE_USE_FFTW_THREADS
 
 
-#if (ADE_TARGET==ADE_DEBUG_MATLAB)
+#if (ADE_TARGET==ADE_PC_DEBUG_MATLAB)
     #define ADE_CONFIGURATION_INTERACTIVE
     #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
-#elif (ADE_TARGET==ADE_DEBUG_NORMAL || ADE_TARGET==ADE_RELEASE)
+    #define ADE_FFT_IMP ADE_USE_FFTW
+    #define ADE_USE_FFTW_THREADS
+#elif (ADE_TARGET==ADE_PC_DEBUG_NORMAL || ADE_TARGET==ADE_PC_RELEASE)
     #undef ADE_CONFIGURATION_INTERACTIVE
     #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
-#elif (ADE_TARGET==ADE_BENCH_ANDROID)
+    #define ADE_FFT_IMP ADE_USE_FFTW
+    #define ADE_USE_FFTW_THREADS
+#elif (ADE_TARGET==ADE_ANDROID)
     #undef ADE_CONFIGURATION_INTERACTIVE
     #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #define ADE_FFT_IMP ADE_USE_FFTW
+    #define ADE_USE_FFTW_THREADS
+    #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
+    #define ADE_BLAS_IMPLEMENTATION ADE_USE_OPENBLAS_LIB
+    #endif
+#elif (ADE_TARGET==ADE_IOS)
+    #undef ADE_CONFIGURATION_INTERACTIVE
+    #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #define ADE_FFT_IMP ADE_USE_ACCEL_FMW_FFT
+    #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
+    #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
+    #endif
+#define TICK   NSDate *startTime = [NSDate date]
+#define TOCK   NSLog(@"Time: %f", -[startTime timeIntervalSinceNow])
 #endif
 
-#ifndef ADE_BLAS_IMPLEMENTATION //to made it overrideable
-#define ADE_BLAS_IMPLEMENTATION ADE_USE_OPENBLAS_LIB
-#endif
+
 
 #define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_TRUE //1 true 0 false
 #define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_TRUE //1 true 0 false

@@ -247,7 +247,9 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     struct timespec start_blas, stop_blas,start_cust, stop_cust,res;
     int ret_time=0;
     int err_code=0;
+#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
     clockid_t clock_id=CLOCK_MONOTONIC;//CLOCK_REALTIME,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
+#endif
    bench_times_T bench_times_int;
 
     bench_times_int.p_start_1=&start_blas;
@@ -255,6 +257,8 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     bench_times_int.p_start_2=&start_cust;
     bench_times_int.p_stop_2=&stop_cust;
     bench_times_int.p_res=&res;
+    
+#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
 
     ret_time=clock_getres(clock_id,&res);
     if (ret_time==-1)
@@ -263,6 +267,8 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
         fprintf(p_fid,"Failed setting clock %d : error %d\n",clock_id,err_code);
         return -1;
     }
+    
+#endif
 
 
 
@@ -316,14 +322,26 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                          /**********load data *********/
                          load_fmatrix((ADE_FLOATING_T*)p_A,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx]);
                          load_fmatrix((ADE_FLOATING_T*)p_B,n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
-
+#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
                          clock_gettime(clock_id,&start_blas);
+//#elif (ADE_TARGET==ADE_IOS)
+//                            TICK;
+#endif
                          ADE_Blas_level3_gemm (p_blas_l3);
+#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
                           clock_gettime(clock_id,&stop_blas);
 
                           clock_gettime(clock_id,&start_cust);
+//#elif (ADE_TARGET==ADE_IOS) 
+//                            TOCK;
+//                            TICK;
+#endif
                           custom_faABpbC (p_blas_l3,(ADE_FLOATING_T*)p_C_custom);
+#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
                         clock_gettime(clock_id,&stop_cust);
+//#elif (ADE_TARGET==ADE_IOS)
+//                            TOCK;
+#endif
 
                         test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
                         checker(p_blas_l3,p_C_custom,tolerance,test_id,mat_type[type_idx],&bench_times_int,p_fid);
