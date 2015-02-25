@@ -188,6 +188,7 @@ extern void dgemm(
         void *c,
         int *ldc
                   );
+#define zgemm FORTRAN_WRAPPER(zgemm)
 extern void zgemm(
         char *transa,
         char *transb,

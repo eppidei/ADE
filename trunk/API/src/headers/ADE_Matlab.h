@@ -18,7 +18,9 @@ struct ADE_MATLAB_S
     size_t *data_size;
 
 };
-
+#ifdef __cplusplus
+    extern "C" {
+#endif
 ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* filename, char* p_matfname,char *p_matpath);
 ADE_VOID_T ADE_Matlab_Release(ADE_MATLAB_T* p_mat);
 ADE_UINT32_T ADE_Matlab_GetVarIndex(ADE_MATLAB_T* p_mat, char *varname);
@@ -36,6 +38,9 @@ double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname);
 ADE_UINT32_T ADE_Matlab_GetLength(ADE_MATLAB_T* p_mat, char *varname);
 ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat);
 
+#ifdef __cplusplus
+    }   /* extern "C" */
+#endif
 
 
 #endif //_ADE_MATLAB_H

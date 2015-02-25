@@ -22,8 +22,8 @@ addpath(res_path)
 
 %     load('dump_slow_rotation_yaw_body_ontable_ipad');
 %    load('dump_0_45_slow2fast');
-%  load('dump_rotation_m90p90_ipad');
- load('roll_p90_m90_various_headeings_const_pitch');
+  load('dump_rotation_m90p90_ipad');
+%  load('roll_p90_m90_various_headeings_const_pitch');
 
 Fs = 50; 
 
@@ -88,14 +88,14 @@ for i=1:cycle_len
 %%%%%gravity vector that points always down the surface)%%%%%
 %%% pitch and roll evaluated as the projection of gravity vector gives
 %%% pitch/roll related to local plane
-    pitch(i)=0;%asin(accel_x_body_filt(i))./grav;
+    pitch(i)=asin(accel_x_body_filt(i))./grav;
     roll(i)=atan2(accel_y_body_filt(i),accel_z_body_filt(i));
 %     %%%%%%%%
 %     C=update_rotation_matrix_body2earth(0,pitch(i),roll(i));
-%     C_NEU2body=angle2dcm(0,pitch(i),roll(i),'ZYX');
+     C_NEU2body=angle2dcm(0,pitch(i),roll(i),'ZYX');
 %     
-%     magneto_neu(:,i)=transp(C_NEU2body)*[magneto_x_body_filt(i);magneto_y_body_filt(i);magneto_z_body_filt(i)];
-    yaw(i)=0;%-atan(magneto_neu(2,i)/magneto_neu(1,i));
+     magneto_neu(:,i)=transp(C_NEU2body)*[magneto_x_body_filt(i);magneto_y_body_filt(i);magneto_z_body_filt(i)];
+    yaw(i)=-atan(magneto_neu(2,i)/magneto_neu(1,i));
     
 %     State(:,i)=[yaw(i);-pitch(i);roll(i)];
     
@@ -104,7 +104,7 @@ for i=1:cycle_len
 %      evolution(:,:,i)=R*ipad_vertex;
 
 
-  MobileViewer([0;0;0],yaw(i),pitch(i),-roll(i),37,55);
+  MobileViewer([0;0;0],yaw(i),pitch(i),roll(i),37,55);
 
   
  

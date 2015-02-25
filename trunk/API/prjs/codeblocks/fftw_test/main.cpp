@@ -8,6 +8,7 @@
 #include "headers/ADE_Utils.h"
 #include "headers/ADE_fft.h"
 #include "headers/ADE_errors.h"
+#include "headers/ADE_complex.h"
 #define MAXCHAR (256)
 #define MAXVAR (32)
 
@@ -25,7 +26,7 @@ ADE_FFT_TYPE_T fft_type=ADE_FFT_C2C;
 ADE_VOID_T *p_in;
 ADE_VOID_T *p_out;
 double *p_matdata;
-ADE_CPLX_T test_cplx[2]={1+3*I,2+5*I};
+ADE_CPLX_T test_cplx[2];
 ADE_UINT32_T i=0;
 ADE_INT32_T lin,col;
 ADE_API_RET_T ret=ADE_DEFAULT_RET;
@@ -34,7 +35,8 @@ float *p_test2;
 
 //printf("double pointer size %d pointed size %d\n",sizeof(p_test),sizeof(*p_test));
 //printf("double pointer size %d pointed size %d\n",sizeof(p_test2),sizeof(*p_test2));
-
+test_cplx[0]=ADE_cset(1,3);
+test_cplx[1]=ADE_cset(2,5);
 
 ADE_Matlab_Init(&p_mat, p_eng,"/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/fft/fft_test.m", "./fft_test_ws.mat","/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab");
 //ADE_Matlab_launch_script_segment(p_mat,"Output");
