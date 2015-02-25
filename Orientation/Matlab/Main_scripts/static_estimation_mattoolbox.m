@@ -23,7 +23,8 @@ addpath(res_path)
 
 %      load('dump_slow_rotation_yaw_body_ontable_ipad');
 %    load('dump_0_45_slow2fast');
- load('dump_rotation_m90p90_ipad');
+%  load('dump_rotation_m90p90_ipad');
+ load('roll_p90_m90_various_headeings_const_pitch');
 
 Fs = 50; 
 
@@ -117,5 +118,5 @@ State=[roll;pitch;yaw];
 % t = 0;
 % h.updateBodies(t);
 % h.updateCamera(t);
-h.Camera.PositionFcn = @staticCameraPosition;
-h.play();
+% h.Camera.PositionFcn = @staticCameraPosition;
+% h.play();

@@ -1,4 +1,4 @@
-function MobileViewer(position_NEU,yaw,pitch,roll,azimuth,elevation)
+function MobileViewer(position_NED,yaw,pitch,roll,azimuth,elevation)
 % display quadcopter movements and rotations
 
 % NOTE 1: it's a computational slow function, so use a rate transition
@@ -43,7 +43,7 @@ end
     
 
 % compute rotation matrix
-NEU2BODY_mat = angle2dcm(yaw,pitch,roll,'ZYX');%NEU2BODY_matrix(attitude(1),attitude(2),attitude(3));
+NED2BODY_mat = angle2dcm(yaw,pitch,roll,'ZYX');%NED2BODY_matrix(attitude(1),attitude(2),attitude(3));
 
 
 
@@ -59,17 +59,17 @@ headLine = [linspace(0,headLineLenght,n_arm_points);linspace(0,0,n_arm_points);l
 
 % top line definition (is defined along Up direction) 
 topLineLenght = armLenghtLong*1.5;
-topLine = [linspace(0,0,n_arm_points);linspace(0,0,n_arm_points);linspace(0,topLineLenght,n_arm_points)];
+topLine = [linspace(0,0,n_arm_points);linspace(0,0,n_arm_points);linspace(0,-topLineLenght,n_arm_points)];
 
 
 
 % body movement (translation + rotation)
-arm1 = moveBody(arm1,position_NEU,NEU2BODY_mat);
-arm2 = moveBody(arm2,position_NEU,NEU2BODY_mat);
-arm3 = moveBody(arm3,position_NEU,NEU2BODY_mat);
-arm4 = moveBody(arm4,position_NEU,NEU2BODY_mat);
-headLine = moveBody(headLine,position_NEU,NEU2BODY_mat);
-topLine = moveBody(topLine,position_NEU,NEU2BODY_mat);
+arm1 = moveBody(arm1,position_NED,NED2BODY_mat);
+arm2 = moveBody(arm2,position_NED,NED2BODY_mat);
+arm3 = moveBody(arm3,position_NED,NED2BODY_mat);
+arm4 = moveBody(arm4,position_NED,NED2BODY_mat);
+headLine = moveBody(headLine,position_NED,NED2BODY_mat);
+topLine = moveBody(topLine,position_NED,NED2BODY_mat);
 
 
 % body plot (in ENU reference frame)
@@ -81,10 +81,10 @@ plot3(0,dir_axe,0,'g.',...
     armx,army,armz,'ro',...
     headLine(2,:),headLine(1,:),headLine(3,:),'k-',...
     topLine(2,:),topLine(1,:),topLine(3,:),'m-',...
-     0,0,2*dir_axe,'g.',...
+     0,0,-2*dir_axe,'g.',...
     dir_axe,0,0,'g.');
     text(0,dir_axe_len,0,'N');
-    text(0,0,2*dir_axe_len,'U');
+    text(0,0,-2*dir_axe_len,'D');
     text(dir_axe_len,0,0,'E');
     
   % orientation
@@ -99,18 +99,18 @@ plot3(0,dir_axe,0,'g.',...
 
 end
 
-function movedBody = moveBody(body,displacement,NEU2BODY_mat)
+function movedBody = moveBody(body,displacement,NED2BODY_mat)
 % apply a rotation and then a displacement to an array of points in 3D
 
 % init
 sizeArm = size(body,2); 
 
 
-neu_body_inv=transp(NEU2BODY_mat);
+NED_body_inv=transp(NED2BODY_mat);
 displacement_int = repmat(displacement,1,sizeArm);
 
 
-movedBody=neu_body_inv*body+displacement_int;
+movedBody=NED_body_inv*body+displacement_int;
 
 end
 

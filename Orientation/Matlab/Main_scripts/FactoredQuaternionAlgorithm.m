@@ -22,7 +22,8 @@ addpath(res_path)
 
 %     load('dump_slow_rotation_yaw_body_ontable_ipad');
 %    load('dump_0_45_slow2fast');
- load('dump_rotation_m90p90_ipad');
+%  load('dump_rotation_m90p90_ipad');
+ load('roll_p90_m90_various_headeings_const_pitch');
 
 Fs = 50; 
 
@@ -105,7 +106,7 @@ for i=1:cycle_len
     %%%%%%%%roll quaternion evaluation%%%%%
     
     sr=-accel_y_body_filt(i)/a_norm/cp;
-    cr=-accel_z_body_filt(i)/a_norm/cp;
+    cr=accel_z_body_filt(i)/a_norm/cp;
     srd2=sin_ang_div2(sr,cr);
     crd2=cos_ang_div2(cr);
     qroll(i,:)=[crd2;srd2;0;0];
@@ -129,9 +130,9 @@ for i=1:cycle_len
    qrot=quatmultiply(q_roll_pitch,qyaw(i,:));
 %     qrot=quatmultiply(rot1, qroll(i,:));
     
-    [y, p,r] = quat2angle(q_roll_pitch,'ZYX');
+    [y, p,r] = quat2angle(qroll(i,:),'ZYX');
     
-      MobileViewer([0;0;0],[r,p,y],37,55);
+      MobileViewer([0;0;0],y,p,r,37,55);
       
 
 
