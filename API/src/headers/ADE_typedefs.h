@@ -96,10 +96,13 @@ typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_
 typedef enum {ADE_UTILS_MAJOR,ADE_UTILS_MINOR,ADE_UTILS_EQUAL,ADE_UTILS_MAJEQUAL,ADE_UTILS_MINEQUAL} ADE_UTILS_CONDITION_T;
 /******************************* BLOW ***************************/
 typedef struct ADE_SNAP_S ADE_SNAP_T;
+/***********************Bench Utils *****************************/
+typedef enum {ADE_CUSTOM_FFT_FORWARD=-1,ADE_CUSTOM_FFT_BACKWARD=1} ADE_CUSTOM_FFT_DIRECTION_T;
 
 /********************************* Benchmarks***************************/
 typedef enum {ADE_BLAS_L1_BM,ADE_BLAS_L2_BM,ADE_BLAS_L3_BM,ADE_FFTW_BM} ADE_BENCH_T;
 typedef enum {ADE_BENCH_REAL,ADE_BENCH_CPLX} ADE_BENCH_MAT_T;
+
  typedef struct bench_times {
         struct timespec* p_start_1;
         struct timespec* p_stop_1;
