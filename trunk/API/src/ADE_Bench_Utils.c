@@ -1,6 +1,7 @@
 #include "headers/ADE_Bench_Utils.h"
 #include "headers/ADE_errors.h"
 #include "headers/ADE_blas_level3.h"
+#include "headers/ADE_fft.h"
 #include "headers/ADE_Utils.h"
 #include <math.h>
 #include <stdlib.h>
@@ -8,10 +9,10 @@
 #include <errno.h>
 #include "headers/ADE_complex.h"
 
-void checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,bench_times_T *bench_struct,FILE* p_fid)
+void gemm_checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,bench_times_T *bench_struct,FILE* p_fid)
 {
     ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
-    double p_sum=0,result=0;
+    ADE_FLOATING_DP_T p_sum=0,result=0;
     ADE_CPLX_T p_csum=ADE_cset(0,0);
     ADE_CPLX_T cresult=ADE_cset(0,0);
     ADE_MATH_ATTRIBUTE_T math_att;
@@ -23,8 +24,8 @@ void checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATING_T 
     ADE_UINT32_T n_row=p_blas_l3->M;
     ADE_UINT32_T n_col=p_blas_l3->N;
     ADE_UINT32_T n_row_col_int=p_blas_l3->K;
-    double time_sum1=0;
-    double time_sum2=0;
+    ADE_FLOATING_DP_T time_sum1=0;
+    ADE_FLOATING_DP_T time_sum2=0;
 
     if (m_type==ADE_BENCH_REAL)
     {
@@ -344,7 +345,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 #endif
 
                         test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
-                        checker(p_blas_l3,p_C_custom,tolerance,test_id,mat_type[type_idx],&bench_times_int,p_fid);
+                        gemm_checker(p_blas_l3,p_C_custom,tolerance,test_id,mat_type[type_idx],&bench_times_int,p_fid);
 
                             /**** freematrices****/
                             free(p_A);
@@ -406,7 +407,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 
                          custom_caABpbC (p_blas_l3,(ADE_CPLX_T*)p_C_custom);
                              test_id=test_idx*n_types*n_dim_cases+type_idx*n_dim_cases+dim_cases_idx;
-                            checker(p_blas_l3,p_C_custom,tolerance,test_id,mat_type[type_idx],&bench_times_int,p_fid);
+                            gemm_checker(p_blas_l3,p_C_custom,tolerance,test_id,mat_type[type_idx],&bench_times_int,p_fid);
 
 
                             /**** freematrices****/
@@ -498,4 +499,71 @@ be an integer power of 2 (this is not checked for!).*/
         }
         mmax=istep;
     }
+}
+
+
+void fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_FFT_TYPE_T m_type,bench_times_T *bench_struct,FILE* p_fid)
+{
+    ADE_UINT32_T row_idx=0;
+    ADE_FLOATING_DP_T p_sum=0,result=0;
+    ADE_CPLX_T p_csum=ADE_cset(0,0);
+    ADE_MATH_ATTRIBUTE_T math_att;
+    ADE_UINT32_T n_row=p_fft->buff_len;
+
+    ADE_FLOATING_DP_T time_sum1=0;
+    ADE_FLOATING_DP_T time_sum2=0;
+
+    if (m_type==ADE_FFT_C2C || m_type==ADE_FFT_R2C)
+    {
+
+        for (row_idx=0;row_idx<n_row;row_idx++)
+        {
+                 p_csum=ADE_csum(ADE_cdiff(((ADE_CPLX_T*)p_fft->p_out)[row_idx],((ADE_CPLX_T*)p_fft_custom)[row_idx]),p_csum);
+        }
+
+        result=ADE_cabs(p_csum);
+
+   }
+    else
+    {
+        printf ("CASE Not handled!!! in fft_checker\n");
+    }
+
+
+
+time_sum1=(*(bench_struct->p_stop_1)).tv_nsec-(*(bench_struct->p_start_1)).tv_nsec;
+time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_nsec;
+
+
+
+
+    if (result<tol)
+    {
+            fprintf(p_fid,"\n");
+            fprintf(p_fid,"TEST %d passed with residue %f and tolerance %f\n",test_id,result,tol);
+            fprintf(p_fid,"FFT LIBRARY took  %lf ns \n",time_sum1);
+            fprintf(p_fid,"Custom FFT took  %lf ns \n",time_sum1);
+
+    }
+    else
+    {
+        fprintf(p_fid,"Test %d NOT PASSED with residue %f and tolerance %f\n",test_id,result,tol);
+
+        if (m_type==ADE_FFT_C2C || m_type==ADE_FFT_R2C)
+        {
+            math_att=ADE_CPLX;
+        }
+        else
+        {
+            printf ("CASE Not handled!!! in fft_checker math_att\n");
+        }
+
+        ADE_Utils_PrintArray(p_fft->p_out,0,n_row-1, 0,0, "FFT LIBRARY ", p_fid,math_att);
+        ADE_Utils_PrintArray(p_fft_custom,0,n_row-1, 0,0, "FFT Custom", p_fid,math_att);
+    }
+
+
+
+
+
 }

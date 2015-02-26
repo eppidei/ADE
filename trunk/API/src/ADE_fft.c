@@ -295,8 +295,8 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
 {
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
-        fftw_free(p_fft->p_in);
-        fftw_free(p_fft->p_out);
+        //fftw_free(p_fft->p_in);
+        //fftw_free(p_fft->p_out);
            #if (ADE_FFTW_NTHREADS>0)
             fftw_cleanup_threads();
            #endif
