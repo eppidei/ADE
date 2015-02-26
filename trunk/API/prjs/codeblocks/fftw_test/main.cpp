@@ -9,6 +9,7 @@
 #include "headers/ADE_fft.h"
 #include "headers/ADE_errors.h"
 #include "headers/ADE_complex.h"
+#include "headers/ADE_Bench_Utils.h"
 #define MAXCHAR (256)
 #define MAXVAR (32)
 
@@ -40,7 +41,7 @@ test_cplx[1]=ADE_cset(2,5);
 
 ADE_Matlab_Init(&p_mat, p_eng,"/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/fft/fft_test.m", "./fft_test_ws.mat","/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab");
 //ADE_Matlab_launch_script_segment(p_mat,"Output");
-ADE_Matlab_Print(p_mat);
+ADE_Matlab_Print(p_mat);/*** Printa le variabili del workspace matlab****/
 
 buff_len=ADE_Matlab_GetScalar(p_mat,"in_len");
 
@@ -141,11 +142,11 @@ ret=ADE_Fft_Step(p_fft);
 //ADE_Fft_Release(p_fft);
 if (fft_type==ADE_FFT_C2C)
 {
-ret=ADE_Utils_PrintArray(p_out,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_C", stdout,ADE_CPLX);
+ret=ADE_Utils_PrintArray(p_out,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_FFTW", stdout,ADE_CPLX);
 }
 else if (fft_type==ADE_FFT_R2C)
 {
-    ret=ADE_Utils_PrintArray(p_out,0,(buff_len/2+1)-1, 0,0,(ADE_CHAR_T*) "outR2C_C", stdout,ADE_CPLX);
+    ret=ADE_Utils_PrintArray(p_out,0,(buff_len/2+1)-1, 0,0,(ADE_CHAR_T*) "outR2C_FFTW", stdout,ADE_CPLX);
 }
 //for (i=0;i<2;i++)
 //{
@@ -153,8 +154,15 @@ else if (fft_type==ADE_FFT_R2C)
 //}
 ADE_Matlab_Release(p_mat);
 
+
+custom_FFT((ADE_FLOATING_T*)p_in-1,buff_len, ADE_CUSTOM_FFT_FORWARD);
+if (fft_type==ADE_FFT_C2C)
+{
+ret=ADE_Utils_PrintArray(p_in,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_Custom", stdout,ADE_CPLX);
+}
+
 //ADE_Get_Terminal_size(&lin ,&col  );
 //fprintf(stdout,"%lin=d col=%d\n",lin,col);
-
+ADE_Fft_Release(p_fft);
 return ret;
 }

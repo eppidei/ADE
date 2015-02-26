@@ -257,7 +257,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     bench_times_int.p_start_2=&start_cust;
     bench_times_int.p_stop_2=&stop_cust;
     bench_times_int.p_res=&res;
-    
+
 #if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
 
     ret_time=clock_getres(clock_id,&res);
@@ -267,7 +267,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
         fprintf(p_fid,"Failed setting clock %d : error %d\n",clock_id,err_code);
         return -1;
     }
-    
+
 #endif
 
 
@@ -332,7 +332,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                           clock_gettime(clock_id,&stop_blas);
 
                           clock_gettime(clock_id,&start_cust);
-//#elif (ADE_TARGET==ADE_IOS) 
+//#elif (ADE_TARGET==ADE_IOS)
 //                            TOCK;
 //                            TICK;
 #endif
@@ -439,3 +439,63 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 
 //int configure_blas_l3 ()
 // gemm=alpha*A*B+Beta*C
+
+
+void custom_FFT(ADE_FLOATING_T data[], unsigned long nn, ADE_CUSTOM_FFT_DIRECTION_T isign)
+/*Replaces data[1..2*nn] by its discrete Fourier transform, if isign is input as 1; or replaces
+data[1..2*nn] by nn times its inverse discrete Fourier transform, if isign is input as −1.
+data is a complex array of length nn or, equivalently, a real array of length 2*nn. nn MUST
+be an integer power of 2 (this is not checked for!).*/
+{
+    unsigned long n,mmax,m,j,istep,i;
+    ADE_FLOATING_DP_T wtemp,wr,wpr,wpi,wi,theta; /*Double precision for the trigonomet ric recurrences.*/
+    ADE_FLOATING_T tempr,tempi;
+    n=nn << 1;
+    j=1;
+    for (i=1; i<n; i+=2) /*This is the bit-reversal section of the  routine.*/
+    {
+        if (j > i)
+        {
+
+            ADE_SWAP(data[j],data[i]); /*Exchange the two complex numbers.*/
+            ADE_SWAP(data[j+1],data[i+1]);
+        }
+        m=n >> 1;
+        while (m >= 2 && j > m)
+        {
+            j -= m;
+            m >>= 1;
+        }
+        j += m;
+    }
+    /*Here begins the Danielson-Lanczos section of the routine. Outer loop executed log2 nn times.*/
+    mmax=2;
+    while (n > mmax)
+    {
+
+        istep=mmax << 1;
+        theta=isign*(6.28318530717959/mmax);
+        /*Initialize the trigonometric recurrence.*/
+        wtemp=sin(0.5*theta);
+        wpr = -2.0*wtemp*wtemp;
+        wpi=sin(theta);
+        wr=1.0;
+        wi=0.0;
+        for (m=1; m<mmax; m+=2)
+        {
+            for (i=m; i<=n; i+=istep)
+            {
+                j=i+mmax;
+                tempr=wr*data[j]-wi*data[j+1];
+                tempi=wr*data[j+1]+wi*data[j];
+                data[j]=data[i]-tempr;
+                data[j+1]=data[i+1]-tempi;
+                data[i] += tempr;
+                data[i+1] += tempi;
+            }
+            wr=(wtemp=wr)*wpr-wi*wpi+wr;
+            wi=wi*wpr+wtemp*wpi+wi;
+        }
+        mmax=istep;
+    }
+}
