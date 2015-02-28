@@ -9,6 +9,7 @@
 #include <time.h>
 #include <errno.h>
 #include "headers/ADE_complex.h"
+#include "headers/ADE_accelerate_framework_wrapper.h"
 
 void gemm_checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,bench_times_T *bench_struct,FILE* p_fid)
 {
@@ -578,6 +579,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
     ADE_SIZE_T size_fft_in,size_fft_out;
     ADE_VOID_T *p_in;
     ADE_VOID_T *p_out;
+    ADE_DSPSplitComplex_T *p_SplitCplxin,*p_SplitCplxout;
     ADE_UINT32_T i=0,buff_len_idx=0;
 
    // ADE_INT32_T lin,col;
@@ -650,6 +652,11 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
                 ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
                 return ADE_E31;
             }
+            #if (ADE_TARGET_TYPE==ADE_IOS)
+                p_SplitCplxin=malloc(size_fft_in);
+                p_SplitCplxout=malloc(size_fft_out);
+            
+            #endif
         }
         else if (fft_type==ADE_FFT_R2C)
         {
@@ -683,6 +690,11 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
                 return ADE_E31;
             }
             /**/
+            #if (ADE_TARGET_TYPE==ADE_IOS)
+            p_SplitCplxin=malloc(size_fft_in);
+            p_SplitCplxout=malloc(size_fft_out);
+            
+            #endif
 
         }
 
@@ -718,7 +730,8 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         {
            ((ADE_FLOATING_T*)p_in)[i]=(ADE_FLOATING_T)(rand()%10);
         }
-
+        
+        ADE_DSPSplitComplex_T
         memcpy(p_fft_custom,p_in,size_fft_in);
 
 

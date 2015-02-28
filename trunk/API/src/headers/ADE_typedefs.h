@@ -5,7 +5,24 @@
 //#include <complex.h>
 #include "fftw3.h"
 
-
+/************************** Accelerate Framework ****************************/
+typedef unsigned long ADE_vDSP_Length;
+typedef long ADE_vDSP_Stride;
+typedef struct ADE_OpaqueFFTSetupD * ADE_FFTSetupD;
+typedef struct ADE_OpaqueFFTSetup * ADE_FFTSetup;
+typedef int ADE_FFTRadix;
+typedef int ADE_FFTDirection;
+//struct DSPComplex { float real; float imag; };
+typedef ADE_CPLX_SP_T ADE_DSPComplex;
+struct DSPSplitComplex { float *realp; float *imagp; };
+typedef struct DSPSplitComplex ADE_DSPSplitComplex;
+//  struct DSPDoubleComplex { double real; double imag; };
+typedef ADE_CPLX_DP_T ADE_DSPDoubleComplex;
+struct DSPDoubleSplitComplex { double *realp; double *imagp; };
+typedef struct DSPDoubleSplitComplex ADE_DSPDoubleSplitComplex;
+typedef enum { ADE_kFFTRadix2 = 0, ADE_kFFTRadix3 = 1, ADE_kFFTRadix5 = 2 } ADE_kFFTRadix_T;
+typedef enum {ADE_vDSP_DFT_FORWARD = +1,ADE_vDSP_DFT_INVERSE = -1} ADE_vDSP_DFT_Direction_T;
+//struct vDSP_DFT_Direction {init(_ value: Int32)var value: Int32}
 typedef int64_t ADE_INT64_T ;
 typedef int32_t ADE_INT32_T ;
 typedef int16_t ADE_INT16_T ;
@@ -31,6 +48,7 @@ typedef struct dcomplex_S
 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef ADE_FLOATING_DP_T ADE_FLOATING_T;
 typedef ADE_CPLX_DP_T ADE_CPLX_T;
+typedef ADE_DSPDoubleSplitComplex ADE_DSPSplitComplex_T;
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     typedef fftw_complex ADE_FFTCPLX_T;
     #else
@@ -39,12 +57,15 @@ typedef ADE_CPLX_DP_T ADE_CPLX_T;
 #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 typedef ADE_FLOATING_SP_T ADE_FLOATING_T;
 typedef ADE_CPLX_SP_T ADE_CPLX_T;
+typedef ADE_DSPSplitComplex ADE_DSPSplitComplex_T;
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     typedef fftwf_complex ADE_FFTCPLX_T;
     #else
     typedef ADE_CPLX_T ADE_FFTCPLX_T;
     #endif
 #endif
+
+
 
 typedef ADE_INT32_T ADE_API_RET_T ;
 typedef void ADE_VOID_T;
@@ -114,24 +135,7 @@ typedef enum {ADE_BENCH_REAL,ADE_BENCH_CPLX} ADE_BENCH_MAT_T;
     } bench_times_T;
 
 
-/************************** Accelerate Framework ****************************/
-typedef unsigned long ADE_vDSP_Length;
- typedef long ADE_vDSP_Stride;
- typedef struct ADE_OpaqueFFTSetupD * ADE_FFTSetupD;
- typedef struct ADE_OpaqueFFTSetup * ADE_FFTSetup;
- typedef int ADE_FFTRadix;
- typedef int ADE_FFTDirection;
-  //struct DSPComplex { float real; float imag; };
-  typedef ADE_CPLX_SP_T ADE_DSPComplex;
-   struct DSPSplitComplex { float *realp; float *imagp; };
-   typedef struct DSPSplitComplex ADE_DSPSplitComplex;
- //  struct DSPDoubleComplex { double real; double imag; };
-  typedef ADE_CPLX_DP_T ADE_DSPDoubleComplex;
-   struct DSPDoubleSplitComplex { double *realp; double *imagp; };
-   typedef struct DSPDoubleSplitComplex ADE_DSPDoubleSplitComplex;
-  typedef enum { ADE_kFFTRadix2 = 0, ADE_kFFTRadix3 = 1, ADE_kFFTRadix5 = 2 } ADE_kFFTRadix_T;
-  typedef enum {ADE_vDSP_DFT_FORWARD = +1,ADE_vDSP_DFT_INVERSE = -1} ADE_vDSP_DFT_Direction_T;
-//struct vDSP_DFT_Direction {init(_ value: Int32)var value: Int32}
+
 
 
 
