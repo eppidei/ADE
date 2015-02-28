@@ -112,4 +112,22 @@ typedef enum {ADE_BENCH_REAL,ADE_BENCH_CPLX} ADE_BENCH_MAT_T;
     } bench_times_T;
 
 
+/************************** Accelerate Framework ****************************/
+typedef unsigned long ADE_vDSP_Length;
+ typedef long ADE_vDSP_Stride;
+ typedef struct ADE_OpaqueFFTSetupD * ADE_FFTSetupD;
+ typedef struct ADE_OpaqueFFTSetup * ADE_FFTSetup;
+ typedef int ADE_FFTRadix;
+ typedef int ADE_FFTDirection;
+  struct DSPComplex { float real; float imag; };
+  typedef struct DSPComplex ADE_DSPComplex;
+   struct DSPSplitComplex { float *realp; float *imagp; };
+   typedef struct DSPSplitComplex ADE_DSPSplitComplex;
+   struct DSPDoubleComplex { double real; double imag; };
+  typedef struct DSPDoubleComplex ADE_DSPDoubleComplex;
+   struct DSPDoubleSplitComplex { double *realp; double *imagp; };
+   typedef struct DSPDoubleSplitComplex ADE_DSPDoubleSplitComplex;
+  typedef enum { kFFTRadix2 = 0, kFFTRadix3 = 1, kFFTRadix5 = 2 } ADE_kFFTRadix_T;
+
+
 #endif //_ADE_TYPEDEFS_H
