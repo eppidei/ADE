@@ -109,16 +109,28 @@ ADE_kFFTRadix_T Ios_radix=kFFTRadix2;
         {
             if (fft_dir==ADE_FFT_FORWARD)
             {
-
+                #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
                     p_fft->plan = fftw_plan_dft_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,FFTW_FORWARD,ADE_FFTW_PLAN_FLAGS);
+                #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+                    p_fft->plan = fftwf_plan_dft_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,FFTW_FORWARD,ADE_FFTW_PLAN_FLAGS);
+                #else
 
+                    ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+
+                #endif
 
             }
             else if (fft_dir==ADE_FFT_BACKWARD)
             {
-
+                 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
                      p_fft->plan = fftw_plan_dft_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,FFTW_BACKWARD,ADE_FFTW_PLAN_FLAGS);
+                 #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+                      p_fft->plan = fftwf_plan_dft_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,FFTW_BACKWARD,ADE_FFTW_PLAN_FLAGS);
+                 #else
 
+                    ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+
+                #endif
             }
             else
             {
@@ -131,9 +143,15 @@ ADE_kFFTRadix_T Ios_radix=kFFTRadix2;
         {
             if (fft_dir==ADE_FFT_FORWARD)
             {
-
+                 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
                     p_fft->plan = fftw_plan_dft_r2c_1d(p_fft->buff_len,(ADE_FLOATING_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
+                 #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+                     p_fft->plan = fftwf_plan_dft_r2c_1d(p_fft->buff_len,(ADE_FLOATING_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
+                  #else
 
+                    ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+
+                #endif
             }
             else if (fft_dir==ADE_FFT_BACKWARD)
             {
@@ -158,8 +176,14 @@ ADE_kFFTRadix_T Ios_radix=kFFTRadix2;
             }
             else if (fft_dir==ADE_FFT_BACKWARD)
             {
+                #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+                    p_fft->plan = fftw_plan_dft_c2r_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FLOATING_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
+                #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+                    p_fft->plan = fftwf_plan_dft_c2r_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FLOATING_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
+                #else
+                    ADE_DEFINE_ERROR(ADE_FP_PRECISION)
 
-                 p_fft->plan = fftw_plan_dft_c2r_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FLOATING_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
+                #endif
             }
             else
             {

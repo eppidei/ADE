@@ -15,7 +15,7 @@ void gemm_checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATI
     ADE_UINT32_T row_idx=0,col_idx=0,lin_idx=0;
     ADE_FLOATING_DP_T p_sum=0,result=0;
     ADE_CPLX_T p_csum=ADE_cset(0,0);
-    ADE_CPLX_T cresult=ADE_cset(0,0);
+   // ADE_CPLX_T cresult=ADE_cset(0,0);
     ADE_MATH_ATTRIBUTE_T math_att;
     ADE_VOID_T *p_alpha=p_blas_l3->p_ALPHA;
     ADE_VOID_T *p_beta=p_blas_l3->p_BETA;
@@ -139,7 +139,7 @@ void custom_faABpbC (ADE_blas_level3_T *p_blas_l3,ADE_FLOATING_T *p_C)
     ADE_UINT32_T n_col_B=p_blas_l3->N;
     ADE_UINT32_T A_row_idx=0,A_col_idx=0,B_col_idx=0,B_row_idx=0,C_col_idx=0,C_row_idx=0;
     ADE_FLOATING_T parz_sum=0;
-    ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0,Out_lin_idx;
+    ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0;
     ADE_FLOATING_T alpha=*p_alpha;
     ADE_FLOATING_T beta=*p_beta;
     ADE_UINT32_T n_col_C=0;
@@ -172,7 +172,7 @@ void custom_caABpbC (ADE_blas_level3_T *p_blas_l3,ADE_CPLX_T *p_C)
 {
 
     ADE_CPLX_T *p_alpha=(ADE_CPLX_T *)p_blas_l3->p_ALPHA;
-    ADE_CPLX_T *p_beta=(ADE_CPLX_T *)p_blas_l3->p_BETA;
+   // ADE_CPLX_T *p_beta=(ADE_CPLX_T *)p_blas_l3->p_BETA;
     ADE_CPLX_T *p_A=(ADE_CPLX_T *)p_blas_l3->p_A;
     ADE_CPLX_T *p_B=(ADE_CPLX_T *)p_blas_l3->p_B;
     ADE_UINT32_T n_row_A=p_blas_l3->M;
@@ -180,7 +180,7 @@ void custom_caABpbC (ADE_blas_level3_T *p_blas_l3,ADE_CPLX_T *p_C)
     ADE_UINT32_T n_col_B=p_blas_l3->N;
     ADE_UINT32_T A_row_idx=0,A_col_idx=0,B_col_idx=0,B_row_idx=0,C_col_idx=0,C_row_idx=0;
     ADE_CPLX_T parz_sum=ADE_cset(0,0);
-    ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0,Out_lin_idx;
+    ADE_UINT32_T A_lin_idx=0,B_lin_idx=0,C_lin_idx=0;
     ADE_CPLX_T alpha=*p_alpha;
     ADE_CPLX_T beta=*p_alpha;
     ADE_UINT32_T n_col_C=0;
@@ -229,7 +229,7 @@ ret= ADE_Blas_Level3_SetC( p_Blas_l3, p_C);
 ADE_Blas_Level3_SetAlpha( p_Blas_l3, p_alpha);
 ADE_Blas_Level3_SetBeta( p_Blas_l3, p_beta);
 
-return 0;
+return ret;
 }
 
 ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,ADE_BENCH_MAT_T *mat_type,ADE_UINT32_T n_types,ADE_INT32_T *n_rows_A,ADE_INT32_T *n_cols_A,ADE_INT32_T *n_cols_B,ADE_INT32_T n_dim_cases,FILE* p_fid)
@@ -506,7 +506,7 @@ be an integer power of 2 (this is not checked for!).*/
 void fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_FFT_TYPE_T m_type,bench_times_T *bench_struct,FILE* p_fid)
 {
     ADE_UINT32_T row_idx=0;
-    ADE_FLOATING_DP_T p_sum=0,result=0;
+    ADE_FLOATING_DP_T result=0;
     ADE_CPLX_T p_csum=ADE_cset(0,0);
     ADE_MATH_ATTRIBUTE_T math_att;
     ADE_UINT32_T n_row=p_fft->buff_len;
@@ -573,17 +573,16 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 {
 
     ADE_FFT_T *p_fft;
-    ADE_MATLAB_T *p_mat;
+   // ADE_MATLAB_T *p_mat;
     ADE_UINT32_T buff_len;
     ADE_SIZE_T size_fft_in,size_fft_out;
     ADE_VOID_T *p_in;
     ADE_VOID_T *p_out;
     ADE_UINT32_T i=0,buff_len_idx=0;
 
-    ADE_INT32_T lin,col;
+   // ADE_INT32_T lin,col;
     ADE_API_RET_T ret=ADE_DEFAULT_RET;
-    double *p_test;
-    float *p_test2;
+
      ADE_FLOATING_T tolerance=1e-4;
     ADE_VOID_T *p_fft_custom=NULL;
      struct timespec start_fft, stop_fft,start_cust, stop_cust,res;
@@ -631,7 +630,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_in==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_FFT_TEST_Procedure);
+                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",fft_test_procedure);
                 return ADE_E31;
             }
             size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
@@ -642,13 +641,13 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_out==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",ADE_FFT_TEST_Procedure);
+                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",fft_test_procedure);
                 return ADE_E31;
             }
             p_fft_custom=malloc(size_fft_in);
             if (p_fft_custom==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",ADE_FFT_TEST_Procedure);
+                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
                 return ADE_E31;
             }
         }
@@ -662,7 +661,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_in==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_Fft_Init);
+                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",fft_test_procedure);
                 return ADE_E31;
             }
             size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
@@ -673,14 +672,14 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_out==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",ADE_Fft_Init);
+                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",fft_test_procedure);
                 return ADE_E31;
             }
             /*2check*/
             p_fft_custom=malloc(size_fft_in);
             if (p_fft_custom==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",ADE_FFT_TEST_Procedure);
+                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
                 return ADE_E31;
             }
             /**/
@@ -690,7 +689,17 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         /******************* FFT SETUP ****************************/
 
         ret=ADE_Fft_Init(&p_fft, buff_len);
+        if (ret<0)
+            {
+                ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",fft_test_procedure);
+                //return ADE_E31;
+            }
         ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
+        if (ret<0)
+            {
+                ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",fft_test_procedure);
+                //return ADE_E31;
+            }
 
         /******************* INPUT FILLING ********************************/
 

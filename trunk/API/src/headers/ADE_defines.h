@@ -21,7 +21,6 @@
 #define ADE_USE_SINGLE_PREC (0)
 #define ADE_USE_DOUBLE_PREC (1)
 
-
 #define ADE_PC_NORMAL (1)
 #define ADE_PC_MATLAB (2)
 #define ADE_ANDROID (3)
@@ -47,7 +46,7 @@
 /* Control */
 
 #ifndef ADE_TARGET_TYPE
-#define ADE_TARGET_TYPE ADE_IOS
+#define ADE_TARGET_TYPE ADE_PC_MATLAB
 #endif //ADE_TARGET_TYPE
 
 #ifndef ADE_TARGET_MODE
@@ -60,12 +59,12 @@
 
 #if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
     #define ADE_CONFIGURATION_INTERACTIVE
-    #ifndef ADE_FP_PRECISION
-        #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
-    #endif
+    #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
-    #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
+     #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
+    #endif
 #elif (ADE_TARGET_TYPE==ADE_PC_NORMAL )
     #undef ADE_CONFIGURATION_INTERACTIVE
     #ifndef ADE_FP_PRECISION
@@ -73,6 +72,9 @@
     #endif
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
+    #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
+    #endif
 #elif (ADE_TARGET_TYPE==ADE_ANDROID)
     #undef ADE_CONFIGURATION_INTERACTIVE
     #ifndef ADE_FP_PRECISION

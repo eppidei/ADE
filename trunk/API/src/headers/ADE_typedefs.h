@@ -64,7 +64,7 @@ typedef struct ADE_blas_level2_S ADE_blas_level2_T;
 typedef ADE_API_RET_T (*ADE_BLAS_LEVEL2_FCN_TYPE1_T)(ADE_blas_level2_T*);
 /*Level3*/
 typedef struct ADE_blas_level3_S ADE_blas_level3_T;
-typedef ADE_VOID_T (*ADE_BLAS_LEVEL3_FCN_TYPE1_T)(ADE_blas_level3_T*);
+typedef ADE_API_RET_T (*ADE_BLAS_LEVEL3_FCN_TYPE1_T)(ADE_blas_level3_T*);
 
 
 
