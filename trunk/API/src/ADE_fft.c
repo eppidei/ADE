@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <math.h>
 
 
 
@@ -173,22 +174,32 @@ ADE_kFFTRadix_T Ios_radix=kFFTRadix2;
             return ADE_E32;
         }
 
+        if (p_fft->plan==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,p_fft->plan,"%p",ADE_Fft_SetPlan);
+            return ADE_E31;
+        }
+
         #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
 
-        #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+            #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-            p_fft->p_setup=vDSP_create_fftsetup ( (ADE_vDSP_Length) ceil(log2(p_fft->buff_len)), Ios_radix );
+                p_fft->p_setup=vDSP_create_fftsetup ( (ADE_vDSP_Length) ceil(log2(p_fft->buff_len)), Ios_radix );
 
-        #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+            #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 
-            p_fft->p_setup=vDSP_create_fftsetupD ( (ADE_vDSP_Length) ceil(log2(p_fft->buff_len)), Ios_radix );
+                p_fft->p_setup=vDSP_create_fftsetupD ( (ADE_vDSP_Length) ceil(log2(p_fft->buff_len)), Ios_radix );
 
-        #else
-          ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+            #else
+              ADE_DEFINE_ERROR(ADE_FP_PRECISION);
 
-        #endif
+            #endif
 
-
+        if (p_fft->p_setup==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,p_fft->p_setup,"%p",ADE_Fft_SetPlan);
+            return ADE_E31;
+        }
 
         #else
 
@@ -196,11 +207,7 @@ ADE_kFFTRadix_T Ios_radix=kFFTRadix2;
 
         #endif
 
-        if (p_fft->plan==NULL)
-        {
-            ADE_PRINT_ERRORS(ADE_MEM,p_fft->plan,"%p",ADE_Fft_SetPlan);
-            return ADE_E31;
-        }
+
 
         return ADE_DEFAULT_RET;
 }
@@ -257,7 +264,7 @@ ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
         #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
             vDSP_destroy_fftsetup (p_fft->p_setup );
-        #elif
+        #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
             vDSP_destroy_fftsetupD (p_fft->p_setup );
         #else
              ADE_DEFINE_ERROR(ADE_FP_PRECISION);

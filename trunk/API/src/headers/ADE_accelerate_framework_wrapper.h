@@ -44,11 +44,11 @@ extern void vDSP_fftm_zriptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSp
 /****  REAL FFT 1-D DOUBLE PECISION Out Of Place*******/
 extern void vDSP_fft_zropD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, ADE_vDSP_Length __vDSP_Log2N, ADE_FFTDirection __vDSP_Direction );
  /* Multiple */
-extern void vDSP_fftm_zropD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, vDSP_Stride __vDSP_IMC, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
+extern void vDSP_fftm_zropD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, ADE_vDSP_Stride __vDSP_IMC, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
 /* temporary*/
 extern void vDSP_fft_zroptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, const ADE_DSPDoubleSplitComplex *__vDSP_Buffer, ADE_vDSP_Length __vDSP_Log2N, ADE_FFTDirection __vDSP_Direction );
 /* Multiple temporary*/
-extern void vDSP_fftm_zroptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, vDSP_Stride __vDSP_IMC, const ADE_DSPDoubleSplitComplex *__vDSP_Buffer, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
+extern void vDSP_fftm_zroptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, ADE_vDSP_Stride __vDSP_IMC, const ADE_DSPDoubleSplitComplex *__vDSP_Buffer, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
 
 
 /************************************************************** COMPLEX FFT *********************************************************/
@@ -83,11 +83,11 @@ extern void vDSP_fftm_ziptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSpl
 /****  COMPLEX FFT 1-D DOUBLE PECISION Out Of Place*******/
 extern void vDSP_fft_zopD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, ADE_vDSP_Length __vDSP_Log2N, ADE_FFTDirection __vDSP_Direction );
  /* Multiple */
-extern void vDSP_fftm_zopD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, vDSP_Stride __vDSP_IMC, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
+extern void vDSP_fftm_zopD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, ADE_vDSP_Stride __vDSP_IMC, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
 /* temporary*/
 extern void vDSP_fft_zoptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, const ADE_DSPDoubleSplitComplex *__vDSP_Buffer, ADE_vDSP_Length __vDSP_Log2N, ADE_FFTDirection __vDSP_Direction );
 /* Multiple temporary*/
-extern void vDSP_fftm_zoptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, vDSP_Stride __vDSP_IMC, const ADE_DSPDoubleSplitComplex *__vDSP_Buffer, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
+extern void vDSP_fftm_zoptD ( ADE_FFTSetupD __vDSP_Setup, const ADE_DSPDoubleSplitComplex *__vDSP_A, ADE_vDSP_Stride __vDSP_IA, ADE_vDSP_Stride __vDSP_IMA, const ADE_DSPDoubleSplitComplex *__vDSP_C, ADE_vDSP_Stride __vDSP_IC, ADE_vDSP_Stride __vDSP_IMC, const ADE_DSPDoubleSplitComplex *__vDSP_Buffer, ADE_vDSP_Length __vDSP_Log2N, ADE_vDSP_Length __vDSP_M, ADE_FFTDirection __vDSP_Direction );
 
 
 
