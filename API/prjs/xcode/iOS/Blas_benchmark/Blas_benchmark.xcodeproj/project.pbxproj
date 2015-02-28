@@ -395,9 +395,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/Users/leonardo/Documents/ADE/API/src,
-					"/Users/leonardo/Documents/ADE/API/lib/fftw-3.3.4/api",
-					"/Users/leonardo/Documents/ADE/API/lib/xianyi-OpenBLAS-v0.2.13-0-g51ce5ef/xianyi-OpenBLAS-51ce5ef",
+					../../../../src,
+					"../../../../lib/fftw-3.3.4/api",
+					"../../../../lib/xianyi-OpenBLAS-v0.2.13-0-g51ce5ef/xianyi-OpenBLAS-51ce5ef",
 				);
 				INFOPLIST_FILE = Blas_benchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -414,9 +414,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/Users/leonardo/Documents/ADE/API/src,
-					"/Users/leonardo/Documents/ADE/API/lib/fftw-3.3.4/api",
-					"/Users/leonardo/Documents/ADE/API/lib/xianyi-OpenBLAS-v0.2.13-0-g51ce5ef/xianyi-OpenBLAS-51ce5ef",
+					../../../../src,
+					"../../../../lib/fftw-3.3.4/api",
+					"../../../../lib/xianyi-OpenBLAS-v0.2.13-0-g51ce5ef/xianyi-OpenBLAS-51ce5ef",
 				);
 				INFOPLIST_FILE = Blas_benchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

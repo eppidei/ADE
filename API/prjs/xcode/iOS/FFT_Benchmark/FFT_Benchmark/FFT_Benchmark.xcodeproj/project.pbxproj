@@ -372,8 +372,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/Users/leonardo/Documents/ADE/API/src,
-					"/Users/leonardo/Documents/ADE/API/lib/fftw-3.3.4/api",
+					../../../../../src,
+					"../../../../../lib/fftw-3.3.4/api",
 				);
 				INFOPLIST_FILE = FFT_Benchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -388,8 +388,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					/Users/leonardo/Documents/ADE/API/src,
-					"/Users/leonardo/Documents/ADE/API/lib/fftw-3.3.4/api",
+					../../../../../src,
+					"../../../../../lib/fftw-3.3.4/api",
 				);
 				INFOPLIST_FILE = FFT_Benchmark/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -450,6 +450,7 @@
 				A724C47D1AA1DE2500479AAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A724C47E1AA1DE2500479AAA /* Build configuration list for PBXNativeTarget "FFT_BenchmarkTests" */ = {
 			isa = XCConfigurationList;
@@ -458,6 +459,7 @@
 				A724C4801AA1DE2500479AAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
