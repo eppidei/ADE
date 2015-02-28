@@ -6,11 +6,17 @@
 #ifdef __cplusplus
     extern "C" {
 #endif
-
+/****************************** SETUP ******************************/
 extern ADE_FFTSetup vDSP_create_fftsetup ( ADE_vDSP_Length __vDSP_Log2n, ADE_FFTRadix __vDSP_Radix );
 extern ADE_FFTSetupD vDSP_create_fftsetupD ( ADE_vDSP_Length __vDSP_Log2n, ADE_FFTRadix __vDSP_Radix );
 extern void vDSP_destroy_fftsetup ( ADE_FFTSetup __vDSP_setup );
 extern void vDSP_destroy_fftsetupD ( ADE_FFTSetup __vDSP_setup );
+
+/******************************** CONVERSION *****************************************/
+extern void vDSP_ctoz (const ADE_DSPComplex *__vDSP_C,ADE_vDSP_Stride __vDSP_IC,const ADE_DSPSplitComplex *__vDSP_Z,ADE_vDSP_Stride __vDSP_IZ,ADE_vDSP_Length __vDSP_N);
+extern void vDSP_ctozD (const ADE_DSPDoubleComplex *__vDSP_C,ADE_vDSP_Stride __vDSP_IC,const ADE_DSPDoubleSplitComplex *__vDSP_Z,ADE_vDSP_Stride __vDSP_IZ,ADE_vDSP_Length __vDSP_N);
+extern void vDSP_ztoc (const ADE_DSPSplitComplex *__vDSP_Z,ADE_vDSP_Stride __vDSP_IZ,ADE_DSPComplex *__vDSP_C,ADE_vDSP_Stride __vDSP_IC,ADE_vDSP_Length __vDSP_N);
+extern void vDSP_ztocD (const ADE_DSPDoubleSplitComplex *__vDSP_Z,ADE_vDSP_Stride __vDSP_IZ,ADE_DSPDoubleComplex *__vDSP_C,ADE_vDSP_Stride __vDSP_IC,ADE_vDSP_Length __vDSP_N);
 
 /********************************************* REAL FFT*************************************************/
 

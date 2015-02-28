@@ -89,8 +89,10 @@ typedef struct ADE_MATLAB_S ADE_MATLAB_T;
 typedef enum {ADE_CPLX,ADE_REAL} ADE_MATH_ATTRIBUTE_T;
 /************************************* FFT ************************/
 typedef struct ADE_FFT_S ADE_FFT_T;
-typedef enum {ADE_FFT_C2C,ADE_FFT_R2C,ADE_FFT_C2R,ADE_FFT_R2R} ADE_FFT_TYPE_T;
-typedef enum {ADE_FFT_FORWARD,ADE_FFT_BACKWARD} ADE_FFT_DIRECTION_T;
+typedef enum {ADE_FFT_C2C=1,ADE_FFT_R2C=2,ADE_FFT_C2R=3,ADE_FFT_R2R=4,ADE_FFT_INVALID_TYPE=-1} ADE_FFT_TYPE_T;
+typedef enum {ADE_FFT_FORWARD=1,ADE_FFT_BACKWARD=-1,ADE_FFT_INVALID_DIR=0} ADE_FFT_DIRECTION_T;
+/****************** FFTW *****************************/
+typedef enum {ADE_FFTW_FORWARD=FFTW_FORWARD,ADE_FFTW_BACKWARD=FFTW_BACKWARD} ADE_FFTW_DIRECTION_T;
 /**************************** UTILS *************************/
 typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_ROW_INFO_T;
 typedef enum {ADE_UTILS_MAJOR,ADE_UTILS_MINOR,ADE_UTILS_EQUAL,ADE_UTILS_MAJEQUAL,ADE_UTILS_MINEQUAL} ADE_UTILS_CONDITION_T;
@@ -119,15 +121,18 @@ typedef unsigned long ADE_vDSP_Length;
  typedef struct ADE_OpaqueFFTSetup * ADE_FFTSetup;
  typedef int ADE_FFTRadix;
  typedef int ADE_FFTDirection;
-  struct DSPComplex { float real; float imag; };
-  typedef struct DSPComplex ADE_DSPComplex;
+  //struct DSPComplex { float real; float imag; };
+  typedef ADE_CPLX_SP_T ADE_DSPComplex;
    struct DSPSplitComplex { float *realp; float *imagp; };
    typedef struct DSPSplitComplex ADE_DSPSplitComplex;
-   struct DSPDoubleComplex { double real; double imag; };
-  typedef struct DSPDoubleComplex ADE_DSPDoubleComplex;
+ //  struct DSPDoubleComplex { double real; double imag; };
+  typedef ADE_CPLX_DP_T ADE_DSPDoubleComplex;
    struct DSPDoubleSplitComplex { double *realp; double *imagp; };
    typedef struct DSPDoubleSplitComplex ADE_DSPDoubleSplitComplex;
-  typedef enum { kFFTRadix2 = 0, kFFTRadix3 = 1, kFFTRadix5 = 2 } ADE_kFFTRadix_T;
+  typedef enum { ADE_kFFTRadix2 = 0, ADE_kFFTRadix3 = 1, ADE_kFFTRadix5 = 2 } ADE_kFFTRadix_T;
+  typedef enum {ADE_vDSP_DFT_FORWARD = +1,ADE_vDSP_DFT_INVERSE = -1} ADE_vDSP_DFT_Direction_T;
+//struct vDSP_DFT_Direction {init(_ value: Int32)var value: Int32}
+
 
 
 #endif //_ADE_TYPEDEFS_H
