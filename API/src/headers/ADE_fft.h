@@ -14,6 +14,13 @@ struct ADE_FFT_S {
         ADE_VOID_T *p_out;//allocati dentro con ffttw_malloc
         #if (ADE_FFT_IMP==ADE_USE_FFTW)
         fftw_plan plan;
+        #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+            #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+            ADE_FFTSetup p_setup;
+            #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+            ADE_FFTSetupD p_setup;
+            #else
+            #endif
         #else
         ADE_DEFINE_ERROR(ADE_FFT_IMP);
         #endif

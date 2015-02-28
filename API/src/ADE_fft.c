@@ -24,88 +24,20 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
     {
         p_this->buff_len=buff_len;
 
-        #if (ADE_FFTW_NTHREADS>0)
+        #if (ADE_FFT_IMP==ADE_USE_FFTW)
 
-            ret_fftw=fftw_init_threads();
+            #if (ADE_FFTW_NTHREADS>0)
 
-            if (ret_fftw<0)
-            {
-                ADE_PRINT_ERRORS(ADE_INCHECKS,ret_fftw,"%d",ADE_Fft_Init);
-                return ADE_E33;
-            }
+                ret_fftw=fftw_init_threads();
 
+                if (ret_fftw<0)
+                {
+                    ADE_PRINT_ERRORS(ADE_INCHECKS,ret_fftw,"%d",ADE_Fft_Init);
+                    return ADE_E33;
+                }
+
+            #endif
         #endif
-
-
-
-//        if (fft_type==ADE_FFT_C2C)
-//        {
-//             p_this->p_in=malloc(buff_len*sizeof(ADE_FFTCPLX_T));
-//             if (p_this->p_in==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_in,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//              p_this->p_out=malloc(buff_len*sizeof(ADE_FFTCPLX_T));
-//              if (p_this->p_out==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_out,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//        }
-//        else if (fft_type==ADE_FFT_R2C)
-//        {
-//            p_this->p_in=malloc(buff_len*sizeof(ADE_FLOATING_T));
-//             if (p_this->p_in==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_in,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//              p_this->p_out=malloc((buff_len/2+1)*sizeof(ADE_FFTCPLX_T));
-//              if (p_this->p_out==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_out,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//
-//        }
-//         else if (fft_type==ADE_FFT_C2R)
-//        {
-//            p_this->p_in=malloc((buff_len/2+1)*sizeof(ADE_FFTCPLX_T));
-//             if (p_this->p_in==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_in,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//              p_this->p_out=malloc(buff_len*sizeof(ADE_FLOATING_T));
-//              if (p_this->p_out==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_out,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//
-//        }
-//        else if (fft_type==ADE_FFT_R2R)
-//        {
-//             p_this->p_in=malloc(buff_len*sizeof(ADE_FLOATING_T));
-//             if (p_this->p_in==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_in,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//              p_this->p_out=malloc(buff_len*sizeof(ADE_FLOATING_T));
-//              if (p_this->p_out==NULL)
-//             {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_this->p_out,"%p",ADE_Fft_Init);
-//                return ADE_E31;
-//             }
-//        }
-//        else
-//        {
-//            ADE_PRINT_ERRORS(ADE_INCHECKS,fft_type,"%d",ADE_Fft_Init);
-//            return ADE_E32;
-//        }
-
 
 
 
@@ -130,9 +62,11 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
      ADE_Fft_SetInBuff(p_fft,p_inbuff);
      ADE_Fft_SetOutBuff(p_fft,p_outbuff);
 
-      #if (ADE_FFTW_NTHREADS>0)
+    #if (ADE_FFT_IMP==ADE_USE_FFTW)
+          #if (ADE_FFTW_NTHREADS>0)
 
-            fftw_plan_with_nthreads(ADE_FFTW_NTHREADS);
+                fftw_plan_with_nthreads(ADE_FFTW_NTHREADS);
+          #endif
       #endif
 
 
@@ -165,7 +99,9 @@ static ADE_VOID_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
 static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FFT_DIRECTION_T fft_dir)
 {
 
+ADE_kFFTRadix_T Ios_radix=kFFTRadix2;
 
+/*** In-Place or not in-place is controlled just with pointers i.e for in-place set p_in=p_out externally**/
 
       #if (ADE_FFT_IMP==ADE_USE_FFTW)
         if (fft_type==ADE_FFT_C2C)
@@ -237,6 +173,22 @@ static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, A
             return ADE_E32;
         }
 
+        #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+
+        #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+
+            p_fft->p_setup=vDSP_create_fftsetup ( (ADE_vDSP_Length) ceil(log2(p_fft->buff_len)), Ios_radix );
+
+        #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+
+            p_fft->p_setup=vDSP_create_fftsetupD ( (ADE_vDSP_Length) ceil(log2(p_fft->buff_len)), Ios_radix );
+
+        #else
+          ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+
+        #endif
+
+
 
         #else
 
@@ -302,9 +254,17 @@ ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
            #endif
         fftw_destroy_plan(p_fft->plan);
         fftw_cleanup();
+    #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+        #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+            vDSP_destroy_fftsetup (p_fft->p_setup );
+        #elif
+            vDSP_destroy_fftsetupD (p_fft->p_setup );
+        #else
+             ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+        #endif
+
     #else
-         free(p_fft->p_in);
-         free(p_fft->p_out);
+         ADE_DEFINE_ERROR(ADE_FFT_IMP);
     #endif
     free(p_fft);
 }

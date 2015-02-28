@@ -14,6 +14,7 @@
 #define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
 /* Parameters */
+
 #define ADE_USE_SINGLE_PREC (0)
 #define ADE_USE_DOUBLE_PREC (1)
 
