@@ -19,18 +19,11 @@ struct ADE_FFT_S {
         ADE_FFTW_DIRECTION_T direction;
         fftw_plan plan;
         #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-            #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-            ADE_DSPSplitComplex *p_in;
-            ADE_DSPSplitComplex *p_out;
-            ADE_FFTSetup p_setup;
-            ADE_vDSP_DFT_Direction_T direction;
-            #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-            ADE_DSPDoubleSplitComplex *p_in;
-            ADE_DSPDoubleSplitComplex *p_out;
-            ADE_FFTSetupD p_setup;
-            ADE_vDSP_DFT_Direction_T direction;
-            #else
-            #endif
+        ADE_DSPSplitComplex_T *p_in;
+        ADE_DSPSplitComplex_T *p_out;
+        ADE_vDSP_DFT_Direction_T direction;
+    ADE_FFTSetup_T p_setup;
+    
         #else
         ADE_DEFINE_ERROR(ADE_FFT_IMP)
         #endif

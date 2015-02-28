@@ -123,9 +123,9 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
         if (p_fft->type==ADE_FFT_C2C)
         {
             #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-                 vDSP_fft_zopD ( p_fft->p_setup,p, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+                 vDSP_fft_zopD ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
             #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-                vDSP_fft_zop ( p_fft->p_setup,p, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+                vDSP_fft_zop ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
                 #else
                     ADE_DEFINE_ERROR(ADE_FP_PRECISION)
                 #endif
@@ -133,9 +133,9 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
         else if (p_fft->type==ADE_FFT_R2C)
         {
         #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-            vDSP_fft_zropD ( p_fft->p_setup,p, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+            vDSP_fft_zropD ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
         #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-            vDSP_fft_zrop ( p_fft->p_setup,p, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+            vDSP_fft_zrop ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
         #else
             ADE_DEFINE_ERROR(ADE_FP_PRECISION)
         #endif
@@ -189,7 +189,12 @@ static ADE_API_RET_T ADE_Fft_SetInBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_inbuff)
         return ADE_E32;
 
     }
+    #if (ADE_FFT_IMP==ADE_USE_FFTW)
     p_fft->p_in=p_inbuff;
+    #elif #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW)
+    p_fft->p_in=p_inbuff;
+    
+    #endif
 
     return ADE_DEFAULT_RET;
 
