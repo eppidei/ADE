@@ -3,6 +3,7 @@
 #include "headers/ADE_blas_level3.h"
 #include "headers/ADE_fft.h"
 #include "headers/ADE_Utils.h"
+#include <string.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
@@ -623,14 +624,22 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         if (fft_type==ADE_FFT_C2C)
         {
             size_fft_in=buff_len*sizeof(ADE_FFTCPLX_T);
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
             p_in=fftw_malloc(size_fft_in);
+            #else
+            p_in=malloc(size_fft_in);
+            #endif
             if (p_in==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_FFT_TEST_Procedure);
                 return ADE_E31;
             }
             size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
             p_out=fftw_malloc(size_fft_out);
+            #else
+             p_out=malloc(size_fft_out);
+            #endif
             if (p_out==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",ADE_FFT_TEST_Procedure);
@@ -646,14 +655,22 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         else if (fft_type==ADE_FFT_R2C)
         {
             size_fft_in=buff_len*sizeof(ADE_FLOATING_T);
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
             p_in=fftw_malloc(size_fft_in);
+            #else
+            p_in=malloc(size_fft_in);
+            #endif
             if (p_in==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_Fft_Init);
                 return ADE_E31;
             }
             size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
             p_out=fftw_malloc(size_fft_out);
+            #else
+            p_out=malloc(size_fft_out);
+            #endif
             if (p_out==NULL)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",ADE_Fft_Init);
@@ -699,32 +716,31 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
 
         /******************** FFT CALCULATION ******************************/
-#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) ||  (ADE_TARGET_TYPE==ADE_ANDROID) )
                          clock_gettime(clock_id,&start_fft);
-//#elif (ADE_TARGET_TYPE==ADE_IOS)
-//                            TICK;
 #endif
          ret=ADE_Fft_Step(p_fft);
-         #if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                           clock_gettime(clock_id,&stop_fft);
 
                           clock_gettime(clock_id,&start_cust);
-//#elif (ADE_TARGET_TYPE==ADE_IOS)
-//                            TOCK;
-//                            TICK;
 #endif
          custom_FFT((ADE_FLOATING_T*)p_fft_custom-1,buff_len, ADE_CUSTOM_FFT_FORWARD);
-#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                         clock_gettime(clock_id,&stop_cust);
-//#elif (ADE_TARGET_TYPE==ADE_IOS)
-//                            TOCK;
+
 #endif
 
        fft_checker(p_fft,p_fft_custom,tolerance,buff_len_idx,fft_type,&bench_times_int,p_fid);
 
         /************ FFT RELEASE***************/
+#if  ( ADE_FFT_IMP==ADE_USE_FFTW )
         fftw_free(p_in);
         fftw_free(p_out);
+    #else
+        free(p_in);
+        free(p_out);
+    #endif
         free(p_fft_custom);
         ADE_Fft_Release(p_fft);
 
