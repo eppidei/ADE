@@ -248,7 +248,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     struct timespec start_blas, stop_blas,start_cust, stop_cust,res;
     int ret_time=0;
     int err_code=0;
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
     clockid_t clock_id=CLOCK_MONOTONIC;//CLOCK_REALTIME,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
 #endif
    bench_times_T bench_times_int;
@@ -259,7 +259,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     bench_times_int.p_stop_2=&stop_cust;
     bench_times_int.p_res=&res;
 
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
 
     ret_time=clock_getres(clock_id,&res);
     if (ret_time==-1)
@@ -323,24 +323,24 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                          /**********load data *********/
                          load_fmatrix((ADE_FLOATING_T*)p_A,n_rows_A[dim_cases_idx],n_cols_A[dim_cases_idx]);
                          load_fmatrix((ADE_FLOATING_T*)p_B,n_cols_A[dim_cases_idx],n_cols_B[dim_cases_idx]);
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                          clock_gettime(clock_id,&start_blas);
-//#elif (ADE_TARGET==ADE_IOS)
+//#elif (ADE_TARGET_TYPE==ADE_IOS)
 //                            TICK;
 #endif
                          ADE_Blas_level3_gemm (p_blas_l3);
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                           clock_gettime(clock_id,&stop_blas);
 
                           clock_gettime(clock_id,&start_cust);
-//#elif (ADE_TARGET==ADE_IOS)
+//#elif (ADE_TARGET_TYPE==ADE_IOS)
 //                            TOCK;
 //                            TICK;
 #endif
                           custom_faABpbC (p_blas_l3,(ADE_FLOATING_T*)p_C_custom);
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                         clock_gettime(clock_id,&stop_cust);
-//#elif (ADE_TARGET==ADE_IOS)
+//#elif (ADE_TARGET_TYPE==ADE_IOS)
 //                            TOCK;
 #endif
 
@@ -588,7 +588,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
      struct timespec start_fft, stop_fft,start_cust, stop_cust,res;
     int ret_time=0;
     int err_code=0;
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
     clockid_t clock_id=CLOCK_MONOTONIC;//CLOCK_REALTIME,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
 #endif
    bench_times_T bench_times_int;
@@ -599,7 +599,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
     bench_times_int.p_stop_2=&stop_cust;
     bench_times_int.p_res=&res;
 
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
 
     ret_time=clock_getres(clock_id,&res);
     if (ret_time==-1)
@@ -699,24 +699,24 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
 
         /******************** FFT CALCULATION ******************************/
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                          clock_gettime(clock_id,&start_fft);
-//#elif (ADE_TARGET==ADE_IOS)
+//#elif (ADE_TARGET_TYPE==ADE_IOS)
 //                            TICK;
 #endif
          ret=ADE_Fft_Step(p_fft);
-         #if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+         #if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                           clock_gettime(clock_id,&stop_fft);
 
                           clock_gettime(clock_id,&start_cust);
-//#elif (ADE_TARGET==ADE_IOS)
+//#elif (ADE_TARGET_TYPE==ADE_IOS)
 //                            TOCK;
 //                            TICK;
 #endif
          custom_FFT((ADE_FLOATING_T*)p_fft_custom-1,buff_len, ADE_CUSTOM_FFT_FORWARD);
-#if ( (ADE_TARGET==ADE_PC_DEBUG_MATLAB) || (ADE_TARGET==ADE_PC_DEBUG_NORMAL) || (ADE_TARGET==ADE_PC_RELEASE) || (ADE_TARGET==ADE_ANDROID) )
+#if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                         clock_gettime(clock_id,&stop_cust);
-//#elif (ADE_TARGET==ADE_IOS)
+//#elif (ADE_TARGET_TYPE==ADE_IOS)
 //                            TOCK;
 #endif
 

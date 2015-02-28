@@ -15,12 +15,15 @@
 /********************** CTRL DEFINES **********************************/
 /* Parameters */
 
+#define ADE_RELEASE (0)
+#define ADE_DEBUG (1)
+
 #define ADE_USE_SINGLE_PREC (0)
 #define ADE_USE_DOUBLE_PREC (1)
 
-#define ADE_PC_RELEASE (0)
-#define ADE_PC_DEBUG_NORMAL (1)
-#define ADE_PC_DEBUG_MATLAB (2)
+
+#define ADE_PC_NORMAL (1)
+#define ADE_PC_MATLAB (2)
 #define ADE_ANDROID (3)
 #define ADE_IOS (4)
 
@@ -43,48 +46,63 @@
 
 /* Control */
 
-#ifndef ADE_TARGET
-#define ADE_TARGET ADE_PC_DEBUG_MATLAB
-#endif //ADE_TARGET
+#ifndef ADE_TARGET_TYPE
+#define ADE_TARGET_TYPE ADE_IOS
+#endif //ADE_TARGET_TYPE
+
+#ifndef ADE_TARGET_MODE
+#define ADE_TARGET_MODE ADE_DEBUG
+#endif
 
 
 #define ADE_LIN_ALG_IMP ADE_USE_LIN_ALG_BLAS
 
 
-#if (ADE_TARGET==ADE_PC_DEBUG_MATLAB)
+#if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
     #define ADE_CONFIGURATION_INTERACTIVE
-    #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
+    #ifndef ADE_FP_PRECISION
+        #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
+    #endif
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
-     #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
-#elif (ADE_TARGET==ADE_PC_DEBUG_NORMAL || ADE_TARGET==ADE_PC_RELEASE)
+    #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
+#elif (ADE_TARGET_TYPE==ADE_PC_NORMAL )
     #undef ADE_CONFIGURATION_INTERACTIVE
-    #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #ifndef ADE_FP_PRECISION
+        #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #endif
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
-#elif (ADE_TARGET==ADE_ANDROID)
+#elif (ADE_TARGET_TYPE==ADE_ANDROID)
     #undef ADE_CONFIGURATION_INTERACTIVE
-    #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #ifndef ADE_FP_PRECISION
+        #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #endif
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
     #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
-    #define ADE_BLAS_IMPLEMENTATION ADE_USE_OPENBLAS_LIB
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_OPENBLAS_LIB
     #endif
-#elif (ADE_TARGET==ADE_IOS)
+#elif (ADE_TARGET_TYPE==ADE_IOS)
     #undef ADE_CONFIGURATION_INTERACTIVE
-    #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #ifndef ADE_FP_PRECISION
+        #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #endif
     #define ADE_FFT_IMP ADE_USE_ACCEL_FMW_FFT
     #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
-    #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
     #endif
-#define TICK   NSDate *startTime = [NSDate date]
-#define TOCK   NSLog(@"Time: %f", -[startTime timeIntervalSinceNow])
+
 #endif
 
 
-
+#if (ADE_TARGET_MODE==ADE_DEBUG)
 #define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_TRUE //1 true 0 false
 #define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_TRUE //1 true 0 false
+#elif  (ADE_TARGET_MODE==ADE_RELEASE)
+#define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_FALSE //1 true 0 false
+#define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_FALSE //1 true 0 false
+#endif
 
 
 

@@ -3,9 +3,11 @@
 #include "headers/ADE_typedefs.h"
 
 #if (ADE_FFT_IMP==ADE_USE_FFTW)
-#include "fftw3.h"
+    #include "fftw3.h"
+#elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    #include "ADE_accelerate_framework_wrapper.h"
 #else
-ADE_DEFINE_ERROR(ADE_FFT_IMP;)
+ADE_DEFINE_ERROR(ADE_FFT_IMP);
 #endif
 
 struct ADE_FFT_S {
