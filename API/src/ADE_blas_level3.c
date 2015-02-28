@@ -18,13 +18,13 @@ ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION)
 static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3);
-static ADE_VOID_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3);
+static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3);
+static ADE_API_RET_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3);
 
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 
-static ADE_VOID_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3);
-static ADE_VOID_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3);
+static ADE_API_RET_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3);
+static ADE_API_RET_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3);
 
 #else
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);
@@ -506,7 +506,7 @@ static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3)
 
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
+static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 {
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
@@ -552,10 +552,10 @@ static ADE_VOID_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
         ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
 
     #endif
-
+return ADE_DEFAULT_RET;
 }
 
-static ADE_VOID_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
+static ADE_API_RET_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 {
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
@@ -603,12 +603,12 @@ static ADE_VOID_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
         ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
 
     #endif
-
+return ADE_DEFAULT_RET;
 }
 
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 
-static ADE_VOID_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3)
+static ADE_API_RET_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3)
 {
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
@@ -654,10 +654,10 @@ if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
         ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
 
     #endif
-
+return ADE_DEFAULT_RET;
 }
 
-static ADE_VOID_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3)
+static ADE_API_RET_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3)
 {
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
@@ -705,7 +705,7 @@ if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
         ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
 
     #endif
-
+return ADE_DEFAULT_RET;
 }
 #else
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);

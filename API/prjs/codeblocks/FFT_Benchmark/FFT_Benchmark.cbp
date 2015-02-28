@@ -19,7 +19,7 @@
 					<Add directory="../../../../../../Program Files/MATLAB/R2013a/extern/include" />
 				</Compiler>
 				<Linker>
-					<Add option="-lrt -lgfortran -lmx -lmat -lfftw3 -lfftw3_threads -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add option="-lrt -lgfortran -lmx -lmat -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
 					<Add library="../../../lib/cblas/CBLAS/lib/cblas_LINUX.a" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />

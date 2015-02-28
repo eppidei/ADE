@@ -17,11 +17,11 @@ ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION)
 static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-static ADE_VOID_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2);
-static ADE_VOID_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2);
+static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2);
+static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2);
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-static ADE_VOID_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2);
-static ADE_VOID_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2);
+static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2);
+static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2);
 #else
 ADE_DEFINE_ERROR(ADE_FP_PRECISION);
 #endif
@@ -559,7 +559,7 @@ static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2)
 
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-static ADE_VOID_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
+static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
 {
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -578,11 +578,11 @@ static ADE_VOID_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-
+    return ADE_DEFAULT_RET;
 
 }
 
-static ADE_VOID_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
+static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
 {
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -613,12 +613,12 @@ static ADE_VOID_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-
+return ADE_DEFAULT_RET;
 
 }
 
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-static ADE_VOID_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2)
+static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2)
 {
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -637,11 +637,11 @@ static ADE_VOID_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-
+return ADE_DEFAULT_RET;
 
 }
 
-static ADE_VOID_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
+static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
 {
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -670,7 +670,7 @@ static ADE_VOID_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-
+return ADE_DEFAULT_RET;
 
 }
 
