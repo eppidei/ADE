@@ -5,7 +5,7 @@
 #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 #include "headers/ADE_cblas.h"
 #else
-ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION)
+#error(ADE_BLAS_IMPLEMENTATION)
 #endif
 #include "headers/ADE_errors.h"
 #include <stddef.h>
@@ -23,7 +23,7 @@ static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2);
 static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2);
 static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2);
 #else
-ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+#error(ADE_FP_PRECISION);
 #endif
 /***************** Init methods  *********************/
 ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type )
@@ -412,7 +412,7 @@ ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
      p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dger;
      #else
-        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+        #error(ADE_FP_PRECISION);
     #endif
 
      ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
@@ -442,7 +442,7 @@ ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
      p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dsbmv;
      #else
-        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+        #error(ADE_FP_PRECISION);
     #endif
 
      ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
@@ -475,7 +475,7 @@ ADE_UINT32_T i = 0;
 
     ret = ADE_Blas_level2_sbmv(p_Blas_l2);
  #else
-     ADE_DEFINE_ERROR(ADE_LIN_ALG_IMP)
+     #error(ADE_LIN_ALG_IMP)
 
      #endif
     return ret;
@@ -574,7 +574,7 @@ static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
     cblas_sger(CblasRowMajor,(p_Blas_l2->M),(p_Blas_l2->N),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_X,(p_Blas_l2->INCX),p_Blas_l2->p_Y,(p_Blas_l2->INCY),p_Blas_l2->p_A,(p_Blas_l2->LDA));
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 
@@ -609,7 +609,7 @@ static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
 
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 
@@ -633,7 +633,7 @@ static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2)
     cblas_dger(CblasRowMajor,(p_Blas_l2->M),(p_Blas_l2->N),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_X,(p_Blas_l2->INCX),p_Blas_l2->p_Y,(p_Blas_l2->INCY),p_Blas_l2->p_A,(p_Blas_l2->LDA));
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 
@@ -666,7 +666,7 @@ static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
 
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 
@@ -675,5 +675,5 @@ return ADE_DEFAULT_RET;
 }
 
 #else
-ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+#error(ADE_FP_PRECISION);
 #endif

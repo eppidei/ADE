@@ -3,7 +3,9 @@
 #include <sys/ioctl.h>
 #include <math.h>
 #include "headers/ADE_complex.h"
-
+#if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+#include "headers/ADE_accelerate_framework_wrapper.h"
+#endif
 /**************************** Private prototypes *********************************/
 
 static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,ADE_UINT32_T n_var_per_printrow,ADE_UTILS_ROW_INFO_T row_info, FILE *p_stream);
@@ -179,6 +181,161 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_l
     return ADE_DEFAULT_RET;
 
 }
+
+ADE_API_RET_T ADE_Utils_Complex2Split(ADE_CPLX_T *p_in,ADE_UINT32_T Stride_in,ADE_SplitComplex_T *p_out,ADE_UINT32_T Stride_out,ADE_UINT32_T cplx_len)
+{
+
+ADE_UINT32_T idx=0;
+ADE_UINT32_T len=cplx_len*2;
+
+if (p_in==NULL )
+{
+    ADE_PRINT_ERRORS(ADE_INCHECKS,p_in,"%p",ADE_Utils_Complex2Split)
+    return ADE_E34;
+}
+
+if (p_out==NULL )
+{
+    ADE_PRINT_ERRORS(ADE_INCHECKS,p_out,"%p",ADE_Utils_Complex2Split)
+    return ADE_E34;
+}
+
+#if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+       vDSP_ctoz (p_in,Stride_in,p_out,Stride_out,cplx_len);
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+        vDSP_ctozD (p_in,Stride_in,p_out,Stride_out,cplx_len);
+    #else
+        #error (ADE_FP_PRECISION)
+    #endif
+#else
+
+    for (idx = 0; idx < len; ++idx)
+    {
+        p_out->realp[idx*Stride_out] = p_in[idx*Stride_in/2].realpart;
+        p_out->imagp[idx*Stride_out] = p_in[idx*Stride_in/2].imagpart;
+    }
+#endif
+
+    return ADE_DEFAULT_RET;
+
+
+}
+
+ADE_API_RET_T ADE_Utils_Split2Complex( ADE_SplitComplex_T *p_in,ADE_UINT32_T Stride_in,ADE_CPLX_T *p_out,ADE_UINT32_T Stride_out,ADE_UINT32_T split_len)
+{
+
+ADE_UINT32_T idx=0;
+
+if (p_in==NULL )
+{
+    ADE_PRINT_ERRORS(ADE_INCHECKS,p_in,"%p",ADE_Utils_Split2Complex)
+    return ADE_E34;
+}
+
+if (p_out==NULL )
+{
+    ADE_PRINT_ERRORS(ADE_INCHECKS,p_out,"%p",ADE_Utils_Split2Complex)
+    return ADE_E34;
+}
+
+#if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+        vDSP_ztoc (p_in,Stride_in,p_out,Stride_out,split_len);
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+        vDSP_ztocD (p_in,Stride_in,p_out,Stride_out,split_len);
+    #else
+        #error (ADE_FP_PRECISION)
+    #endif
+#else
+    for (idx = 0; idx < split_len; ++idx)
+    {
+        p_out[idx*Stride_in/2].realpart = p_in->realp[idx*Stride_out];
+        p_out[idx*Stride_in/2].imagpart = p_in->imagp[idx*Stride_out];
+    }
+
+#endif
+    return ADE_DEFAULT_RET;
+
+
+}
+
+ADE_API_RET_T ADE_Utils_SetSplit(ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split)
+{
+
+/*This function needs that buffer length = n_cplx = n_floats/2 */
+
+ADE_FLOATING_T *p_int=(ADE_FLOATING_T *)p_buff;
+
+if (p_split==NULL )
+{
+    ADE_PRINT_ERRORS(ADE_INCHECKS,p_split,"%p",ADE_SetSplit)
+    return ADE_E34;
+}
+
+if (p_buff==NULL )
+{
+    ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_SetSplit)
+    return ADE_E34;
+}
+
+
+    p_split->realp=p_int;
+    p_split->imagp=&(p_int[buff_len]);
+
+ return ADE_DEFAULT_RET;
+
+}
+
+ADE_API_RET_T ADE_Utils_FillSplitReal(ADE_FLOATING_T real,ADE_UINT32_T idx,ADE_SplitComplex_T *p_split)
+{
+
+    if (p_split==NULL )
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_split,"%p",ADE_Utils_FillSplitReal)
+        return ADE_E34;
+    }
+
+    p_split->realp[idx]=real;
+   // p_split->imagp[idx]=imag;
+
+    return ADE_DEFAULT_RET;
+}
+
+ADE_API_RET_T ADE_Utils_FillSplitImag(ADE_FLOATING_T imag,ADE_UINT32_T idx,ADE_SplitComplex_T *p_split)
+{
+
+    if (p_split==NULL )
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_split,"%p",ADE_Utils_FillSplitImag)
+        return ADE_E34;
+    }
+
+    //p_split->realp[idx]=real;
+    p_split->imagp[idx]=imag;
+
+    return ADE_DEFAULT_RET;
+}
+
+ADE_API_RET_T ADE_Utils_FillSplitCplx(ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx,ADE_SplitComplex_T *p_split)
+{
+
+ADE_API_RET_T ret=ADE_DEFAULT_RET;
+
+   ret=ADE_Utils_FillSplitReal(real, idx,p_split);
+   if  (ret<0)
+   {
+       return ADE_E35;
+   }
+   ret=ADE_Utils_FillSplitImag(imag,idx,p_split);
+   if  (ret<0)
+   {
+       return ADE_E35;
+   }
+
+    return ADE_DEFAULT_RET;
+}
+
 /*********************** Private Functions ******************************/
 
 static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,ADE_UINT32_T n_var_per_printrow, ADE_UTILS_ROW_INFO_T row_info,FILE *p_stream)

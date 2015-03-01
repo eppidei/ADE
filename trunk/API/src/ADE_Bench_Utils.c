@@ -510,17 +510,29 @@ void fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,AD
     ADE_FLOATING_DP_T result=0;
     ADE_CPLX_T p_csum=ADE_cset(0,0);
     ADE_MATH_ATTRIBUTE_T math_att;
+    ADE_VOID_T * p_desplit=NULL;
     ADE_UINT32_T n_row=p_fft->buff_len;
 
     ADE_FLOATING_DP_T time_sum1=0;
     ADE_FLOATING_DP_T time_sum2=0;
+
+    #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+
+        p_desplit=malloc(p_fft->buff_len*sizeof(ADE_FFTCPLX_T));
+        ADE_Utils_Split2Complex( &(p_fft->split_out),1,(ADE_CPLX_T*)p_desplit,1,p_fft->buff_len);
+
+    #endif
 
     if (m_type==ADE_FFT_C2C || m_type==ADE_FFT_R2C)
     {
 
         for (row_idx=0;row_idx<n_row;row_idx++)
         {
-                 p_csum=ADE_csum(ADE_cdiff(((ADE_CPLX_T*)p_fft->p_out)[row_idx],((ADE_CPLX_T*)p_fft_custom)[row_idx]),p_csum);
+            #if (ADE_FFT_IMP==ADE_USE_FFTW)
+                p_csum=ADE_csum(ADE_cdiff(((ADE_CPLX_T*)p_fft->p_out)[row_idx],((ADE_CPLX_T*)p_fft_custom)[row_idx]),p_csum);
+             #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+                p_csum=ADE_csum(ADE_cdiff(((ADE_CPLX_T*)p_desplit)[row_idx],((ADE_CPLX_T*)p_fft_custom)[row_idx]),p_csum);
+             #endif
         }
 
         result=ADE_cabs(p_csum);
@@ -559,11 +571,17 @@ time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_ns
         {
             printf ("CASE Not handled!!! in fft_checker math_att\n");
         }
-
+    #if (ADE_FFT_IMP==ADE_USE_FFTW)
         ADE_Utils_PrintArray(p_fft->p_out,0,n_row-1, 0,0, "FFT LIBRARY ", p_fid,math_att);
+        #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+         ADE_Utils_PrintArray(p_desplit,0,n_row-1, 0,0, "FFT LIBRARY ", p_fid,math_att);
+         #endif
         ADE_Utils_PrintArray(p_fft_custom,0,n_row-1, 0,0, "FFT Custom", p_fid,math_att);
-    }
 
+    }
+ #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    free(p_desplit);
+#endif
 
 
 
@@ -579,9 +597,9 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
     ADE_SIZE_T size_fft_in,size_fft_out;
     ADE_VOID_T *p_in;
     ADE_VOID_T *p_out;
-    ADE_DSPSplitComplex_T *p_SplitCplxin,*p_SplitCplxout;
-    ADE_UINT32_T i=0,buff_len_idx=0;
 
+    ADE_UINT32_T i=0,buff_len_idx=0;
+    //ADE_SplitComplex_T split_in,split_out;
    // ADE_INT32_T lin,col;
     ADE_API_RET_T ret=ADE_DEFAULT_RET;
 
@@ -637,7 +655,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             }
             size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-            p_out=fftw_malloc(size_fft_out);
+             p_out=fftw_malloc(size_fft_out);
             #else
              p_out=malloc(size_fft_out);
             #endif
@@ -652,51 +670,45 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
                 ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
                 return ADE_E31;
             }
-            #if (ADE_TARGET_TYPE==ADE_IOS)
-                p_SplitCplxin=malloc(size_fft_in);
-                p_SplitCplxout=malloc(size_fft_out);
-            
-            #endif
-        }
-        else if (fft_type==ADE_FFT_R2C)
-        {
-            size_fft_in=buff_len*sizeof(ADE_FLOATING_T);
-            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-            p_in=fftw_malloc(size_fft_in);
-            #else
-            p_in=malloc(size_fft_in);
-            #endif
-            if (p_in==NULL)
-            {
-                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",fft_test_procedure);
-                return ADE_E31;
-            }
-            size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
-            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-            p_out=fftw_malloc(size_fft_out);
-            #else
-            p_out=malloc(size_fft_out);
-            #endif
-            if (p_out==NULL)
-            {
-                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",fft_test_procedure);
-                return ADE_E31;
-            }
-            /*2check*/
-            p_fft_custom=malloc(size_fft_in);
-            if (p_fft_custom==NULL)
-            {
-                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
-                return ADE_E31;
-            }
-            /**/
-            #if (ADE_TARGET_TYPE==ADE_IOS)
-            p_SplitCplxin=malloc(size_fft_in);
-            p_SplitCplxout=malloc(size_fft_out);
-            
-            #endif
+
+
 
         }
+//        else if (fft_type==ADE_FFT_R2C)
+//        {
+//            size_fft_in=buff_len*sizeof(ADE_FLOATING_T);
+//            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+//            p_in=fftw_malloc(size_fft_in);
+//            #else
+//            p_in=malloc(size_fft_in);
+//            #endif
+//            if (p_in==NULL)
+//            {
+//                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",fft_test_procedure);
+//                return ADE_E31;
+//            }
+//            size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
+//            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+//            p_out=fftw_malloc(size_fft_out);
+//            #else
+//            p_out=malloc(size_fft_out);
+//            #endif
+//            if (p_out==NULL)
+//            {
+//                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",fft_test_procedure);
+//                return ADE_E31;
+//            }
+//            /*2check*/
+//            p_fft_custom=malloc(size_fft_in);
+//            if (p_fft_custom==NULL)
+//            {
+//                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
+//                return ADE_E31;
+//            }
+//            /**/
+
+
+   //     }
 
         /******************* FFT SETUP ****************************/
 
@@ -706,7 +718,9 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
                 ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",fft_test_procedure);
                 //return ADE_E31;
             }
-        ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
+
+            ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
+
         if (ret<0)
             {
                 ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",fft_test_procedure);
@@ -717,22 +731,37 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
         if (fft_type==ADE_FFT_C2C)
         {
-
-
             for(i=0; i<buff_len; i++)
             {
+                #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+                    ((ADE_CPLX_T*)p_in)[i]=ADE_cset((rand()%10),(rand()%10));
+                #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+                    ADE_Fft_FillSplitIn(p_fft,(rand()%10),(rand()%10),i);
+                #endif
 
-                ((ADE_CPLX_T*)p_in)[i]=ADE_cset((rand()%10),(rand()%10));
             }
 
+             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+                memcpy(p_fft_custom,p_in,size_fft_in);
+            #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+                ADE_Utils_Split2Complex( &(p_fft->split_in),1,(ADE_CPLX_T *)p_fft_custom,1,buff_len);
+            #endif
+
         }
-        else if (fft_type==ADE_FFT_R2C)
-        {
-           ((ADE_FLOATING_T*)p_in)[i]=(ADE_FLOATING_T)(rand()%10);
-        }
-        
-        ADE_DSPSplitComplex_T
-        memcpy(p_fft_custom,p_in,size_fft_in);
+//        else if (fft_type==ADE_FFT_R2C)
+//        {
+//         for(i=0; i<buff_len; i++)
+//            {
+//                #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+//                   ((ADE_FLOATING_T*)p_in)[i]=(ADE_FLOATING_T)(rand()%10);
+//                #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+//                     ADE_Fft_FillSplitIn(p_fft,(rand()%10),0,i);
+//                #endif
+//                }
+//
+//        }
+
+
 
 
 
@@ -764,9 +793,11 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         free(p_out);
     #endif
         free(p_fft_custom);
+
+
         ADE_Fft_Release(p_fft);
 
-    }
+}
     return ADE_DEFAULT_RET;
 }
 

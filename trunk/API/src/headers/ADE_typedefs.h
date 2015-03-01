@@ -4,7 +4,16 @@
 #include "headers/ADE_defines.h"
 //#include <complex.h>
 #include "fftw3.h"
-
+typedef struct fcomplex_S
+{
+    float realpart;
+    float imagpart;
+} ADE_CPLX_SP_T;
+typedef struct dcomplex_S
+{
+    double realpart;
+    double imagpart;
+}ADE_CPLX_DP_T;
 /************************** Accelerate Framework ****************************/
 typedef unsigned long ADE_vDSP_Length;
 typedef long ADE_vDSP_Stride;
@@ -35,20 +44,12 @@ typedef uint8_t ADE_UINT8_T ;
 typedef unsigned char  ADE_UCHAR_T ;
 typedef double ADE_FLOATING_DP_T;
 typedef float ADE_FLOATING_SP_T;
-typedef struct fcomplex_S
-{
-    float realpart;
-    float imagpart;
-} ADE_CPLX_SP_T;
-typedef struct dcomplex_S
-{
-    double realpart;
-    double imagpart;
-}ADE_CPLX_DP_T;
+
 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef ADE_FLOATING_DP_T ADE_FLOATING_T;
 typedef ADE_CPLX_DP_T ADE_CPLX_T;
-typedef ADE_DSPDoubleSplitComplex ADE_DSPSplitComplex_T;
+typedef ADE_DSPDoubleSplitComplex ADE_SplitComplex_T;
+typedef ADE_FFTSetupD ADE_FFTSetup_T;
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     typedef fftw_complex ADE_FFTCPLX_T;
     #else
@@ -57,7 +58,8 @@ typedef ADE_DSPDoubleSplitComplex ADE_DSPSplitComplex_T;
 #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 typedef ADE_FLOATING_SP_T ADE_FLOATING_T;
 typedef ADE_CPLX_SP_T ADE_CPLX_T;
-typedef ADE_DSPSplitComplex ADE_DSPSplitComplex_T;
+typedef ADE_DSPSplitComplex ADE_SplitComplex_T;
+typedef ADE_FFTSetup ADE_FFTSetup_T;
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     typedef fftwf_complex ADE_FFTCPLX_T;
     #else
