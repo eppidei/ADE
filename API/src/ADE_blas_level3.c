@@ -5,7 +5,7 @@
 #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 #include "headers/ADE_cblas.h"
 #else
-ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION)
+#error(ADE_BLAS_IMPLEMENTATION)
 #endif
 #include "headers/ADE_complex.h"
 #include <stddef.h>
@@ -27,7 +27,7 @@ static ADE_API_RET_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3);
 static ADE_API_RET_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3);
 
 #else
-ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+#error(ADE_FP_PRECISION);
 #endif
 
 /**********************Init Methods************************************/
@@ -389,7 +389,7 @@ ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
          p_Blas_l3->blas_level3_fcn_type1=ADE_Blas_level3_zgemm;
      }
      #else
-        ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+        #error(ADE_FP_PRECISION);
     #endif
 
      ret = ADE_Blas_level3_launch_type1(p_Blas_l3);
@@ -549,7 +549,7 @@ static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 return ADE_DEFAULT_RET;
@@ -600,7 +600,7 @@ static ADE_API_RET_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 return ADE_DEFAULT_RET;
@@ -651,7 +651,7 @@ if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
 
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 return ADE_DEFAULT_RET;
@@ -702,11 +702,11 @@ if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
 
      #else
 
-        ADE_DEFINE_ERROR(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION);
 
     #endif
 return ADE_DEFAULT_RET;
 }
 #else
-ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+#error(ADE_FP_PRECISION);
 #endif

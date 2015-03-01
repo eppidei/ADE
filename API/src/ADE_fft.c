@@ -1,5 +1,6 @@
 #include "headers/ADE_fft.h"
 #include "headers/ADE_errors.h"
+#include "headers/ADE_Utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -14,6 +15,8 @@ static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff);
 static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft);
 static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T fft_dir);
 static ADE_API_RET_T ADE_Fft_SetType(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type);
+//static ADE_API_RET_T ADE_Fft_SetSplitIn(ADE_FFT_T* p_fft,ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split);
+//static ADE_API_RET_T ADE_Fft_SetSplitOut(ADE_FFT_T* p_fft,ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split);
 
 
 ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
@@ -123,21 +126,21 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
         if (p_fft->type==ADE_FFT_C2C)
         {
             #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-                 vDSP_fft_zopD ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+                 vDSP_fft_zopD ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
             #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-                vDSP_fft_zop ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+                vDSP_fft_zop ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
                 #else
-                    ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+                    #error(ADE_FP_PRECISION)
                 #endif
         }
         else if (p_fft->type==ADE_FFT_R2C)
         {
         #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-            vDSP_fft_zropD ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+            vDSP_fft_zropD ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
         #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-            vDSP_fft_zrop ( p_fft->p_setup, p_fft->p_in, 1, p_fft->p_out, 1, log2(p_fft->buff_len), p_fft->direction );
+            vDSP_fft_zrop ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
         #else
-            ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+            #error(ADE_FP_PRECISION)
         #endif
         }
 
@@ -145,13 +148,64 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 
 
     #else
-         ADE_DEFINE_ERROR(ADE_FFT_IMP);
+         #error(ADE_FFT_IMP);
 
     #endif
 
     return ADE_DEFAULT_RET;
 
 }
+
+#if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
+{
+
+    if (&(p_fft->split_in)==NULL )
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,&(p_fft->split_in),"%p",ADE_Fft_FillSplitIn)
+        return ADE_E32;
+    }
+
+    if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_C2R)
+    {
+        ADE_Utils_FillSplitCplx(real,imag,idx,&(p_fft->split_in));
+    }
+    else if (p_fft->type==ADE_FFT_R2C || p_fft->type==ADE_FFT_R2R)
+
+    {
+        ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_in));
+    }
+
+
+
+    return ADE_DEFAULT_RET;
+}
+
+ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
+{
+
+     if (&(p_fft->split_out)==NULL )
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,&(p_fft->split_out),"%p",ADE_Fft_FillSplitIn)
+        return ADE_E32;
+    }
+
+    if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_R2C)
+    {
+        ADE_Utils_FillSplitCplx(real,imag,idx,&(p_fft->split_out));
+    }
+    else if (p_fft->type==ADE_FFT_C2R || p_fft->type==ADE_FFT_R2R)
+
+    {
+        ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_out));
+    }
+
+
+
+    return ADE_DEFAULT_RET;
+}
+
+#endif
 
 ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
 {
@@ -169,14 +223,21 @@ ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
         #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
             vDSP_destroy_fftsetupD (p_fft->p_setup );
         #else
-             ADE_DEFINE_ERROR(ADE_FP_PRECISION);
+             #error(ADE_FP_PRECISION);
         #endif
 
     #else
-         ADE_DEFINE_ERROR(ADE_FFT_IMP);
+         #error(ADE_FFT_IMP);
     #endif
     free(p_fft);
 }
+
+
+
+
+
+
+
 
 
 /******************** Private Methods *****************************/
@@ -191,9 +252,10 @@ static ADE_API_RET_T ADE_Fft_SetInBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_inbuff)
     }
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     p_fft->p_in=p_inbuff;
-    #elif #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW)
-    p_fft->p_in=p_inbuff;
-    
+    #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    ADE_Utils_SetSplit(p_inbuff,p_fft->buff_len,&(p_fft->split_in));
+
+
     #endif
 
     return ADE_DEFAULT_RET;
@@ -208,9 +270,16 @@ static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
         return ADE_E32;
 
     }
+     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     p_fft->p_out=p_outbuff;
+    #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    ADE_Utils_SetSplit(p_outbuff,p_fft->buff_len,&(p_fft->split_out));
+
+    #endif
  return ADE_DEFAULT_RET;
 }
+
+
 
 static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T fft_dir)
 {
@@ -283,7 +352,7 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
                     p_fft->plan = fftwf_plan_dft_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,p_fft->direction,ADE_FFTW_PLAN_FLAGS);
                 #else
 
-                    ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+                    #error(ADE_FP_PRECISION)
 
                 #endif
 
@@ -297,7 +366,7 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
                  p_fft->plan = fftwf_plan_dft_r2c_1d(p_fft->buff_len,(ADE_FLOATING_T*)p_fft->p_in,(ADE_FFTCPLX_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
               #else
 
-                ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+                #error(ADE_FP_PRECISION)
 
             #endif
 
@@ -311,7 +380,7 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
                 #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
                     p_fft->plan = fftwf_plan_dft_c2r_1d(p_fft->buff_len,(ADE_FFTCPLX_T*)p_fft->p_in,(ADE_FLOATING_T*)p_fft->p_out,ADE_FFTW_PLAN_FLAGS);
                 #else
-                    ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+                    #error(ADE_FP_PRECISION)
 
                 #endif
         }
@@ -338,7 +407,7 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
                 p_fft->p_setup=vDSP_create_fftsetupD ( (ADE_vDSP_Length) ceil(log2(p_fft->buff_len)), Ios_radix );
 
             #else
-              ADE_DEFINE_ERROR(ADE_FP_PRECISION)
+              #error(ADE_FP_PRECISION)
 
             #endif
 
@@ -350,7 +419,7 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
 
         #else
 
-        ADE_DEFINE_ERROR(ADE_FFT_IMP)
+        #error(ADE_FFT_IMP)
 
         #endif
 
