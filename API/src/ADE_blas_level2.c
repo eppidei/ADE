@@ -331,6 +331,9 @@ ADE_API_RET_T ADE_Blas_level2_SetX(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *
 
 ADE_API_RET_T ADE_Blas_level2_Elewise_Config(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len)
 {
+
+/** Configure p_Blas_l2 to work as element wise multiplier between two buffers**/
+
     ADE_INT32_T k=0;
     ADE_FLOATING_T alpha=alpha_i,beta=beta_i;
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
@@ -533,7 +536,7 @@ static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2)
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     static unsigned short flag= 0;
 
-    #if (ADE_CHECK_INPUTS==1)
+    #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
         if (flag==0)
         {

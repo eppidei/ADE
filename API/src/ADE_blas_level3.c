@@ -477,7 +477,7 @@ static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3)
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     static unsigned short flag= 0;
 
-    #if (ADE_CHECK_INPUTS==1)
+    #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
         if (flag==0)
         {

@@ -85,6 +85,26 @@ extern void zcopy(
     int *incy
 );
 
+#define sdot FORTRAN_WRAPPER(sdot)
+
+extern float sdot(
+int *n,
+void* sx,
+int *incx,
+void *sy,
+int *incy
+);
+
+#define ddot FORTRAN_WRAPPER(ddot)
+
+extern double ddot(
+int *n,
+void* sx,
+int *incx,
+void *sy,
+int *incy
+);
+
 /********************************* LEVEL 2 **************************************/
 #define ssbmv FORTRAN_WRAPPER(ssbmv)
 extern void ssbmv(

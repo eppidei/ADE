@@ -281,7 +281,7 @@ ADE_API_RET_T ADE_Iir_setFilt_Implementation(ADE_IIR_T* p_iir,ADE_FILTER_IMP_CHO
    }
    else
    {
-       #if (ADE_CHECK_INPUTS==1)
+       #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
         ADE_PRINT_ERRORS(ADE_INCHECKS,filt_imp_type,"%d",ADE_Iir_setFilt_Implementation);
         #endif
 
@@ -300,7 +300,7 @@ ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir)
 
 
     /**** set static params blas ****/
-#if (ADE_CHECK_INPUTS==1)
+#if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
 if ((p_iir->filter_func)==NULL)
 {
