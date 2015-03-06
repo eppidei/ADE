@@ -161,7 +161,7 @@ ADE_API_RET_T ADE_Polyfit_Step(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T* frame_i,ADE
 
     ADE_UINT32_T i=0;
 
-      #if (ADE_CHECK_INPUTS==1)
+      #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
         if (p_poly->p_poly_coeffs==NULL)
         {

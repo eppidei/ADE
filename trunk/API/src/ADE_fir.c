@@ -112,7 +112,7 @@ ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FILTER_IMP_CHO
    }
    else
    {
-       #if (ADE_CHECK_INPUTS==1)
+       #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
         ADE_PRINT_ERRORS(ADE_INCHECKS,filt_imp_type,"%d",ADE_Fir_setFilt_Implementation);
         #endif
 
@@ -126,7 +126,7 @@ ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir)
 {
 //    ADE_UINT32_T i=0;
 
-#if (ADE_CHECK_INPUTS==1)
+#if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
 if ((p_fir->p_state)==NULL)
 {

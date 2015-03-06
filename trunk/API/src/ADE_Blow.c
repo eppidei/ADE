@@ -767,7 +767,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     static ADE_UINT8_T flag;
 
-    #if (ADE_CHECK_INPUTS==1)
+    #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
     if (p_blow->p_in==NULL)
     {

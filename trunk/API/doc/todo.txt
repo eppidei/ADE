@@ -1,3 +1,4 @@
 1)improve error codes system 
 2) check that all processing class have define to check inp and check out
 3) check all set methods have input check
+4) function round
