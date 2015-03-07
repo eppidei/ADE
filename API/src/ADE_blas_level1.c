@@ -21,13 +21,13 @@ static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_scopy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_caxpy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1);
-static ADE_API_RET_T ADE_Blas_level1_sdot (ADE_blas_level1_T *p_blas_l1)
+static ADE_API_RET_T ADE_Blas_level1_sdot (ADE_blas_level1_T *p_blas_l1);
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 static ADE_API_RET_T ADE_Blas_level1_daxpy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_dcopy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_zaxpy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_zcopy (ADE_blas_level1_T *p_blas_l1);
-static ADE_API_RET_T ADE_Blas_level1_ddot (ADE_blas_level1_T *p_blas_l1)
+static ADE_API_RET_T ADE_Blas_level1_ddot (ADE_blas_level1_T *p_blas_l1);
 #else
 #error(ADE_FP_PRECISION);
 #endif
@@ -710,7 +710,7 @@ static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
 
 static ADE_FLOATING_T ADE_Blas_level1_launch_type2 (ADE_blas_level1_T *p_blas_l1)
 {
-    //ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
     static unsigned short flag= 0;
 
     #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)

@@ -108,7 +108,7 @@ ADE_API_RET_T ADE_Utils_PrintArray(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_r
     }
 }
 
-ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_len ,ADE_FLOATING_T *indexes_o,ADE_FLOATING_T *n_indexes_o, ADE_FLOATING_T threshold,ADE_UTILS_CONDITION_T condition)
+ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *p_frame_i,ADE_UINT32_T frame_len ,ADE_FLOATING_T *p_indexes_o,ADE_UINT32_T *p_n_indexes_o, ADE_FLOATING_T *p_threshold,ADE_UTILS_CONDITION_T condition)
 {
     ADE_UINT32_T i=0,idx=0;
 
@@ -116,9 +116,9 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_l
     {
         for(i=0;i<frame_len;i++)
         {
-            if (frame_i[i]>threshold)
+            if (p_frame_i[i]>p_threshold[i])
             {
-                indexes_o[idx]=i;
+                p_indexes_o[idx]=i;
                 idx++;
             }
         }
@@ -128,9 +128,9 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_l
     {
         for(i=0;i<frame_len;i++)
         {
-            if (frame_i[i]<threshold)
+            if (p_frame_i[i]<p_threshold[i])
             {
-                indexes_o[idx]=i;
+                p_indexes_o[idx]=i;
                 idx++;
             }
         }
@@ -139,9 +139,9 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_l
     {
         for(i=0;i<frame_len;i++)
         {
-            if (frame_i[i]==threshold)
+            if (p_frame_i[i]==p_threshold[i])
             {
-                indexes_o[idx]=i;
+                p_indexes_o[idx]=i;
                 idx++;
             }
         }
@@ -151,9 +151,9 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_l
     {
         for(i=0;i<frame_len;i++)
         {
-            if (frame_i[i]>=threshold)
+            if (p_frame_i[i]>=p_threshold[i])
             {
-                indexes_o[idx]=i;
+                p_indexes_o[idx]=i;
                 idx++;
             }
         }
@@ -163,9 +163,9 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_l
     {
         for(i=0;i<frame_len;i++)
         {
-            if (frame_i[i]<=threshold)
+            if (p_frame_i[i]<=p_threshold[i])
             {
-                indexes_o[idx]=i;
+                p_indexes_o[idx]=i;
                 idx++;
             }
         }
@@ -176,7 +176,7 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *frame_i,ADE_UINT32_T frame_l
         return ADE_E34;
     }
 
-    *n_indexes_o=idx;
+    *p_n_indexes_o=idx;
 
     return ADE_DEFAULT_RET;
 
@@ -334,6 +334,21 @@ ADE_API_RET_T ret=ADE_DEFAULT_RET;
    }
 
     return ADE_DEFAULT_RET;
+}
+
+ADE_API_RET_T ADE_Utils_memset_float(ADE_FLOATING_T *vec,ADE_UINT32_T len, ADE_FLOATING_T memset_val)
+{
+
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_UINT32_T vec_idx=0;
+
+    for (vec_idx=0;vec_idx<len;vec_idx++)
+    {
+        vec[vec_idx]=memset_val;
+    }
+
+    return ret;
+
 }
 
 /*********************** Private Functions ******************************/
