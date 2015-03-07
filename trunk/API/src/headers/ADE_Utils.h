@@ -19,6 +19,7 @@ ADE_API_RET_T ADE_Utils_FillSplitImag(ADE_FLOATING_T imag,ADE_UINT32_T idx,ADE_S
 ADE_API_RET_T ADE_Utils_FillSplitCplx(ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx,ADE_SplitComplex_T *p_split);
 ADE_API_RET_T ADE_Utils_SetSplit(ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split);
 ADE_API_RET_T ADE_Utils_memset_float(ADE_FLOATING_T *vec,ADE_UINT32_T len, ADE_FLOATING_T memset_val);
+ADE_VOID_T ADE_Utils_indexx(ADE_ULONG_T n, ADE_FLOATING_SP_T arr[], ADE_ULONG_T indx[]);
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif
