@@ -11,8 +11,9 @@
 /******* Private methods prototypes ***********************/
 static ADE_API_RET_T ADE_Snap_TeagerKaiser(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_ThresholdDetection(ADE_SNAP_T *p_snap);
+static ADE_API_RET_T ADE_Snap_Xrms2(ADE_SNAP_T *p_snap);
 /******* Init methods  ***********************/
-ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i)
+ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i)
 {
     ADE_SNAP_T *p_this=NULL;
     ADE_API_RET_T iir_ret=ADE_DEFAULT_RET;
@@ -30,6 +31,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
         p_this->buff_len=buff_len;
         p_this->Fs=Fs_i;
         p_this->n_pow_est_slots=n_pow_slots_i;
+        p_this->n_max_indexes=n_max_indexes_i;
         /****** ALLOC OUT BUFF TGK ******/
         p_this->p_tgk=calloc(buff_len,sizeof(ADE_FLOATING_T));
         if(p_this->p_tgk==NULL)
@@ -38,10 +40,17 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
             return ADE_E44;
         }
 
-        p_this->p_indexes=calloc(buff_len,sizeof(ADE_FLOATING_T));
+        p_this->p_indexes=calloc( p_this->n_max_indexes,sizeof(ADE_FLOATING_T));
         if(p_this->p_indexes==NULL)
         {
             ADE_PRINT_ERRORS(ADE_MEM,p_this->p_indexes,"%p",ADE_Snap_Init);
+            return ADE_E44;
+        }
+
+        p_this->p_index_vals=calloc( p_this->n_max_indexes,sizeof(ADE_FLOATING_T));
+        if(p_this->p_index_vals==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,p_this->p_index_vals,"%p",ADE_Snap_Init);
             return ADE_E44;
         }
 
@@ -181,8 +190,10 @@ ADE_FLOATING_T freq_right=3200;
 ADE_FLOATING_T spectral_threshold_schiocco  = 0.2;
 ADE_FLOATING_T thresh_gain = 7;
 ADE_FLOATING_T thresh_bias = 2e-2;
-ADE_FLOATING_T at=1e-4;
-ADE_FLOATING_T rt=50e-3;
+ADE_FLOATING_T attack_time=1e-4;
+ADE_FLOATING_T release_time=50e-3;
+ADE_FLOATING_T at = 1-exp(-2.2/(p_snap->Fs*attack_time));
+ADE_FLOATING_T rt = 1-exp(-2.2/(p_snap->Fs*release_time));
 ADE_FLOATING_T time_left=0.5e-3;
 ADE_FLOATING_T time_right=6e-3;
 ADE_FLOATING_T samp_range_search_time = 80e-3;
@@ -191,13 +202,14 @@ ADE_FLOATING_T max_range[2]  = {2000,3000};
 ADE_UINT32_T search_step = 3;
 ADE_UINT32_T look_ahead_step = 3;
 
+
 ADE_UINT32_T b1_idx=0,thresh_idx=0;
 ADE_API_RET_T ret_b1=ADE_DEFAULT_RET;
 ADE_API_RET_T ret_b2=ADE_DEFAULT_RET;
 ADE_FLOATING_SP_T slot_len=0, mod_res=0;
 ADE_UINT32_T uslot_len=0;
 
-/*** to put into set methids***/
+/*** to put into set methods***/
 p_snap->frame_time_len;
 p_snap->buff_len=frame_len;
 p_snap->freq_left=freq_left;
@@ -215,6 +227,7 @@ p_snap->max_range[0]=max_range[0];
 p_snap->max_range[1]=max_range[1];
 p_snap->search_step=search_step;
 p_snap->look_ahead_step=look_ahead_step;
+
 
 
     if (p_snap->p_in==NULL)
@@ -370,10 +383,113 @@ static ADE_API_RET_T ADE_Snap_ThresholdDetection(ADE_SNAP_T *p_snap)
             #error (ADE_CHECK_RETURNS)
     #endif
     /* indexes=find(out_tg>thresh); */
-    ret=ADE_Utils_FindIndexes(p_snap->p_tgk,p_snap->buff_len, p_snap->p_indexes,&n_indexes, p_snap->p_thresh,ADE_UTILS_MAJOR);
+    //ret=ADE_Utils_FindIndexes(p_snap->p_tgk,p_snap->buff_len, p_snap->p_indexes,&n_indexes, p_snap->p_thresh,ADE_UTILS_MAJOR);
 
 
     return ADE_DEFAULT_RET;
 
 }
+
+static ADE_API_RET_T ADE_Snap_Xrms2(ADE_SNAP_T *p_snap)
+{
+
+    /****elaboration In-place on tgk buffer****/
+    ADE_FLOATING_T local_peak=abs(p_snap->p_tgk[0]);
+    ADE_UINT32_T len=p_snap->buff_len;
+    ADE_UINT32_T i=0;
+    ADE_FLOATING_T a=0,coeff=0;
+
+p_snap->p_tgk[0]=local_peak;
+
+for (i=1;i<len;i++)
+{
+    a=abs(p_snap->p_tgk[i]);
+
+    if (a > local_peak)
+    {
+        coeff = p_snap->at;
+    }
+    else
+    {
+        coeff = p_snap->rt;
+    }
+
+    local_peak = (1-coeff)*local_peak+coeff*a;
+
+   p_snap->p_tgk[i]=local_peak;
+
+}
+
+
+}
+
+static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap)
+{
+   ADE_UINT32_T len=p_snap->buff_len;
+max_indexes = 10;
+indexes=zeros(1,max_indexes);
+vals=zeros(1,max_indexes);
+k=1;
+
+for i = 3: search_step :samples_range
+
+    idx_l = i-look_ahead_step:-look_ahead_step:look_ahead_step;
+    idx_r = i+look_ahead_step:look_ahead_step:i+samples_range;
+    a1 =  data(i)> data(idx_l);
+    a2 =  data(i)> data(idx_r);
+     b1 =  ones(size(idx_l)) ;
+    b =  ones(size(idx_r)) ;
+    if ( sum(a1-b1)==0) && (sum(a2-b)==0) && data(i)>min_thresh(i)
+
+        indexes(k)=i;
+        vals(k)=data(i);
+        k=k+1;
+    end
+
+    last_idx = i;
+
+end
+
+for i = last_idx+search_step : search_step :len -samples_range -search_step
+
+    idx_l = i-look_ahead_step:-look_ahead_step:i-samples_range;
+    idx_r = i+look_ahead_step:look_ahead_step:i+samples_range;
+    a1 =  data(i)> data(idx_l);
+    a2 =  data(i)> data(idx_r);
+    b =  ones(size(idx_r)) ;
+    if (sum(a1-b)==0) && ( sum(a2-b)==0) && data(i)>min_thresh(i)
+
+        indexes(k)=i;
+        vals(k)=data(i);
+        k=k+1;
+    end
+last_idx = i;
+end
+
+for i = last_idx+search_step: search_step : len
+
+    idx_l = i-look_ahead_step:-look_ahead_step:i-samples_range;
+    idx_r = i+look_ahead_step:look_ahead_step:len;
+    a1 =  data(i)> data(idx_l);
+    a2 =  data(i)> data(idx_r);
+    b =  ones(size(idx_l)) ;
+     b2 =  ones(size(idx_r)) ;
+
+
+    if (sum(a1-b)==0) && ( (sum(a2-b2)==0)) && data(i)>min_thresh(i)
+
+        indexes(k)=i;
+        vals(k)=data(i);
+        k=k+1;
+    end
+
+end
+
+[vals,sort_idx]=sort(vals,'descend');
+indexes=indexes(sort_idx);
+
+n_indexes=k-1;
+
+}
+
 

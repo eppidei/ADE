@@ -44,6 +44,8 @@ typedef uint8_t ADE_UINT8_T ;
 typedef unsigned char  ADE_UCHAR_T ;
 typedef double ADE_FLOATING_DP_T;
 typedef float ADE_FLOATING_SP_T;
+typedef long ADE_LONG_T;
+typedef unsigned long ADE_ULONG_T;
 
 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef ADE_FLOATING_DP_T ADE_FLOATING_T;

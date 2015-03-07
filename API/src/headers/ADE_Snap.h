@@ -32,17 +32,19 @@ struct ADE_SNAP_S
     ADE_UINT32_T samp_range_search;
     ADE_UINT32_T search_step ;
     ADE_UINT32_T look_ahead_step;
+    ADE_UINT32_T n_max_indexes;
 
 
     /*in out buffers*/ //allocati fuori
     ADE_FLOATING_T *p_in;
     ADE_FLOATING_T *p_out;
     /*Internal buffers*/ //allocati internamente
-    ADE_FLOATING_T *p_pow_est;
-    ADE_FLOATING_T *p_dot_vals;
-    ADE_FLOATING_T *p_thresh;
-    ADE_FLOATING_T *p_tgk;
-    ADE_FLOATING_T *p_indexes;
+    ADE_FLOATING_T *p_pow_est;//lungo buff_len
+    ADE_FLOATING_T *p_dot_vals;//lungo n_slots
+    ADE_FLOATING_T *p_thresh;//lungo buff_len
+    ADE_FLOATING_T *p_tgk;//lungo buff_len usato per tgk e cc
+    ADE_FLOATING_T *p_indexes;//lungo n_max_indexes
+    ADE_FLOATING_T *p_index_vals;//lungo n_max_indexes
   //  ADE_FLOATING_T *p_tgk_temp;
     /*Friend Classes*/
     ADE_IIR_T *p_iir;
@@ -57,7 +59,7 @@ struct ADE_SNAP_S
 };
 
 /*********************** Init Methods************************/
-ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i);
+ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i);
 ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
 /**************************** Set Methods ********************************/
 /************************ Configuration Methods **************************************/
