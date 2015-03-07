@@ -39,6 +39,7 @@ struct ADE_SNAP_S
     ADE_FLOATING_T *p_out;
     /*Internal buffers*/ //allocati internamente
     ADE_FLOATING_T *p_pow_est;
+    ADE_FLOATING_T *p_dot_vals;
     ADE_FLOATING_T *p_thresh;
     ADE_FLOATING_T *p_tgk;
     ADE_FLOATING_T *p_indexes;
@@ -46,7 +47,7 @@ struct ADE_SNAP_S
     /*Friend Classes*/
     ADE_IIR_T *p_iir;
     ADE_blas_level1_T **dp_blas_l1_pow_est;
-    ADE_blas_level2_T *p_blas_l2_threshold;
+    ADE_blas_level1_T *p_blas_l1_threshold;
     ADE_blas_level2_T *p_blas_l2_tgk1;
     ADE_blas_level2_T *p_blas_l2_tgk2;
     #ifdef ADE_CONFIGURATION_INTERACTIVE
@@ -56,7 +57,7 @@ struct ADE_SNAP_S
 };
 
 /*********************** Init Methods************************/
-ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len);
+ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i);
 ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
 /**************************** Set Methods ********************************/
 /************************ Configuration Methods **************************************/
