@@ -4,6 +4,7 @@
 #include "headers/ADE_defines.h"
 //#include <complex.h>
 #include "fftw3.h"
+#include <stdbool.h>
 typedef struct fcomplex_S
 {
     float realpart;
@@ -46,6 +47,9 @@ typedef double ADE_FLOATING_DP_T;
 typedef float ADE_FLOATING_SP_T;
 typedef long ADE_LONG_T;
 typedef unsigned long ADE_ULONG_T;
+typedef bool ADE_BOOL_T;
+#define ADE_TRUE true;
+#define ADE_FALSE false;
 
 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef ADE_FLOATING_DP_T ADE_FLOATING_T;
