@@ -14,7 +14,7 @@ static ADE_API_RET_T ADE_Snap_TeagerKaiser(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_ThresholdDetection(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_Xrms2(ADE_SNAP_T *p_snap);
 /******* Init methods  ***********************/
-ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i)
+ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i)
 {
     ADE_SNAP_T *p_this=NULL;
     ADE_API_RET_T iir_ret=ADE_DEFAULT_RET;
@@ -33,6 +33,9 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
         p_this->Fs=Fs_i;
         p_this->n_pow_est_slots=n_pow_slots_i;
         p_this->n_max_indexes=n_max_indexes_i;
+        p_this->time_left=time_left_i;
+        p_this->time_right=time_right_i;
+        p_this->extract_len=ceil((time_left_i+time_right_i)*Fs_i);
         /****** ALLOC OUT BUFF TGK ******/
         p_this->p_tgk=calloc(buff_len,sizeof(ADE_FLOATING_T));
         if(p_this->p_tgk==NULL)
@@ -75,6 +78,132 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
             ADE_PRINT_ERRORS(ADE_MEM,p_this->p_thresh,"%p",ADE_Snap_Init);
             return ADE_E44;
         }
+
+        /*********** FFT allocations ****************/
+
+        /* segment allocation */
+        p_this->dp_segments=(ADE_FLOATING_T**)calloc(p_this->n_max_indexes,sizeof(ADE_FLOATING_T*));
+        if(p_this->dp_segments==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_spectrum,"%p",ADE_Snap_Init);
+            return ADE_E44;
+        }
+            ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments,"%p",ADE_Snap_Init);
+            return ADE_E44;
+        }
+
+        for (i=0;i<p_this->n_max_indexes;i++)
+        {
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+                p_this->dp_segments[i]=(ADE_FLOATING_T*)fftw_malloc(p_this->extract_len*sizeof(ADE_FLOATING_T));
+
+                if(p_this->dp_segments[i]==NULL)
+                {
+                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments[i],"%p",ADE_Snap_Init);
+                return ADE_E44;
+                }
+                memset(p_this->dp_segments[i],0,p_this->extract_len*sizeof(ADE_FLOATING_T));
+            #else
+
+            p_this->dp_segments[i]=(ADE_FLOATING_T*)calloc(p_this->extract_len,sizeof(ADE_FLOATING_T));
+
+                if(p_this->dp_segments[i]==NULL)
+                {
+                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments[i],"%p",ADE_Snap_Init);
+                return ADE_E44;
+                }
+
+
+
+            #endif
+        }
+
+
+        /* spectrum allocation */
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+            p_this->dp_segments[i]=(ADE_FLOATING_T*)fftw_malloc(p_this->extract_len*sizeof(ADE_FLOATING_T));
+
+                if(p_this->dp_segments[i]==NULL)
+                {
+                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments[i],"%p",ADE_Snap_Init);
+                return ADE_E44;
+                }
+            memset(p_this->dp_segments[i],0,p_this->extract_len*sizeof(ADE_FLOATING_T));
+
+            #else
+
+             p_this->dp_segments[i]=(ADE_FLOATING_T*)calloc(p_this->extract_len,sizeof(ADE_FLOATING_T));
+
+                if(p_this->dp_segments[i]==NULL)
+                {
+                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments[i],"%p",ADE_Snap_Init);
+                return ADE_E44;
+                }
+
+
+            #endif
+
+        }
+
+           p_this->dp_spectrum=(ADE_CPLX_T**)calloc(p_this->n_max_indexes,sizeof(ADE_CPLX_T*));
+        if(p_this->dp_spectrum==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_spectrum,"%p",ADE_Snap_Init);
+            return ADE_E44;
+        }
+
+        for (i=0;i<p_this->n_max_indexes;i++)
+        {
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+            p_this->dp_spectrum[i]=(ADE_CPLX_T*)fftw_malloc(p_this->extract_len*sizeof(ADE_CPLX_T));
+
+                if(p_this->dp_spectrum[i]==NULL)
+                {
+                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_spectrum[i],"%p",ADE_Snap_Init);
+                return ADE_E44;
+                }
+            memset(p_this->dp_spectrum[i],0,p_this->extract_len*sizeof(ADE_CPLX_T));
+
+            #else
+
+             p_this->dp_spectrum[i]=(ADE_CPLX_T*)calloc(p_this->extract_len,sizeof(ADE_CPLX_T));
+
+                if(p_this->dp_spectrum[i]==NULL)
+                {
+                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_spectrum[i],"%p",ADE_Snap_Init);
+                return ADE_E44;
+                }
+
+
+            #endif
+
+        }
+
+        /* FFt objects allocation */
+
+        p_this->dp_fft=(ADE_FFT_T**)calloc(p_this->n_max_indexes,sizeof(ADE_FFT_T*));
+        if(p_this->dp_fft==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_fft,"%p",ADE_Snap_Init);
+            return ADE_E44;
+        }
+
+
+         for (i=0;i<p_this->n_max_indexes;i++)
+        {
+
+            p_this->dp_fft[i]=(ADE_FFT_T*)calloc(p_this->extract_len,sizeof(ADE_FFT_T));
+
+                if(p_this->dp_fft[i]==NULL)
+                {
+                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_fft[i],"%p",ADE_Snap_Init);
+                return ADE_E44;
+                }
+        }
+
+
+
+
 
          /************** ALLOC Blas1********************/
 
@@ -186,6 +315,35 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
     ADE_CHECKNFREE(p_snap->p_indexes);
     ADE_CHECKNFREE(p_snap->p_sort_indexes);
     ADE_CHECKNFREE(p_snap->p_index_vals);
+    /* segment release */
+    for (i=0;i<p_snap->n_max_indexes;i++)
+    {
+     #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+        fftw_free(p_snap->dp_segments[i]);
+     #else
+        ADE_CHECKNFREE(p_snap->dp_segments[i]);
+     #endif
+    }
+    ADE_CHECKNFREE(p_snap->dp_segments);
+    /* spectrum release */
+    for (i=0;i<p_snap->n_max_indexes;i++)
+    {
+     #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+        fftw_free(p_snap->dp_spectrum[i]);
+     #else
+        ADE_CHECKNFREE(p_snap->dp_spectrum[i]);
+     #endif
+    }
+    ADE_CHECKNFREE(p_snap->dp_spectrum);
+     /* fft release */
+     for (i=0;i<p_snap->n_max_indexes;i++)
+    {
+
+        ADE_CHECKNFREE(p_snap->dp_fft[i]);
+
+    }
+    ADE_CHECKNFREE(p_snap->dp_fft);
+    //
     ADE_CHECKNFREE(p_snap);
 
 }
@@ -204,8 +362,8 @@ ADE_FLOATING_T attack_time=1e-4;
 ADE_FLOATING_T release_time=50e-3;
 ADE_FLOATING_T at = 1-exp(-2.2/(p_snap->Fs*attack_time));
 ADE_FLOATING_T rt = 1-exp(-2.2/(p_snap->Fs*release_time));
-ADE_FLOATING_T time_left=0.5e-3;
-ADE_FLOATING_T time_right=6e-3;
+//ADE_FLOATING_T time_left=0.5e-3;
+//ADE_FLOATING_T time_right=6e-3;
 ADE_FLOATING_T samp_range_search_time = 80e-3;
 ADE_UINT32_T samp_range_search = ceil(samp_range_search_time*p_snap->Fs)-1;
 ADE_FLOATING_T max_range[2]  = {2000,3000};
@@ -449,7 +607,7 @@ static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap)
    ADE_FLOATING_T *p_index_vals=p_snap->p_index_vals;
    ADE_UINT32_T search_step=p_snap->search_step;
    ADE_UINT32_T *p_sort_idx=p_snap->p_sort_indexes;
-
+   ADE_UINT32_T index_limit=0;
 
 
     k=1;
@@ -585,18 +743,68 @@ for (i =  last_idx+search_step;i<len;i+=search_step)
 
 }
 p_snap->n_found_indexes=k-1;
-ADE_Utils_indexx(p_snap->n_found_indexes,p_index_vals-1,p_sort_idx-1);
-//[vals,sort_idx]=sort(vals,'descend');
 
-for(i=0;i<p_snap->n_found_indexes;i++)
+//[vals,sort_idx]=sort(vals,'descend');
+index_limit=p_snap->n_found_indexes;
+/* Max indexes check */
+if (p_snap->n_found_indexes > p_snap->n_max_indexes)
+{
+    index_limit=p_snap->n_max_indexes;
+}
+
+/** To substitute with descending **/
+ADE_Utils_indexx(index_limit,p_index_vals-1,p_sort_idx-1);
+
+for(i=0;i<index_limit;i++)
 {
     j=p_sort_idx[i]-1;
     p_indexes[i]=p_indexes[j];
 }
 //indexes=indexes(sort_idx);
 
-
+p_snap->n_found_indexes=index_limit;
 
 }
 
 
+static ADE_API_RET_T ADE_Snap_extract_events(ADE_SNAP_T *p_snap)
+{
+
+ADE_UINT32_T n_indx=p_snap->n_found_indexes;
+ADE_UINT32_T extracted_allocated_len=p_snap->extract_len;
+ADE_UINT32_T *p_main_idx=p_snap->p_indexes;
+ADE_INT32_T sample_left=0,sample_right=0;
+ADE_FLOATING_T Fs=p_snap->Fs;
+ADE_FLOATING_T time_left=p_snap->time_left;
+ADE_FLOATING_T time_right=p_snap->time_right;
+ADE_UINT32_T frame_len=p_snap->buff_len;
+ADE_UINT32_T actual_calc_len=0;
+ADE_FLOATING_T **dp_segments=p_snap->dp_segments;
+ADE_FLOATING_T *p_in=p_snap->p_in;
+
+for (i=0;i<n_indx;i++)
+{
+
+    sample_left = floor(p_main_idx[i]-time_left*Fs);
+    sample_right = ceil(p_main_idx[i]+time_right*Fs);
+    if (sample_left<0)
+    {
+        sample_left=0;
+    }
+    if (sample_right>frame_len-1)
+    {
+        sample_right=frame_len-1;
+    }
+    actual_calc_len=sample_right-sample_left+1;
+    if (actual_calc_len>extracted_allocated_len)
+    {
+        fprintf(stderr,"sample right and left longer than expected in  ADE_Snap_extract_events\n");
+        return ADE_E46;
+    }
+
+    memset(dp_segments[i],0,extracted_allocated_len*sizeof(ADE_FLOATING_T));
+    memcpy(dp_segments[i],&(p_in[p_main_idx[i]]),actual_calc_len*sizeof(ADE_FLOATING_T));
+
+}
+
+}

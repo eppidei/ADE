@@ -2,3 +2,6 @@
 2) check that all processing class have define to check inp and check out
 3) check all set methods have input check
 4) function round
+5) Funzioni (spesso static) che prendono puntatore a oggetto non sono atomiche perchè usano memoria allocata esternamente
+   magari dividere tra funzione propria e associazione puntatori generici con allocati dall'oggetto
+6) wrappare allocazioni di memoria

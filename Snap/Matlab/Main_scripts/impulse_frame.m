@@ -2,9 +2,12 @@ clear all; close all;clc
 
 sim_mat_common_params
 
-  addpath ../ele_samples/
+  addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/resources/
+  addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Alg_funcs/
 
-  file_name='schiocco.wma';
+  %addpath ../ele_samples/
+
+  file_name='samples.wav';
 
 %   load schiochhi_ele1.mat;
 
