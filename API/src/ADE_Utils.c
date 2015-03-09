@@ -354,14 +354,14 @@ ADE_API_RET_T ADE_Utils_memset_float(ADE_FLOATING_T *vec,ADE_UINT32_T len, ADE_F
 
 
 
-
-ADE_VOID_T ADE_Utils_indexx(ADE_ULONG_T n, ADE_FLOATING_SP_T arr[], ADE_ULONG_T indx[])
+#define ADE_ISWAP(a,b) itemp=(a);(a)=(b);(b)=itemp;
+ADE_VOID_T ADE_Utils_indexx(ADE_ULONG_T n, ADE_FLOATING_T arr[], ADE_ULONG_T indx[])
 /*Indexes an array arr[1..n], i.e., outputs the array indx[1..n] such that arr[indx[j]] is
 in ascending order for j = 1, 2, . . . , N . The input quantities n and arr are not changed.*/
 {
 ADE_ULONG_T i,indxt,ir=n,itemp,j,k,l=1;
 ADE_INT32_T jstack=0,*istack;
-ADE_FLOATING_SP_T a;
+ADE_FLOATING_T a;
 istack=ivector(1,NR_STACK);
     for (j=1; j<=n; j++) indx[j]=j;
     for (;;)
@@ -386,18 +386,18 @@ istack=ivector(1,NR_STACK);
         else
         {
             k=(l+ir) >> 1;
-            ADE_SWAP(indx[k],indx[l+1]);
+            ADE_ISWAP(indx[k],indx[l+1]);
             if (arr[indx[l]] > arr[indx[ir]])
             {
-                ADE_SWAP(indx[l],indx[ir])
+                ADE_ISWAP(indx[l],indx[ir])
             }
             if (arr[indx[l+1]] > arr[indx[ir]])
             {
-                ADE_SWAP(indx[l+1],indx[ir])
+                ADE_ISWAP(indx[l+1],indx[ir])
             }
             if (arr[indx[l]] > arr[indx[l+1]])
             {
-                ADE_SWAP(indx[l],indx[l+1])
+                ADE_ISWAP(indx[l],indx[l+1])
             }
             i=l+1;
             j=ir;
@@ -410,7 +410,7 @@ istack=ivector(1,NR_STACK);
                 do j--;
                 while (arr[indx[j]] > a);
                 if (j < i) break;
-                ADE_SWAP(indx[i],indx[j])
+                ADE_ISWAP(indx[i],indx[j])
             }
             indx[l+1]=indx[j];
             indx[j]=indxt;

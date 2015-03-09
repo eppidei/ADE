@@ -443,7 +443,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 //int configure_blas_l3 ()
 // gemm=alpha*A*B+Beta*C
 
-
+#define ADE_SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
 void custom_FFT(ADE_FLOATING_T data[], unsigned long nn, ADE_CUSTOM_FFT_DIRECTION_T isign)
 /*Replaces data[1..2*nn] by its discrete Fourier transform, if isign is input as 1; or replaces
 data[1..2*nn] by nn times its inverse discrete Fourier transform, if isign is input as −1.

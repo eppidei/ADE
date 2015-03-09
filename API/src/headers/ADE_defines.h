@@ -10,7 +10,6 @@
 //#define ADE_GOTO_LABEL gently_closure :
 #define CHECK_RET_MAIN(s)  if(s<0) {goto gently_closure;}
 #define PRINT_ARRAY(x,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
-#define ADE_SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
 #define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
 /* Parameters */
@@ -163,7 +162,7 @@
 
 /********************** NR Utils ***************/
 #define NR_M 7
-#define NR_NSTACK 50
+#define NR_STACK 50
 
 
 

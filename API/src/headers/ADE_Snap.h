@@ -33,6 +33,8 @@ struct ADE_SNAP_S
     ADE_UINT32_T search_step ;
     ADE_UINT32_T look_ahead_step;
     ADE_UINT32_T n_max_indexes;
+    ADE_UINT32_T n_found_indexes;
+
 
 
     /*in out buffers*/ //allocati fuori
@@ -43,7 +45,8 @@ struct ADE_SNAP_S
     ADE_FLOATING_T *p_dot_vals;//lungo n_slots
     ADE_FLOATING_T *p_thresh;//lungo buff_len
     ADE_FLOATING_T *p_tgk;//lungo buff_len usato per tgk e cc
-    ADE_FLOATING_T *p_indexes;//lungo n_max_indexes
+    ADE_UINT32_T *p_indexes;//lungo n_max_indexes
+    ADE_UINT32_T *p_sort_indexes;
     ADE_FLOATING_T *p_index_vals;//lungo n_max_indexes
   //  ADE_FLOATING_T *p_tgk_temp;
     /*Friend Classes*/

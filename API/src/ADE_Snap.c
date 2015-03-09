@@ -8,6 +8,7 @@
 #include "headers/ADE_Utils.h"
 #include <math.h>
 
+
 /******* Private methods prototypes ***********************/
 static ADE_API_RET_T ADE_Snap_TeagerKaiser(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_ThresholdDetection(ADE_SNAP_T *p_snap);
@@ -40,7 +41,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
             return ADE_E44;
         }
 
-        p_this->p_indexes=calloc( p_this->n_max_indexes,sizeof(ADE_FLOATING_T));
+        p_this->p_indexes=calloc( p_this->n_max_indexes,sizeof(ADE_UINT32_T));
         if(p_this->p_indexes==NULL)
         {
             ADE_PRINT_ERRORS(ADE_MEM,p_this->p_indexes,"%p",ADE_Snap_Init);
@@ -51,6 +52,13 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
         if(p_this->p_index_vals==NULL)
         {
             ADE_PRINT_ERRORS(ADE_MEM,p_this->p_index_vals,"%p",ADE_Snap_Init);
+            return ADE_E44;
+        }
+
+        p_this->p_sort_indexes=calloc( p_this->n_max_indexes,sizeof(ADE_UINT32_T));
+        if(p_this->p_sort_indexes==NULL)
+        {
+            ADE_PRINT_ERRORS(ADE_MEM,p_this->p_sort_indexes,"%p",ADE_Snap_Init);
             return ADE_E44;
         }
 
@@ -176,6 +184,8 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
     ADE_CHECKNFREE(p_snap->p_thresh);
     ADE_CHECKNFREE(p_snap->p_tgk);
     ADE_CHECKNFREE(p_snap->p_indexes);
+    ADE_CHECKNFREE(p_snap->p_sort_indexes);
+    ADE_CHECKNFREE(p_snap->p_index_vals);
     ADE_CHECKNFREE(p_snap);
 
 }
@@ -426,69 +436,166 @@ for (i=1;i<len;i++)
 static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap)
 {
    ADE_UINT32_T len=p_snap->buff_len;
-max_indexes = 10;
-indexes=zeros(1,max_indexes);
-vals=zeros(1,max_indexes);
-k=1;
+   ADE_UINT32_T k=0,i=0,j=0,last_idx=0,idx_l=0,idx_r=0;
+   ADE_UINT32_T look_ahead_step=p_snap->look_ahead_step;
+   ADE_UINT32_T samples_range=p_snap->samp_range_search;
+   ADE_FLOATING_T *p_min_thresh=p_snap->p_thresh;
+   ADE_FLOATING_T *p_data=p_snap->p_tgk;
+   ADE_FLOATING_T min_data_sensed=1e-10;
+   ADE_BOOL_T a1=ADE_FALSE;//,
+   ADE_BOOL_T a2=ADE_FALSE;
+   ADE_BOOL_T skip=ADE_FALSE;
+   ADE_FLOATING_T *p_indexes=p_snap->p_indexes;
+   ADE_FLOATING_T *p_index_vals=p_snap->p_index_vals;
+   ADE_UINT32_T search_step=p_snap->search_step;
+   ADE_UINT32_T *p_sort_idx=p_snap->p_sort_indexes;
 
-for i = 3: search_step :samples_range
 
-    idx_l = i-look_ahead_step:-look_ahead_step:look_ahead_step;
-    idx_r = i+look_ahead_step:look_ahead_step:i+samples_range;
-    a1 =  data(i)> data(idx_l);
-    a2 =  data(i)> data(idx_r);
-     b1 =  ones(size(idx_l)) ;
-    b =  ones(size(idx_r)) ;
-    if ( sum(a1-b1)==0) && (sum(a2-b)==0) && data(i)>min_thresh(i)
 
-        indexes(k)=i;
-        vals(k)=data(i);
+    k=1;
+
+for (i = 3-1 ;i<samples_range;i+=search_step)
+{
+    skip = ADE_FALSE;
+    if ((p_data[i]<=p_min_thresh[i]) || (p_min_thresh[i]<min_data_sensed))
+    {
+        skip=ADE_TRUE;
+    }
+    else
+    {
+
+         for (j=i+look_ahead_step;j<i+samples_range;j+=look_ahead_step)
+         {
+            a2 =  p_data[i]> p_data[j];
+            if (!a2)
+            {
+                skip=ADE_TRUE;
+                break;
+            }
+         }
+        if (!skip)
+        {
+            for (j = i-look_ahead_step;j>1;j-=look_ahead_step)
+            {
+                a1 =  p_data[i]> p_data[j];
+                if (!a1)
+                {
+                    skip=ADE_TRUE;
+                    break;
+                }
+            }
+        }
+
+    }
+
+    if (!skip)
+    {
+        p_indexes[k]=i;
+        p_index_vals[k]=p_data[i];
         k=k+1;
-    end
+    }
 
     last_idx = i;
+}
 
-end
 
-for i = last_idx+search_step : search_step :len -samples_range -search_step
+for (i = last_idx+search_step ;i< len -samples_range -search_step;i+=search_step)
 
-    idx_l = i-look_ahead_step:-look_ahead_step:i-samples_range;
-    idx_r = i+look_ahead_step:look_ahead_step:i+samples_range;
-    a1 =  data(i)> data(idx_l);
-    a2 =  data(i)> data(idx_r);
-    b =  ones(size(idx_r)) ;
-    if (sum(a1-b)==0) && ( sum(a2-b)==0) && data(i)>min_thresh(i)
+{
+skip = ADE_FALSE;
+    if (p_data[i]<=p_min_thresh[i] || p_min_thresh[i]<min_data_sensed)
+    {
+        skip=ADE_TRUE;
+    }
+    else
+    {
+         for (j=i+look_ahead_step;i<i+samples_range;j+=look_ahead_step)
+         {
+            a2 =  p_data[i]> p_data[j];
+            if (!a2)
+            {
+                skip=ADE_TRUE;
+                break;
+            }
+         }
+        if (!skip)
+        {
+            for (j = i-look_ahead_step ; j>i-samples_range;j-=look_ahead_step)
+            {
+                a1 =  p_data[i]> p_data[j];
+                if (!a1)
+                {
+                    skip=ADE_TRUE;
+                    break;
+                }
+            }
+        }
 
-        indexes(k)=i;
-        vals(k)=data(i);
+    }
+
+    if (!skip)
+    {
+
+        p_indexes[k]=i;
+         p_index_vals[k]=p_data[i];
         k=k+1;
-    end
+    }
 last_idx = i;
-end
+}
 
-for i = last_idx+search_step: search_step : len
+for (i =  last_idx+search_step;i<len;i+=search_step)
+{
+    skip = ADE_FALSE;
+    if (p_data[i]<=p_min_thresh[i] || p_min_thresh[i]<min_data_sensed)
+    {
+        skip=ADE_TRUE;
+    }
+    else
+    {
+         for (j=i+look_ahead_step;j<len;j+=look_ahead_step)
+         {
+            a2 =  p_data[i]> p_data[j];
+            if (!a2) //a2==ADE_FALSE
+            {
+                skip=ADE_TRUE;
+                break;
+            }
+         }
+        if (!skip)//skip==0
+        {
+            for (j = i-look_ahead_step;j>i-samples_range;j-=look_ahead_step)
+            {
+                a1 =  p_data[i]> p_data[j];
+                if (!a1)//a1==0
+                {
+                    skip=ADE_TRUE;
+                    break;
+                }
+            }
+        }
 
-    idx_l = i-look_ahead_step:-look_ahead_step:i-samples_range;
-    idx_r = i+look_ahead_step:look_ahead_step:len;
-    a1 =  data(i)> data(idx_l);
-    a2 =  data(i)> data(idx_r);
-    b =  ones(size(idx_l)) ;
-     b2 =  ones(size(idx_r)) ;
+    }
+
+    if (!skip)//skip==0
+    {
+         p_indexes[k]=i;
+         p_index_vals[k]=p_data[i];
+         k=k+1;
+    }
+
+}
+p_snap->n_found_indexes=k-1;
+ADE_Utils_indexx(p_snap->n_found_indexes,p_index_vals-1,p_sort_idx-1);
+//[vals,sort_idx]=sort(vals,'descend');
+
+for(i=0;i<p_snap->n_found_indexes;i++)
+{
+    j=p_sort_idx[i]-1;
+    p_indexes[i]=p_indexes[j];
+}
+//indexes=indexes(sort_idx);
 
 
-    if (sum(a1-b)==0) && ( (sum(a2-b2)==0)) && data(i)>min_thresh(i)
-
-        indexes(k)=i;
-        vals(k)=data(i);
-        k=k+1;
-    end
-
-end
-
-[vals,sort_idx]=sort(vals,'descend');
-indexes=indexes(sort_idx);
-
-n_indexes=k-1;
 
 }
 
