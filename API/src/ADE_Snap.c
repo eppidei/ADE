@@ -14,7 +14,7 @@ static ADE_API_RET_T ADE_Snap_TeagerKaiser(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_ThresholdDetection(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_Xrms2(ADE_SNAP_T *p_snap);
 /******* Init methods  ***********************/
-ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i)
+ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,ADE_UINT32_T fft_len_i)
 {
     ADE_SNAP_T *p_this=NULL;
     ADE_API_RET_T iir_ret=ADE_DEFAULT_RET;
@@ -22,6 +22,8 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
     ADE_API_RET_T blas2_ret_tgk2=ADE_DEFAULT_RET;
     ADE_API_RET_T blas1_ret_threshold=ADE_DEFAULT_RET;
     ADE_API_RET_T blas1_ret_pow=ADE_DEFAULT_RET;
+    ADE_API_RET_T blas1_ret_specw=ADE_DEFAULT_RET;
+    ADE_API_RET_T blas1_ret_specb=ADE_DEFAULT_RET;
     ADE_UINT32_T iir_n_sos=1;
     ADE_UINT32_T i=0;
 
@@ -35,7 +37,14 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
         p_this->n_max_indexes=n_max_indexes_i;
         p_this->time_left=time_left_i;
         p_this->time_right=time_right_i;
-        p_this->extract_len=ceil((time_left_i+time_right_i)*Fs_i);
+        p_this->extract_len=fft_len_i;//ceil((time_left_i+time_right_i)*Fs_i);
+        p_this->fft_len=fft_len_i;
+        if (fft_len_i<p_this->extract_len)
+        {
+             ADE_PRINT_ERRORS(ADE_INCHECKS,fft_len_i,"%d",ADE_Snap_Init);
+             fprintf(stderr,"FFT length too short\n");
+             return ADE_E44;
+        }
         /****** ALLOC OUT BUFF TGK ******/
         p_this->p_tgk=calloc(buff_len,sizeof(ADE_FLOATING_T));
         if(p_this->p_tgk==NULL)
@@ -81,13 +90,11 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 
         /*********** FFT allocations ****************/
 
-        /* segment allocation */
+        /**** segment allocation *****/
         p_this->dp_segments=(ADE_FLOATING_T**)calloc(p_this->n_max_indexes,sizeof(ADE_FLOATING_T*));
+
         if(p_this->dp_segments==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_spectrum,"%p",ADE_Snap_Init);
-            return ADE_E44;
-        }
             ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments,"%p",ADE_Snap_Init);
             return ADE_E44;
         }
@@ -119,31 +126,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
         }
 
 
-        /* spectrum allocation */
-            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-            p_this->dp_segments[i]=(ADE_FLOATING_T*)fftw_malloc(p_this->extract_len*sizeof(ADE_FLOATING_T));
-
-                if(p_this->dp_segments[i]==NULL)
-                {
-                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments[i],"%p",ADE_Snap_Init);
-                return ADE_E44;
-                }
-            memset(p_this->dp_segments[i],0,p_this->extract_len*sizeof(ADE_FLOATING_T));
-
-            #else
-
-             p_this->dp_segments[i]=(ADE_FLOATING_T*)calloc(p_this->extract_len,sizeof(ADE_FLOATING_T));
-
-                if(p_this->dp_segments[i]==NULL)
-                {
-                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_segments[i],"%p",ADE_Snap_Init);
-                return ADE_E44;
-                }
-
-
-            #endif
-
-        }
+        /****** spectrum allocation ********/
 
            p_this->dp_spectrum=(ADE_CPLX_T**)calloc(p_this->n_max_indexes,sizeof(ADE_CPLX_T*));
         if(p_this->dp_spectrum==NULL)
@@ -155,18 +138,18 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
         for (i=0;i<p_this->n_max_indexes;i++)
         {
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-            p_this->dp_spectrum[i]=(ADE_CPLX_T*)fftw_malloc(p_this->extract_len*sizeof(ADE_CPLX_T));
+            p_this->dp_spectrum[i]=(ADE_CPLX_T*)fftw_malloc(p_this->fft_len*sizeof(ADE_CPLX_T));
 
                 if(p_this->dp_spectrum[i]==NULL)
                 {
                 ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_spectrum[i],"%p",ADE_Snap_Init);
                 return ADE_E44;
                 }
-            memset(p_this->dp_spectrum[i],0,p_this->extract_len*sizeof(ADE_CPLX_T));
+            memset(p_this->dp_spectrum[i],0,p_this->fft_len*sizeof(ADE_CPLX_T));
 
             #else
 
-             p_this->dp_spectrum[i]=(ADE_CPLX_T*)calloc(p_this->extract_len,sizeof(ADE_CPLX_T));
+             p_this->dp_spectrum[i]=(ADE_CPLX_T*)calloc(p_this->fft_len,sizeof(ADE_CPLX_T));
 
                 if(p_this->dp_spectrum[i]==NULL)
                 {
@@ -192,13 +175,9 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
          for (i=0;i<p_this->n_max_indexes;i++)
         {
 
-            p_this->dp_fft[i]=(ADE_FFT_T*)calloc(p_this->extract_len,sizeof(ADE_FFT_T));
+           ADE_Fft_Init(&(p_this->dp_fft[i]),p_this->fft_len);
 
-                if(p_this->dp_fft[i]==NULL)
-                {
-                ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_fft[i],"%p",ADE_Snap_Init);
-                return ADE_E44;
-                }
+
         }
 
 
@@ -240,6 +219,48 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
                 ADE_PRINT_ERRORS(ADE_MEM,blas1_ret_threshold,"%d",ADE_Snap_Init);
                 return ADE_E44;
             }
+
+            /* whole spectrum allocation */
+            p_this->dp_blas_l1_pow_spect_whole = (ADE_blas_level1_T**)calloc(p_this->n_max_indexes,sizeof(ADE_blas_level1_T*));
+
+        if (p_this->dp_blas_l1_pow_spect_whole==NULL)
+        {
+             ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_blas_l1_pow_spect_whole,"%p",ADE_Snap_Init);
+             return ADE_E44;
+        }
+
+        for (i=0;i<p_this->n_max_indexes;i++)
+        {
+                blas1_ret_specw=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_spect_whole[i]),ADE_CPLX);
+
+                if (blas1_ret_pow<0)
+                {
+                    ADE_PRINT_ERRORS(ADE_MEM,blas1_ret_specw,"%d",ADE_Snap_Init);
+                    return ADE_E44;
+                }
+        }
+
+
+            /*spectrum band allocation */
+
+             p_this->dp_blas_l1_pow_spect_band = (ADE_blas_level1_T**)calloc(p_this->n_max_indexes,sizeof(ADE_blas_level1_T*));
+
+        if (p_this->dp_blas_l1_pow_spect_band==NULL)
+        {
+             ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_blas_l1_pow_spect_band,"%p",ADE_Snap_Init);
+             return ADE_E44;
+        }
+
+        for (i=0;i<p_this->n_max_indexes;i++)
+        {
+                blas1_ret_specb=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_spect_band[i]),ADE_CPLX);
+
+                if (blas1_ret_pow<0)
+                {
+                    ADE_PRINT_ERRORS(ADE_MEM,blas1_ret_specb,"%d",ADE_Snap_Init);
+                    return ADE_E44;
+                }
+        }
 
         /************** ALLOC Blas2********************/
 
@@ -305,6 +326,19 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
         ADE_Blas_level1_Release(p_snap->dp_blas_l1_pow_est[i]);
     }
     ADE_CHECKNFREE(p_snap->dp_blas_l1_pow_est);
+
+    for (i=0;i<p_snap->n_max_indexes;i++)
+    {
+        ADE_Blas_level1_Release(p_snap->dp_blas_l1_pow_spect_whole[i]);
+    }
+    ADE_CHECKNFREE(p_snap->dp_blas_l1_pow_spect_band);
+
+    for (i=0;i<p_snap->n_max_indexes;i++)
+    {
+        ADE_Blas_level1_Release(p_snap->dp_blas_l1_pow_spect_band[i]);
+    }
+    ADE_CHECKNFREE(p_snap->dp_blas_l1_pow_spect_band);
+
      ADE_CHECKNFREE(p_snap->p_dot_vals);
     ADE_Blas_level1_Release(p_snap->p_blas_l1_threshold);
     ADE_Blas_level2_Release(p_snap->p_blas_l2_tgk1);
@@ -339,7 +373,7 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
      for (i=0;i<p_snap->n_max_indexes;i++)
     {
 
-        ADE_CHECKNFREE(p_snap->dp_fft[i]);
+        ADE_Fft_Release(p_snap->dp_fft[i]);
 
     }
     ADE_CHECKNFREE(p_snap->dp_fft);
@@ -371,9 +405,12 @@ ADE_UINT32_T search_step = 3;
 ADE_UINT32_T look_ahead_step = 3;
 
 
-ADE_UINT32_T b1_idx=0,thresh_idx=0;
+ADE_UINT32_T b1_idx=0,thresh_idx=0,fft_idx=0;
 ADE_API_RET_T ret_b1=ADE_DEFAULT_RET;
 ADE_API_RET_T ret_b2=ADE_DEFAULT_RET;
+ADE_API_RET_T ret_fft=ADE_DEFAULT_RET;
+ADE_API_RET_T ret_specw=ADE_DEFAULT_RET;
+ADE_API_RET_T ret_specb=ADE_DEFAULT_RET;
 ADE_FLOATING_SP_T slot_len=0, mod_res=0;
 ADE_UINT32_T uslot_len=0;
 
@@ -444,7 +481,27 @@ ADE_Blas_level1_setINCY(p_snap->p_blas_l1_threshold, 1);
 ret_b2 = ADE_Blas_level1_setY(p_snap->p_blas_l1_threshold,p_snap->p_thresh);
 ret_b2 = ADE_Blas_level1_setX(p_snap->p_blas_l1_threshold,p_snap->p_pow_est);
 
+/*** fft config ****/
+for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
+{
+    ret_fft=ADE_Fft_Configure(p_snap->dp_fft[fft_idx],ADE_FFT_R2C, ADE_FFT_FORWARD,p_snap->dp_segment[i],p_snap->dp_spectrum[i]);
+}
+
      return ADE_DEFAULT_RET;
+
+     /*** blas1 spectrum whole config ***/
+
+for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
+{
+    ret_specw = ADE_Blas_level1_setN(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],p_snap->fft_len);
+    ret_specw =  ADE_Blas_level1_setINCX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
+    ret_specw =  ADE_Blas_level1_setINCY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
+    ret_specw =  ADE_Blas_level1_setX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],&(p_snap->dp_spectrum[fft_idx]));
+    ret_specw =  ADE_Blas_level1_setY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],&(p_snap->dp_spectrum[fft_idx]));
+
+}
+
+ /*** to do blas1 spectrum band config ***/
 
 }
 
@@ -807,4 +864,38 @@ for (i=0;i<n_indx;i++)
 
 }
 
+}
+static ADE_API_RET_T ADE_Snap_snap_recognition(ADE_SNAP_T *p_snap)
+
+{
+
+ADE_UINT32_T n_events=p_snap->n_found_indexes;
+ADE_UINT32_T i=0;
+
+  for (i=0;i<n_events;i++)
+  {
+
+        //fff = fft(events(i,1:len_fft));
+        ADE_Fft_Step(p_snap->dp_fft[i]);
+//        spectrum(i,:) =real(fff).^2+imag(fff).^2;
+//        spectrum(i,1:3) = 0;
+//        whole_pow_spec = spectrum(i,1:len_fft/2);
+//        tot_pow(i) = sum(whole_pow_spec);
+
+        ADE_FLOATING_T ADE_Blas_level1_nrm2(ADE_blas_level1_T* p_blas_l1);
+
+        sel_pow_spec = spectrum(i,sx_bin_b2:dx_bin_b2);
+         vara(i)=var(sel_pow_spec);
+        sel_pow2(i) = sum(sel_pow_spec);
+
+        percent_pow(2,i)=sel_pow2(i)/tot_pow(i);
+        [max_peak(i),bin_peak(i)]=max(sel_pow_spec);
+        peak_idx = sx_bin_b2+bin_peak(i);
+         band_peak(i)=(peak_idx-1)*freq_step;
+         bal_right = peak_idx+bal_range;
+         bal_left = peak_idx-bal_range;
+         rp = sum(spectrum(i,peak_idx:1:bal_right));
+         lp = sum(spectrum(i,peak_idx:-1:bal_left));
+         balance(i)= rp/lp;
+    }
 }

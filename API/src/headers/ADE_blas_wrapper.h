@@ -2,7 +2,7 @@
 #define _ADE_BLAS_WRAPPER_H
 #include "headers/ADE_defines.h"
 
-#if  (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+#if  (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB )
 
 
 #ifdef __cplusplus
@@ -95,6 +95,46 @@ void *sy,
 int *incy
 );
 
+#define cdotu FORTRAN_WRAPPER(cdotu)
+
+extern float cdotu(
+int *n,
+void* sx,
+int *incx,
+void *sy,
+int *incy
+);
+
+#define cdotc FORTRAN_WRAPPER(cdotc)
+
+extern float cdotc(
+int *n,
+void* sx,
+int *incx,
+void *sy,
+int *incy
+);
+
+#define zdotu FORTRAN_WRAPPER(zdotu)
+
+extern float zdotu(
+int *n,
+void* sx,
+int *incx,
+void *sy,
+int *incy
+);
+
+#define zdotc FORTRAN_WRAPPER(zdotc)
+
+extern float cdotc(
+int *n,
+void* sx,
+int *incx,
+void *sy,
+int *incy
+);
+
 #define ddot FORTRAN_WRAPPER(ddot)
 
 extern double ddot(
@@ -103,6 +143,22 @@ void* sx,
 int *incx,
 void *sy,
 int *incy
+);
+
+#define snrm2 FORTRAN_WRAPPER(snrm2)
+
+extern double snrm2(
+int *n,
+void* x,
+int *incx
+);
+
+#define dnrm2 FORTRAN_WRAPPER(dnrm2)
+
+extern double dnrm2(
+int *n,
+void* x,
+int *incx
 );
 
 /********************************* LEVEL 2 **************************************/

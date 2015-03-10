@@ -35,6 +35,7 @@ struct ADE_SNAP_S
     ADE_UINT32_T n_max_indexes;
     ADE_UINT32_T n_found_indexes;
     ADE_UINT32_T extract_len;
+    ADE_UINT32_T fft_len;
 
 
 
@@ -58,6 +59,8 @@ struct ADE_SNAP_S
     ADE_blas_level1_T *p_blas_l1_threshold;
     ADE_blas_level2_T *p_blas_l2_tgk1;
     ADE_blas_level2_T *p_blas_l2_tgk2;
+    ADE_blas_level1_T **dp_blas_l1_pow_spect_whole;
+    ADE_blas_level1_T **dp_blas_l1_pow_spect_band;
     ADE_FFT_T** dp_fft;
     #ifdef ADE_CONFIGURATION_INTERACTIVE
     ADE_MATLAB_T *p_mat;
