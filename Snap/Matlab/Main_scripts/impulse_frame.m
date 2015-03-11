@@ -1,9 +1,12 @@
 clear all; close all;clc
 
-sim_mat_common_params
+
 
   addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/resources/
   addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Alg_funcs/
+   addpath /home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Main_scripts
+  
+  sim_mat_common_params
 
   %addpath ../ele_samples/
 
@@ -30,7 +33,7 @@ else
     Fs = AudioInfo.SampleRate;
 end
 
-
+%% Configuration
 
 Ts = 1/Fs;
 samples_len = length(actual_samples);
@@ -112,6 +115,10 @@ h3=figure('Name','Tg smoothing');
     extract_len = (time_right-time_left)*Fs;
 %     extract_len=sample_right-sample_left+1;
      events_coll = zeros(n_frames*max_events_per_frame,extract_len);
+     save('snap_config_ws');
+%end Configuration
+
+%% Snap
    
 for i=1:n_frames
     

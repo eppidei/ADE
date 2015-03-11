@@ -87,7 +87,7 @@ typedef struct ADE_S* ADE_HANDLE;
 /*Level1*/
 typedef struct ADE_blas_level1_S ADE_blas_level1_T;
 typedef ADE_API_RET_T (*ADE_BLAS_LEVEL1_FCN_TYPE1_T)(ADE_blas_level1_T*);
-typedef ADE_FLOATING_T* (*ADE_BLAS_LEVEL1_FCN_TYPE2_T)(ADE_blas_level1_T*);
+typedef ADE_FLOATING_T (*ADE_BLAS_LEVEL1_FCN_TYPE2_T)(ADE_blas_level1_T*);
 /*Level2*/
 typedef struct ADE_blas_level2_S ADE_blas_level2_T;
 typedef ADE_API_RET_T (*ADE_BLAS_LEVEL2_FCN_TYPE1_T)(ADE_blas_level2_T*);

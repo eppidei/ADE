@@ -464,7 +464,7 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
      fprintf(stdout,"Loading  Segment ending with -> %s\n",temp_str);
      if (i>ADE_MAX_SEGMENT_LINES)
      {
-         fprintf(stderr,"WARNING SEGMENT MIGHT BE TOO LONG CONSIDER INCREASING ""ADE_MAX_SEGMENT_LINES"" \n");
+         fprintf(stderr,"WARNING SEGMENT MIGHT BE TOO LONG CONSIDER INCREASING ""ADE_MAX_SEGMENT_LINES"" or CHECK THE end of configuration marker found %d max %d \n",i,ADE_MAX_SEGMENT_LINES);
      }
      ret_eng=engEvalString(p_mat->p_eng,segment_str);
 
