@@ -51,7 +51,9 @@ struct ADE_SNAP_S
     ADE_UINT32_T *p_sort_indexes;
     ADE_FLOATING_T *p_index_vals;//lungo n_max_indexes
     ADE_FLOATING_T **dp_segments;//lungo n_max_indexes*extract_len
-    ADE_CPLX_T **dp_spectrum;
+    ADE_CPLX_T **dp_spectrum;//lungo n_max_indexes*extract_len*2
+    ADE_FLOATING_T *p_percent_pow;
+    ADE_BOOL_T *p_snaps;
   //  ADE_FLOATING_T *p_tgk_temp;
     /*Friend Classes*/
     ADE_IIR_T *p_iir;
@@ -69,10 +71,11 @@ struct ADE_SNAP_S
 };
 
 /*********************** Init Methods************************/
-ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i);
+ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,ADE_UINT32_T fft_len_i);
 ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
 /**************************** Set Methods ********************************/
 /************************ Configuration Methods **************************************/
+ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap);
 /************************** Operative Methods *******************************/
 ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap);
 

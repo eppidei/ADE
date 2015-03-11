@@ -33,7 +33,7 @@ static ADE_API_RET_T ADE_Blas_level1_zcopy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_ddot (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_zdotu (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_zdotc (ADE_blas_level1_T *p_blas_l1);
-static ADE_API_RET_T ADE_Blas_level1_dnrm2 (ADE_blas_level1_T *p_blas_l1)
+static ADE_API_RET_T ADE_Blas_level1_dnrm2 (ADE_blas_level1_T *p_blas_l1);
 #else
 #error(ADE_FP_PRECISION);
 #endif
@@ -1299,7 +1299,7 @@ static ADE_API_RET_T ADE_Blas_level1_zdotc (ADE_blas_level1_T *p_blas_l1)// (ADE
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        zdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+       zdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 

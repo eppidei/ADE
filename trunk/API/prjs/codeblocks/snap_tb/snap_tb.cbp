@@ -92,6 +92,7 @@
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_Snap.h" />
 		<Unit filename="../../../src/headers/ADE_Utils.h" />
+		<Unit filename="../../../src/headers/ADE_accelerate_framework_wrapper.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level1.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level2.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level3.h" />
