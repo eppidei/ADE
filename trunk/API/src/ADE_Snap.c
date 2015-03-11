@@ -9,6 +9,7 @@
 #include "headers/ADE_Utils.h"
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 /******* Private methods prototypes ***********************/
@@ -31,6 +32,14 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
     ADE_API_RET_T blas1_ret_specb=ADE_DEFAULT_RET;
     ADE_UINT32_T iir_n_sos=1;
     ADE_UINT32_T i=0;
+    #ifdef ADE_CONFIGURATION_INTERACTIVE
+     char *p_matpath = ADE_MATLAB_EXE ;
+	 char *p_scriptpath=ADE_SNAP_SCRIPT;
+	 char *p_matfilepath=ADE_SNAP_WS;
+	 ADE_API_RET_T mat_ret=0;
+	// ADE_MATLAB_T* p_mat=NULL;
+     Engine *p_mateng=NULL;
+	#endif
 
     p_this=calloc(1,sizeof(ADE_SNAP_T));
 
@@ -50,6 +59,21 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
              fprintf(stderr,"FFT length too short\n");
              return ADE_E44;
         }
+
+         /******** MATLAB ALLOC ********/
+
+            #ifdef ADE_CONFIGURATION_INTERACTIVE
+
+            mat_ret = ADE_Matlab_Init(&(p_this->p_mat),p_mateng,p_scriptpath, p_matfilepath,p_matpath);
+
+            if (mat_ret<0)
+            {
+                ADE_PRINT_ERRORS(ADE_RETCHECKS,mat_ret,"%d",ADE_Snap_Init);
+                return ADE_E25;
+            }
+
+            #endif
+
         /****** ALLOC OUT BUFF TGK ******/
         p_this->p_tgk=calloc(buff_len,sizeof(ADE_FLOATING_T));
         if(p_this->p_tgk==NULL)
@@ -358,7 +382,7 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
     {
         ADE_Blas_level1_Release(p_snap->dp_blas_l1_pow_spect_whole[i]);
     }
-    ADE_CHECKNFREE(p_snap->dp_blas_l1_pow_spect_band);
+    ADE_CHECKNFREE(p_snap->dp_blas_l1_pow_spect_whole);
 
     for (i=0;i<p_snap->n_max_indexes;i++)
     {
@@ -405,16 +429,20 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
 
     }
     ADE_CHECKNFREE(p_snap->dp_fft);
+
+     #ifdef ADE_CONFIGURATION_INTERACTIVE
+     ADE_Matlab_Release(p_snap->p_mat);
+     #endif
     //
     ADE_CHECKNFREE(p_snap);
+
+
 
 }
 /******* Configure methods  ***********************/
 ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap)
 {
 
-ADE_FLOATING_T frame_time_len = 300e-3;
-ADE_UINT32_T frame_len = floor(frame_time_len*p_snap->Fs+0.5)-1;
 ADE_FLOATING_T freq_left=1800;
 ADE_FLOATING_T freq_right=3200;
 ADE_FLOATING_T spectral_threshold_schiocco  = 0.2;
@@ -448,7 +476,7 @@ ADE_UINT32_T uslot_len=0;
 
 /*** to put into set methods***/
 p_snap->frame_time_len;
-p_snap->buff_len=frame_len;
+//p_snap->buff_len=frame_len;
 p_snap->freq_left=freq_left;
 p_snap->freq_right=freq_right;
 p_snap->spectral_threshold_schiocco=spectral_threshold_schiocco;
@@ -482,7 +510,7 @@ p_snap->look_ahead_step=look_ahead_step;
 /*** Configure Blas1 for pow estimate ********/
 mod_res=fmodf ((ADE_FLOATING_SP_T)p_snap->buff_len    ,(ADE_FLOATING_SP_T) p_snap->n_pow_est_slots);
 
-if ( mod_res!= 0.0F )
+if ( mod_res== 0.0F )
 {
    slot_len=(p_snap->buff_len)/p_snap->n_pow_est_slots;
 }
@@ -504,7 +532,7 @@ for (b1_idx=0;b1_idx<p_snap->n_pow_est_slots;b1_idx++)
 
 }
 
-    /*** to do configure threshold blas2***/
+    /*** configure threshold blas2***/
 
 ret_b2 = ADE_Blas_level1_setN(p_snap->p_blas_l1_threshold,p_snap->buff_len);
 ret_b2 = ADE_Blas_level1_setALPHA(p_snap->p_blas_l1_threshold,&p_snap->thresh_gain);
@@ -528,12 +556,13 @@ for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
     ret_specw = ADE_Blas_level1_setN(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],p_snap->fft_len);
     ret_specw =  ADE_Blas_level1_setINCX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
     ret_specw =  ADE_Blas_level1_setINCY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
+    /** to do cast pointer 2 flat or decide to use void in blas **/
     ret_specw =  ADE_Blas_level1_setX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(p_snap->dp_spectrum[fft_idx]));
     ret_specw =  ADE_Blas_level1_setY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(p_snap->dp_spectrum[fft_idx]));
 
 }
 
- /*** to do blas1 spectrum band config ***/
+ /*** blas1 spectrum band config ***/
 
  for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
@@ -589,6 +618,28 @@ ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap)
     return ADE_DEFAULT_RET;
 }
 
+
+ADE_API_RET_T ADE_Snap_SetInbuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff)
+{
+
+    if (p_buff==NULL)
+    {
+         ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Snap_SetInbuff);
+            return ADE_E46;
+    }
+
+    if (p_snap==NULL)
+
+    {
+        ADE_PRINT_ERRORS(ADE_INCHECKS,p_snap,"%p",ADE_Snap_SetInbuff);
+            return ADE_E46;
+    }
+
+    p_snap->p_in=p_buff;
+
+    return ADE_DEFAULT_RET;
+
+}
 /************************* private methods ***********************/
 static ADE_API_RET_T ADE_Snap_TeagerKaiser(ADE_SNAP_T *p_snap)
 {
@@ -707,7 +758,7 @@ static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap)
    ADE_BOOL_T a1=ADE_FALSE;//,
    ADE_BOOL_T a2=ADE_FALSE;
    ADE_BOOL_T skip=ADE_FALSE;
-   ADE_FLOATING_T *p_indexes=p_snap->p_indexes;
+   ADE_UINT32_T *p_indexes=p_snap->p_indexes;
    ADE_FLOATING_T *p_index_vals=p_snap->p_index_vals;
    ADE_UINT32_T search_step=p_snap->search_step;
    ADE_UINT32_T *p_sort_idx=p_snap->p_sort_indexes;

@@ -142,6 +142,9 @@
 #define ADE_MAX_CHARS (128)
 #define ADE_MAX_SEGMENT_LINES (256)
 #define ADE_MAT_WAIT printf("Hit return to continue\n\n");fgetc(stdin);
+#define ADE_MATLAB_EXE "/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab"
+#define ADE_SNAP_SCRIPT "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Main_scripts/impulse_frame.m"
+#define ADE_SNAP_WS "./snap_config_ws.mat"
 /**************************** FFTW **********************************/
 #define ADE_FFTW_PLAN_FLAGS FFTW_MEASURE //FFTW_PATIENT //FFTW_ESTIMATE //read manual pg.18
 #define ADE_FLOAT_SIZE (4)

@@ -41,7 +41,7 @@ struct ADE_SNAP_S
 
     /*in out buffers*/ //allocati fuori
     ADE_FLOATING_T *p_in;
-    ADE_FLOATING_T *p_out;
+    //ADE_FLOATING_T *p_out;
     /*Internal buffers*/ //allocati internamente
     ADE_FLOATING_T *p_pow_est;//lungo buff_len
     ADE_FLOATING_T *p_dot_vals;//lungo n_slots
@@ -70,6 +70,10 @@ struct ADE_SNAP_S
 
 };
 
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 /*********************** Init Methods************************/
 ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,ADE_UINT32_T fft_len_i);
 ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
@@ -78,6 +82,12 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
 ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap);
 /************************** Operative Methods *******************************/
 ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap);
+ADE_API_RET_T ADE_Snap_SetInbuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
+
+#ifdef __cplusplus
+    }   /* extern "C" */
+#endif
+
 
 #endif //_ADE_SNAP_H
 
