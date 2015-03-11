@@ -15,6 +15,7 @@ static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff);
 static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft);
 static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T fft_dir);
 static ADE_API_RET_T ADE_Fft_SetType(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type);
+
 //static ADE_API_RET_T ADE_Fft_SetSplitIn(ADE_FFT_T* p_fft,ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split);
 //static ADE_API_RET_T ADE_Fft_SetSplitOut(ADE_FFT_T* p_fft,ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split);
 
