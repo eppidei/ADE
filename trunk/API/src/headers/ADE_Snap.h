@@ -15,7 +15,7 @@ struct ADE_SNAP_S
     ADE_FLOATING_T Fs;
     ADE_UINT32_T buff_len;
     ADE_UINT32_T n_pow_est_slots;/* slots to divide the frame for power estimation into smaller time*/
-    ADE_FLOATING_T threshold;
+  // ADE_FLOATING_T threshold;
     ADE_FLOATING_T frame_time_len;
    // ADE_UINT32_T frame_len;
     ADE_FLOATING_T freq_left;
@@ -48,7 +48,7 @@ struct ADE_SNAP_S
     ADE_FLOATING_T *p_thresh;//lungo buff_len
     ADE_FLOATING_T *p_tgk;//lungo buff_len usato per tgk e cc
     ADE_UINT32_T *p_indexes;//lungo n_max_indexes
-    ADE_UINT32_T *p_sort_indexes;
+    ADE_ULONG_T *p_sort_indexes;
     ADE_FLOATING_T *p_index_vals;//lungo n_max_indexes
     ADE_FLOATING_T **dp_segments;//lungo n_max_indexes*extract_len
     ADE_CPLX_T **dp_spectrum;//lungo n_max_indexes*extract_len*2

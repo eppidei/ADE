@@ -5,3 +5,5 @@
 5) Funzioni (spesso static) che prendono puntatore a oggetto non sono atomiche perchè usano memoria allocata esternamente
    magari dividere tra funzione propria e associazione puntatori generici con allocati dall'oggetto
 6) wrappare allocazioni di memoria
+7) rivedere blas filtering (no riutilizzo blas per easy threading)
+8) fare classe resampling

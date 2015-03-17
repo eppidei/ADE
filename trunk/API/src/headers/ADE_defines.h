@@ -159,6 +159,12 @@
 #define PRINT_IDX(x) PLUS_ONE(x)
 #define ADE_UTILS_PRINTF_FLOAT_WIDTH (14)
 #define ADE_UTILS_PRINTF_FLOAT_PRECISION (5)
+/* Period parameters Marsenne twister*/
+#define MT_N 624
+#define MT_M 397
+#define MT_MATRIX_A 0x9908b0dfUL   /* constant vector a */
+#define MT_UPPER_MASK 0x80000000UL /* most significant w-r bits */
+#define MT_LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
 /****************************** BENCHMARKS *******************************/
 
