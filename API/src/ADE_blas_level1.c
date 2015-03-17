@@ -607,9 +607,10 @@ ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
 
 }
 
-ADE_FLOATING_T ADE_Blas_level1_dot(ADE_blas_level1_T* p_blas_l1)
+ADE_FLOATING_T ADE_Blas_level1_dot(ADE_blas_level1_T* p_blas_l1
+)
 {
- ADE_API_RET_T ret = ADE_DEFAULT_RET;
+ ADE_FLOATING_T ret = 0;
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -625,21 +626,13 @@ ADE_FLOATING_T ADE_Blas_level1_dot(ADE_blas_level1_T* p_blas_l1)
 
     ret = ADE_Blas_level1_launch_type2(p_blas_l1);
 
-     #if (ADE_CHECK_RETURNS==1)
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_BLAS_L1,ret,"%d",ADE_Blas_level1_dot);
-    }
-    #endif
-
-
     return ret;
 
 }
 
 ADE_FLOATING_T ADE_Blas_level1_dotc(ADE_blas_level1_T* p_blas_l1)
 {
- ADE_API_RET_T ret = ADE_DEFAULT_RET;
+ ADE_FLOATING_T ret = 0;
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -655,13 +648,6 @@ ADE_FLOATING_T ADE_Blas_level1_dotc(ADE_blas_level1_T* p_blas_l1)
 
     ret = ADE_Blas_level1_launch_type2(p_blas_l1);
 
-     #if (ADE_CHECK_RETURNS==1)
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_BLAS_L1,ret,"%d",ADE_Blas_level1_dotc);
-    }
-    #endif
-
 
     return ret;
 
@@ -669,7 +655,7 @@ ADE_FLOATING_T ADE_Blas_level1_dotc(ADE_blas_level1_T* p_blas_l1)
 
 ADE_FLOATING_T ADE_Blas_level1_dotu(ADE_blas_level1_T* p_blas_l1)
 {
- ADE_API_RET_T ret = ADE_DEFAULT_RET;
+ ADE_FLOATING_T ret = 0;
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -685,12 +671,6 @@ ADE_FLOATING_T ADE_Blas_level1_dotu(ADE_blas_level1_T* p_blas_l1)
 
     ret = ADE_Blas_level1_launch_type2(p_blas_l1);
 
-     #if (ADE_CHECK_RETURNS==1)
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_BLAS_L1,ret,"%d",ADE_Blas_level1_dotu);
-    }
-    #endif
 
 
     return ret;
@@ -700,7 +680,7 @@ ADE_FLOATING_T ADE_Blas_level1_dotu(ADE_blas_level1_T* p_blas_l1)
 
 ADE_FLOATING_T ADE_Blas_level1_nrm2(ADE_blas_level1_T* p_blas_l1)
 {
- ADE_API_RET_T ret = ADE_DEFAULT_RET;
+ ADE_FLOATING_T ret = 0;
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -716,12 +696,6 @@ ADE_FLOATING_T ADE_Blas_level1_nrm2(ADE_blas_level1_T* p_blas_l1)
 
     ret = ADE_Blas_level1_launch_type2(p_blas_l1);
 
-     #if (ADE_CHECK_RETURNS==1)
-    if (ret<0)
-    {
-        ADE_PRINT_ERRORS(ADE_BLAS_L1,ret,"%d",ADE_Blas_level1_nrm2);
-    }
-    #endif
 
 
     return ret;
@@ -807,7 +781,7 @@ static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
 
 static ADE_FLOATING_T ADE_Blas_level1_launch_type2 (ADE_blas_level1_T *p_blas_l1)
 {
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_FLOATING_T ret = 0;
     static unsigned short flag= 0;
 
     #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
@@ -1060,11 +1034,11 @@ ADE_FLOATING_T ret = 0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        cdotu(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=cdotu(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_cdotu(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+        ret=cblas_cdotu(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
 #error(ADE_BLAS_IMPLEMENTATION);
@@ -1089,11 +1063,11 @@ ADE_FLOATING_T ret = 0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        cdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=cdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_cdotc(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+        ret=cblas_cdotc(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
 #error(ADE_BLAS_IMPLEMENTATION);
@@ -1120,11 +1094,11 @@ ADE_FLOATING_T ret=0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        snrm2(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX));
+        ret=snrm2(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX));
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_snrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
+        ret=cblas_snrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
 #else
 
 #error(ADE_BLAS_IMPLEMENTATION);
@@ -1255,11 +1229,11 @@ ADE_FLOATING_T ret=0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ddot(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=ddot(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_ddot(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+        ret=cblas_ddot(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
 #error(ADE_BLAS_IMPLEMENTATION);
@@ -1284,11 +1258,11 @@ ADE_FLOATING_T ret=0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        zdotu(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=zdotu(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_zdotu(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+        ret=cblas_zdotu(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
 #error(ADE_BLAS_IMPLEMENTATION);
@@ -1313,11 +1287,11 @@ ADE_FLOATING_T ret=0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-       zdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+       ret=zdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_zdotc(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+        ret=cblas_zdotc(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
 #error(ADE_BLAS_IMPLEMENTATION);
@@ -1330,9 +1304,6 @@ ADE_FLOATING_T ret=0;
   return ret;
 
 }
-#else
-#error(ADE_FP_PRECISION);
-#endif
 
 static ADE_FLOATING_T ADE_Blas_level1_dnrm2 (ADE_blas_level1_T *p_blas_l1)
 {
@@ -1345,11 +1316,11 @@ ADE_FLOATING_T ret=0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        dnrm2(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX));
+        ret=dnrm2(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX));
 
         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
 
-        cblas_dnrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
+        ret=cblas_dnrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
 #else
 
 #error(ADE_BLAS_IMPLEMENTATION);
@@ -1362,3 +1333,8 @@ ADE_FLOATING_T ret=0;
   return ret;
 
 }
+
+#else
+#error(ADE_FP_PRECISION);
+#endif
+

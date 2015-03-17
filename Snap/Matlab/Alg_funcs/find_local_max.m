@@ -60,8 +60,12 @@ for i = last_idx+search_step: search_step : len
     
 end
 
+if (k>1)
+
 [vals,sort_idx]=sort(vals,'descend');
 indexes=indexes(sort_idx);
+
+end
 
 n_indexes=k-1;
 end

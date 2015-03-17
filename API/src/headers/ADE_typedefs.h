@@ -71,6 +71,8 @@ typedef ADE_FFTSetup ADE_FFTSetup_T;
     #else
     typedef ADE_CPLX_T ADE_FFTCPLX_T;
     #endif
+#else
+    #error (ADE_FP_PRECISION) in ADE_typedefs.h
 #endif
 
 
