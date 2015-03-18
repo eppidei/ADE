@@ -1,7 +1,7 @@
-function estimate = pow_est(data)
+function estimate = pow_est(data,n_slots)
 %#codegen
 
-n_slots = 2;
+% n_slots = 2;
 len = length(data);
 j=0;
 % parzial_sum=single(0);

@@ -529,9 +529,9 @@ samp_range_search_time = 80e-3;
 #endif
 at = 1-exp(-2.2/(p_snap->Fs*attack_time));
 rt = 1-exp(-2.2/(p_snap->Fs*release_time));
+freq_step=p_snap->Fs/(p_snap->fft_len-1);
 sx_bin=floor(freq_left/freq_step+0.5);
  dx_bin=floor(freq_right/freq_step+0.5);
-freq_step=p_snap->Fs/(p_snap->fft_len-1);
 band_len=dx_bin-sx_bin+1;
 
 
@@ -608,7 +608,7 @@ for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
     ret_fft=ADE_Fft_Configure(p_snap->dp_fft[fft_idx],ADE_FFT_R2C, ADE_FFT_FORWARD,p_snap->dp_segments[fft_idx],p_snap->dp_spectrum[fft_idx]);
 }
 
-     return ADE_DEFAULT_RET;
+
 
      /*** blas1 spectrum whole config ***/
 
@@ -627,13 +627,16 @@ for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 
  for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
-    ret_specb = ADE_Blas_level1_setN(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],band_len);
-    ret_specb =  ADE_Blas_level1_setINCX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
-    ret_specb =  ADE_Blas_level1_setINCY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
-    ret_specb =  ADE_Blas_level1_setX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(ADE_FLOATING_T*)(p_snap->dp_spectrum[fft_idx]+sx_bin));
-    ret_specb =  ADE_Blas_level1_setY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(ADE_FLOATING_T*)(p_snap->dp_spectrum[fft_idx]+sx_bin));
+    ret_specb = ADE_Blas_level1_setN(p_snap->dp_blas_l1_pow_spect_band[fft_idx],band_len);
+    ret_specb =  ADE_Blas_level1_setINCX(p_snap->dp_blas_l1_pow_spect_band[fft_idx],1);
+    ret_specb =  ADE_Blas_level1_setINCY(p_snap->dp_blas_l1_pow_spect_band[fft_idx],1);
+    ret_specb =  ADE_Blas_level1_setX(p_snap->dp_blas_l1_pow_spect_band[fft_idx],(ADE_FLOATING_T*)(p_snap->dp_spectrum[fft_idx]+sx_bin));
+    ret_specb =  ADE_Blas_level1_setY(p_snap->dp_blas_l1_pow_spect_band[fft_idx],(ADE_FLOATING_T*)(p_snap->dp_spectrum[fft_idx]+sx_bin));
 
 }
+
+
+ return ADE_DEFAULT_RET;
 
 
 }
@@ -1102,9 +1105,9 @@ ADE_FLOATING_T whole_pow_spec=0,sel_pow_spec=0;
 
 //ADE_API_RET_T ADE_Utils_Split2Complex( ADE_SplitComplex_T *p_in,ADE_UINT32_T Stride_in,ADE_CPLX_T *p_out,ADE_UINT32_T Stride_out,ADE_UINT32_T split_len)
 
-        whole_pow_spec= ADE_Blas_level1_dotu(p_snap->dp_blas_l1_pow_spect_whole[i]);
+        whole_pow_spec= ADE_Blas_level1_dotc(p_snap->dp_blas_l1_pow_spect_whole[i]);
 
-        sel_pow_spec = ADE_Blas_level1_dotu(p_snap->dp_blas_l1_pow_spect_band[i]);
+        sel_pow_spec = ADE_Blas_level1_dotc(p_snap->dp_blas_l1_pow_spect_band[i]);
 //
 //         vara(i)=var(sel_pow_spec);
 //        sel_pow2(i) = sum(sel_pow_spec);

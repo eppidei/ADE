@@ -20,8 +20,8 @@
 				</Compiler>
 				<Linker>
 					<Add option="-lrt -lgfortran -lmx -lmat -lfftw3 -lfftw3_threads -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
-					<Add library="..\..\..\lib\blas\BLAS\blas_LINUX.a" />
-					<Add library="..\..\..\lib\cblas\CBLAS\lib\cblas_LINUX.a" />
+					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add library="../../../lib/cblas/CBLAS/lib/cblas_LINUX.a" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 				</Linker>
 			</Target>
@@ -38,8 +38,8 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s -lmx -lmat -lfftw3 -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
-					<Add library="\home\leonardo\Windows_home\WCPYS_win\ADE_wcpy2\API\lib\cblas\CBLAS\lib\cblas_LINUX.a" />
-					<Add library="\home\leonardo\Windows_home\WCPYS_win\ADE_wcpy2\API\lib\blas\BLAS\blas_LINUX.a" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
+					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS/blas_LINUX.a" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 				</Linker>
 			</Target>
@@ -77,6 +77,9 @@
 		<Unit filename="../../../src/ADE_iir.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_nrutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_polyfit.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -94,6 +97,7 @@
 		<Unit filename="../../../src/headers/ADE_fft.h" />
 		<Unit filename="../../../src/headers/ADE_fir.h" />
 		<Unit filename="../../../src/headers/ADE_iir.h" />
+		<Unit filename="../../../src/headers/ADE_nrutil.h" />
 		<Unit filename="../../../src/headers/ADE_polyfit.h" />
 		<Unit filename="../../../src/headers/ADE_typedefs.h" />
 		<Unit filename="main.cpp" />

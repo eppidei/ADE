@@ -87,11 +87,11 @@ ADE_SNAP_T * p_snap;
 ADE_API_RET_T ret=ADE_DEFAULT_RET;
 //ADE_UINT32_T buff_len=512;
 ADE_UINT32_T Fs_i=22050,cycles_idx=0,j=0;
-ADE_UINT32_T n_pow_slots_i = 2;
+ADE_UINT32_T n_pow_slots_i = 2,n_pow_slots_mat;
 ADE_UINT32_T n_max_indexes_i = 2;
-ADE_FLOATING_T time_left_i =0.5e-3;
-ADE_FLOATING_T time_right_i = 4e-3;
-ADE_UINT32_T fft_len_i = 256;
+ADE_FLOATING_T time_left_i =0.5e-3,time_left_mat;
+ADE_FLOATING_T time_right_i = 6e-3,time_right_mat;
+ADE_UINT32_T fft_len_i = 512,fft_len_mat;
 ADE_FLOATING_T *p_buff=NULL;
 ADE_FLOATING_T frame_time_len = 300e-3;
 ADE_UINT32_T frame_len = floor(frame_time_len*Fs_i+0.5)-1;
@@ -121,7 +121,31 @@ if (!strcmp(input_type,"matlab"))
     frame_len_mat=ADE_Matlab_GetScalar(p_snap->p_mat,"frame_len");
     if (frame_len_mat!=frame_len)
     {
-        printf("adjust frame len with matlab for comparison\n");
+        printf("ERROR : adjust frame len with matlab for comparison %d\n",frame_len_mat);
+        return -11;
+    }
+    time_left_mat=ADE_Matlab_GetScalar(p_snap->p_mat,"time_left");
+    if (time_left_mat!=time_left_i)
+    {
+        printf("ERROR : adjust time_left_i with matlab for comparison %f \n,time_left_mat");
+        return -11;
+    }
+    time_right_mat=ADE_Matlab_GetScalar(p_snap->p_mat,"time_right");
+    if (time_right_mat!=time_right_i)
+    {
+        printf("ERROR : adjust time_right_i with matlab for comparison %f\n",time_right_mat);
+        return -11;
+    }
+    fft_len_mat=ADE_Matlab_GetScalar(p_snap->p_mat,"len_fft");
+    if (fft_len_mat!=fft_len_i)
+    {
+        printf("ERROR : adjust fft_len with matlab for comparison %d \n",fft_len_mat);
+        return -11;
+    }
+    n_pow_slots_mat=ADE_Matlab_GetScalar(p_snap->p_mat,"n_pow_slots");
+    if (n_pow_slots_mat!=n_pow_slots_i)
+    {
+        printf("ERROR : adjust fft_len with matlab for comparison %d \n",n_pow_slots_mat);
         return -11;
     }
  }

@@ -1,4 +1,5 @@
 Fs=22050;
+n_pow_slots=2;
 frame_time_len = 300e-3;
 frame_len = round(frame_time_len*Fs)-1;
 freq_left=1800;
