@@ -118,7 +118,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             }
             else
             {
-               // #if (ADE_CHECK_RETURNS==1)
+               // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
                 ADE_PRINT_ERRORS(ADE_MEM,p_sec_buff,"%p",ADE_Iir_Init);
                // #endif
                 return ADE_E3;
@@ -143,7 +143,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             }
             else
             {
-               // #if (ADE_CHECK_RETURNS==1)
+               // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
                     ADE_PRINT_ERRORS(ADE_MEM,p_states,"%p",ADE_Iir_Init);
                // #endif
                 return ADE_E3;

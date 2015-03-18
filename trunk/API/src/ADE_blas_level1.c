@@ -546,7 +546,7 @@ ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 
      ret = ADE_Blas_level1_launch_type1(p_blas_l1);
 
-     #if (ADE_CHECK_RETURNS==1)
+     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
     if (ret<0)
     {
         ADE_PRINT_ERRORS(ADE_BLAS_L1,ret,"%d",ADE_Blas_axpy);
@@ -596,7 +596,7 @@ ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
 
      ret = ADE_Blas_level1_launch_type1(p_blas_l1);
 
-     #if (ADE_CHECK_RETURNS==1)
+     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
     if (ret<0)
     {
         ADE_PRINT_ERRORS(ADE_BLAS_L1,ret,"%d",ADE_Blas_copy);
@@ -768,7 +768,7 @@ static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
 
     ret = (p_blas_l1->blas_level1_fcn_type1)(p_blas_l1);
 
-    #if (ADE_CHECK_RETURNS==1)
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
 
     if (ret<0)
     {
@@ -797,7 +797,7 @@ static ADE_FLOATING_T ADE_Blas_level1_launch_type2 (ADE_blas_level1_T *p_blas_l1
 
     ret = (p_blas_l1->blas_level1_fcn_type2)(p_blas_l1);
 
-//    #if (ADE_CHECK_RETURNS==1)
+//    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
 //
 //    if (ret<0)
 //    {

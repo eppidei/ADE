@@ -792,7 +792,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     #endif
  ret = ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len);
 
- #if ADE_CHECK_RETURNS==1
+ #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
  if (ret<0)
  {
@@ -803,7 +803,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
  #endif
       ret = ADE_Blas_level2_Elewise(p_blow->p_blas_l2);
 
-      #if ADE_CHECK_RETURNS==1
+      #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
  if (ret<0)
  {
@@ -815,7 +815,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
    // ADE_Blow_square_vector(p_blow);
     fir_step_ret=ADE_Fir_Step(p_blow->p_fir);
 
-    #if ADE_CHECK_RETURNS==1
+    #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
     if (fir_step_ret<0)
     {
@@ -826,7 +826,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     #endif
     iir_step_ret = ADE_Iir_Step(p_blow->p_iir);
 
-     #if ADE_CHECK_RETURNS==1
+     #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
     if (iir_step_ret<0)
     {
@@ -845,7 +845,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     iir_step_ret=ADE_Iir_Step(p_iir2_int);
 
-    #if ADE_CHECK_RETURNS==1
+    #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
     if (iir_step_ret<0)
     {

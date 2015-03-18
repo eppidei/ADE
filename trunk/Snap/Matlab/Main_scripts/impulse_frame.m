@@ -233,7 +233,7 @@ end
                     
                     
                    
-                    if percent_pow(2,j)>spectral_threshold_schiocco && band_peak(j)<max_range(2) && band_peak(j)>max_range(1)
+                    if percent_pow(2,j)>spectral_threshold_schiocco %% && band_peak(j)<max_range(2) && band_peak(j)>max_range(1)
                         num_estimated_true_snaps=num_estimated_true_snaps+1;
                         positive_events_idx(num_estimated_true_snaps)=(i-1)*frame_len+ind(j);
                         

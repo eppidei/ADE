@@ -394,7 +394,7 @@ ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
 
      ret = ADE_Blas_level3_launch_type1(p_Blas_l3);
 
-     #if (ADE_CHECK_RETURNS==1)
+     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
     if (ret<0)
     {
         ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level3_gemm);
@@ -490,7 +490,7 @@ static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3)
     (p_Blas_l3->blas_level3_fcn_type1)(p_Blas_l3);
 //    ret = (p_Blas_l3->blas_level3_fcn_type1)(p_Blas_l3);
 //
-//    #if (ADE_CHECK_RETURNS==1)
+//    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
 //
 //    if (ret<0)
 //    {
