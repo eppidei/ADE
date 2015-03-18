@@ -132,7 +132,7 @@ for i=1:n_frames
     actual_taxe = time_axe(sample_idx);
     sub_plot_idx = mod(i-1,n_frame_refresh_graph)+1;
     
-    estimate = pow_est(actual_frame);
+    estimate = pow_est(actual_frame,n_pow_slots);
     
 %     dbval = 10*log10(frame_pow);
 
