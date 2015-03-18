@@ -661,18 +661,56 @@ ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap)
     ADE_Utils_memset_float(p_snap->p_thresh,p_snap->buff_len,p_snap->thresh_bias);
     ret_b1= ADE_Blas_level1_axpy(p_snap->p_blas_l1_threshold);
 
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    if (ret_b1<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_b1,"%d",ADE_Snap_Step)
+        return ADE_E45;
+    }
+    #endif
+
     /*  detect_energy_threshold(actual_frame,thres); */
 
     ret_thresh =  ADE_Snap_ThresholdDetection(p_snap);
-
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    if (ret_thresh<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_thresh,"%d",ADE_Snap_Step)
+        return ADE_E45;
+    }
+    #endif
     ret_Xrms2 = ADE_Snap_Xrms2(p_snap);
-
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    if (ret_Xrms2<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_Xrms2,"%d",ADE_Snap_Step)
+        return ADE_E45;
+    }
+    #endif
     ret_max =  ADE_Snap_find_local_max(p_snap);
-
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    if (ret_max<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_max,"%d",ADE_Snap_Step)
+        return ADE_E45;
+    }
+    #endif
     ret_events = ADE_Snap_extract_events(p_snap);
-
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    if (ret_events<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_events,"%d",ADE_Snap_Step)
+        return ADE_E45;
+    }
+    #endif
     ret_recog = ADE_Snap_snap_recognition(p_snap);
-
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    if (ret_recog<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_recog,"%d",ADE_Snap_Step)
+        return ADE_E45;
+    }
+    #endif
 
 
 
@@ -831,9 +869,9 @@ static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap)
    ADE_UINT32_T index_limit=0;
 
 
-    k=1;
+    k=0;
 
-for (i = 3-1 ;i<samples_range;i+=search_step)
+for (i = 3-1 ;i<=(samples_range-search_step);i+=search_step)
 {
     skip = ADE_FALSE;
     if ((p_data[i]<=p_min_thresh[i]) || (p_min_thresh[i]<min_data_sensed))
@@ -843,7 +881,7 @@ for (i = 3-1 ;i<samples_range;i+=search_step)
     else
     {
 
-         for (j=i+look_ahead_step;j<i+samples_range;j+=look_ahead_step)
+         for (j=i+look_ahead_step;j<=(i+samples_range-look_ahead_step);j+=look_ahead_step)
          {
             a2 =  p_data[i]> p_data[j];
             if (!a2)
@@ -854,7 +892,7 @@ for (i = 3-1 ;i<samples_range;i+=search_step)
          }
         if (!skip)
         {
-            for (j = i-look_ahead_step;j>1;j-=look_ahead_step)
+            for (j = i-look_ahead_step;j>=look_ahead_step;j-=look_ahead_step)
             {
                 a1 =  p_data[i]> p_data[j];
                 if (!a1)
@@ -878,7 +916,7 @@ for (i = 3-1 ;i<samples_range;i+=search_step)
 }
 
 
-for (i = last_idx+search_step ;i< len -samples_range -search_step;i+=search_step)
+for (i = last_idx+search_step ;i<=( len -samples_range -search_step);i+=search_step)
 
 {
 skip = ADE_FALSE;
@@ -888,7 +926,7 @@ skip = ADE_FALSE;
     }
     else
     {
-         for (j=i+look_ahead_step;i<i+samples_range;j+=look_ahead_step)
+         for (j=i+look_ahead_step;i<=(i+samples_range-look_ahead_step);j+=look_ahead_step)
          {
             a2 =  p_data[i]> p_data[j];
             if (!a2)
@@ -899,7 +937,7 @@ skip = ADE_FALSE;
          }
         if (!skip)
         {
-            for (j = i-look_ahead_step ; j>i-samples_range;j-=look_ahead_step)
+            for (j = i-look_ahead_step ; j>=(i-samples_range+look_ahead_step);j-=look_ahead_step)
             {
                 a1 =  p_data[i]> p_data[j];
                 if (!a1)
@@ -922,7 +960,7 @@ skip = ADE_FALSE;
 last_idx = i;
 }
 
-for (i =  last_idx+search_step;i<len;i+=search_step)
+for (i =  last_idx+search_step;i<=(len-search_step);i+=search_step)
 {
     skip = ADE_FALSE;
     if (p_data[i]<=p_min_thresh[i] || p_min_thresh[i]<min_data_sensed)
@@ -931,7 +969,7 @@ for (i =  last_idx+search_step;i<len;i+=search_step)
     }
     else
     {
-         for (j=i+look_ahead_step;j<len;j+=look_ahead_step)
+         for (j=i+look_ahead_step;j<=(len-look_ahead_step);j+=look_ahead_step)
          {
             a2 =  p_data[i]> p_data[j];
             if (!a2) //a2==ADE_FALSE
@@ -942,7 +980,7 @@ for (i =  last_idx+search_step;i<len;i+=search_step)
          }
         if (!skip)//skip==0
         {
-            for (j = i-look_ahead_step;j>i-samples_range;j-=look_ahead_step)
+            for (j = i-look_ahead_step;j>=(i-samples_range+look_ahead_step);j-=look_ahead_step)
             {
                 a1 =  p_data[i]> p_data[j];
                 if (!a1)//a1==0
@@ -963,7 +1001,7 @@ for (i =  last_idx+search_step;i<len;i+=search_step)
     }
 
 }
-p_snap->n_found_indexes=k-1;
+p_snap->n_found_indexes=k;
 
 //[vals,sort_idx]=sort(vals,'descend');
 index_limit=p_snap->n_found_indexes;
@@ -975,7 +1013,7 @@ if (p_snap->n_found_indexes > p_snap->n_max_indexes)
 if (index_limit>0)
 {
 /** To substitute with descending **/
-ADE_Utils_indexx(index_limit,p_index_vals-1,p_sort_idx-1);
+ADE_Utils_indexx_descend(index_limit,p_index_vals-1,p_sort_idx-1);
 }
 
 for(i=0;i<index_limit;i++)
@@ -1030,7 +1068,7 @@ for (i=0;i<n_indx;i++)
 
     memset(dp_segments[i],0,extracted_allocated_len*sizeof(ADE_FLOATING_T));
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
-    memcpy(dp_segments[i],&(p_in[p_main_idx[i]]),actual_calc_len*sizeof(ADE_FLOATING_T));
+    memcpy(dp_segments[i],&(p_in[sample_left]),actual_calc_len*sizeof(ADE_FLOATING_T));
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
     for (j=0;j<actual_calc_len;j++)
     {

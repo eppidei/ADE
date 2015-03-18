@@ -433,6 +433,85 @@ istack=ivector(1,NR_STACK);
     free_ivector(istack,1,NR_STACK);
 }
 
+ADE_VOID_T ADE_Utils_indexx_descend(ADE_ULONG_T n, ADE_FLOATING_T arr[], ADE_ULONG_T indx[])
+/*Indexes an array arr[1..n], i.e., outputs the array indx[1..n] such that arr[indx[j]] is
+in ascending order for j = 1, 2, . . . , N . The input quantities n and arr are not changed.*/
+{
+ADE_ULONG_T i,indxt,ir=n,itemp,j,k,l=1;
+ADE_INT32_T jstack=0,*istack;
+ADE_FLOATING_T a;
+istack=ivector(1,NR_STACK);
+    for (j=1; j<=n; j++) indx[j]=j;
+    for (;;)
+    {
+        if (ir-l < NR_M)
+        {
+            for (j=l+1; j<=ir; j++)
+            {
+                indxt=indx[j];
+                a=arr[indxt];
+                for (i=j-1; i>=l; i--)
+                {
+                    if (arr[indx[i]] > a) break;
+                    indx[i+1]=indx[i];
+                }
+                indx[i+1]=indxt;
+            }
+            if (jstack == 0) break;
+            ir=istack[jstack--];
+            l=istack[jstack--];
+        }
+        else
+        {
+            k=(l+ir) >> 1;
+            ADE_ISWAP(indx[k],indx[l+1]);
+            if (arr[indx[l]] <= arr[indx[ir]])
+            {
+                ADE_ISWAP(indx[l],indx[ir])
+            }
+            if (arr[indx[l+1]] <= arr[indx[ir]])
+            {
+                ADE_ISWAP(indx[l+1],indx[ir])
+            }
+            if (arr[indx[l]] <= arr[indx[l+1]])
+            {
+                ADE_ISWAP(indx[l],indx[l+1])
+            }
+            i=l+1;
+            j=ir;
+            indxt=indx[l+1];
+            a=arr[indxt];
+            for (;;)
+            {
+                do i++;
+                while (arr[indx[i]] > a);
+                do j--;
+                while (arr[indx[j]] < a);
+                if (j < i) break;
+                ADE_ISWAP(indx[i],indx[j])
+            }
+            indx[l+1]=indx[j];
+            indx[j]=indxt;
+            jstack += 2;
+            if (jstack > NR_STACK) nrerror("NR_STACK too small in ADE_Utils_indexx.");
+            if (ir-i+1 >= j-l)
+            {
+                istack[jstack]=ir;
+                istack[jstack-1]=i;
+                ir=j-1;
+            }
+            else
+            {
+                istack[jstack]=j-1;
+                istack[jstack-1]=l;
+                l=i;
+            }
+        }
+    }
+    free_ivector(istack,1,NR_STACK);
+}
+
+
 
 /*********************** Private Functions ******************************/
 

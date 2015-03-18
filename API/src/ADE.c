@@ -91,7 +91,7 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
      {
         blow_ret = ADE_Blow_Step(p_ADE->p_blow);
 
-        #if ADE_CHECK_RETURNS==1
+        #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
         if (blow_ret<0)
         {

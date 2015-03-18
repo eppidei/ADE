@@ -420,7 +420,7 @@ ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
 
      ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
 
-     #if (ADE_CHECK_RETURNS==1)
+     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
     if (ret<0)
     {
         ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_ger);
@@ -450,7 +450,7 @@ ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
 
      ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
 
-     #if (ADE_CHECK_RETURNS==1)
+     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
     if (ret<0)
     {
         ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_sbmv);
@@ -477,6 +477,7 @@ ADE_UINT32_T i = 0;
  #elif (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_BLAS)
 
     ret = ADE_Blas_level2_sbmv(p_Blas_l2);
+
  #else
      #error(ADE_LIN_ALG_IMP)
 
@@ -549,7 +550,7 @@ static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2)
 
     ret = (p_Blas_l2->blas_level2_fcn_type1)(p_Blas_l2);
 
-    #if (ADE_CHECK_RETURNS==1)
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
 
     if (ret<0)
     {

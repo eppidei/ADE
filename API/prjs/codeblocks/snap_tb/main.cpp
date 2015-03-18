@@ -6,6 +6,7 @@
 #include "headers/ADE_typedefs.h"
 #include "headers/ADE_Matlab.h"
 #include "headers/ADE_Snap.h"
+#include "headers/ADE_Utils.h"
 #include <math.h>
 
 static unsigned long mt[MT_N]; /* the array for the state vector  */
@@ -94,10 +95,17 @@ ADE_UINT32_T fft_len_i = 256;
 ADE_FLOATING_T *p_buff=NULL;
 ADE_FLOATING_T frame_time_len = 300e-3;
 ADE_UINT32_T frame_len = floor(frame_time_len*Fs_i+0.5)-1;
-ADE_UINT32_T frame_len_mat = 0;
+ADE_UINT32_T frame_len_mat = 0,n_frames=0;
 unsigned long seed= 5489;
 char *input_type="matlab";
 double *p_buf_mat=NULL;
+
+//ADE_FLOATING_T p_vals[10]={1,2,3,4,5,6,7,8,9,10};
+//ADE_ULONG_T p_vals_idx[10]={0,0,0,0,0,0,0,0,0,0};
+//
+//ADE_Utils_indexx_descend(10, p_vals-1, p_vals_idx-1);
+
+
 
 init_genrand(seed);
 
@@ -121,8 +129,8 @@ if (!strcmp(input_type,"matlab"))
 ret = ADE_Snap_SetInbuff(p_snap, p_buff);
 
 ret = ADE_Snap_Configure(p_snap);
-
-for (cycles_idx=0;cycles_idx<100;cycles_idx++)
+n_frames=ADE_Matlab_GetScalar(p_snap->p_mat,"n_frames");
+for (cycles_idx=0;cycles_idx<n_frames;cycles_idx++)
 {
     if (!strcmp(input_type,"rand"))
     {
