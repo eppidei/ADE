@@ -31,6 +31,9 @@
 #define ADE_USE_LIN_ALG_BLAS (0)
 #define ADE_USE_LIN_ALG_CUSTOM (1)
 
+#define ADE_UTILS_USE_BLAS (0)
+#define ADE_UTILS_USE_CUSTOM (1)
+
 #define ADE_USE_BLAS_CUSTOM (0)
 #define ADE_USE_BLAS_LIB (1)
 #define ADE_USE_CBLAS_LIB (2)
@@ -54,6 +57,7 @@
 
 
 #define ADE_LIN_ALG_IMP ADE_USE_LIN_ALG_BLAS
+#define ADE_UTILS_IMP ADE_UTILS_USE_BLAS
 
 
 #if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
@@ -134,9 +138,12 @@
 //#define ADE_BLOW_MATLAB_PATH "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts/"
 //#define ADE_BLOW_MAT_SCRIPT "blow_fine_control_swlike.m"
 /***************************** ENVIRONMENT *******************************/
-//ALG LIST
+/*one based*/
 #define BLOW_BIT (0)
-#define BLOW_FLAG (1<<BLOW_BIT)
+#define SNAP_BIT (1)
+
+#define BLOW_FLAG (1<<(BLOW_BIT))
+#define SNAP_FLAG (1<<(SNAP_BIT))
 
 /*************************** MATLAB *******************************/
 #define ADE_MAX_CHARS (128)
