@@ -7,6 +7,7 @@
 #include "headers/ADE_errors.h"
 #include "headers/ADE_defines.h"
 #include "headers/ADE_Utils.h"
+#include "headers/ADE_complex.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -32,6 +33,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
     ADE_API_RET_T blas1_ret_specb=ADE_DEFAULT_RET;
     ADE_UINT32_T iir_n_sos=1;
     ADE_UINT32_T i=0;
+    ADE_UINT32_T out_buff_fft_len=0;
     #ifdef ADE_CONFIGURATION_INTERACTIVE
      char *p_matpath = ADE_MATLAB_EXE ;
 	 char *p_scriptpath=ADE_SNAP_SCRIPT;
@@ -165,21 +167,25 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
             return ADE_E44;
         }
 
+        out_buff_fft_len=(p_this->fft_len/2+1);
+
         for (i=0;i<p_this->n_max_indexes;i++)
         {
+        /* size (p_this->fft_len/2+1) perchè la parte simmetrica non viene calcola */
+        /* To improve bisogna rendere coerente questo con il type FFT_R2C  */
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-            p_this->dp_spectrum[i]=(ADE_CPLX_T*)fftw_malloc(p_this->fft_len*sizeof(ADE_CPLX_T));
+            p_this->dp_spectrum[i]=(ADE_CPLX_T*)fftw_malloc(out_buff_fft_len*sizeof(ADE_CPLX_T));
 
                 if(p_this->dp_spectrum[i]==NULL)
                 {
                 ADE_PRINT_ERRORS(ADE_MEM,p_this->dp_spectrum[i],"%p",ADE_Snap_Init);
                 return ADE_E44;
                 }
-            memset(p_this->dp_spectrum[i],0,p_this->fft_len*sizeof(ADE_CPLX_T));
+            memset(p_this->dp_spectrum[i],0,out_buff_fft_len*sizeof(ADE_CPLX_T));
 
             #else
 
-             p_this->dp_spectrum[i]=(ADE_CPLX_T*)calloc(p_this->fft_len,sizeof(ADE_CPLX_T));
+             p_this->dp_spectrum[i]=(ADE_CPLX_T*)calloc(out_buff_fft_len,sizeof(ADE_CPLX_T));
 
                 if(p_this->dp_spectrum[i]==NULL)
                 {
@@ -512,6 +518,12 @@ ADE_UINT32_T uslot_len=0;
 
 freq_left=1800;
 freq_right=3200;
+if (freq_right>p_snap->Fs)
+{
+    ADE_PRINT_ERRORS(ADE_INCHECKS,freq_right,"%f",ADE_Snap_Configure);
+    fprintf(stderr,"freq_right right %f greater than Fs/2 \n",freq_right);
+    return ADE_E46;
+}
 spectral_threshold_schiocco  = 0.2;
  thresh_gain = 7;
  thresh_bias = 2e-2;
@@ -614,7 +626,7 @@ for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 
 for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
-    ret_specw = ADE_Blas_level1_setN(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],p_snap->fft_len);
+    ret_specw = ADE_Blas_level1_setN(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(p_snap->fft_len/2));//per essere come matlab forse meglio len/2+1
     ret_specw =  ADE_Blas_level1_setINCX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
     ret_specw =  ADE_Blas_level1_setINCY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
     /** to do cast pointer 2 flat or decide to use void in blas **/
@@ -1065,7 +1077,8 @@ for (i=0;i<n_indx;i++)
     actual_calc_len=sample_right-sample_left+1;
     if (actual_calc_len>extracted_allocated_len)
     {
-        fprintf(stderr,"sample right and left longer than expected in  ADE_Snap_extract_events\n");
+        ADE_PRINT_ERRORS(ADE_INCHECKS,actual_calc_len,"%d",ADE_Snap_Configure);
+        fprintf(stderr,"sample right and left longer than expected in  ADE_Snap_extract_events %d vs max allowed %d \n",actual_calc_len,extracted_allocated_len);
         return ADE_E46;
     }
 
@@ -1092,6 +1105,7 @@ static ADE_API_RET_T ADE_Snap_snap_recognition(ADE_SNAP_T *p_snap)
 ADE_UINT32_T n_events=p_snap->n_found_indexes;
 ADE_UINT32_T i=0;
 ADE_FLOATING_T whole_pow_spec=0,sel_pow_spec=0;
+ADE_CPLX_T temp_cplx;
 
   for (i=0;i<n_events;i++)
   {
@@ -1100,14 +1114,21 @@ ADE_FLOATING_T whole_pow_spec=0,sel_pow_spec=0;
         ADE_Fft_Step(p_snap->dp_fft[i]);
 //        spectrum(i,:) =real(fff).^2+imag(fff).^2;
 //        spectrum(i,1:3) = 0;
+(p_snap->dp_spectrum[i])[0]=ADE_cset(0,0);
+(p_snap->dp_spectrum[i])[1]=ADE_cset(0,0);
+(p_snap->dp_spectrum[i])[2]=ADE_cset(0,0);
 //        whole_pow_spec = spectrum(i,1:len_fft/2);
 //        tot_pow(i) = sum(whole_pow_spec);
 
 //ADE_API_RET_T ADE_Utils_Split2Complex( ADE_SplitComplex_T *p_in,ADE_UINT32_T Stride_in,ADE_CPLX_T *p_out,ADE_UINT32_T Stride_out,ADE_UINT32_T split_len)
 
-        whole_pow_spec= ADE_Blas_level1_dotc(p_snap->dp_blas_l1_pow_spect_whole[i]);
+        temp_cplx= ADE_Blas_level1_dotc(p_snap->dp_blas_l1_pow_spect_whole[i]);
 
-        sel_pow_spec = ADE_Blas_level1_dotc(p_snap->dp_blas_l1_pow_spect_band[i]);
+        whole_pow_spec=temp_cplx.realpart;
+
+         temp_cplx= ADE_Blas_level1_dotc(p_snap->dp_blas_l1_pow_spect_band[i]);
+
+         sel_pow_spec=temp_cplx.realpart;
 //
 //         vara(i)=var(sel_pow_spec);
 //        sel_pow2(i) = sum(sel_pow_spec);

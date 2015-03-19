@@ -37,7 +37,7 @@ spectrum=zeros(max_events,len_fft);
             
         fff = fft(events(i,1:len_fft));
         spectrum(i,:) =real(fff).^2+imag(fff).^2;
-        spectrum(i,1:3) = 0;
+         spectrum(i,1:3) = 0;
         whole_pow_spec = spectrum(i,1:len_fft/2);
         tot_pow(i) = sum(whole_pow_spec);
 %          sel_pow1(i) = sum(spectrum(i,sx_bin_b1:dx_bin_b1));
