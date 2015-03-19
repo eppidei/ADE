@@ -20,6 +20,7 @@ static ADE_API_RET_T ADE_Snap_Xrms2(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_extract_events(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_snap_recognition(ADE_SNAP_T *p_snap);
+static ADE_API_RET_T ADE_Snap_snap_detector(ADE_SNAP_T *p_snap);
 /******* Init methods  ***********************/
 ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,ADE_UINT32_T fft_len_i)
 {
@@ -661,6 +662,7 @@ ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap)
     ADE_API_RET_T ret_b1=ADE_DEFAULT_RET;
     ADE_API_RET_T ret_thresh=ADE_DEFAULT_RET;
     ADE_API_RET_T ret_Xrms2=ADE_DEFAULT_RET,ret_max=ADE_DEFAULT_RET,ret_events=ADE_DEFAULT_RET,ret_recog=ADE_DEFAULT_RET;
+    ADE_API_RET_T ret_detect=ADE_DEFAULT_RET;
     ADE_UINT32_T b1_idx=0;
 
     /*  estimate = pow_est(actual_frame); */
@@ -723,6 +725,15 @@ ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap)
     if (ret_recog<0)
     {
         ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_recog,"%d",ADE_Snap_Step)
+        return ADE_E45;
+    }
+    #endif
+
+    ret_detect=ADE_Snap_snap_detector(p_snap);
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    if (ret_detect<0)
+    {
+        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_detect,"%d",ADE_Snap_Step)
         return ADE_E45;
     }
     #endif
@@ -941,7 +952,7 @@ skip = ADE_FALSE;
     }
     else
     {
-         for (j=i+look_ahead_step;i<=(i+samples_range-look_ahead_step);j+=look_ahead_step)
+         for (j=i+look_ahead_step;j<=(i+samples_range-look_ahead_step);j+=look_ahead_step)
          {
             a2 =  p_data[i]> p_data[j];
             if (!a2)
@@ -1145,4 +1156,34 @@ ADE_CPLX_T temp_cplx;
     }
 
     return ADE_DEFAULT_RET;
+}
+
+static ADE_API_RET_T ADE_Snap_snap_detector(ADE_SNAP_T *p_snap)
+{
+
+ADE_UINT32_T n_events=p_snap->n_found_indexes;
+ADE_FLOATING_T percent_pow=0;
+ADE_UINT32_T i=0;
+
+for (i=0;i<n_events;i++)
+  {
+
+    percent_pow=p_snap->p_percent_pow[i];
+
+    if (percent_pow>=p_snap->spectral_threshold_schiocco)
+    {
+
+        p_snap->p_snaps[i]=ADE_TRUE;
+
+    }
+    else
+    {
+        p_snap->p_snaps[i]=ADE_FALSE;
+
+    }
+
+
+  }
+
+ return ADE_DEFAULT_RET;
 }
