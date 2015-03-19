@@ -1,6 +1,7 @@
 #ifndef _ADE_BLAS_WRAPPER_H
 #define _ADE_BLAS_WRAPPER_H
 #include "headers/ADE_defines.h"
+#include "headers/ADE_complex.h"
 
 #if  (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB )
 
@@ -97,7 +98,7 @@ int *incy
 
 #define cdotu FORTRAN_WRAPPER(cdotu)
 
-extern float cdotu(
+extern ADE_CPLX_T cdotu(
 int *n,
 void* sx,
 int *incx,
@@ -107,7 +108,7 @@ int *incy
 
 #define cdotc FORTRAN_WRAPPER(cdotc)
 
-extern float cdotc(
+extern ADE_CPLX_T cdotc(
 int *n,
 void* sx,
 int *incx,
@@ -115,19 +116,11 @@ void *sy,
 int *incy
 );
 
-#define cdotu FORTRAN_WRAPPER(cdotu)
 
-extern float cdotu(
-int *n,
-void* sx,
-int *incx,
-void *sy,
-int *incy
-);
 
 #define zdotu FORTRAN_WRAPPER(zdotu)
 
-extern float zdotu(
+extern ADE_CPLX_T zdotu(
 int *n,
 void* sx,
 int *incx,
@@ -137,7 +130,7 @@ int *incy
 
 #define zdotc FORTRAN_WRAPPER(zdotc)
 
-extern float zdotc(
+extern ADE_CPLX_T zdotc(
 int *n,
 void* sx,
 int *incx,

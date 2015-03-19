@@ -56,7 +56,7 @@ max_time_right = 300e-3;
 
 max_event_len_time = time_right+time_left;
     
-    len_fft=512;
+    len_fft=256;
     
         
 %     freq_left=2000;

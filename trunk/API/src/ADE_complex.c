@@ -29,15 +29,29 @@ ADE_FLOATING_T ADE_cabs(ADE_CPLX_T val)
 
 }
 
+/*************WARNING ********************/
+/* experienced a strange behaviour while using ADE_cset, the output
+returned (temp) is correct inside the function but changes value when stepped
+out of function !!!!!! due to linking without include the header  */
+
 ADE_FLOATING_T ADE_creal(ADE_CPLX_T val)
 {
-    return val.realpart;
+ADE_FLOATING_T temp;
+    temp= val.realpart;
+
+    return temp;
 }
 
 ADE_FLOATING_T ADE_cimag(ADE_CPLX_T val)
 {
-    return val.imagpart;
+
+    ADE_FLOATING_T temp;
+
+    temp = val.imagpart;
+    return temp;
 }
+
+/**********************************/
 
 ADE_CPLX_T ADE_cset(ADE_FLOATING_T initreal,ADE_FLOATING_T initimag)
 {
