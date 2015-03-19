@@ -7,6 +7,7 @@
 #include "headers/ADE_accelerate_framework_wrapper.h"
 #endif
 #include "headers/ADE_nrutil.h"
+#include "headers/ADE_blas_level1.h"
 /**************************** Private prototypes *********************************/
 
 static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,ADE_UINT32_T n_var_per_printrow,ADE_UTILS_ROW_INFO_T row_info, FILE *p_stream);
@@ -342,11 +343,136 @@ ADE_API_RET_T ADE_Utils_memset_float(ADE_FLOATING_T *vec,ADE_UINT32_T len, ADE_F
 
     ADE_API_RET_T ret = ADE_DEFAULT_RET;
     ADE_UINT32_T vec_idx=0;
+    ADE_blas_level1_T *p_blas_l1=NULL;
+
+
+
+    #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
+    ADE_Blas_level1_Init(&p_blas_l1,ADE_REAL);
+    ADE_Blas_level1_setN(p_blas_l1,len);
+    ADE_Blas_level1_setINCX(p_blas_l1,0);
+    ADE_Blas_level1_setINCY(p_blas_l1,1);
+    ADE_Blas_level1_setX(p_blas_l1,&memset_val);
+    ADE_Blas_level1_setY(p_blas_l1,vec);
+    ADE_Blas_level1_copy(p_blas_l1);
+    ADE_Blas_level1_Release(p_blas_l1);
+
+    #elif (ADE_UTILS_IMP==ADE_UTILS_USE_CUSTOM)
 
     for (vec_idx=0; vec_idx<len; vec_idx++)
     {
         vec[vec_idx]=memset_val;
     }
+    #else
+
+        #error (ADE_UTILS_IMP in ADE_Utils_memset_float)
+
+    #endif
+
+    return ret;
+
+}
+
+ADE_API_RET_T ADE_Utils_memcpy_float(ADE_FLOATING_T *p_dst,ADE_FLOATING_T *p_src,ADE_UINT32_T len)
+{
+
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_UINT32_T vec_idx=0;
+    ADE_blas_level1_T *p_blas_l1=NULL;
+
+
+
+    #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
+    ADE_Blas_level1_Init(&p_blas_l1,ADE_REAL);
+    ADE_Blas_level1_setN(p_blas_l1,len);
+    ADE_Blas_level1_setINCX(p_blas_l1,1);
+    ADE_Blas_level1_setINCY(p_blas_l1,1);
+    ADE_Blas_level1_setX(p_blas_l1,p_src);
+    ADE_Blas_level1_setY(p_blas_l1,p_dst);
+    ADE_Blas_level1_copy(p_blas_l1);
+    ADE_Blas_level1_Release(p_blas_l1);
+
+    #elif (ADE_UTILS_IMP==ADE_UTILS_USE_CUSTOM)
+
+    for (vec_idx=0; vec_idx<len; vec_idx++)
+    {
+        p_dst[vec_idx]=p_src[vec_idx];
+    }
+    #else
+
+        #error (ADE_UTILS_IMP in ADE_Utils_memcpy_float)
+
+    #endif
+
+    return ret;
+
+}
+
+ADE_API_RET_T ADE_Utils_memcpy_cplx(ADE_CPLX_T *p_dst,ADE_CPLX_T *p_src,ADE_UINT32_T len)
+{
+
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_UINT32_T vec_idx=0;
+    ADE_blas_level1_T *p_blas_l1=NULL;
+
+
+
+    #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
+    ADE_Blas_level1_Init(&p_blas_l1,ADE_CPLX);
+    ADE_Blas_level1_setN(p_blas_l1,len);
+    ADE_Blas_level1_setINCX(p_blas_l1,1);
+    ADE_Blas_level1_setINCY(p_blas_l1,1);
+    ADE_Blas_level1_setX(p_blas_l1,p_src);
+    ADE_Blas_level1_setY(p_blas_l1,p_dst);
+    ADE_Blas_level1_copy(p_blas_l1);
+    ADE_Blas_level1_Release(p_blas_l1);
+
+    #elif (ADE_UTILS_IMP==ADE_UTILS_USE_CUSTOM)
+
+    for (vec_idx=0; vec_idx<len; vec_idx++)
+    {
+        p_dst[vec_idx]=p_src[vec_idx];
+    }
+    #else
+
+        #error (ADE_UTILS_IMP in ADE_Utils_memcpy_cplx)
+
+    #endif
+
+    return ret;
+
+}
+
+ADE_API_RET_T ADE_Utils_memset_cplx(ADE_CPLX_T *vec,ADE_UINT32_T len, ADE_CPLX_T memset_val)
+{
+
+    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_UINT32_T vec_idx=0;
+    ADE_blas_level1_T *p_blas_l1=NULL;
+
+
+
+    #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
+    ADE_Blas_level1_Init(&p_blas_l1,ADE_CPLX);
+    ADE_Blas_level1_setN(p_blas_l1,len);
+    ADE_Blas_level1_setINCX(p_blas_l1,0);
+    ADE_Blas_level1_setINCY(p_blas_l1,1);
+    ADE_Blas_level1_setX(p_blas_l1,&memset_val);
+    ADE_Blas_level1_setY(p_blas_l1,vec);
+    ADE_Blas_level1_copy(p_blas_l1);
+    ADE_Blas_level1_Release(p_blas_l1);
+
+    #elif (ADE_UTILS_IMP==ADE_UTILS_USE_CUSTOM)
+
+    for (vec_idx=0; vec_idx<len; vec_idx++)
+    {
+        vec[vec_idx]=ADE_cset(memset_val.realpart,memset_val.imagpart);
+    }
+    #else
+
+        #error (ADE_UTILS_IMP in ADE_Utils_memset_cplx)
+
+    #endif
 
     return ret;
 

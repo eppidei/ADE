@@ -97,7 +97,6 @@ ADE_FLOATING_T frame_time_len = 300e-3;
 ADE_UINT32_T frame_len = floor(frame_time_len*Fs_i+0.5)-1;
 ADE_UINT32_T frame_len_mat = 0,n_frames=0;
 unsigned long seed= 5489;
-char *input_type="matlab";
 double *p_buf_mat=NULL;
 
 ADE_FLOATING_T *p_pos_event_idx=NULL,*p_neg_event_idx=NULL;
@@ -118,9 +117,8 @@ p_buff=(ADE_FLOATING_T *)calloc(frame_len,sizeof(ADE_FLOATING_T));
 
 
 ret =  ADE_Snap_Init(&p_snap, frame_len, Fs_i, n_pow_slots_i, n_max_indexes_i, time_left_i, time_right_i, fft_len_i);
+#if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
 
-if (!strcmp(input_type,"matlab"))
- {
     frame_len_mat=ADE_Matlab_GetScalar(p_snap->p_mat,"frame_len");
     if (frame_len_mat!=frame_len)
     {
@@ -158,35 +156,40 @@ if (!strcmp(input_type,"matlab"))
         printf("ERROR : adjust n_max_indexes_i with matlab for comparison matlab is %d \n",n_max_indexes_mat);
         return -11;
     }
- }
 
+#endif
 ret = ADE_Snap_SetInbuff(p_snap, p_buff);
 
 ret = ADE_Snap_Configure(p_snap);
+
+#if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
 n_frames=ADE_Matlab_GetScalar(p_snap->p_mat,"n_frames");
+#else
+n_frames=100;
+
+#endif
 
 p_pos_event_idx=(ADE_FLOATING_T *)calloc(frame_len*n_max_indexes_i,sizeof(ADE_FLOATING_T));
 p_neg_event_idx=(ADE_FLOATING_T *)calloc(frame_len*n_max_indexes_i,sizeof(ADE_FLOATING_T));
 for (cycles_idx=0;cycles_idx<n_frames;cycles_idx++)
 {
-    if (!strcmp(input_type,"rand"))
-    {
-        for (j=0;j< frame_len;j++)
-        {
-            p_buff[j]=genrand_real4();
-        }
-    }
-    else if (!strcmp(input_type,"matlab"))
-    {
 
+#if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
         p_buf_mat=ADE_Matlab_GetDataPointer(p_snap->p_mat,"actual_samples")+cycles_idx*p_snap->buff_len;
-
         for (j=0;j< frame_len;j++)
         {
             p_buff[j]=p_buf_mat[j];
         }
+    #else
+    for (j=0;j< frame_len;j++)
+        {
+            p_buff[j]=genrand_real4();
+        }
+#endif
 
-    }
+
+
+
 
 
 
@@ -210,6 +213,7 @@ for (i=0;i<n_max_indexes_i;i++)
 }
 
 }
+#if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
 ADE_Matlab_PutVarintoWorkspace(p_snap->p_mat, p_pos_event_idx, "pos_event_idx_C", 1, n_max_indexes_i*n_frames, ADE_REAL);
 ADE_Matlab_PutVarintoWorkspace(p_snap->p_mat, p_neg_event_idx, "neg_event_idx_C", 1, n_max_indexes_i*n_frames, ADE_REAL);
 /*** Run Matlab algorithm****/
@@ -217,7 +221,7 @@ ADE_Matlab_launch_script_segment(p_snap->p_mat,"Snap");
 /* Compare Results */
 ADE_Matlab_Evaluate_StringnWait(p_snap->p_mat, "figure;hold on;plot(pos_event_idx_C,'or');plot(positive_events_idx,'+b');hold off;");
 ADE_Matlab_Evaluate_StringnWait(p_snap->p_mat, "figure;hold on;plot(neg_event_idx_C,'or');plot(negative_events_idx,'+b');hold off;");
-
+#endif
 
 /*** Free Mem ***/
 

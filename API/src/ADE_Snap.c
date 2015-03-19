@@ -1093,9 +1093,11 @@ for (i=0;i<n_indx;i++)
         return ADE_E46;
     }
 
-    memset(dp_segments[i],0,extracted_allocated_len*sizeof(ADE_FLOATING_T));
+    ADE_Utils_memset_float(dp_segments[i],extracted_allocated_len,0);
+    //memset(dp_segments[i],0,extracted_allocated_len*sizeof(ADE_FLOATING_T));
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
-    memcpy(dp_segments[i],&(p_in[sample_left]),actual_calc_len*sizeof(ADE_FLOATING_T));
+    ADE_Utils_memcpy_float(dp_segments[i],&(p_in[sample_left]),actual_calc_len);
+   // memcpy(dp_segments[i],&(p_in[sample_left]),actual_calc_len*sizeof(ADE_FLOATING_T));
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
     for (j=0;j<actual_calc_len;j++)
     {
