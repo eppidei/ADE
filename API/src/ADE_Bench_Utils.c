@@ -519,7 +519,7 @@ void fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,AD
     #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
 
         p_desplit=malloc(p_fft->buff_len*sizeof(ADE_FFTCPLX_T));
-        ADE_Utils_Split2Complex( &(p_fft->split_out),1,(ADE_CPLX_T*)p_desplit,1,p_fft->buff_len);
+        ADE_Utils_Split2Complex( &(p_fft->split_out),1,(ADE_CPLX_T*)p_desplit,2,p_fft->buff_len);
 
     #endif
 
@@ -744,7 +744,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
              #if ( ADE_FFT_IMP==ADE_USE_FFTW )
                 memcpy(p_fft_custom,p_in,size_fft_in);
             #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-                ADE_Utils_Split2Complex( &(p_fft->split_in),1,(ADE_CPLX_T *)p_fft_custom,1,buff_len);
+                ADE_Utils_Split2Complex( &(p_fft->split_in),1,(ADE_CPLX_T *)p_fft_custom,2,buff_len);
             #endif
 
         }
