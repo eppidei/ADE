@@ -319,7 +319,6 @@ static ADE_VOID_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow)
     ADE_Blow_Iir_Config(p_blow);
     ADE_Blow_Iir2_Config(p_blow);
     ADE_Blow_Expander_Config(p_blow);
-    ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len);
 
 }
 
@@ -791,7 +790,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
       //  printf("CHECKs INPUTS STILL NEED TO BE IMPLEMENTED in ADE_Blow_Step\n");
 
     #endif
- //ret = ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len);
+ ret = ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len);
 
  #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
