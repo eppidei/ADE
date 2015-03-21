@@ -46,12 +46,6 @@
 		<Compiler>
 			<Add option="-Wall -Wextra" />
 		</Compiler>
-		<Unit filename="main.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../../src/ADE.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="../../../src/ADE_Blow.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -67,6 +61,9 @@
 		<Unit filename="../../../src/ADE_blas_level2.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_complex.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_fft.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -76,24 +73,29 @@
 		<Unit filename="../../../src/ADE_iir.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_nrutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_polyfit.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/headers/ADE.h" />
 		<Unit filename="../../../src/headers/ADE_Blow.h" />
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_Utils.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level1.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level2.h" />
 		<Unit filename="../../../src/headers/ADE_blas_wrapper.h" />
+		<Unit filename="../../../src/headers/ADE_complex.h" />
 		<Unit filename="../../../src/headers/ADE_defines.h" />
 		<Unit filename="../../../src/headers/ADE_errors.h" />
 		<Unit filename="../../../src/headers/ADE_fft.h" />
 		<Unit filename="../../../src/headers/ADE_fir.h" />
 		<Unit filename="../../../src/headers/ADE_iir.h" />
+		<Unit filename="../../../src/headers/ADE_nrutil.h" />
 		<Unit filename="../../../src/headers/ADE_polyfit.h" />
 		<Unit filename="../../../src/headers/ADE_typedefs.h" />
 		<Unit filename="../../../src/headers/cblas.h" />
+		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
