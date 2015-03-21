@@ -11,7 +11,7 @@ RM:=rm -f
 MKDIR:=mkdir -p
 CC:=gcc
 CCFLAGS:=-g -Wall -Wextra
-MAIN:=main.c
+MAIN:=main.cpp
 PROJECT_NAME:=fir_tb
 	
 OBJ=    $(PRJPATH)/obj/Debug/ADE_fir.o \

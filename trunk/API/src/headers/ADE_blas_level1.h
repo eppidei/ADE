@@ -25,7 +25,9 @@ struct ADE_blas_level1_S
     ADE_BLAS_LEVEL1_FCN_TYPE3_T blas_level1_fcn_type3;
 };
 
-
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
 ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type );
 ADE_VOID_T ADE_Blas_level1_Release (ADE_blas_level1_T* p_blas_l1);
@@ -50,5 +52,10 @@ ADE_FLOATING_T ADE_Blas_level1_dot(ADE_blas_level1_T* p_blas_l1);
 ADE_CPLX_T ADE_Blas_level1_dotc(ADE_blas_level1_T* p_blas_l1);
 ADE_CPLX_T ADE_Blas_level1_dotu(ADE_blas_level1_T* p_blas_l1);
 ADE_FLOATING_T ADE_Blas_level1_nrm2(ADE_blas_level1_T* p_blas_l1);
+
+#ifdef __cplusplus
+    }   /* extern "C" */
+#endif
+
 
 #endif //_ADE_BLAS_LEVEL1_H

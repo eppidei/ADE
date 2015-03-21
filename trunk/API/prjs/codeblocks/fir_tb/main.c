@@ -90,10 +90,10 @@ outbuff=calloc(input_len,sizeof(double));
 outbuff2=calloc(input_len2,sizeof(double));
 /********** CONFIGURE fir **************/
 
-ADE_Fir_Init(&p_fir, fir_order,input_len);
+ADE_Fir_Init(&p_fir, fir_order,input_len,ADE_FIR_TRASP_II);
 ADE_Fir_setNum(p_fir,ADE_Matlab_GetDataPointer(p_mat,"fir_coeffs"));
 //ADE_Matlab_Configure_fir_sos(p_mat,p_fir, "sosmat", "scaleval");
-ADE_Fir_setFilt_Implementation(p_fir,trasp_II_blas);
+//ADE_Fir_setFilt_Implementation(p_fir,trasp_II_blas);
 
 /************ LAUNCH MATLAB AND C UNIT TEST 1*************/
 ADE_Matlab_launch_script_segment(p_mat,"Unit Test 1");
