@@ -20,7 +20,9 @@ struct ADE_IIR_S
     ADE_IIR_IMP_CHOICE_T filt_imp_type;
     ADE_FILTER_IMPLEMENTATION_T filter_func;
 };
-
+#ifdef __cplusplus
+    extern "C" {
+#endif
 /******** Init Methods ***********/
 ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_UINT32_T buff_len,ADE_IIR_IMP_CHOICE_T filt_imp_type);
 ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir);
@@ -35,6 +37,9 @@ ADE_API_RET_T ADE_Iir_setOutbuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
 /******** Processing Methods **********/
 ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir);
 
+#ifdef __cplusplus
+    }   /* extern "C" */
+#endif
 
 
 #endif //_ADE_IIR_H
