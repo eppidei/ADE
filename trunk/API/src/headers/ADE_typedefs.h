@@ -105,11 +105,11 @@ typedef ADE_API_RET_T (*ADE_BLAS_LEVEL3_FCN_TYPE1_T)(ADE_blas_level3_T*);
 /******************************* IIR **************************/
 typedef struct ADE_IIR_S ADE_IIR_T;
 typedef ADE_API_RET_T (*ADE_FILTER_IMPLEMENTATION_T)(ADE_IIR_T*);
-typedef enum  {trasp_II,trasp_II_blas} ADE_FILTER_IMP_CHOICE_T;
+typedef enum  {ADE_IIR_TRASP_II_B} ADE_IIR_IMP_CHOICE_T;
 /******************************* FIR **************************/
 typedef struct ADE_FIR_S ADE_FIR_T;
 typedef ADE_API_RET_T (*ADE_FIR_FILTER_IMPLEMENTATION_T)(ADE_FIR_T*);
-
+typedef enum  {ADE_FIR_TRASP_II,ADE_FIR_OVSA} ADE_FIR_IMP_CHOICE_T;
 /**************************** POLYFIT ****************************/
 typedef struct ADE_POLYFIT_S ADE_POLYFIT_T;
 

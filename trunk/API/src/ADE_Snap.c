@@ -351,7 +351,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 
 
         /***************** ALLOC CC IIR *********************/
-        iir_ret=ADE_Iir_Init(&(p_this->p_iir),iir_n_sos,buff_len);
+        iir_ret=ADE_Iir_Init(&(p_this->p_iir),iir_n_sos,buff_len,ADE_IIR_TRASP_II_B);
         if (iir_ret<0)
         {
             ADE_PRINT_ERRORS(ADE_RETCHECKS,iir_ret,"%d",ADE_Snap_Init);

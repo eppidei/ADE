@@ -105,7 +105,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOAT
 
             /******************* IIR ALLOC **************************/
 
-            ret = ADE_Iir_Init(&(pthis->p_iir), n_sos_sections_iir, buff_len);
+            ret = ADE_Iir_Init(&(pthis->p_iir), n_sos_sections_iir, buff_len,ADE_IIR_TRASP_II_B);
 
             if (ret<0)
             {
@@ -115,7 +115,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOAT
 
             /******************* IIR2 ALLOC **************************/
 
-            ret = ADE_Iir_Init(&(pthis->p_iir2), n_sos_sections_iir2, buff_len);
+            ret = ADE_Iir_Init(&(pthis->p_iir2), n_sos_sections_iir2, buff_len,ADE_IIR_TRASP_II_B);
 
             if (ret<0)
             {
@@ -218,7 +218,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOAT
 
              /**************** FIR ALLOC (depends on static params) *****************************/
 
-            ret = ADE_Fir_Init(&(pthis->p_fir), pthis->running_pow_win_fast, buff_len);
+            ret = ADE_Fir_Init(&(pthis->p_fir), pthis->running_pow_win_fast, buff_len,ADE_FIR_TRASP_II);
             if (ret<0)
             {
                 ADE_PRINT_ERRORS(ADE_MEM,ret,"%d",ADE_Blow_Init);
@@ -319,6 +319,7 @@ static ADE_VOID_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow)
     ADE_Blow_Iir_Config(p_blow);
     ADE_Blow_Iir2_Config(p_blow);
     ADE_Blow_Expander_Config(p_blow);
+    ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len);
 
 }
 
@@ -600,9 +601,9 @@ static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
      ADE_Fir_setInbuff(p_blow->p_fir,p_blow->p_in_squared);
      ADE_Fir_setOutbuff(p_blow->p_fir,p_blow->p_pow_fast);
 
-     /*** SET FILTER IMPLEMENTATION ***/
-
-     ADE_Fir_setFilt_Implementation(p_blow->p_fir,trasp_II);
+//     /*** SET FILTER IMPLEMENTATION ***/
+//
+//     ADE_Fir_setFilt_Implementation(p_blow->p_fir,ADE_FIR_TRASP_II);
 
 
     return ADE_DEFAULT_RET;
@@ -653,7 +654,7 @@ ADE_Iir_setDenoms( p_blow->p_iir, &(*denoms));
 
 ADE_Iir_setInbuff(p_blow->p_iir,p_blow->p_in_squared);
 ADE_Iir_setOutbuff(p_blow->p_iir,p_blow->p_pow_slow);
-ADE_Iir_setFilt_Implementation(p_blow->p_iir,trasp_II);
+//ADE_Iir_setFilt_Implementation(p_blow->p_iir,ADE_FIR_TRASP_II);
 
 
     return ADE_DEFAULT_RET;
@@ -703,7 +704,7 @@ ADE_Iir_setDenoms( p_blow->p_iir2, &(*denoms));
 #endif
 ADE_Iir_setInbuff(p_blow->p_iir2,p_blow->p_pow_slow);
 ADE_Iir_setOutbuff(p_blow->p_iir2,p_blow->p_pow_slow_filtered);
-ADE_Iir_setFilt_Implementation(p_blow->p_iir2,trasp_II);
+//ADE_Iir_setFilt_Implementation(p_blow->p_iir2,ADE_FIR_TRASP_II);
     return ADE_DEFAULT_RET;
 }
 
@@ -790,7 +791,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
       //  printf("CHECKs INPUTS STILL NEED TO BE IMPLEMENTED in ADE_Blow_Step\n");
 
     #endif
- ret = ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len);
+ //ret = ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len);
 
  #if ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE
 
