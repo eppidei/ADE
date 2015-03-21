@@ -239,8 +239,9 @@ static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_F
     ADE_FLOATING_T gain = (p_fir-> gain);
     ADE_FLOATING_T *state = (p_fir-> p_state);
     ADE_UINT32_T len_frame = p_fir->buff_len;
-
+   #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
     ADE_blas_level1_T *p_Blas_L1 = p_fir->p_Blas_L1;
+    #endif
     //ADE_FLOATING_T *temp_buffer = calloc(order,sizeof(ADE_FLOATING_T));
     ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
     ADE_FLOATING_T ALPHA=0;

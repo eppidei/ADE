@@ -169,11 +169,24 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
         }
            /*********** Temp buffer allocation ***********/
 
-        pthis->p_tempbuff=calloc(order,sizeof(ADE_FLOATING_T));
-        if (pthis->p_tempbuff==NULL)
+        pthis->dp_tempbuff=(ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
+        if (pthis->dp_tempbuff==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->p_tempbuff,"%d",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff,"%d",ADE_Iir_Init);
             return ADE_E3;
+        }
+        for (i=0;i<(n_SOS_sections);i++)
+        {
+            pthis->dp_tempbuff[i] = calloc(order,sizeof(ADE_FLOATING_T));
+
+            if (pthis->dp_tempbuff[i]==NULL)
+            {
+               // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+                    ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff[i],"%p",ADE_Iir_Init);
+               // #endif
+                return ADE_E3;
+            }
+
         }
 
         /************ BLAS ALLOC ***************/
@@ -193,8 +206,8 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             ADE_Blas_level1_setN(pthis->dp_Blas_L1[i],order);
             ADE_Blas_level1_setINCX(pthis->dp_Blas_L1[i],1);
             ADE_Blas_level1_setINCY(pthis->dp_Blas_L1[i],1);
-            ADE_Blas_level1_setY(pthis->dp_Blas_L1[i],pthis->p_tempbuff);
-            ADE_Blas_level1_setX(pthis->dp_Blas_L1[i],&((pthis-> dp_nums)[i])[0+1]);
+            //ADE_Blas_level1_setY(pthis->dp_Blas_L1[i],pthis->p_tempbuff);
+            //ADE_Blas_level1_setX(pthis->dp_Blas_L1[i],&((pthis-> dp_nums)[i])[0+1]);
         }
 
 
@@ -249,6 +262,10 @@ ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir)
     {
       ADE_CHECKNFREE( (p_iir->dp_denoms)[i] );
     }
+    for (i=0;i<( p_iir->n_SOS_sections);i++)
+    {
+      ADE_CHECKNFREE( (p_iir->dp_tempbuff)[i] );
+    }
       #if (ADE_IIR_IMP==ADE_IIR_USE_BLAS)
     for (i=0;i<( p_iir->n_SOS_sections);i++)
     {
@@ -261,7 +278,7 @@ ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir)
     ADE_CHECKNFREE(p_iir->dp_nums);
     ADE_CHECKNFREE(p_iir->dp_denoms);
     ADE_CHECKNFREE(p_iir->p_gains);
-    ADE_CHECKNFREE(p_iir->p_tempbuff);
+    ADE_CHECKNFREE(p_iir->dp_tempbuff);
     ADE_CHECKNFREE(p_iir);
 }
 
@@ -484,7 +501,7 @@ if (*(p_iir->dp_states)==NULL)
 //
  static ADE_API_RET_T filter_DII_T_b (ADE_IIR_T* p_iir)//(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame,ADE_blas_level1_T *p_Blas_L1;)
 {
-    ADE_UINT32_T k=0;
+    ADE_UINT32_T k=0,i=0;
     ADE_UINT32_T active_section = p_iir->active_section;
     ADE_FLOATING_T *in = (p_iir-> dp_section_buffers)[active_section];
     ADE_FLOATING_T *out = (p_iir-> dp_section_buffers)[active_section+1];
@@ -494,8 +511,10 @@ if (*(p_iir->dp_states)==NULL)
     ADE_FLOATING_T gain = (p_iir-> p_gains)[active_section];
     ADE_FLOATING_T *state = (p_iir-> dp_states)[active_section];
     ADE_UINT32_T len_frame = p_iir->buff_len;
+    #if (ADE_IIR_IMP==ADE_IIR_USE_BLAS)
     ADE_blas_level1_T *p_Blas_L1 = p_iir->dp_Blas_L1[active_section];
-    ADE_FLOATING_T *temp_buffer = p_iir->p_tempbuff;//calloc(order,sizeof(ADE_FLOATING_T));
+    #endif
+    ADE_FLOATING_T *temp_buffer = p_iir->dp_tempbuff[active_section];//calloc(order,sizeof(ADE_FLOATING_T));
     ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
     ADE_FLOATING_T ALPHA=0.0;
 
@@ -506,8 +525,8 @@ if (*(p_iir->dp_states)==NULL)
         out[k] = gain*b[0]*(in[k])+state[0];
         memcpy(temp_buffer,&state[0+1],temp_buff_size);
         /*************/
-      //  ADE_Blas_level1_setY(p_Blas_L1,temp_buffer);
-      //  ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
+        ADE_Blas_level1_setY(p_Blas_L1,temp_buffer);
+        ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
         ALPHA=gain*in[k];
         ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
         ADE_Blas_level1_axpy(p_Blas_L1);

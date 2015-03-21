@@ -15,7 +15,7 @@ struct ADE_IIR_S
     ADE_FLOATING_T **dp_states; //allocati dentro
     ADE_FLOATING_T *p_gains; //allocati fuori
     ADE_FLOATING_T **dp_section_buffers; //allocati dentro
-    ADE_FLOATING_T *p_tempbuff; //allocati dentro
+    ADE_FLOATING_T **dp_tempbuff; //allocati dentro tanti quante le sezione per rendere indipendenti le strutture (threading facilitato??)
     ADE_blas_level1_T **dp_Blas_L1;
     ADE_IIR_IMP_CHOICE_T filt_imp_type;
     ADE_FILTER_IMPLEMENTATION_T filter_func;
