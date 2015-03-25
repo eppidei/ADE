@@ -6,4 +6,5 @@
    magari dividere tra funzione propria e associazione puntatori generici con allocati dall'oggetto
 6) wrappare allocazioni di memoria
 7) rivedere blas filtering (no riutilizzo blas per easy threading)
-8) fare classe resampling
+8) separati i metodi privati in PrivateMethod and doPrivateMethods dove nel primo si associano membri oggetto a parametri
+   e l'altra funzione vera e propria (legata a quello che volevo dire al punto 5)

@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "headers/ADE_Error_Handler.h"
 
 
 
@@ -17,7 +18,7 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
     ADE_blas_level1_T *p_Blas_L1;
     ADE_FLOATING_T default_gain = 1.0;
     ADE_FLOATING_T *p_state=NULL;
-    ADE_API_RET_T ret=ADE_DEFAULT_RET;
+    ADE_API_RET_T ret=ADE_RET_SUCCESS;
 
 
 
@@ -36,8 +37,9 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
         p_state=calloc(fir_order+1,sizeof(ADE_FLOATING_T));
         if (p_state==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,p_state,"%d",ADE_Fir_Init);
-            return ADE_E17;
+            //ADE_PRINT_ERRORS(ADE_MEM,p_state,"%d",ADE_Fir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,p_state,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;//17;
         }
         pthis->p_state=p_state;
 
@@ -45,8 +47,9 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
         pthis->p_num=calloc(fir_order+1,sizeof(ADE_FLOATING_T));
         if (pthis->p_num==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->p_num,"%d",ADE_Fir_Init);
-            return ADE_E17;
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->p_num,"%d",ADE_Fir_Init);
+             ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,pthis->p_num,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;//17;
         }
 
         /********* Blas1 Allocation ***************/
@@ -55,9 +58,9 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
         {
             #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
             ADE_Blas_level1_Init(&p_Blas_L1,ADE_REAL);
-             ADE_Blas_level1_setN(p_Blas_L1,fir_order);
-            ADE_Blas_level1_setINCX(p_Blas_L1,1);
-            ADE_Blas_level1_setINCY(p_Blas_L1,1);
+             ADE_Blas_level1_SetN(p_Blas_L1,fir_order);
+            ADE_Blas_level1_SetINCX(p_Blas_L1,1);
+            ADE_Blas_level1_SetINCY(p_Blas_L1,1);
 
             pthis->p_Blas_L1=p_Blas_L1;
             #endif
@@ -66,8 +69,9 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
         else
         {
 
-             ADE_PRINT_ERRORS(ADE_INCHECKS,pthis->filt_imp_type,"%d",ADE_Fir_Init);
-             return ADE_E13;
+             //ADE_PRINT_ERRORS(ADE_INCHECKS,pthis->filt_imp_type,"%d",ADE_Fir_Init);
+             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Init,pthis->filt_imp_type,"%d",(FILE*)ADE_STD_STREAM);
+             return ADE_RET_ERROR;//13;
 
         }
 
@@ -76,22 +80,23 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
         pthis->p_tempbuff=calloc(fir_order,sizeof(ADE_FLOATING_T));
         if (pthis->p_tempbuff==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->p_tempbuff,"%d",ADE_Fir_Init);
-            return ADE_E17;
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->p_tempbuff,"%d",ADE_Fir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,pthis->p_tempbuff,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;//17;
         }
 
          *dp_this=pthis;
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_MEM,pthis,"%p",ADE_Fir_Init);
-        return ADE_E17;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,pthis,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//17;
     }
 
 
 
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 ADE_VOID_T ADE_Fir_Release(ADE_FIR_T* p_fir)
 {
@@ -110,21 +115,21 @@ ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num)
 {
     if (p_num==NULL)
     {
-     ADE_PRINT_ERRORS(ADE_INCHECKS,p_num,"%p",ADE_Fir_setNum);
-     return ADE_E13;
+     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,setNum,p_num,"%p",(FILE*)ADE_STD_STREAM);
+     return ADE_RET_ERROR;//13;
     }
 
     if (p_fir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_fir,"%p",ADE_Fir_setNum);
-        return ADE_E13;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,setNum,p_fir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//13;
 
     }
 
     //memcpy(p_fir->p_num,p_num,(p_fir->filter_order+1)*sizeof(ADE_FLOATING_T));
     ADE_Utils_memcpy_float(p_fir->p_num,p_num,(p_fir->filter_order+1));
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
 
@@ -132,52 +137,52 @@ ADE_API_RET_T ADE_Fir_ResetState(ADE_FIR_T* p_fir,ADE_FLOATING_T rst_val)
 {
     if (p_fir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_fir,"%p",ADE_Fir_ResetState);
-        return ADE_E13;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,ResetState,p_fir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//13;
 
     }
     ADE_Utils_memset_float(p_fir->p_state,(p_fir->filter_order+1),rst_val);
    // memset(p_fir->p_state,0,(p_fir->filter_order+1)*sizeof(ADE_FLOATING_T));
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Fir_setInbuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
+ADE_API_RET_T ADE_Fir_SetInBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
 {
     if (p_buff==NULL)
     {
-     ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Fir_setInbuff);
-     return ADE_E13;
+     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetInBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
+     return ADE_RET_ERROR;//13;
     }
 
     if (p_fir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_fir,"%p",ADE_Fir_setInbuff);
-        return ADE_E13;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetInBuff,p_fir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//13;
 
     }
     p_fir->p_in=p_buff;
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Fir_setOutbuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
+ADE_API_RET_T ADE_Fir_SetOutBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
 {
      if (p_buff==NULL)
     {
-     ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Fir_setInbuff);
-     return ADE_E13;
+     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetOutBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
+     return ADE_RET_ERROR;//13;
     }
 
     if (p_fir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_fir,"%p",ADE_Fir_setInbuff);
-        return ADE_E13;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetOutBuff,p_fir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//13;
 
     }
     p_fir->p_out=p_buff;
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 
@@ -191,25 +196,25 @@ ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir)
 
 if ((p_fir->p_state)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_fir->p_state,"%p",ADE_Fir_Step);
-    return ADE_E13;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->p_state,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//13;
 }
 
 if ((p_fir->p_in)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->p_in),"%p",ADE_Fir_Step);
-    return ADE_E13;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->p_in,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//13;
 }
 if ((p_fir->p_out)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->p_out),"%p",ADE_Fir_Step);
-    return ADE_E13;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->p_out,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//13;
 }
 
 if ((p_fir->filter_func)==NULL)
 {
-     ADE_PRINT_ERRORS(ADE_INCHECKS,(p_fir->filter_func),"%p",ADE_Fir_Step);
-    return ADE_E13;
+     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->filter_func,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//13;
 
 }
 
@@ -220,7 +225,7 @@ if ((p_fir->filter_func)==NULL)
 
 	//memcpy(p_fir->p_out ,(p_fir-> dp_section_buffers)[p_fir->n_SOS_sections],p_fir->buff_len*sizeof(ADE_FLOATING_T));
 
-	return ADE_DEFAULT_RET;
+	return ADE_RET_SUCCESS;
 
 }
 
@@ -255,19 +260,14 @@ static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_F
         out[k] = gain*b[0]*(in[k])+state[0];
         memcpy(p_temp_buffer,&state[0+1],temp_buff_size);
         /*************/
-        ADE_Blas_level1_setY(p_Blas_L1,p_temp_buffer);
-        ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
+        ADE_Blas_level1_SetY(p_Blas_L1,p_temp_buffer);
+        ADE_Blas_level1_SetX(p_Blas_L1,&b[0+1]);
         ALPHA=gain*in[k];
-        ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
+        ADE_Blas_level1_SetALPHA(p_Blas_L1,&ALPHA);
         ADE_Blas_level1_axpy(p_Blas_L1);
         /*****************/
         memcpy(&state[0],p_temp_buffer,temp_buff_size);
         memset(p_temp_buffer,0,temp_buff_size);
-
-//        for (i=0;i<(order);i++)// lostate deve essere inizializzato a 0 e lungo pari a order+1 (es. biquad ordine 2)
-//        {
-//            state[i]=b[i+1]*(in[k])+state[i+1]-a[i+1]*(out[k]);
-//        }
 
     }
 
@@ -295,44 +295,9 @@ static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_F
 
     //ADE_CHECKNFREE(temp_buffer);
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
-
-//static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame,ADE_blas_level1_T *p_Blas_L1;)
-//{
-//    ADE_UINT32_T i=0,k=0;
-//    //ADE_UINT32_T active_section = p_iir->active_section;
-//    ADE_FLOATING_T *in = p_fir->p_in;
-//    ADE_FLOATING_T *out = p_fir->p_out;
-//    //ADE_FLOATING_T *a = (p_iir-> dp_denoms)[active_section];
-//    ADE_UINT32_T order = p_fir->filter_order;
-//    ADE_FLOATING_T *b = (p_fir-> p_num);
-//    ADE_FLOATING_T gain = (p_fir-> gain);
-//    ADE_FLOATING_T *state = (p_fir-> p_state);
-//    ADE_UINT32_T len_frame = p_fir->buff_len;
-//
-//
-//
-//
-//    for (k=0;k<len_frame;k++)
-//    {
-//
-//
-//        out[k] = gain*b[0]*(in[k])+state[0];
-//
-//
-//
-//        for (i=0;i<(order);i++)// lostate deve essere inizializzato a 0 e lungo pari a order+1 (es. biquad ordine 2)
-//        {
-//            state[i]=gain*b[i+1]*(in[k])+state[i+1];
-//        }
-//
-//    }
-//
-//    return ADE_DEFAULT_RET;
-//
-//}
 
 static ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FIR_IMP_CHOICE_T filt_imp_type)
 {
@@ -344,10 +309,10 @@ static ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FIR_IMP
    else
    {
 
-        ADE_PRINT_ERRORS(ADE_INCHECKS,filt_imp_type,"%d",ADE_Fir_setFilt_Implementation);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,setFilt_Implementation,filt_imp_type,"%d",(FILE*)ADE_STD_STREAM);
 
-            return ADE_E13;
+            return ADE_RET_ERROR;//13;
    }
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }

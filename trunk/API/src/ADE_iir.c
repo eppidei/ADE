@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "headers/ADE_Error_Handler.h"
+#include "headers/ADE_Utils.h"
 
 
 
@@ -46,9 +48,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         if (pthis->p_gains==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->p_gains,"%p",ADE_Iir_Init);
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->p_gains,"%p",ADE_Iir_Init);
+             ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->p_gains,"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
         }
 
         /************ NUMS ALLOC ***************/
@@ -59,9 +62,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         if (pthis->dp_nums==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_nums,"%p",ADE_Iir_Init);
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_nums,"%p",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_nums,"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
         }
 
 
@@ -71,9 +75,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
             if ( (pthis->dp_nums)[i]==NULL)
             {
-            ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_nums)[i],"%p",ADE_Iir_Init);
+            //ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_nums)[i],"%p",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_nums[i],"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
             }
 
         }
@@ -86,9 +91,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         if (pthis->dp_denoms==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_denoms,"%p",ADE_Iir_Init);
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_denoms,"%p",ADE_Iir_Init);
                // #endif
-                return ADE_E3;
+                ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_nums[i],"%p",(FILE*)ADE_STD_STREAM);
+                return ADE_RET_ERROR;//3;
         }
 
         for (i=0;i<(n_SOS_sections);i++)
@@ -97,9 +103,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
              if ( (pthis->dp_denoms)[i]==NULL)
             {
-            ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_denoms)[i],"%p",ADE_Iir_Init);
+            //ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_denoms)[i],"%p",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_denoms[i],"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
             }
 
         }
@@ -112,9 +119,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         if (pthis->dp_section_buffers==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_section_buffers,"%p",ADE_Iir_Init);
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_section_buffers,"%p",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_section_buffers,"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
         }
 
         for (i=0;i<(n_SOS_sections+1);i++)
@@ -129,9 +137,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             else
             {
                // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-                ADE_PRINT_ERRORS(ADE_MEM,p_sec_buff,"%p",ADE_Iir_Init);
+                //ADE_PRINT_ERRORS(ADE_MEM,p_sec_buff,"%p",ADE_Iir_Init);
+                ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,p_sec_buff,"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
             }
 
 
@@ -145,9 +154,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         if (pthis->dp_states==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_states,"%p",ADE_Iir_Init);
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_states,"%p",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_states,"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
         }
 
         for (i=0;i<(n_SOS_sections);i++)
@@ -161,9 +171,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             else
             {
                // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-                    ADE_PRINT_ERRORS(ADE_MEM,p_states,"%p",ADE_Iir_Init);
+                    //ADE_PRINT_ERRORS(ADE_MEM,p_states,"%p",ADE_Iir_Init);
+                    ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,p_states,"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
             }
 
         }
@@ -172,8 +183,9 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
         pthis->dp_tempbuff=(ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
         if (pthis->dp_tempbuff==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff,"%d",ADE_Iir_Init);
-            return ADE_E3;
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff,"%d",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_tempbuff,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;//3;
         }
         for (i=0;i<(n_SOS_sections);i++)
         {
@@ -182,9 +194,10 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
             if (pthis->dp_tempbuff[i]==NULL)
             {
                // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-                    ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff[i],"%p",ADE_Iir_Init);
+                    //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff[i],"%p",ADE_Iir_Init);
+                    ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_tempbuff[i],"%p",(FILE*)ADE_STD_STREAM);
                // #endif
-                return ADE_E3;
+                return ADE_RET_ERROR;//3;
             }
 
         }
@@ -196,18 +209,19 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
          if (pthis->dp_Blas_L1==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_Blas_L1,"%p",ADE_Iir_Init);
-            return ADE_E3;
+            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_Blas_L1,"%p",ADE_Iir_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_Blas_L1,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;//3;
         }
 
          for (i=0;i<(n_SOS_sections);i++)
         {
             ADE_Blas_level1_Init(&(pthis->dp_Blas_L1[i]),ADE_REAL);
-            ADE_Blas_level1_setN(pthis->dp_Blas_L1[i],order);
-            ADE_Blas_level1_setINCX(pthis->dp_Blas_L1[i],1);
-            ADE_Blas_level1_setINCY(pthis->dp_Blas_L1[i],1);
-            //ADE_Blas_level1_setY(pthis->dp_Blas_L1[i],pthis->p_tempbuff);
-            //ADE_Blas_level1_setX(pthis->dp_Blas_L1[i],&((pthis-> dp_nums)[i])[0+1]);
+            ADE_Blas_level1_SetN(pthis->dp_Blas_L1[i],order);
+            ADE_Blas_level1_SetINCX(pthis->dp_Blas_L1[i],1);
+            ADE_Blas_level1_SetINCY(pthis->dp_Blas_L1[i],1);
+            //ADE_Blas_level1_SetY(pthis->dp_Blas_L1[i],pthis->p_tempbuff);
+            //ADE_Blas_level1_SetX(pthis->dp_Blas_L1[i],&((pthis-> dp_nums)[i])[0+1]);
         }
 
 
@@ -229,14 +243,15 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
     else
     {
 
-        ADE_PRINT_ERRORS(ADE_MEM,pthis,"%p",ADE_Iir_Init);
-        return  ADE_E3;
+        //ADE_PRINT_ERRORS(ADE_MEM,pthis,"%p",ADE_Iir_Init);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis,"%p",(FILE*)ADE_STD_STREAM);
+        return  ADE_RET_ERROR;//3;
 
     }
 
 
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 
@@ -286,21 +301,23 @@ ADE_API_RET_T ADE_Iir_setGains(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_gains)
 {
     if (p_gains==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_gains,"%p",ADE_Iir_setGains);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_gains,"%p",ADE_Iir_setGains);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setGains,p_gains,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
     if (p_iir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setGains);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setGains);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setGains,p_iir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
 
         memcpy((p_iir->p_gains),p_gains,p_iir->n_SOS_sections*sizeof(ADE_FLOATING_T));
 
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums)
 {
@@ -308,14 +325,16 @@ ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums)
 
     if (p_iir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setNums);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setNums);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setNums,p_iir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
     if (dp_nums==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,dp_nums,"%p",ADE_Iir_setNums);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,dp_nums,"%p",ADE_Iir_setNums);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setNums,dp_nums,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
 
@@ -324,7 +343,7 @@ ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums)
         memcpy((p_iir->dp_nums)[i],dp_nums[i],(p_iir->section_order+1)*sizeof(ADE_FLOATING_T));
     }
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 
@@ -335,14 +354,16 @@ ADE_API_RET_T ADE_Iir_setDenoms(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_denoms)
 
      if (p_iir==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setDenoms);
-            return ADE_E4;
+            //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setDenoms);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setDenoms,p_iir,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;//4;
         }
 
         if (dp_denoms==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_INCHECKS,dp_denoms,"%p",ADE_Iir_setDenoms);
-            return ADE_E4;
+            //ADE_PRINT_ERRORS(ADE_INCHECKS,dp_denoms,"%p",ADE_Iir_setDenoms);
+             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setDenoms,dp_denoms,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;//4;
         }
 
     for (i=0;i<p_iir->n_SOS_sections;i++)
@@ -351,47 +372,51 @@ ADE_API_RET_T ADE_Iir_setDenoms(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_denoms)
         memcpy((p_iir->dp_denoms)[i], dp_denoms[i],(p_iir->section_order+1)*sizeof(ADE_FLOATING_T));
     }
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Iir_setInbuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
+ADE_API_RET_T ADE_Iir_SetInBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 {
 
     if (p_iir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setInbuff);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_SetInBuff);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetInBuff,p_iir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
     if (p_buff==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Iir_setInbuff);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Iir_SetInBuff);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetInBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
     p_iir->p_in=p_buff;
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Iir_setOutbuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
+ADE_API_RET_T ADE_Iir_SetOutBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 {
 
     if (p_iir==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setOutbuff);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_SetOutBuff);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetOutBuff,p_iir,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
     if (p_buff==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Iir_setOutbuff);
-        return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Iir_SetOutBuff);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetOutBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//4;
     }
 
     p_iir->p_out=p_buff;
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir)
@@ -403,7 +428,7 @@ ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir)
         memset( (p_iir->dp_states)[i],0,(p_iir->section_order+1)*sizeof(ADE_FLOATING_T));
     }
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 
@@ -419,13 +444,14 @@ static ADE_API_RET_T ADE_Iir_setFilt_Implementation(ADE_IIR_T* p_iir,ADE_IIR_IMP
    else
    {
        #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
-        ADE_PRINT_ERRORS(ADE_INCHECKS,filt_imp_type,"%d",ADE_Iir_setFilt_Implementation);
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,filt_imp_type,"%d",ADE_Iir_setFilt_Implementation);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setFilt_Implementation,filt_imp_type,"%d",(FILE*)ADE_STD_STREAM);
         #endif
 
-            return ADE_E4;
+            return ADE_RET_ERROR;//4;
    }
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir)
@@ -441,47 +467,54 @@ ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir)
 
 if ((p_iir->filter_func)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->filter_func),"%p",ADE_Iir_Step);
-    return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->filter_func),"%p",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->filter_func,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//4;
 }
 
 if (*(p_iir->dp_denoms)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_denoms),"%p",ADE_Iir_Step);
-    return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_denoms),"%p",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,*(p_iir->dp_denoms),"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//4;
 }
 if (*(p_iir->dp_nums)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_nums),"%p",ADE_Iir_Step);
-    return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_nums),"%p",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,*(p_iir->dp_nums),"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//4;
 }
 if ((p_iir->p_gains)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_gains),"%p",ADE_Iir_Step);
-    return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_gains),"%p",ADE_Iir_Step);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->p_gains,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//4;
 }
 
 if ((p_iir->p_in)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_in),"%p",ADE_Iir_Step);
-    return ADE_E4;
+      ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->p_in,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//4;
 }
 
 if ((p_iir->p_out)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_out),"%p",ADE_Iir_Step);
-    return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_out),"%p",ADE_Iir_Step);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->p_out,"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//4;
 }
 
 if (*(p_iir->dp_states)==NULL)
 {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_states),"%p",ADE_Iir_Step);
-    return ADE_E4;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_states),"%p",ADE_Iir_Step);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,*(p_iir->dp_states),"%p",(FILE*)ADE_STD_STREAM);
+    return ADE_RET_ERROR;//4;
 }
 
 #endif
 
- memcpy( ((p_iir-> dp_section_buffers)[0]),p_iir->p_in,(p_iir->buff_len)*sizeof(ADE_FLOATING_T));
+ //memcpy( ((p_iir-> dp_section_buffers)[0]),p_iir->p_in,(p_iir->buff_len)*sizeof(ADE_FLOATING_T));
+ ADE_Utils_memcpy_float(((p_iir-> dp_section_buffers)[0]),p_iir->p_in,p_iir->buff_len);
 
     for (i=0;i<p_iir->n_SOS_sections;i++)
 	{
@@ -492,9 +525,9 @@ if (*(p_iir->dp_states)==NULL)
 
 	}
 
-	memcpy(p_iir->p_out ,(p_iir-> dp_section_buffers)[p_iir->n_SOS_sections],p_iir->buff_len*sizeof(ADE_FLOATING_T));
-
-	return ADE_DEFAULT_RET;
+	//memcpy(p_iir->p_out ,(p_iir-> dp_section_buffers)[p_iir->n_SOS_sections],p_iir->buff_len*sizeof(ADE_FLOATING_T));
+ADE_Utils_memcpy_float(p_iir->p_out ,(p_iir-> dp_section_buffers)[p_iir->n_SOS_sections],p_iir->buff_len);
+	return ADE_RET_SUCCESS;
 
 }
 //
@@ -525,15 +558,15 @@ if (*(p_iir->dp_states)==NULL)
         out[k] = gain*b[0]*(in[k])+state[0];
         memcpy(temp_buffer,&state[0+1],temp_buff_size);
         /*************/
-        ADE_Blas_level1_setY(p_Blas_L1,temp_buffer);
-        ADE_Blas_level1_setX(p_Blas_L1,&b[0+1]);
+        ADE_Blas_level1_SetY(p_Blas_L1,temp_buffer);
+        ADE_Blas_level1_SetX(p_Blas_L1,&b[0+1]);
         ALPHA=gain*in[k];
-        ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
+        ADE_Blas_level1_SetALPHA(p_Blas_L1,&ALPHA);
         ADE_Blas_level1_axpy(p_Blas_L1);
         /*****************/
-        ADE_Blas_level1_setX(p_Blas_L1,&a[0+1]);
+        ADE_Blas_level1_SetX(p_Blas_L1,&a[0+1]);
         ALPHA=-out[k];
-        ADE_Blas_level1_setALPHA(p_Blas_L1,&ALPHA);
+        ADE_Blas_level1_SetALPHA(p_Blas_L1,&ALPHA);
         ADE_Blas_level1_axpy(p_Blas_L1);
         memcpy(&state[0],temp_buffer,temp_buff_size);
         memset(temp_buffer,0,temp_buff_size);
@@ -570,7 +603,7 @@ if (*(p_iir->dp_states)==NULL)
 
   //  ADE_CHECKNFREE(temp_buffer);
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
 

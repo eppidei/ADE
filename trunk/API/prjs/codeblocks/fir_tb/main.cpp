@@ -22,8 +22,8 @@ typedef struct ADE_Uut_params_S
 
 ADE_VOID_T UnitTest1_procedure(ADE_MATLAB_T *p_mat, ADE_FIR_T *p_fir, ADE_Uut_params_T *params)
 {
-    ADE_Fir_setInbuff( p_fir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1));
-    ADE_Fir_setOutbuff( p_fir,  (ADE_FLOATING_T*)(params->output1));
+    ADE_Fir_SetInBuff( p_fir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1));
+    ADE_Fir_SetOutBuff( p_fir, (ADE_FLOATING_T*)(params->output1));
     ADE_Fir_Step(p_fir);
 }
 
@@ -34,8 +34,8 @@ ADE_VOID_T UnitTest2_procedure(ADE_MATLAB_T *p_mat, ADE_FIR_T *p_fir, ADE_Uut_pa
 
     for (i=0;i<frame_len;i++)
     {
-        ADE_Fir_setInbuff( p_fir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len);
-        ADE_Fir_setOutbuff( p_fir,  (ADE_FLOATING_T*)(params->output1)+i*frame_len);
+        ADE_Fir_SetInBuff( p_fir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len);
+        ADE_Fir_SetOutBuff( p_fir,  (ADE_FLOATING_T*)(params->output1)+i*frame_len);
         ADE_Fir_Step(p_fir);
     }
 

@@ -30,8 +30,8 @@ ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir);
 ADE_API_RET_T ADE_Iir_setGains(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_gains);
 ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums);
 ADE_API_RET_T ADE_Iir_setDenoms(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_denoms);
-ADE_API_RET_T ADE_Iir_setInbuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
-ADE_API_RET_T ADE_Iir_setOutbuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
+ADE_API_RET_T ADE_Iir_SetInBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
+ADE_API_RET_T ADE_Iir_SetOutBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
 
 
 /******** Processing Methods **********/

@@ -5,6 +5,9 @@
 //#include <complex.h>
 #include "fftw3.h"
 #include <stdbool.h>
+
+
+
 typedef struct fcomplex_S
 {
     float realpart;
@@ -77,7 +80,6 @@ typedef ADE_FFTSetup ADE_FFTSetup_T;
 
 
 
-typedef ADE_INT32_T ADE_API_RET_T ;
 typedef void ADE_VOID_T;
 typedef size_t ADE_SIZE_T;
 
@@ -85,7 +87,7 @@ typedef size_t ADE_SIZE_T;
 typedef struct ADE_S ADE_T;
 typedef struct ADE_S* ADE_HANDLE;
 
-
+typedef enum {ADE_RET_SUCCESS=0,ADE_RET_ERROR=-1,ADE_RET_WARNING=1} ADE_API_RET_T;
 /**************************** BLAS *********************/
 /*Level1*/
 
@@ -147,6 +149,17 @@ typedef enum {ADE_BENCH_REAL,ADE_BENCH_CPLX} ADE_BENCH_MAT_T;
         struct timespec* p_res;
     } bench_times_T;
 
+/********** Upsampler *****************/
+typedef struct ADE_UPSAMPLER_S ADE_UPSAMPLER_T;
+typedef enum  {ADE_UPSAMP_PURE,ADE_UPSAMP_FIR,ADE_UPSAMP_IIR} ADE_UPSAMP_CHOICE_T;
+
+/**************** Error **************/
+typedef struct ADE_Error_Handler_S
+{
+    ADE_UINT32_T p_error_code[ADE_ERRSTACK_DEPTH];
+    ADE_UINT32_T error_count;
+   // ADE_CHAR_T p_error_str[64];
+} ADE_Error_Handler_T;
 
 
 
