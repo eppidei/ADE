@@ -157,7 +157,28 @@ X_ERRMETHODS(PrintColArray) \
 X_ERRMETHODS(PrintMatrix) \
 X_ERRMETHODS(Upsampler_Pure) \
 X_ERRMETHODS(Upsampler_doPure_blas) \
-X_ERRMETHODS(Upsampler_doPure_custom)
+X_ERRMETHODS(Upsampler_doPure_custom) \
+X_ERRMETHODS(SetUplo) \
+X_ERRMETHODS(SetTrans) \
+X_ERRMETHODS(SetDiag) \
+X_ERRMETHODS(SetM) \
+X_ERRMETHODS(SetK) \
+X_ERRMETHODS(SetKl) \
+X_ERRMETHODS(SetKU) \
+X_ERRMETHODS(SetLda) \
+X_ERRMETHODS(SetBeta) \
+X_ERRMETHODS(Elewise_Config) \
+X_ERRMETHODS(ger) \
+X_ERRMETHODS(sbmv) \
+X_ERRMETHODS(Elewise) \
+X_ERRMETHODS(launch_type1) \
+X_ERRMETHODS(Saturation_detector_sm) \
+X_ERRMETHODS(doSaturation_detector_sm) \
+X_ERRMETHODS(Fir_Config) \
+X_ERRMETHODS(Configure) \
+X_ERRMETHODS(SetDirection) \
+X_ERRMETHODS(SetType) \
+X_ERRMETHODS(SetPlan)
 
 #define X_ERRMETHODS(a) a,
 typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;

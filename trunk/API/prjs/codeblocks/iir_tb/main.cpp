@@ -22,8 +22,8 @@ typedef struct ADE_Uut_params_S
 
 ADE_VOID_T UnitTest1_procedure(ADE_MATLAB_T *p_mat, ADE_IIR_T *p_iir, ADE_Uut_params_T *params)
 {
-    ADE_Iir_setInbuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1));
-    ADE_Iir_setOutbuff( p_iir,  (ADE_FLOATING_T*)(params->output1));
+    ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1));
+    ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1));
     ADE_Iir_Step(p_iir);
 }
 
@@ -34,8 +34,8 @@ ADE_VOID_T UnitTest2_procedure(ADE_MATLAB_T *p_mat, ADE_IIR_T *p_iir, ADE_Uut_pa
 
     for (i=0;i<frame_len;i++)
     {
-        ADE_Iir_setInbuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len);
-        ADE_Iir_setOutbuff( p_iir,  (ADE_FLOATING_T*)(params->output1)+i*frame_len);
+        ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len);
+        ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1)+i*frame_len);
         ADE_Iir_Step(p_iir);
     }
 
