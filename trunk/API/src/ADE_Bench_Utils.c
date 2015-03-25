@@ -214,7 +214,7 @@ int blas3_configuration(ADE_blas_level3_T* p_Blas_l3,ADE_CHAR_T TRANSA,ADE_CHAR_
                          ADE_INT32_T N,ADE_INT32_T K,ADE_INT32_T LDA,ADE_INT32_T LDB,ADE_INT32_T LDC,
                          ADE_FLOATING_T *p_alpha,ADE_FLOATING_T *p_beta,ADE_FLOATING_T *p_A,ADE_FLOATING_T *p_B,ADE_FLOATING_T *p_C)
 {
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_API_RET_T ret = ADE_RET_SUCCESS;
 
     ret= ADE_Blas_Level3_SetTransA(p_Blas_l3, TRANSA);
 ret= ADE_Blas_Level3_SetTransB(p_Blas_l3, TRANSB);
@@ -227,7 +227,7 @@ ADE_Blas_Level3_SetLdc(p_Blas_l3, LDC);
 ret= ADE_Blas_Level3_SetA(p_Blas_l3, p_A);
 ret= ADE_Blas_Level3_SetB( p_Blas_l3, p_B);
 ret= ADE_Blas_Level3_SetC( p_Blas_l3, p_C);
-ADE_Blas_Level3_SetAlpha( p_Blas_l3, p_alpha);
+ADE_Blas_Level3_SetALPHA( p_Blas_l3, p_alpha);
 ADE_Blas_Level3_SetBeta( p_Blas_l3, p_beta);
 
 return ret;
@@ -295,25 +295,26 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                             p_A=calloc(1,n_rows_A[dim_cases_idx]*n_cols_A[dim_cases_idx]*sizeof(ADE_FLOATING_T));
                             if (p_A==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,"%p",blas3_test_procedure);
+                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,blas3_test_procedure)\n");
+
                                 return -1;
                             }
                             p_B=calloc(1,n_cols_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
                              if (p_A==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,"%p",blas3_test_procedure);
+                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,blas3_test_procedure)\n");
                                 return -1;
                             }
                             p_C=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
                              if (p_C==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,blas3_test_procedure)\n");
                                 return -1;
                             }
                             p_C_custom=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
                              if (p_C_custom==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_Custom,blas3_test_procedure)\n");
                                 return -1;
                             }
                             LDA=n_rows_A[dim_cases_idx];
@@ -371,25 +372,25 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                             p_A=calloc(1,n_rows_A[dim_cases_idx]*n_cols_A[dim_cases_idx]*sizeof(ADE_CPLX_T));
                             if (p_A==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,"%p",blas3_test_procedure);
+                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,blas3_test_procedure);\n");
                                 return -1;
                             }
                             p_B=calloc(1,n_cols_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
                              if (p_A==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,"%p",blas3_test_procedure);
+                                 fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,blas3_test_procedure);\n");
                                 return -1;
                             }
                             p_C=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
                              if (p_C==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,blas3_test_procedure);\n");
                                 return -1;
                             }
                             p_C_custom=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
                              if (p_C_custom==NULL)
                             {
-                                ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,"%p",blas3_test_procedure);
+                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_Custom,blas3_test_procedure);\n");
                                 return -1;
                             }
                             LDA=n_rows_A[dim_cases_idx];
@@ -423,7 +424,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                 }
                 else
                 {
-                    ADE_PRINT_ERRORS(ADE_INCHECKS,mat_type[type_idx],"%d",main);
+                    fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,mat_type[type_idx],main);\n");
                     return -1;
                 }
 
@@ -432,7 +433,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
         }
         else
         {
-            ADE_PRINT_ERRORS(ADE_INCHECKS,test_cases[test_idx],"%d",main);
+            fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,test_cases[test_idx],main);\n");
             return -1;
         }
     }
@@ -601,7 +602,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
     ADE_UINT32_T i=0,buff_len_idx=0;
     //ADE_SplitComplex_T split_in,split_out;
    // ADE_INT32_T lin,col;
-    ADE_API_RET_T ret=ADE_DEFAULT_RET;
+    ADE_API_RET_T ret=ADE_RET_ERROR;
 
      ADE_FLOATING_T tolerance=1e-4;
     ADE_VOID_T *p_fft_custom=NULL;
@@ -650,8 +651,8 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_in==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",fft_test_procedure);
-                return ADE_E31;
+                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_MEM,p_in,fft_test_procedure);\n");
+                return -1;
             }
             size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
@@ -661,14 +662,14 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_out==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",fft_test_procedure);
-                return ADE_E31;
+                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_MEM,p_out,fft_test_procedure);\n");
+                return -1;
             }
             p_fft_custom=malloc(size_fft_in);
             if (p_fft_custom==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
-                return ADE_E31;
+                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,fft_test_procedure);\n");
+                return -1;
             }
 
 
@@ -715,7 +716,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         ret=ADE_Fft_Init(&p_fft, buff_len);
         if (ret<0)
             {
-                ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",fft_test_procedure);
+                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,fft_test_procedure);\n");
                 //return ADE_E31;
             }
 
@@ -723,7 +724,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
         if (ret<0)
             {
-                ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",fft_test_procedure);
+                 fprintf(stderr,"ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,fft_test_procedure);\n");
                 //return ADE_E31;
             }
 
@@ -798,7 +799,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         ADE_Fft_Release(p_fft);
 
 }
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 
