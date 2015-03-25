@@ -178,7 +178,17 @@ X_ERRMETHODS(Fir_Config) \
 X_ERRMETHODS(Configure) \
 X_ERRMETHODS(SetDirection) \
 X_ERRMETHODS(SetType) \
-X_ERRMETHODS(SetPlan)
+X_ERRMETHODS(SetPlan) \
+X_ERRMETHODS(SetTransA) \
+X_ERRMETHODS(SetTransB) \
+X_ERRMETHODS(SetSide) \
+X_ERRMETHODS(SetLdb) \
+X_ERRMETHODS(SetLdc) \
+X_ERRMETHODS(gemm)
+
+
+
+
 
 #define X_ERRMETHODS(a) a,
 typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;

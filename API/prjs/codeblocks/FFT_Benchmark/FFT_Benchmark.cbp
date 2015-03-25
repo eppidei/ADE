@@ -50,6 +50,9 @@
 		<Unit filename="../../../src/ADE_Bench_Utils.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_Error_Handler.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_Matlab.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -77,10 +80,14 @@
 		<Unit filename="../../../src/ADE_iir.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_nrutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_polyfit.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/headers/ADE_Bench_Utils.h" />
+		<Unit filename="../../../src/headers/ADE_Error_Handler.h" />
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_Utils.h" />
 		<Unit filename="../../../src/headers/ADE_accelerate_framework_wrapper.h" />
@@ -95,6 +102,7 @@
 		<Unit filename="../../../src/headers/ADE_fft.h" />
 		<Unit filename="../../../src/headers/ADE_fir.h" />
 		<Unit filename="../../../src/headers/ADE_iir.h" />
+		<Unit filename="../../../src/headers/ADE_nrutil.h" />
 		<Unit filename="../../../src/headers/ADE_polyfit.h" />
 		<Unit filename="../../../src/headers/ADE_typedefs.h" />
 		<Unit filename="main.cpp" />
