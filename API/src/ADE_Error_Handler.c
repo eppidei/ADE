@@ -60,6 +60,10 @@ ADE_VOID_T ADE_Error_Handler_SetError(ADE_ERRSEVERITY_T severity,ADE_ERRTYPE_T t
     {
         fprintf(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
     }
+    else if (!strcmp(format,"%c"))
+    {
+        fprintf(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
+    }
     else
     {
         fprintf(stderr,"ERROR IN ADE_Error_Handler_SetError format not recognized\n");

@@ -11,10 +11,12 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "headers/ADE_Error_Handler.h"
 
 /***************** Private methods prototypes *********************/
 
 static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2);
+static ADE_VOID_T ADE_Blas_level2_doElewiseCustom(ADE_FLOATING_T* p_Y, ADE_FLOATING_T* p_X,ADE_FLOATING_T* p_A,ADE_UINT32_T N);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
 static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2);
@@ -44,14 +46,17 @@ ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUT
         }
         else
         {
-            ADE_PRINT_ERRORS(ADE_INCHECKS,math_type,"%d",ADE_Blas_level2_Init);
-            return ADE_E38;
+           // ADE_PRINT_ERRORS(ADE_INCHECKS,math_type,"%d",ADE_Blas_level2_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Init,math_type,"%d",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;
         }
+
 
         if (p_this->p_ALPHA==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,p_this->p_ALPHA,"%p",ADE_Blas_level2_Init);
-            return ADE_E37;
+            //ADE_PRINT_ERRORS(ADE_MEM,p_this->p_ALPHA,"%p",ADE_Blas_level2_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_BLAS_LEVEL2,Init,p_this->p_ALPHA,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;
         }
 
 
@@ -69,14 +74,16 @@ ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUT
         }
         else
         {
-            ADE_PRINT_ERRORS(ADE_INCHECKS,math_type,"%d",ADE_Blas_level2_Init);
-            return ADE_E38;
+           // ADE_PRINT_ERRORS(ADE_INCHECKS,math_type,"%d",ADE_Blas_level2_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Init,math_type,"%d",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;
         }
 
         if (p_this->p_BETA==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,p_this->p_BETA,"%p",ADE_Blas_level2_Init);
-            return ADE_E37;
+            //ADE_PRINT_ERRORS(ADE_MEM,p_this->p_BETA,"%p",ADE_Blas_level2_Init);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_BLAS_LEVEL2,Init,p_this->p_BETA,"%p",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;
         }
 
 
@@ -84,13 +91,14 @@ ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUT
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_MEM,p_this,"%p",ADE_Blas_level2_Init);
-        return ADE_E37;
+       // ADE_PRINT_ERRORS(ADE_MEM,p_this,"%p",ADE_Blas_level2_Init);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_BLAS_LEVEL2,Init,p_this,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
 
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 
@@ -103,12 +111,18 @@ ADE_VOID_T ADE_Blas_level2_Release (ADE_blas_level2_T* p_Blas_l2)
 /***************** Configuration methods  *********************/
 ADE_API_RET_T ADE_Blas_Level2_SetUplo(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T UPLO)
 {
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetUplo,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
     if (UPLO!='U' && UPLO!='u' && UPLO!='L' && UPLO!='l')
     {
 
 
-        ADE_PRINT_ERRORS(ADE_INCHECKS,UPLO,"%c",ADE_Blas_Level2_SetUplo);
-        return ADE_E38;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,UPLO,"%c",ADE_Blas_Level2_SetUplo);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetUplo,UPLO,"%c",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else
     {
@@ -129,7 +143,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetUplo(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T U
         #else
         p_Blas_l2->UPLO=UPLO;
         #endif
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
 
@@ -137,16 +151,22 @@ ADE_API_RET_T ADE_Blas_Level2_SetUplo(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T U
 
 ADE_API_RET_T ADE_Blas_Level2_SetTrans(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T TRANS)
 {
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetTrans,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
     if (TRANS!='N' && TRANS!='n' && TRANS!='T' && TRANS!='t' && TRANS!='C' && TRANS!='c')
     {
 
-        ADE_PRINT_ERRORS(ADE_INCHECKS,TRANS,"%c",ADE_Blas_Level2_SetTrans);
-        return ADE_E38;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,TRANS,"%c",ADE_Blas_Level2_SetTrans);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetTrans,TRANS,"%c",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else
     {
         p_Blas_l2->TRANS=TRANS;
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
 
@@ -154,84 +174,130 @@ ADE_API_RET_T ADE_Blas_Level2_SetTrans(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T 
 
 ADE_API_RET_T ADE_Blas_Level2_SetDiag(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T DIAG)
 {
+
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetDiag,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+
     if (DIAG!='U' && DIAG!='u' && DIAG!='N' && DIAG!='n')
     {
 
-        ADE_PRINT_ERRORS(ADE_INCHECKS,DIAG,"%c",ADE_Blas_Level2_SetDiag);
-        return ADE_E38;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,DIAG,"%c",ADE_Blas_Level2_SetDiag);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetDiag,DIAG,"%c",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else
     {
         p_Blas_l2->DIAG=DIAG;
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
 
 }
 
-ADE_VOID_T ADE_Blas_Level2_SetM(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T M)
+ADE_API_RET_T ADE_Blas_Level2_SetM(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T M)
 {
-
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetM,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->M=M;
-
+     return ADE_RET_SUCCESS;
 }
 
-ADE_VOID_T ADE_Blas_Level2_SetN(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T N)
+ADE_API_RET_T ADE_Blas_Level2_SetN(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T N)
 {
-
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetN,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->N=N;
-
+     return ADE_RET_SUCCESS;
 }
 
-ADE_VOID_T ADE_Blas_Level2_SetK(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K)
+ADE_API_RET_T ADE_Blas_Level2_SetK(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K)
 {
-
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetK,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->K=K;
-
+     return ADE_RET_SUCCESS;
 }
 
-ADE_VOID_T ADE_Blas_Level2_SetKl(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KL)
+ADE_API_RET_T ADE_Blas_Level2_SetKl(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KL)
 {
-
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetKl,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->KL=KL;
-
+     return ADE_RET_SUCCESS;
 }
 
-ADE_VOID_T ADE_Blas_Level2_SetKu(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KU)
+ADE_API_RET_T ADE_Blas_Level2_SetKu(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KU)
 {
-
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetKU,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->KU=KU;
-
+     return ADE_RET_SUCCESS;
 }
 
 
-ADE_VOID_T ADE_Blas_Level2_SetLda(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level2_SetLda(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
 {
-
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetLda,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->LDA=val;
-
+     return ADE_RET_SUCCESS;
 }
 
 
-ADE_VOID_T ADE_Blas_Level2_SetIncx(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level2_SetINCX(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
 {
-
+        if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetINCX,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->INCX=val;
-
+     return ADE_RET_SUCCESS;
 }
 
 
-ADE_VOID_T ADE_Blas_Level2_SetIncy(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level2_SetINCY(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
 {
-
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetINCY,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
         p_Blas_l2->INCY=val;
-
+     return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blas_level2_SetAlpha(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_val)
+ADE_API_RET_T ADE_Blas_level2_SetALPHA(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_val)
 {
     ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
+
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetALPHA,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
 
     if (p_Blas_l2->math_type==ADE_REAL)
     {
@@ -243,15 +309,15 @@ ADE_API_RET_T ADE_Blas_level2_SetAlpha(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_Blas_l2->math_type,"%d",ADE_Blas_level2_SetAlpha);
-        return ADE_E38;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetALPHA,p_Blas_l2->math_type,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
     for (i=0;i<n_elements;i++)
     {
         (p_Blas_l2->p_ALPHA)[i]=p_val[i];
     }
-     return ADE_DEFAULT_RET;
+     return ADE_RET_SUCCESS;
 
 }
 
@@ -260,6 +326,12 @@ ADE_API_RET_T ADE_Blas_level2_SetBeta(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_
     ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
 
+     if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetBeta,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+
     if (p_Blas_l2->math_type==ADE_REAL)
     {
         n_elements=1;
@@ -270,64 +342,80 @@ ADE_API_RET_T ADE_Blas_level2_SetBeta(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_Blas_l2->math_type,"%d",ADE_Blas_level2_SetBeta);
-        return ADE_E38;
+       ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetBeta,p_Blas_l2->math_type,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
     for (i=0;i<n_elements;i++)
     {
         (p_Blas_l2->p_BETA)[i]=p_val[i];
     }
-     return ADE_DEFAULT_RET;
+     return ADE_RET_SUCCESS;
 
 }
 
 ADE_API_RET_T ADE_Blas_level2_SetA(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff)
 {
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetA,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+
     if (p_buff==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Blas_level2_SetA);
-        return ADE_E38;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetA,p_buff,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else
     {
         p_Blas_l2->p_A=p_buff;
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
 }
 
 ADE_API_RET_T ADE_Blas_level2_SetY(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff)
 {
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetY,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
     if (p_buff==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Blas_level2_SetY);
-        return ADE_E38;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetY,p_buff,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else
     {
         p_Blas_l2->p_Y=p_buff;
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
 }
 
 ADE_API_RET_T ADE_Blas_level2_SetX(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff)
 {
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetX,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+
     if (p_buff==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Blas_level2_SetX);
-        return ADE_E38;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetX,p_buff,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else
     {
         p_Blas_l2->p_X=p_buff;
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
 }
 
-/***************** Operative methods  *********************/
 
 ADE_API_RET_T ADE_Blas_level2_Elewise_Config(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len)
 {
@@ -336,77 +424,126 @@ ADE_API_RET_T ADE_Blas_level2_Elewise_Config(ADE_blas_level2_T* p_Blas_l2,ADE_FL
 
     ADE_INT32_T k=0;
     ADE_FLOATING_T alpha=alpha_i,beta=beta_i;
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_API_RET_T ret_uplo = ADE_RET_ERROR;
+     ADE_API_RET_T ret_N = ADE_RET_ERROR;
+      ADE_API_RET_T ret_K = ADE_RET_ERROR;
+      ADE_API_RET_T ret_A = ADE_RET_ERROR;
+      ADE_API_RET_T ret_Alpha = ADE_RET_ERROR;
+      ADE_API_RET_T ret_Beta = ADE_RET_ERROR;
+      ADE_API_RET_T ret_x = ADE_RET_ERROR;
+      ADE_API_RET_T ret_y = ADE_RET_ERROR;
+      ADE_API_RET_T ret_Lda = ADE_RET_ERROR;
+      ADE_API_RET_T ret_incx = ADE_RET_ERROR;
+      ADE_API_RET_T ret_incy = ADE_RET_ERROR;
 
+     if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
     /* light input checks*/
     if (p_buff1==NULL )
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,p_buff1,"%p",ADE_Blas_level2_Elewise_Config)
-        return ADE_E38;
+       ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_buff1,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     if (p_buff2==NULL )
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,p_buff2,"%p",ADE_Blas_level2_Elewise_Config);
-        return ADE_E38;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_buff2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     if (p_out==NULL )
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,p_out,"%p",ADE_Blas_level2_Elewise_Config);
-        return ADE_E38;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_out,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
-    ret = ADE_Blas_Level2_SetUplo(p_Blas_l2,'L');
-    if (ret<0)
+    ret_uplo = ADE_Blas_Level2_SetUplo(p_Blas_l2,'L');
+    if (ret_uplo==ADE_RET_ERROR)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_Elewise_Config);
-        return ADE_E40;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_uplo,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
-    ADE_Blas_Level2_SetN(p_Blas_l2,buff_len);
-    ADE_Blas_Level2_SetK(p_Blas_l2,k);
-    ret=ADE_Blas_level2_SetAlpha(p_Blas_l2,&alpha);/*it's safe to pass a local pointer because the pointed value is copied, pointer is needed only for complex case*/
-    if (ret<0)
+    ret_N=ADE_Blas_Level2_SetN(p_Blas_l2,buff_len);
+    if (ret_N==ADE_RET_ERROR)
     {
-      ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_Elewise_Config);
-        return ADE_E40;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_N,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
-    ret=ADE_Blas_level2_SetA(p_Blas_l2,p_buff1);
-    if (ret<0)
+    ret_K=ADE_Blas_Level2_SetK(p_Blas_l2,k);
+    if (ret_K==ADE_RET_ERROR)
     {
-       ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_Elewise_Config);
-        return ADE_E40;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_K,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
-    ADE_Blas_Level2_SetLda(p_Blas_l2,k+1);
-    ret=ADE_Blas_level2_SetX(p_Blas_l2,p_buff2);
-    if (ret<0)
+    ret_Alpha=ADE_Blas_level2_SetALPHA(p_Blas_l2,&alpha);/*it's safe to pass a local pointer because the pointed value is copied, pointer is needed only for complex case*/
+    if (ret_Alpha==ADE_RET_ERROR)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_Elewise_Config);
-        return ADE_E40;
+      ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_Alpha,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
-    ADE_Blas_Level2_SetIncx(p_Blas_l2,1);
-    ret=ADE_Blas_level2_SetBeta(p_Blas_l2,&beta);
-    if (ret<0)
+    ret_A=ADE_Blas_level2_SetA(p_Blas_l2,p_buff1);
+    if (ret_A==ADE_RET_ERROR)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_Elewise_Config);
-        return ADE_E40;
+       ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_A,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
-    ret=ADE_Blas_level2_SetY(p_Blas_l2,p_out);
-    if (ret<0)
+    ret_Lda=ADE_Blas_Level2_SetLda(p_Blas_l2,k+1);
+    if (ret_Lda==ADE_RET_ERROR)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_Elewise_Config);
-        return ADE_E40;
+       ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_Lda,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
-    ADE_Blas_Level2_SetIncy(p_Blas_l2,1);
+    ret_x=ADE_Blas_level2_SetX(p_Blas_l2,p_buff2);
+    if (ret_x==ADE_RET_ERROR)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_x,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+    ret_incx=ADE_Blas_Level2_SetINCX(p_Blas_l2,1);
+    if (ret_incx==ADE_RET_ERROR)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_incx,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+    ret_Beta=ADE_Blas_level2_SetBeta(p_Blas_l2,&beta);
+    if (ret_Beta==ADE_RET_ERROR)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_Beta,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+    ret_y=ADE_Blas_level2_SetY(p_Blas_l2,p_out);
+    if (ret_y==ADE_RET_ERROR)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_y,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+    ret_incy=ADE_Blas_Level2_SetINCY(p_Blas_l2,1);
+     if (ret_incy==ADE_RET_ERROR)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_incy,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
     //ADE_Blas_level2_Print(p_Blas_l2);
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
+
+/***************** Operative methods  *********************/
 
 ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
 {
+    ADE_API_RET_T ret = ADE_RET_ERROR;
+    #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,ger,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+
+    #endif
 
 
-
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -415,15 +552,15 @@ ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
      p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dger;
      #else
-        #error(ADE_FP_PRECISION);
+        #error(ADE_FP_PRECISION) in ADE_Blas_level2_ger
     #endif
 
      ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
 
      #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret<0)
+    if (ret==ADE_RET_ERROR)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_ger);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,ger,ret,"%p",(FILE*)ADE_STD_STREAM);
     }
     #endif
 
@@ -434,9 +571,16 @@ ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
 ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
 {
 
+    ADE_API_RET_T ret = ADE_RET_ERROR;
 
+    #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,sbmv,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
 
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    #endif
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -445,15 +589,15 @@ ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
      p_Blas_l2->blas_level2_fcn_type1=ADE_Blas_level2_dsbmv;
      #else
-        #error(ADE_FP_PRECISION);
+        #error(ADE_FP_PRECISION) in ADE_Blas_level2_sbmv
     #endif
 
      ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
 
      #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret<0)
+    if (ret==ADE_RET_ERROR)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_sbmv);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,sbmv,ret,"%d",(FILE*)ADE_STD_STREAM);
     }
     #endif
 
@@ -464,15 +608,26 @@ ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
 
 ADE_API_RET_T ADE_Blas_level2_Elewise(ADE_blas_level2_T* p_Blas_l2)
 {
-ADE_API_RET_T ret = ADE_DEFAULT_RET;
+ADE_API_RET_T ret = ADE_RET_ERROR;
 ADE_UINT32_T i = 0;
+ADE_FLOATING_T* p_Y=NULL;
+ADE_FLOATING_T* p_X=NULL;
+ADE_FLOATING_T* p_A=NULL;
+ADE_UINT32_T N=0;
+
+#if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+    if (p_Blas_l2==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Elewise,p_Blas_l2,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+    #endif
 
  #if (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_CUSTOM)
-
- for (i=0;i<p_Blas_l2->N;i++)
- {
-     (p_Blas_l2->p_Y)[i]=(p_Blas_l2->p_A)[i]*(p_Blas_l2->p_X)[i];
- }
+p_Y=p_Blas_l2->p_Y;
+p_X=p_Blas_l2->p_X;
+p_A=p_Blas_l2->p_A;
+ ADE_Blas_level2_doElewiseCustom(p_Y,p_X,p_A,N);
 
  #elif (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_BLAS)
 
@@ -484,6 +639,8 @@ ADE_UINT32_T i = 0;
      #endif
     return ret;
 }
+
+
 
 ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_Blas_l2)
 {
@@ -516,13 +673,13 @@ ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_Blas_l2)
         fprintf(p_fid,"\n");
       //  fclose(p_fid);
 
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
     else
     {
 
-        return ADE_E40;
+        return ADE_RET_ERROR;
     }
 
 
@@ -531,10 +688,21 @@ ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_Blas_l2)
 }
 
 /****************************** Private methods ********************************************/
+static ADE_VOID_T ADE_Blas_level2_doElewiseCustom(ADE_FLOATING_T* p_Y, ADE_FLOATING_T* p_X,ADE_FLOATING_T* p_A,ADE_UINT32_T N)
+{
+
+ADE_UINT32_T i = 0;
+
+ for (i=0;i<N;i++)
+ {
+     (p_Y)[i]=(p_A)[i]*(p_X)[i];
+ }
+
+}
 
 static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2)
 {
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_API_RET_T ret = ADE_RET_ERROR;
     static unsigned short flag= 0;
 
     #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
@@ -552,9 +720,9 @@ static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2)
 
     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
 
-    if (ret<0)
+    if (ret==ADE_RET_SUCCESS)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Blas_level2_launch_type1)
+       ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,launch_type1,ret,"%d",(FILE*)ADE_STD_STREAM);
     }
     #endif
 
@@ -582,7 +750,7 @@ static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
 
@@ -617,7 +785,7 @@ static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-return ADE_DEFAULT_RET;
+return ADE_RET_SUCCESS;
 
 }
 
@@ -641,7 +809,7 @@ static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-return ADE_DEFAULT_RET;
+return ADE_RET_SUCCESS;
 
 }
 
@@ -674,7 +842,7 @@ static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
 
     #endif
 
-return ADE_DEFAULT_RET;
+return ADE_RET_SUCCESS;
 
 }
 

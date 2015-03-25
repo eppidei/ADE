@@ -17,7 +17,7 @@ int main()
 	ADE_BLOW_T *p_blow;
 	ADE_UINT32_T Frame_len=256;
 	ADE_FLOATING_T Fs_i=44100;
-ADE_API_RET_T init_ret=ADE_DEFAULT_RET;
+ADE_API_RET_T init_ret=ADE_RET_ERROR;
 ADE_FLOATING_T *p_inbuff;
 ADE_UINT32_T i=0,n_iterations=0;
 double *p_inbuffmat=NULL;

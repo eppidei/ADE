@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <math.h>
+#include "headers/ADE_Error_Handler.h"
 
 
 
@@ -23,7 +24,7 @@ static ADE_API_RET_T ADE_Fft_SetType(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type);
 ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 {
     ADE_FFT_T *p_this=NULL;
-    ADE_INT32_T ret_fftw = ADE_DEFAULT_RET;
+    ADE_INT32_T ret_fftw = 0;
 
     p_this=calloc(1,sizeof(ADE_FFT_T));
 
@@ -39,8 +40,8 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 
                 if (ret_fftw<0)
                 {
-                    ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_fftw,"%d",ADE_Fft_Init);
-                    return ADE_E33;
+                     ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_FFT,Init,ret_fftw,"%d",(FILE*)ADE_STD_STREAM);
+                    return ADE_RET_ERROR;
                 }
 
             #endif
@@ -53,11 +54,11 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_MEM,p_this,"%p",ADE_Fft_Init);
-        return ADE_E31;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FFT,Init,p_this,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 
 }
@@ -65,7 +66,7 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FFT_DIRECTION_T fft_dir,ADE_VOID_T *p_inbuff,ADE_VOID_T *p_outbuff)
 {
 
-    ADE_API_RET_T plan_ret= ADE_DEFAULT_RET;
+    ADE_API_RET_T plan_ret= ADE_RET_SUCCESS;
 
      ADE_Fft_SetInBuff(p_fft,p_inbuff);
      ADE_Fft_SetOutBuff(p_fft,p_outbuff);
@@ -84,11 +85,11 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
 
      if (plan_ret<0)
      {
-         ADE_PRINT_ERRORS(ADE_RETCHECKS,plan_ret,"%d",ADE_Fft_Configure);
-         return ADE_E33;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_FFT,Configure,plan_ret,"%d",(FILE*)ADE_STD_STREAM);
+         return ADE_RET_ERROR;
      }
 
-     return ADE_DEFAULT_RET;
+     return ADE_RET_SUCCESS;
 
 
 }
@@ -100,19 +101,20 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
         #if (ADE_CHECK_INPUTS==ADE_CHECK_RETURNS_TRUE)
             if (p_fft->p_in==NULL)
             {
-                 ADE_PRINT_ERRORS(ADE_INCHECKS,p_fft->p_in,"%p",ADE_Fft_Step);
-                return ADE_E32;
+
+                  ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,Step,p_fft->p_in,"%p",(FILE*)ADE_STD_STREAM);
+                return ADE_RET_ERROR;
             }
             if (p_fft->p_out==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_INCHECKS,p_fft->p_out,"%p",ADE_Fft_Step);
-                return ADE_E32;
+                 ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,Step,p_fft->p_out,"%p",(FILE*)ADE_STD_STREAM);
+                return ADE_RET_ERROR;
 
             }
             if (p_fft->plan==NULL)
             {
-                ADE_PRINT_ERRORS(ADE_INCHECKS,p_fft->plan,"%p",ADE_Fft_Step);
-                return ADE_E32;
+                 ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,Step,p_fft->plan,"%p",(FILE*)ADE_STD_STREAM);
+                return ADE_RET_ERROR;
             }
 
 
@@ -153,7 +155,7 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 
     #endif
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
 
@@ -163,8 +165,9 @@ ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOAT
 
     if (&(p_fft->split_in)==NULL )
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,&(p_fft->split_in),"%p",ADE_Fft_FillSplitIn)
-        return ADE_E32;
+       // ADE_PRINT_ERRORS(ADE_INCHECKS,&(p_fft->split_in),"%p",ADE_Fft_FillSplitIn)
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,FillSplitIn,&(p_fft->split_in),"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
     if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_C2R)
@@ -179,7 +182,7 @@ ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOAT
 
 
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
@@ -187,8 +190,8 @@ ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOA
 
      if (&(p_fft->split_out)==NULL )
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,&(p_fft->split_out),"%p",ADE_Fft_FillSplitIn)
-        return ADE_E32;
+       ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,FillSplitOut,&(p_fft->split_out),"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
     if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_R2C)
@@ -203,7 +206,7 @@ ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOA
 
 
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 #endif
@@ -247,8 +250,8 @@ static ADE_API_RET_T ADE_Fft_SetInBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_inbuff)
 {
     if (p_inbuff==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_inbuff,"%p",ADE_Fft_SetInBuff);
-        return ADE_E32;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetInBuff,p_inbuff,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
 
     }
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
@@ -259,7 +262,7 @@ static ADE_API_RET_T ADE_Fft_SetInBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_inbuff)
 
     #endif
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
 
@@ -267,8 +270,8 @@ static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
 {
     if (p_outbuff==NULL)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,p_outbuff,"%p",ADE_Fft_SetOutBuff);
-        return ADE_E32;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetOutBuff,p_outbuff,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
 
     }
      #if (ADE_FFT_IMP==ADE_USE_FFTW)
@@ -277,7 +280,7 @@ static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
     ADE_Utils_SetSplit(p_outbuff,p_fft->buff_len,&(p_fft->split_out));
 
     #endif
- return ADE_DEFAULT_RET;
+ return ADE_RET_SUCCESS;
 }
 
 
@@ -286,18 +289,18 @@ static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T f
 {
     if (fft_dir!=ADE_FFT_FORWARD && fft_dir!=ADE_FFT_BACKWARD)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetDirection);
-        return ADE_E32;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else if (p_fft->type==ADE_FFT_R2C && fft_dir==ADE_FFT_BACKWARD)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetDirection);
-        return ADE_E32;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     else if (p_fft->type==ADE_FFT_C2R && fft_dir==ADE_FFT_FORWARD)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,fft_dir,"%d",ADE_Fft_SetDirection);
-        return ADE_E32;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
 
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
@@ -323,18 +326,18 @@ static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T f
     #else
 
     #endif
-return ADE_DEFAULT_RET;
+return ADE_RET_SUCCESS;
 }
 
 static ADE_API_RET_T ADE_Fft_SetType(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type)
 {
     if (fft_type!=ADE_FFT_C2C && fft_type!=ADE_FFT_C2R && fft_type!=ADE_FFT_R2C && fft_type!=ADE_FFT_R2R)
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,fft_type,"%d",ADE_Fft_SetType);
-        return ADE_E32;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetType,fft_type,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
     }
     p_fft->type=fft_type;
-return ADE_DEFAULT_RET;
+return ADE_RET_SUCCESS;
 }
 static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft)
 {
@@ -387,14 +390,14 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
         }
         else
         {
-            ADE_PRINT_ERRORS(ADE_INCHECKS,p_fft->type,"%d",ADE_Fft_SetPlan);
-            return ADE_E32;
+           ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetPlan,p_fft->type,"%d",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;
         }
 
         if (p_fft->plan==NULL)
         {
-            ADE_PRINT_ERRORS(ADE_MEM,p_fft->plan,"%p",ADE_Fft_SetPlan)
-            return ADE_E31;
+             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetPlan,p_fft->plan,"%d",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;
         }
 
         #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
@@ -426,5 +429,5 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
 
 
 
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
 }
