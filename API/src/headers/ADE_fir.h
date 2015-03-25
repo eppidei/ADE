@@ -26,8 +26,8 @@ ADE_VOID_T ADE_Fir_Release(ADE_FIR_T* p_fir);
 /************* Set Methods ****************/
 ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num);
 ADE_API_RET_T ADE_Fir_ResetState(ADE_FIR_T* p_fir,ADE_FLOATING_T rst_val);
-ADE_API_RET_T ADE_Fir_setInbuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
-ADE_API_RET_T ADE_Fir_setOutbuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
+ADE_API_RET_T ADE_Fir_SetInBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
+ADE_API_RET_T ADE_Fir_SetOutBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
 /********** Processing Methods *****************/
 ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir);
 

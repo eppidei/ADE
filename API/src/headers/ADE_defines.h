@@ -1,9 +1,6 @@
 #ifndef _ADE_DEFINES_H
 #define _ADE_DEFINES_H
 
-#include "headers/ADE_errors.h"
-
-#define ADE_DEFAULT_RET (0)
 
 /****************** Macros **************************/
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
@@ -13,6 +10,10 @@
 #define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
 /* Parameters */
+
+#define ADE_STDERR_STREAM stderr
+#define ADE_STDOUT_STREAM stdout
+
 
 #define ADE_RELEASE (0)
 #define ADE_DEBUG (1)
@@ -66,6 +67,8 @@
 #define ADE_UTILS_IMP ADE_UTILS_USE_BLAS
 #define ADE_FIR_IMP ADE_FIR_USE_BLAS
 #define ADE_IIR_IMP ADE_IIR_USE_BLAS
+#define ADE_STD_STREAM ADE_STDERR_STREAM
+#define ADE_UPSAMPLER_IMP ADE_UPSAMPLER_USE_BLAS
 
 
 #if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
@@ -121,12 +124,12 @@
 
 /*************************** VERBOSITY LEVELS ***********************/
 
-#define ADE_NO_VERBOSITY (0)
-#define ADE_ERROR_LEVEL (1)
-#define ADE_WARNING_LEVEL (2)
-#define ADE_INFO_LEVEL (3)
+//#define ADE_NO_VERBOSITY (0)
+//#define ADE_RET_ERROR;//RROR_LEVEL (1)
+//#define ADE_WARNING_LEVEL (2)
+//#define ADE_INFO_LEVEL (3)
 
-#define ADE_VERBOSITY_LEVEL ADE_ERROR_LEVEL
+//#define ADE_VERBOSITY_LEVEL ADE_RET_ERROR;//RROR_LEVEL
 
 /*************************** BLAS ****************************/
 #if defined(_WIN32) || defined(__hpux)
@@ -181,8 +184,9 @@
 #define MT_UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define MT_LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
-/****************************** BENCHMARKS *******************************/
-
+/****************************** Error Handler *******************************/
+#define ADE_ERRSTACK_DEPTH (128)
+#define ADE_ERRSTRING_LEN (128)
 
 /********************** NR Utils ***************/
 #define NR_M 7

@@ -24,6 +24,7 @@ ADE_API_RET_T ADE_Utils_memcpy_float(ADE_FLOATING_T *p_dst,ADE_FLOATING_T *p_src
 ADE_API_RET_T ADE_Utils_memcpy_cplx(ADE_CPLX_T *p_dst,ADE_CPLX_T *p_src,ADE_UINT32_T len);
 ADE_VOID_T ADE_Utils_indexx(ADE_ULONG_T n, ADE_FLOATING_T arr[], ADE_ULONG_T indx[]);
 ADE_VOID_T ADE_Utils_indexx_descend(ADE_ULONG_T n, ADE_FLOATING_T arr[], ADE_ULONG_T indx[]);
+ADE_API_RET_T ADE_Utils_memoryless_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T* frame_i,ADE_FLOATING_T* y_o);
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

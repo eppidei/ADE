@@ -44,6 +44,9 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../../../src/ADE_Error_Handler.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_Matlab.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -68,6 +71,10 @@
 		<Unit filename="../../../src/ADE_polyfit.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_upsampler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/headers/ADE_Error_Handler.h" />
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_Utils.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level1.h" />
@@ -80,6 +87,7 @@
 		<Unit filename="../../../src/headers/ADE_nrutil.h" />
 		<Unit filename="../../../src/headers/ADE_polyfit.h" />
 		<Unit filename="../../../src/headers/ADE_typedefs.h" />
+		<Unit filename="../../../src/headers/ADE_upsampler.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

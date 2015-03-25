@@ -6,6 +6,7 @@
 #include "mat.h"
 #include <string.h>
 #include <stdio.h>
+#include "headers/ADE_Error_Handler.h"
 
 
 
@@ -31,6 +32,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
     unsigned int *p_valid_arr_idx=NULL;
     char **dp_temp_names=NULL;
     double *p_temp,*p_temp2;
+    char *p_temp_name=NULL;
    // char *ArrayClassName=NULL;
   //  size_t Arraysize=0;
 
@@ -39,8 +41,9 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 
      if (!(p_mateng = engOpen(p_matpath))) {
 		fprintf(stderr, "\nCan't start MATLAB engine\n");
-		ADE_PRINT_ERRORS(ADE_RETCHECKS,p_mateng,"%p",ADE_Matlab_Init);
-	    return ADE_E27;
+		//ADE_PRINT_ERRORS(ADE_RETCHECKS,p_mateng,"%p",ADE_Matlab_Init);
+		ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,Init,p_mateng,"%p",(FILE*)ADE_STD_STREAM);
+	    return ADE_RET_ERROR;//27;
 	}
 
 
@@ -56,8 +59,9 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
             if (script_fid==NULL)
             {
 
-                ADE_PRINT_ERRORS(ADE_RETCHECKS,script_fid,"%p",ADE_Matlab_Init);
-                return ADE_E27;
+                //ADE_PRINT_ERRORS(ADE_RETCHECKS,script_fid,"%p",ADE_Matlab_Init);
+                ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,Init,script_fid,"%p",(FILE*)ADE_STD_STREAM);
+                return ADE_RET_ERROR;//27;
             }
 
 
@@ -133,8 +137,8 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 //          p_mxarr=engGetVariable(p_mateng, p_this->dp_var_list[i]);
 //           if (p_mxarr==NULL)
 //             {
-//                 ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
-//                 return  ADE_E26;
+//                 //ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
+//                 return  ADE_RET_ERROR;//26;
 //             }
             k=p_valid_arr_idx[i];
             p_this->n_row[i]=mxGetM(dp_mxarray[k]);
@@ -156,8 +160,10 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
             }
             else
             {
-                ADE_PRINT_WARNINGS(ADE_INCHECKS,mxGetClassName(dp_mxarray[k]),"%s",ADE_Matlab_Init);
-                return ADE_W30;
+            p_temp_name=mxGetClassName(dp_mxarray[k]);
+              //  ADE_PRINT_WARNINGS(ADE_INCHECKS,mxGetClassName(dp_mxarray[k]),"%s",ADE_Matlab_Init);
+               ADE_PRINT_ERRORS(ADE_WARNING,ADE_INCHECKS,ADE_CLASS_MATLAB,Init,p_temp_name,"%s",(FILE*)ADE_STD_STREAM);
+                return ADE_RET_WARNING;
             }
          }
 
@@ -173,8 +179,8 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 //
 //             if (p_mxarr==NULL)
 //             {
-//                 ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
-//                 return  ADE_E26;
+//                 //ADE_PRINT_ERRORS(ADE_MEM,p_mxarr,"%p",ADE_Matlab_Init);
+//                 return  ADE_RET_ERROR;//26;
 //             }
             k=p_valid_arr_idx[i];
              p_this->dp_vardouble[i]=calloc(1,p_this->data_size[i]);
@@ -206,13 +212,14 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
     else
     {
 
-        ADE_PRINT_ERRORS(ADE_MEM,p_this,"%p",ADE_Matlab_Init);
-        return  ADE_E26;
+        //ADE_PRINT_ERRORS(ADE_MEM,p_this,"%p",ADE_Matlab_Init);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MATLAB,Init,p_this,"%p",(FILE*)ADE_STD_STREAM);
+        return  ADE_RET_ERROR;//26;
 
     }
 
 
- return ADE_DEFAULT_RET;
+ return ADE_RET_SUCCESS;
 }
 
 ADE_VOID_T ADE_Matlab_Release(ADE_MATLAB_T* p_mat)
@@ -260,7 +267,7 @@ ADE_UINT32_T ADE_Matlab_GetVarIndex(ADE_MATLAB_T* p_mat, char *varname)
 
 
     fprintf(stderr,"WARNING - ADE_Matlab_GetVarIndex -> Variable \"%s\" not found \n",varname);
-    return ADE_E29;
+    return ADE_RET_ERROR;//29;
 }
 
 ADE_UINT32_T ADE_Matlab_GetNRows(ADE_MATLAB_T* p_mat, char *varname)
@@ -334,8 +341,9 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,comp_type,"%u",ADE_Matlab_PutVarintoWorkspace);
-        return ADE_E28;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,comp_type,"%u",ADE_Matlab_PutVarintoWorkspace);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_MATLAB,PutVarintoWorkspace,comp_type,"%u",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//28;
 
     }
 
@@ -346,15 +354,16 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
 
     if (ret_engPutVariable==1)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_engPutVariable,"%d",ADE_Matlab_Evaluate_String);
-        return ADE_E27;
+        //ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_engPutVariable,"%d",ADE_Matlab_Evaluate_String);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_MATLAB,PutVarintoWorkspace,ret_engPutVariable,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//27;
     }
 
     mxDestroyArray(p_tmp);
 
 
 
-     return ADE_DEFAULT_RET;
+     return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Matlab_Evaluate_String(ADE_MATLAB_T* p_mat, char *matcode)
@@ -366,30 +375,32 @@ ADE_API_RET_T ADE_Matlab_Evaluate_String(ADE_MATLAB_T* p_mat, char *matcode)
 
     if (ret_engEvalString==1)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_engEvalString,"%d",ADE_Matlab_Evaluate_String);
-        return ADE_E27;
+        //ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_engEvalString,"%d",ADE_Matlab_Evaluate_String);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,Evaluate_String,ret_engEvalString,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//27;
     }
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
 
 ADE_API_RET_T ADE_Matlab_Evaluate_StringnWait(ADE_MATLAB_T* p_mat, char *matcode)
 {
 
-    ADE_API_RET_T ret_Matlab_Evaluate_String = ADE_DEFAULT_RET;
+    ADE_API_RET_T ret_Matlab_Evaluate_String = ADE_RET_SUCCESS;
 
     ret_Matlab_Evaluate_String=ADE_Matlab_Evaluate_String(p_mat,matcode);
 
     if (ret_Matlab_Evaluate_String<0)
     {
-        ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_Matlab_Evaluate_String,"%d",ADE_Matlab_Evaluate_StringnWait);
-        return ADE_E27;
+        //ADE_PRINT_ERRORS(ADE_RETCHECKS,ret_Matlab_Evaluate_String,"%d",ADE_Matlab_Evaluate_StringnWait);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,Evaluate_StringnWait,ret_Matlab_Evaluate_String,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//27;
     }
 
     ADE_MAT_WAIT;
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 
 }
 
@@ -422,7 +433,7 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
     ADE_CHECKNFREE(dp_num);
     ADE_CHECKNFREE(dp_denom);
 
-    return ADE_DEFAULT_RET;
+    return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stopword)
@@ -435,8 +446,23 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
     int ret_eng=0;
 
     temp_str=calloc(ADE_MAX_CHARS,sizeof(char));
+    if (temp_str==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,launch_script_segment,temp_str,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//27;
+    }
     test_str=calloc(ADE_MAX_CHARS,sizeof(char));
+    if (test_str==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,launch_script_segment,test_str,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//27;
+    }
     segment_str=calloc(ADE_MAX_CHARS*ADE_MAX_SEGMENT_LINES,sizeof(char));
+    if (segment_str==NULL)
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,launch_script_segment,segment_str,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//27;
+    }
 
     //memset(segment_str,'\0',sizeof(segment_str));
 
@@ -471,7 +497,7 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
      if (ret_eng==1)
      {
          fprintf(stderr,"Invalid Matlab session Pointer or session no longer running!\n");
-         return ADE_E27;
+         return ADE_RET_ERROR;//27;
      }
 
 
@@ -481,11 +507,11 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
         fprintf(stdout,"REACHED EOF of SCRIPT\n");
     }
 
-    free(temp_str);
-    free(test_str);
-    free(segment_str);
+    ADE_CHECKNFREE(temp_str);
+    ADE_CHECKNFREE(test_str);
+    ADE_CHECKNFREE(segment_str);
 
-     return ADE_DEFAULT_RET;
+     return ADE_RET_SUCCESS;
 }
 
 static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned int n_rows, unsigned int n_cols)
@@ -566,12 +592,13 @@ static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigne
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_INCHECKS,comp_type,"%d",ADE_Matlab_C2Mat_copy);
-        return ADE_E28;
+        //ADE_PRINT_ERRORS(ADE_INCHECKS,comp_type,"%d",ADE_Matlab_C2Mat_copy);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_MATLAB,C2Mat_copy,comp_type,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;//28;
     }
 
 
-return ADE_DEFAULT_RET;
+return ADE_RET_SUCCESS;
 
 
 }
@@ -585,7 +612,7 @@ ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
     double *p_data=NULL;
     ADE_MATH_ATTRIBUTE_T var_type;
     //ADE_UINT32_T n_var_per_printrow = 1;
-    ADE_API_RET_T ret = ADE_DEFAULT_RET;
+    ADE_API_RET_T ret = ADE_RET_SUCCESS;
     ADE_UINT32_T n_row=0,n_col=0;
 
     p_fid=fopen("./mat2C_variables.txt","w");
@@ -605,21 +632,22 @@ ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
 
           if (ret<0)
           {
-              ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Matlab_Print);
-                return ADE_E27;
+              //ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Matlab_Print);
+               ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,Print,ret,"%d",(FILE*)ADE_STD_STREAM);
+                return ADE_RET_ERROR;//27;
           }
 
         }
 
         fclose(p_fid);
 
-        return ADE_DEFAULT_RET;
+        return ADE_RET_SUCCESS;
     }
 
     else
     {
 
-        return ADE_E27;
+        return ADE_RET_ERROR;//27;
     }
 
 
