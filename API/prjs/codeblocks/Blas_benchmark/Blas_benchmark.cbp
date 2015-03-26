@@ -19,7 +19,7 @@
 					<Add directory="../../../lib/xianyi-OpenBLAS-v0.2.13-0-g51ce5ef/xianyi-OpenBLAS-51ce5ef" />
 				</Compiler>
 				<Linker>
-					<Add option="-lrt -lgfortran" />
+					<Add option="-lrt -lgfortran -lfftw -lfftw_threads -lfftwf" />
 					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
 					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
 				</Linker>

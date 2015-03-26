@@ -50,6 +50,7 @@ static char *ADE_ERRTYPEStrings[] = { ERRTYPE };
 
 /*******************************ERROR  CLASSES **************************/
 #define ERRCLASS \
+X_ERRCLASS(ADE_CLASS_MAIN) \
 X_ERRCLASS(ADE_CLASS_BLAS_LEVEL1) \
 X_ERRCLASS(ADE_CLASS_IIR) \
 X_ERRCLASS(ADE_CLASS_FIR) \
@@ -63,7 +64,7 @@ X_ERRCLASS(ADE_CLASS_BLAS_LEVEL2) \
 X_ERRCLASS(ADE_CLASS_BLAS_LEVEL3) \
 X_ERRCLASS(ADE_CLASS_SNAP) \
 X_ERRCLASS(ADE_CLASS_UPSAMPLER) \
-X_ERRCLASS(ADE_CLASS_COMPLEX)
+X_ERRCLASS(ADE_CLASS_COMPLEX) \
 
 #define X_ERRCLASS(a) a,
 typedef enum  { ERRCLASS } ADE_ERRCLASS_T;
@@ -187,8 +188,14 @@ X_ERRMETHODS(SetLdc) \
 X_ERRMETHODS(gemm) \
 X_ERRMETHODS(TeagerKaiser) \
 X_ERRMETHODS(ThresholdDetection) \
-X_ERRMETHODS(extract_events)
-
+X_ERRMETHODS(extract_events) \
+X_ERRMETHODS(tb) \
+X_ERRMETHODS(Config_blas_memcpy) \
+X_ERRMETHODS(Config_fir) \
+X_ERRMETHODS(Pure) \
+X_ERRMETHODS(doPure_blas) \
+X_ERRMETHODS(doPure_custom) \
+X_ERRMETHODS(Fir)
 
 
 

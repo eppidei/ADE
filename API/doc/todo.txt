@@ -1,4 +1,3 @@
-1)improve error codes system 
 2) check that all processing class have define to check inp and check out
 3) check all set methods have input check
 4) function round
@@ -8,3 +7,4 @@
 7) rivedere blas filtering (no riutilizzo blas per easy threading)
 8) separati i metodi privati in PrivateMethod and doPrivateMethods dove nel primo si associano membri oggetto a parametri
    e l'altra funzione vera e propria (legata a quello che volevo dire al punto 5)
+9) fare periodicamente code review

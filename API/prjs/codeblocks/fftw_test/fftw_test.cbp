@@ -50,6 +50,9 @@
 		<Unit filename="../../../src/ADE_Bench_Utils.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_Error_Handler.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_Matlab.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -84,6 +87,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/headers/ADE_Bench_Utils.h" />
+		<Unit filename="../../../src/headers/ADE_Error_Handler.h" />
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_Utils.h" />
 		<Unit filename="../../../src/headers/ADE_blas_level1.h" />

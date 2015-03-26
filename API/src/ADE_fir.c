@@ -12,6 +12,8 @@
 
 static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir);
 static ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FIR_IMP_CHOICE_T filt_imp_type);
+static ADE_VOID_T dofilter_DII_T_blas (ADE_blas_level1_T *p_Blas_L1, ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_FLOATING_T *p_temp_buffer,ADE_UINT32_T temp_buff_size);
+static ADE_VOID_T dofilter_DII_T_custom(ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_UINT32_T order);
 
 ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT32_T buff_len,ADE_FIR_IMP_CHOICE_T filt_imp_type)
 {
@@ -236,58 +238,29 @@ static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_F
 {
     ADE_UINT32_T i=0,k=0;
     //ADE_UINT32_T active_section = p_iir->active_section;
-    ADE_FLOATING_T *in = p_fir->p_in;
-    ADE_FLOATING_T *out = p_fir->p_out;
+    ADE_FLOATING_T *p_in = p_fir->p_in;
+    ADE_FLOATING_T *p_out = p_fir->p_out;
     //ADE_FLOATING_T *a = (p_iir-> dp_denoms)[active_section];
     ADE_UINT32_T order = p_fir->filter_order;
-    ADE_FLOATING_T *b = (p_fir-> p_num);
+    ADE_FLOATING_T *p_b = (p_fir-> p_num);
     ADE_FLOATING_T gain = (p_fir-> gain);
-    ADE_FLOATING_T *state = (p_fir-> p_state);
+    ADE_FLOATING_T *p_state = (p_fir-> p_state);
     ADE_UINT32_T len_frame = p_fir->buff_len;
    #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
     ADE_blas_level1_T *p_Blas_L1 = p_fir->p_Blas_L1;
     #endif
     //ADE_FLOATING_T *temp_buffer = calloc(order,sizeof(ADE_FLOATING_T));
     ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
-    ADE_FLOATING_T ALPHA=0;
+
     ADE_FLOATING_T *p_temp_buffer=p_fir->p_tempbuff;
 
 #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
 
-    for (k=0;k<len_frame;k++)
-    {
-
-        out[k] = gain*b[0]*(in[k])+state[0];
-        memcpy(p_temp_buffer,&state[0+1],temp_buff_size);
-        /*************/
-        ADE_Blas_level1_SetY(p_Blas_L1,p_temp_buffer);
-        ADE_Blas_level1_SetX(p_Blas_L1,&b[0+1]);
-        ALPHA=gain*in[k];
-        ADE_Blas_level1_SetALPHA(p_Blas_L1,&ALPHA);
-        ADE_Blas_level1_axpy(p_Blas_L1);
-        /*****************/
-        memcpy(&state[0],p_temp_buffer,temp_buff_size);
-        memset(p_temp_buffer,0,temp_buff_size);
-
-    }
+dofilter_DII_T_blas (p_Blas_L1, p_in,p_b,len_frame,p_out, p_state,gain,p_temp_buffer,temp_buff_size);
 
     #elif (ADE_FIR_IMP==ADE_FIR_USE_CUSTOM)
 
-     for (k=0;k<len_frame;k++)
-    {
-
-
-        out[k] = gain*b[0]*(in[k])+state[0];
-
-
-
-        for (i=0;i<(order);i++)// lostate deve essere inizializzato a 0 e lungo pari a order+1 (es. biquad ordine 2)
-        {
-            state[i]=gain*b[i+1]*(in[k])+state[i+1];
-        }
-
-    }
-
+   dofilter_DII_T_custom(p_in,p_b, len_frame,p_out, p_state, gain,order) ;
     #else
 
         #error ADE_FIR_IMP in filter_DII_T
@@ -296,6 +269,52 @@ static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_F
     //ADE_CHECKNFREE(temp_buffer);
 
     return ADE_RET_SUCCESS;
+
+}
+static ADE_VOID_T dofilter_DII_T_blas (ADE_blas_level1_T *p_Blas_L1, ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_FLOATING_T *p_temp_buffer,ADE_UINT32_T temp_buff_size)
+{
+
+ADE_UINT32_T k=0;
+ADE_FLOATING_T ALPHA=0;
+
+ for (k=0;k<len_frame;k++)
+    {
+
+        p_out[k] = gain*p_b[0]*(p_in[k])+p_state[0];
+        memcpy(p_temp_buffer,&p_state[0+1],temp_buff_size);
+        /*************/
+        ADE_Blas_level1_SetY(p_Blas_L1,p_temp_buffer);
+        ADE_Blas_level1_SetX(p_Blas_L1,&p_b[0+1]);
+        ALPHA=gain*p_in[k];
+        ADE_Blas_level1_SetALPHA(p_Blas_L1,&ALPHA);
+        ADE_Blas_level1_axpy(p_Blas_L1);
+        /*****************/
+        memcpy(&p_state[0],p_temp_buffer,temp_buff_size);
+        memset(p_temp_buffer,0,temp_buff_size);
+
+    }
+}
+
+static ADE_VOID_T dofilter_DII_T_custom(ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_UINT32_T order)
+
+{
+ADE_UINT32_T k=0,i=0;
+
+ for (k=0;k<len_frame;k++)
+    {
+
+
+        p_out[k] = gain*p_b[0]*(p_in[k])+p_state[0];
+
+
+
+        for (i=0;i<(order);i++)// lostate deve essere inizializzato a 0 e lungo pari a order+1 (es. biquad ordine 2)
+        {
+            p_state[i]=gain*p_b[i+1]*(p_in[k])+p_state[i+1];
+        }
+
+    }
+
 
 }
 
