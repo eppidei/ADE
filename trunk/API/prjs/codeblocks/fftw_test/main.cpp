@@ -10,6 +10,7 @@
 #include "headers/ADE_errors.h"
 #include "headers/ADE_complex.h"
 #include "headers/ADE_Bench_Utils.h"
+#include "headers/ADE_Error_Handler.h"
 #define MAXCHAR (256)
 #define MAXVAR (32)
 
@@ -30,7 +31,7 @@ double *p_matdata;
 ADE_CPLX_T test_cplx[2];
 ADE_UINT32_T i=0;
 ADE_INT32_T lin,col;
-ADE_API_RET_T ret=ADE_DEFAULT_RET;
+ADE_API_RET_T ret=ADE_RET_ERROR;
 double *p_test;
 float *p_test2;
 
@@ -52,15 +53,15 @@ buff_len=ADE_Matlab_GetScalar(p_mat,"in_len");
      p_in=fftw_malloc(size_fft_in);
      if (p_in==NULL)
      {
-        ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_Fft_Init);
-        return ADE_E31;
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_in,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
      }
      size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
       p_out=fftw_malloc(size_fft_out);
       if (p_out==NULL)
      {
-        ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",ADE_Fft_Init);
-        return ADE_E31;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_out,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
      }
 }
 else if (fft_type==ADE_FFT_R2C)
@@ -69,15 +70,15 @@ else if (fft_type==ADE_FFT_R2C)
      p_in=fftw_malloc(size_fft_in);
      if (p_in==NULL)
      {
-        ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_Fft_Init);
-        return ADE_E31;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_in,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
      }
      size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
       p_out=fftw_malloc(size_fft_out);
       if (p_out==NULL)
      {
-        ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",ADE_Fft_Init);
-        return ADE_E31;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_out,"%p",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
      }
 
 }
@@ -87,13 +88,13 @@ else if (fft_type==ADE_FFT_R2C)
 ////             if (p_in==NULL)
 ////             {
 ////                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_Fft_Init);
-////                return ADE_E31;
+////                return ADE_RET_ERROR;
 ////             }
 ////              p_out=fftw_malloc(2*(buff_len/2+1)*sizeof(ADE_FLOATING_T));
 ////              if (p_out==NULL)
 ////             {
 ////                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",ADE_Fft_Init);
-////                return ADE_E31;
+////                return ADE_RET_ERROR;
 ////             }
 ////
 ////        }
@@ -103,13 +104,13 @@ else if (fft_type==ADE_FFT_R2C)
 ////             if (p_in==NULL)
 ////             {
 ////                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",ADE_Fft_Init);
-////                return ADE_E31;
+////                return ADE_RET_ERROR;
 ////             }
 ////              p_out=fftw_malloc(buff_len*sizeof(ADE_FLOATING_T));
 ////              if (p_out==NULL)
 ////             {
 ////                ADE_PRINT_ERRORS(save('fft_test_ws');ADE_MEM,p_out,"%p",ADE_Fft_Init);
-////                return ADE_E31;http://stackoverflow.com/questions/2672015/hiding-members-in-a-c-struct
+////                return ADE_RET_ERROR;http://stackoverflow.com/questions/2672015/hiding-members-in-a-c-struct
 ////             }
 ////        }
 ////        else
