@@ -84,7 +84,7 @@ int main()
 {
 
 ADE_SNAP_T * p_snap;
-ADE_API_RET_T ret=ADE_DEFAULT_RET;
+ADE_API_RET_T ret=ADE_RET_ERROR;
 //ADE_UINT32_T buff_len=512;
 ADE_UINT32_T Fs_i=22050,cycles_idx=0,j=0;
 ADE_UINT32_T n_pow_slots_i = 2,n_pow_slots_mat;
@@ -158,7 +158,7 @@ ret =  ADE_Snap_Init(&p_snap, frame_len, Fs_i, n_pow_slots_i, n_max_indexes_i, t
     }
 
 #endif
-ret = ADE_Snap_SetInbuff(p_snap, p_buff);
+ret = ADE_Snap_SetInBuff(p_snap, p_buff);
 
 ret = ADE_Snap_Configure(p_snap);
 

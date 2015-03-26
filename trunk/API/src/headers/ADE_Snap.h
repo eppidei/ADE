@@ -82,7 +82,7 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
 ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap);
 /************************** Operative Methods *******************************/
 ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap);
-ADE_API_RET_T ADE_Snap_SetInbuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
+ADE_API_RET_T ADE_Snap_SetInBuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
 
 #ifdef __cplusplus
     }   /* extern "C" */

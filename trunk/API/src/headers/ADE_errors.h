@@ -184,7 +184,10 @@ X_ERRMETHODS(SetTransB) \
 X_ERRMETHODS(SetSide) \
 X_ERRMETHODS(SetLdb) \
 X_ERRMETHODS(SetLdc) \
-X_ERRMETHODS(gemm)
+X_ERRMETHODS(gemm) \
+X_ERRMETHODS(TeagerKaiser) \
+X_ERRMETHODS(ThresholdDetection) \
+X_ERRMETHODS(extract_events)
 
 
 

@@ -720,9 +720,10 @@ static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2)
 
     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
 
-    if (ret==ADE_RET_SUCCESS)
+    if (ret==ADE_RET_ERROR)
     {
        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_BLAS_LEVEL2,launch_type1,ret,"%d",(FILE*)ADE_STD_STREAM);
+       return ADE_RET_ERROR;
     }
     #endif
 

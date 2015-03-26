@@ -1324,8 +1324,9 @@ ADE_API_RET_T ret_Y=ADE_RET_ERROR;
         if (ret_N==ADE_RET_ERROR)
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_blasconfig,ret_N,"%d",(FILE*)ADE_STD_STREAM);
+            return ADE_RET_ERROR;
         }
-        return ADE_RET_ERROR;
+
     #endif
     ret_INCX=ADE_Blas_level1_SetINCX(p_blas_l1,0);
     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
