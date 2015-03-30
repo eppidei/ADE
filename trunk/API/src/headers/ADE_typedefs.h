@@ -153,6 +153,10 @@ typedef enum {ADE_BENCH_REAL,ADE_BENCH_CPLX} ADE_BENCH_MAT_T;
 typedef struct ADE_UPSAMPLER_S ADE_UPSAMPLER_T;
 typedef enum  {ADE_UPSAMP_PURE,ADE_UPSAMP_FIR,ADE_UPSAMP_IIR} ADE_UPSAMP_CHOICE_T;
 
+/********** Downsampler *****************/
+typedef struct ADE_DOWNSAMPLER_S ADE_DOWNSAMPLER_T;
+typedef enum  {ADE_DOWNSAMP_PURE,ADE_DOWNSAMP_FIR,ADE_DOWNSAMP_IIR} ADE_DOWNSAMP_CHOICE_T;
+
 /**************** Error **************/
 typedef struct ADE_Error_Handler_S
 {
