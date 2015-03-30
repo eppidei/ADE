@@ -59,6 +59,9 @@
 		<Unit filename="../../../src/ADE_complex.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_downsampler.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_fir.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -81,6 +84,7 @@
 		<Unit filename="../../../src/headers/ADE_blas_wrapper.h" />
 		<Unit filename="../../../src/headers/ADE_complex.h" />
 		<Unit filename="../../../src/headers/ADE_defines.h" />
+		<Unit filename="../../../src/headers/ADE_downsampler.h" />
 		<Unit filename="../../../src/headers/ADE_errors.h" />
 		<Unit filename="../../../src/headers/ADE_fir.h" />
 		<Unit filename="../../../src/headers/ADE_iir.h" />
