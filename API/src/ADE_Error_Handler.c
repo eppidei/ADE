@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern  ADE_Error_Handler_T ade_error_handler;
+//extern  ADE_Error_Handler_T ade_error_handler;
+
+
 
 ADE_VOID_T ADE_Error_Handler_SetError(ADE_ERRSEVERITY_T severity,ADE_ERRTYPE_T type , ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_var, ADE_CHAR_T *var_name_str,FILE* p_stream)
 {
@@ -107,6 +109,69 @@ ADE_VOID_T ADE_Error_Handler_Decoder(ADE_UINT32_T err_code, ADE_CHAR_T* p_decod_
     strcat(p_decod_string," in Method ->");
     strcat(p_decod_string,ADE_ERRMETHODSStrings[method]);
     strcat(p_decod_string," ");
+
+
+
+}
+
+ADE_VOID_T ADE_Error_Handler_CheckMemAlloc(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_var, ADE_CHAR_T *var_name_str)
+{
+
+    #if (ADE_CHECK_MEM==ADE_CHECK_MEM_TRUE)
+
+    FILE *p_stream=ADE_STDOUT_STREAM;
+
+    if (p_var==NULL)
+    {
+
+        ADE_Error_Handler_SetError(ADE_ERROR,ADE_MEM,_class,method,format,p_var, var_name_str,p_stream);
+    }
+
+    #elif (ADE_CHECK_MEM==ADE_CHECK_MEM_FALSE)
+    ;
+    #else
+        #error ADE_CHECK_MEM in ADE_Error_Handler_CheckMemAlloc
+    #endif
+
+
+}
+
+ADE_VOID_T ADE_Error_Handler_CheckInputPointer(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_var, ADE_CHAR_T *var_name_str)
+{
+    #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+    FILE *p_stream=ADE_STDOUT_STREAM;
+
+    if (p_var==NULL)
+    {
+
+        ADE_Error_Handler_SetError(ADE_ERROR,ADE_INCHECKS,_class,method,format,p_var, var_name_str,p_stream);
+    }
+    #elif (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_FALSE)
+    ;
+    #else
+
+        #error ADE_CHECK_INPUTS in ADE_Error_Handler_CheckInputPointer
+    #endif
+
+
+}
+
+ADE_VOID_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_INT32_T ret_val, ADE_CHAR_T *var_name_str)
+{
+    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+        FILE *p_stream=ADE_STDOUT_STREAM;
+
+        if (ret_val==ADE_RET_ERROR)
+        {
+            ADE_Error_Handler_SetError(ADE_ERROR,ADE_RETCHECKS,_class,method,format,p_var, var_name_str,p_stream);
+        }
+    #elif (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_FALSE)
+
+        ;
+
+    #else
+            #error (ADE_CHECK_RETURNS) in ADE_Error_Handler_CheckReturn
+    #endif
 
 
 

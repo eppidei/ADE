@@ -23,9 +23,9 @@ ADE_FIR_IMP_CHOICE_T fir_type, ADE_IIR_IMP_CHOICE_T iir_type,ADE_UINT32_T n_iir_
 
 
     p_this=calloc(1,sizeof(ADE_UPSAMPLER_T));
+    ADE_CHECK_MEMALLOC(ADE_CLASS_UPSAMPLER,Init,p_this);
 
-    if (p_this!=NULL)
-    {
+
         p_this->up_fact=upfact;
          p_this->up_samp_type=up_type;
          p_this->filter_order=0;
@@ -36,51 +36,23 @@ ADE_FIR_IMP_CHOICE_T fir_type, ADE_IIR_IMP_CHOICE_T iir_type,ADE_UINT32_T n_iir_
         {
             p_this->filter_order=filter_order;
             ret_fir=ADE_Fir_Init(&p_this->p_fir,filter_order,in_buff_len,fir_type);
-            if (ret_fir==ADE_RET_ERROR)
-            {
-                ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Init,ret_fir,"%p",(FILE*)ADE_STD_STREAM);
-                return ADE_RET_ERROR;
-            }
+            ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Init,ret_fir);
 
             p_this->p_temp_buff=calloc(in_buff_len*upfact,sizeof(ADE_FLOATING_T));
-            if (p_this->p_temp_buff==NULL)
-            {
-
-                ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_UPSAMPLER,Init,p_this->p_temp_buff,"%p",(FILE*)ADE_STD_STREAM);
-                return ADE_RET_ERROR;
-            }
+            ADE_CHECK_MEMALLOC(ADE_CLASS_UPSAMPLER,Init,p_this->p_temp_buff);
         }
         else if (up_type==ADE_UPSAMP_IIR)
         {
             p_this->filter_order=filter_order;
             p_this->n_iir_sections=n_iir_sections;
             ret_iir=ADE_Iir_Init(&p_this->p_iir,filter_order,in_buff_len,iir_type);
-            if (ret_iir==ADE_RET_ERROR)
-            {
-                ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Init,ret_iir,"%p",(FILE*)ADE_STD_STREAM);
-                return ADE_RET_ERROR;
-            }
+            ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Init,ret_iir);
         }
 
         ret_blas=ADE_Blas_level1_Init(&p_this->p_blas_l1_memcpy,ADE_REAL);
-        if (ret_blas==ADE_RET_ERROR)
-        {
-                ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Init,ret_blas,"%p",(FILE*)ADE_STD_STREAM);
-                return ADE_RET_ERROR;
-        }
-
-
-
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Init,ret_blas);
 
         *dp_upsampler=p_this;
-    }
-    else
-    {
-       ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_UPSAMPLER,Init,p_this,"%p",(FILE*)ADE_STD_STREAM);
-       return ADE_RET_ERROR;//47;
-    }
-
-
 
     return ADE_RET_SUCCESS;
 }
@@ -122,15 +94,8 @@ ADE_API_RET_T ADE_Upsampler_SetInBuff(ADE_UPSAMPLER_T *p_upsampler,ADE_FLOATING_
 
     p_upsampler->p_in=p_buff;
 
-
-
     ret_blas1=ADE_Blas_level1_SetX(p_upsampler->p_blas_l1_memcpy,p_buff);
-
-    if (ret_blas1==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,SetInBuff,ret_blas1,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//49;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,SetInBuff,ret_blas1);
 
     return ADE_RET_SUCCESS;
 
@@ -164,26 +129,14 @@ ADE_API_RET_T ADE_Upsampler_SetOutBuff(ADE_UPSAMPLER_T *p_upsampler,ADE_FLOATING
      {
 
         ret_blas1=ADE_Blas_level1_SetY(p_upsampler->p_blas_l1_memcpy,p_buff);
-
-
-        if (ret_blas1==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,SetOutBuff,ret_blas1,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//49;
-        }
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,SetOutBuff,ret_blas1);
 
       } else if (p_upsampler->up_samp_type==ADE_UPSAMP_FIR)
       {
 
         ret_fir = ADE_Fir_SetOutBuff(p_upsampler->p_fir, p_buff);
-        if (ret_fir==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,SetOutBuff,ret_fir,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//49;
-        }
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,SetOutBuff,ret_fir);
       }
-
-
 
     return ADE_RET_SUCCESS;
 
@@ -210,41 +163,19 @@ ADE_API_RET_T ADE_Upsampler_Config_blas_memcpy(ADE_UPSAMPLER_T *p_upsampler)
     /* Do */
 
     ret_blas_INCY=ADE_Blas_level1_SetINCY(p_upsampler->p_blas_l1_memcpy,p_upsampler->up_fact);
-    if (ret_blas_INCY==ADE_RET_ERROR)
-    {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_INCY,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_INCY);
+
     ret_blas_INCX=ADE_Blas_level1_SetINCX(p_upsampler->p_blas_l1_memcpy,1);
-    if (ret_blas_INCX==ADE_RET_ERROR)
-    {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_INCX,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_INCX);
+
     ret_blas_N=ADE_Blas_level1_SetN(p_upsampler->p_blas_l1_memcpy,p_upsampler->in_buff_len);
-    if (ret_blas_N==ADE_RET_ERROR)
-    {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_N,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_N);
 
      if (p_upsampler->up_samp_type==ADE_UPSAMP_FIR)
      {
-
         ret_blas_Y=ADE_Blas_level1_SetY(p_upsampler->p_blas_l1_memcpy,p_upsampler->p_temp_buff);
-
-
-        if (ret_blas_Y==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_Y,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//49;
-        }
-
-
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Config_blas_memcpy,ret_blas_Y);
      }
-
-
-
 
         return ADE_RET_SUCCESS;
 }
@@ -281,19 +212,12 @@ ADE_API_RET_T ADE_Upsampler_Config_fir(ADE_UPSAMPLER_T *p_upsampler,ADE_FLOATING
     /* Do */
 
     ret_firnum = ADE_Fir_setNum(p_upsampler->p_fir, p_num);
-    if (ret_firnum==ADE_RET_ERROR)
-         {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Config_fir,ret_firnum,"%d",(FILE*)ADE_STD_STREAM);
-             return ADE_RET_ERROR;
-         }
-    ret_firbuf = ADE_Fir_SetInBuff(p_upsampler->p_fir, p_upsampler->p_temp_buff);
-     if (ret_firbuf==ADE_RET_ERROR)
-         {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Config_fir,ret_firbuf,"%d",(FILE*)ADE_STD_STREAM);
-             return ADE_RET_ERROR;
-         }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Config_fir,ret_firnum);
 
-      return ADE_RET_SUCCESS;
+    ret_firbuf = ADE_Fir_SetInBuff(p_upsampler->p_fir, p_upsampler->p_temp_buff);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Config_fir,ret_firbuf);
+
+    return ADE_RET_SUCCESS;
 }
 /****************** Processing Methods ************************/
 ADE_API_RET_T ADE_Upsampler_Step(ADE_UPSAMPLER_T *p_upsampler)
@@ -312,26 +236,13 @@ ADE_API_RET_T ADE_Upsampler_Step(ADE_UPSAMPLER_T *p_upsampler)
 
     if (p_upsampler->up_samp_type==ADE_UPSAMP_PURE)
     {
-
          ret_pure = ADE_Upsampler_Pure(p_upsampler);
-          #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-         if (ret_pure==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Step,ret_pure,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
+         ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Step,ret_pure);
     }
     else if (p_upsampler->up_samp_type==ADE_UPSAMP_FIR)
     {
         ret_fir = ADE_Upsampler_Fir(p_upsampler);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-         if (ret_fir==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Step,ret_fir,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Step,ret_fir);
 
     }
 
@@ -367,14 +278,7 @@ static ADE_API_RET_T ADE_Upsampler_Pure(ADE_UPSAMPLER_T *p_upsampler)
         #error ADE_UPSAMPLER_IMP in ADE_Upsampler_Pure
     #endif
 
- #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-         if (ret_up==ADE_RET_ERROR)
-         {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Pure,ret_up,"%d",(FILE*)ADE_STD_STREAM);
-             return ADE_RET_ERROR;
-         }
-        #endif
-
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Pure,ret_up);
 
     return ADE_RET_SUCCESS;
 
@@ -395,13 +299,7 @@ ADE_UINT32_T i=0;
     }
      #endif
      ret=ADE_Blas_level1_copy(p_b1);
-     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-     if (ret==ADE_RET_ERROR)
-     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,doPure_blas,p_b1,"%p",(FILE*)ADE_STD_STREAM);
-         return ADE_RET_ERROR;
-     }
-    #endif
+     ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,doPure_blas,ret);
 
      return ADE_RET_SUCCESS;
 }
@@ -452,21 +350,10 @@ static ADE_API_RET_T ADE_Upsampler_Fir(ADE_UPSAMPLER_T *p_upsampler)
     #endif
 
     ret_up=ADE_Upsampler_Pure(p_upsampler);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_up==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Fir,ret_up,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Fir,ret_up);
+
     ret_fir=ADE_Fir_Step(p_upsampler->p_fir);
-     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-     if (ret_fir==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UPSAMPLER,Fir,ret_fir,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,Fir,ret_fir);
 
     return ADE_RET_SUCCESS;
 }

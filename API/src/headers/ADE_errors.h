@@ -2,9 +2,6 @@
 #define _ADE_ERRORS_H
 #include "headers/ADE_typedefs.h"
 
-static ADE_Error_Handler_T ade_error_handler;
-
-#define ADE_PRINT_ERRORS(sev,type,class,met,var,format,stream)  ADE_Error_Handler_SetError(sev,type,class,met,format,&(var),#var,(FILE*)stream)
 
 /*************************** ERROR DEFINES ***************************/
 #define ADE_MISSING_IMPLEMENTATION(fcn_name) fprintf(stderr," MISSING IMPLEMENTATION IN fcn ->  " #fcn_name " \n");
@@ -60,6 +57,7 @@ X_ERRCLASS(ADE_CLASS_ADE) \
 X_ERRCLASS(ADE_CLASS_MATLAB) \
 X_ERRCLASS(ADE_CLASS_FFT) \
 X_ERRCLASS(ADE_CLASS_UTILS) \
+X_ERRCLASS(ADE_CLASS_BENCH_UTILS) \
 X_ERRCLASS(ADE_CLASS_BLAS_LEVEL2) \
 X_ERRCLASS(ADE_CLASS_BLAS_LEVEL3) \
 X_ERRCLASS(ADE_CLASS_SNAP) \
@@ -196,7 +194,8 @@ X_ERRMETHODS(Config_fir) \
 X_ERRMETHODS(Pure) \
 X_ERRMETHODS(doPure_blas) \
 X_ERRMETHODS(doPure_custom) \
-X_ERRMETHODS(Fir)
+X_ERRMETHODS(Fir) \
+X_ERRMETHODS(GetOutBuff)
 
 
 

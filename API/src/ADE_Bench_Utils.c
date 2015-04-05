@@ -250,6 +250,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     struct timespec start_blas, stop_blas,start_cust, stop_cust,res;
     int ret_time=0;
     int err_code=0;
+    FILE *p_stream=ADE_STDERR_STREAM;
 #if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
     clockid_t clock_id=CLOCK_MONOTONIC;//CLOCK_REALTIME,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
 #endif
@@ -293,30 +294,17 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 
                             /**** matrix alloc********/
                             p_A=calloc(1,n_rows_A[dim_cases_idx]*n_cols_A[dim_cases_idx]*sizeof(ADE_FLOATING_T));
-                            if (p_A==NULL)
-                            {
-                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,blas3_test_procedure)\n");
+                            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_A);
 
-                                return -1;
-                            }
                             p_B=calloc(1,n_cols_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
-                             if (p_A==NULL)
-                            {
-                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,blas3_test_procedure)\n");
-                                return -1;
-                            }
+                            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_B);
+
                             p_C=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
-                             if (p_C==NULL)
-                            {
-                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,blas3_test_procedure)\n");
-                                return -1;
-                            }
+                            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_C);
+
                             p_C_custom=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_FLOATING_T));
-                             if (p_C_custom==NULL)
-                            {
-                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_Custom,blas3_test_procedure)\n");
-                                return -1;
-                            }
+                             ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_C_custom);
+
                             LDA=n_rows_A[dim_cases_idx];
                             LDB=n_cols_A[dim_cases_idx];
                             LDC=n_rows_A[dim_cases_idx];
@@ -370,29 +358,17 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 
                         /**** matrix alloc********/
                             p_A=calloc(1,n_rows_A[dim_cases_idx]*n_cols_A[dim_cases_idx]*sizeof(ADE_CPLX_T));
-                            if (p_A==NULL)
-                            {
-                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_A,blas3_test_procedure);\n");
-                                return -1;
-                            }
+                            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_A);
+
                             p_B=calloc(1,n_cols_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
-                             if (p_A==NULL)
-                            {
-                                 fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_B,blas3_test_procedure);\n");
-                                return -1;
-                            }
+                            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_B);
+
                             p_C=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
-                             if (p_C==NULL)
-                            {
-                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_C,blas3_test_procedure);\n");
-                                return -1;
-                            }
+                            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_C);
+
                             p_C_custom=calloc(1,n_rows_A[dim_cases_idx]*n_cols_B[dim_cases_idx]*sizeof(ADE_CPLX_T));
-                             if (p_C_custom==NULL)
-                            {
-                                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,p_Custom,blas3_test_procedure);\n");
-                                return -1;
-                            }
+                            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS,blas3_test_procedure,p_C_custom);
+
                             LDA=n_rows_A[dim_cases_idx];
                             LDB=n_cols_A[dim_cases_idx];
                             LDC=n_rows_A[dim_cases_idx];
@@ -424,7 +400,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                 }
                 else
                 {
-                    fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,mat_type[type_idx],main);\n");
+                    fprintf(p_stream,"ADE_PRINT_ERRORS(ADE_INCHECKS,mat_type[type_idx],main);\n");
                     return -1;
                 }
 
@@ -433,7 +409,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
         }
         else
         {
-            fprintf(stderr,"ADE_PRINT_ERRORS(ADE_INCHECKS,test_cases[test_idx],main);\n");
+            fprintf(p_stream,"ADE_PRINT_ERRORS(ADE_INCHECKS,test_cases[test_idx],main);\n");
             return -1;
         }
     }
@@ -651,9 +627,11 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_in==NULL)
             {
-                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_MEM,p_in,fft_test_procedure);\n");
+                fprintf(p_stream,"ADE_PRINT_ERRORS(ADE_MEM,p_in,fft_test_procedure);\n");
                 return -1;
             }
+
+
             size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
              p_out=fftw_malloc(size_fft_out);
@@ -662,13 +640,13 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_out==NULL)
             {
-                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_MEM,p_out,fft_test_procedure);\n");
+                fprintf(p_stream,"ADE_PRINT_ERRORS(ADE_MEM,p_out,fft_test_procedure);\n");
                 return -1;
             }
             p_fft_custom=malloc(size_fft_in);
             if (p_fft_custom==NULL)
             {
-                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,fft_test_procedure);\n");
+                fprintf(p_stream,"ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,fft_test_procedure);\n");
                 return -1;
             }
 
@@ -714,19 +692,10 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         /******************* FFT SETUP ****************************/
 
         ret=ADE_Fft_Init(&p_fft, buff_len);
-        if (ret<0)
-            {
-                fprintf(stderr,"ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,fft_test_procedure);\n");
-                //return ADE_E31;
-            }
+        ADE_CHECK_ADERETVAL(ADE_CLASS_BENCH_UTILS,fft_test_procedure,ret);
 
-            ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
-
-        if (ret<0)
-            {
-                 fprintf(stderr,"ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,fft_test_procedure);\n");
-                //return ADE_E31;
-            }
+        ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_BENCH_UTILS,fft_test_procedure,ret);
 
         /******************* INPUT FILLING ********************************/
 

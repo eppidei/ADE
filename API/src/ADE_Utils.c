@@ -30,90 +30,53 @@ static ADE_API_RET_T ADE_Utils_memcpy_blasconfig(ADE_blas_level1_T *p_blas_l1,AD
 
 ADE_VOID_T ADE_Utils_Get_Terminal_size(ADE_INT32_T *lines ,ADE_INT32_T *columns  )
 {
-    //  char *temp=NULL;
-    // ADE_INT32_T line_int=0;
-//    ADE_INT32_T col_int=0;
     struct winsize sz;
 
     ioctl(0, TIOCGWINSZ, &sz);
     if (sz.ws_row==0 )
     {
-       // ADE_PRINT_WARNINGS(ADE_RETCHECKS,sz.ws_row,"%d",ADE_Get_Terminal_size);
         ADE_PRINT_ERRORS(ADE_WARNING,ADE_RETCHECKS,ADE_CLASS_UTILS,Get_Terminal_size,sz.ws_row,"%d",(FILE*)ADE_STD_STREAM);
-        fprintf(stderr,"setting default value of 80\n");
+        fprintf(ADE_STDERR_STREAM,"setting default value of 80\n");
         *lines=80;
-
     }
     if (sz.ws_col==0 )
     {
-      //  ADE_PRINT_WARNINGS(ADE_RETCHECKS,sz.ws_col,"%d",ADE_Get_Terminal_size);
-      ADE_PRINT_ERRORS(ADE_WARNING,ADE_RETCHECKS,ADE_CLASS_UTILS,Get_Terminal_size,sz.ws_col,"%d",(FILE*)ADE_STD_STREAM);
-        fprintf(stderr,"setting default value of 24\n");
+        ADE_PRINT_ERRORS(ADE_WARNING,ADE_RETCHECKS,ADE_CLASS_UTILS,Get_Terminal_size,sz.ws_col,"%d",(FILE*)ADE_STD_STREAM);
+        fprintf(ADE_STDERR_STREAM,"setting default value of 24\n");
         *columns=24;
     }
 
     *lines=sz.ws_row;
     *columns=sz.ws_col;
-    //printf("Screen width: %i  Screen height: %i\n", sz.ws_col, sz.ws_row);
 
-//    temp =getenv("LINES");
-//    if (temp==NULL)
-//    {
-//        ADE_PRINT_WARNINGS(ADE_RETCHECKS,temp,"%s",ADE_Get_Terminal_size);
-//    }
-//    line_int = strtol(temp,NULL,10);
-//    if (line_int==0)
-//    {
-//         //ADE_PRINT_ERRORS(ADE_RETCHECKS,line_int,"%d",ADE_Get_Terminal_size);
-//        return ADE_RET_ERROR;//35;
-//    }
-//    temp =getenv("COLUMNS");
-//    if (temp==NULL)
-//    {
-//        ADE_PRINT_WARNINGS(ADE_RETCHECKS,temp,"%s",ADE_Get_Terminal_size);
-//    }
-//     col_int = strtol(temp,NULL,10);
-//
-//    if (col_int==0)
-//    {
-//        //ADE_PRINT_ERRORS(ADE_RETCHECKS,line_int,"%d",ADE_Get_Terminal_size);
-//        return ADE_RET_ERROR;//35;
-//    }
-
-//     return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Utils_PrintArray(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATH_ATTRIBUTE_T math_type)
 {
 
-    ADE_API_RET_T ret = ADE_RET_SUCCESS;
+    ADE_API_RET_T ret = ADE_RET_ERROR;
     ADE_UINT32_T n_row=stop_0based_row_idx-start_0based_row_idx+1;
     ADE_UINT32_T n_col=stop_0based_col_idx-start_0based_col_idx+1;
 
     if (n_row==1)
     {
         ret = ADE_Utils_PrintRowArray(p_var,start_0based_col_idx, stop_0based_col_idx,p_varname, p_stream,math_type);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,PrintArray,ret);
     }
     else if (n_col==1)
     {
         ret = ADE_Utils_PrintColArray(p_var,start_0based_row_idx,stop_0based_row_idx, p_varname, p_stream,math_type);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,PrintArray,ret);
     }
     else
     {
         ret = ADE_Utils_PrintMatrix(p_var,start_0based_row_idx,stop_0based_row_idx, start_0based_col_idx, stop_0based_col_idx, p_varname,p_stream,math_type);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,PrintArray,ret);
     }
 
-    if (ret<0)
-    {
-        //ADE_PRINT_ERRORS(ADE_RETCHECKS,ret,"%d",ADE_Utils_PrintArray);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,PrintArray,ret,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//35;
 
-    }
-    else
-    {
-        return ADE_RET_SUCCESS;
-    }
+    return ADE_RET_SUCCESS;
+
 }
 
 ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *p_frame_i,ADE_UINT32_T frame_len ,ADE_FLOATING_T *p_indexes_o,ADE_UINT32_T *p_n_indexes_o, ADE_FLOATING_T *p_threshold,ADE_UTILS_CONDITION_T condition)
@@ -182,7 +145,7 @@ ADE_API_RET_T ADE_Utils_FindIndexes(ADE_FLOATING_T *p_frame_i,ADE_UINT32_T frame
     else
     {
          ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,FindIndexes,condition,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
+        return ADE_RET_ERROR;
     }
 
     *p_n_indexes_o=idx;
@@ -197,28 +160,17 @@ ADE_API_RET_T ADE_Utils_Complex2Split(ADE_CPLX_T *p_in,ADE_UINT32_T Stride_in,AD
     ADE_UINT32_T idx=0;
     ADE_UINT32_T len=cplx_len*2;
 
-    if (p_in==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_in,"%p",ADE_Utils_Complex2Split)
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,Complex2Split,p_in,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
-
-    if (p_out==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_out,"%p",ADE_Utils_Complex2Split)
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,Complex2Split,p_out,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,Complex2Split,p_in);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,Complex2Split,p_out);
 
 #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-#if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-    vDSP_ctoz (p_in,Stride_in,p_out,Stride_out,cplx_len);
-#elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-    vDSP_ctozD (p_in,Stride_in,p_out,Stride_out,cplx_len);
-#else
-#error (ADE_FP_PRECISION)
-#endif
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+        vDSP_ctoz (p_in,Stride_in,p_out,Stride_out,cplx_len);
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+        vDSP_ctozD (p_in,Stride_in,p_out,Stride_out,cplx_len);
+    #else
+    #error (ADE_FP_PRECISION)
+    #endif
 #else
 
     for (idx = 0; idx < len; ++idx)
@@ -238,28 +190,18 @@ ADE_API_RET_T ADE_Utils_Split2Complex( ADE_SplitComplex_T *p_in,ADE_UINT32_T Str
 
     ADE_UINT32_T idx=0;
 
-    if (p_in==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_in,"%p",ADE_Utils_Split2Complex)
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,Split2Complex,p_in,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
 
-    if (p_out==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_out,"%p",ADE_Utils_Split2Complex)
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,Split2Complex,p_out,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,Split2Complex,p_in);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,Split2Complex,p_out);
 
 #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-#if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-    vDSP_ztoc (p_in,Stride_in,p_out,Stride_out,split_len);
-#elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-    vDSP_ztocD (p_in,Stride_in,p_out,Stride_out,split_len);
-#else
-#error (ADE_FP_PRECISION)
-#endif
+    #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+        vDSP_ztoc (p_in,Stride_in,p_out,Stride_out,split_len);
+    #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+        vDSP_ztocD (p_in,Stride_in,p_out,Stride_out,split_len);
+    #else
+    #error (ADE_FP_PRECISION)
+    #endif
 #else
     for (idx = 0; idx < split_len; ++idx)
     {
@@ -280,20 +222,8 @@ ADE_API_RET_T ADE_Utils_SetSplit(ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_Sp
 
     ADE_FLOATING_T *p_int=(ADE_FLOATING_T *)p_buff;
 
-    if (p_split==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_split,"%p",ADE_SetSplit)
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,SetSplit,p_split,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
-
-    if (p_buff==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_SetSplit)
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,SetSplit,p_buff,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
-
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,SetSplit,p_buff);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,SetSplit,p_split);
 
     p_split->realp=p_int;
     p_split->imagp=&(p_int[buff_len]);
@@ -305,15 +235,9 @@ ADE_API_RET_T ADE_Utils_SetSplit(ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_Sp
 ADE_API_RET_T ADE_Utils_FillSplitReal(ADE_FLOATING_T real,ADE_UINT32_T idx,ADE_SplitComplex_T *p_split)
 {
 
-    if (p_split==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_split,"%p",ADE_Utils_FillSplitReal)
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,FillSplitReal,p_split,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,FillSplitReal,p_split);
 
     p_split->realp[idx]=real;
-    // p_split->imagp[idx]=imag;
 
     return ADE_RET_SUCCESS;
 }
@@ -321,15 +245,9 @@ ADE_API_RET_T ADE_Utils_FillSplitReal(ADE_FLOATING_T real,ADE_UINT32_T idx,ADE_S
 ADE_API_RET_T ADE_Utils_FillSplitImag(ADE_FLOATING_T imag,ADE_UINT32_T idx,ADE_SplitComplex_T *p_split)
 {
 
-    if (p_split==NULL )
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_split,"%p",ADE_Utils_FillSplitImag)
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,FillSplitImag,p_split,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
-    }
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,FillSplitImag,p_split);
 
-    //p_split->realp[idx]=real;
-    p_split->imagp[idx]=imag;
+     p_split->imagp[idx]=imag;
 
     return ADE_RET_SUCCESS;
 }
@@ -339,18 +257,13 @@ ADE_API_RET_T ADE_Utils_FillSplitCplx(ADE_FLOATING_T real,ADE_FLOATING_T imag,AD
 
     ADE_API_RET_T ret=ADE_RET_ERROR;
 
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,FillSplitCplx,p_split);
+
     ret=ADE_Utils_FillSplitReal(real, idx,p_split);
-    if  (ret==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,FillSplitCplx,ret,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//35;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,FillSplitCplx,ret);
+
     ret=ADE_Utils_FillSplitImag(imag,idx,p_split);
-    if  (ret==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,FillSplitCplx,ret,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//35;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,FillSplitCplx,ret);
 
     return ADE_RET_SUCCESS;
 }
@@ -366,42 +279,18 @@ ADE_API_RET_T ADE_Utils_memset_float(ADE_FLOATING_T *vec,ADE_UINT32_T len, ADE_F
     ADE_API_RET_T ret_copy=ADE_RET_ERROR;
     ADE_VOID_T *p_val=&memset_val;
 
-
-
-
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memset_float,vec);
 
     #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
     ret_init=ADE_Blas_level1_Init(&p_blas_l1,ADE_REAL);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_init==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_float,ret_init,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
-        ret_conf=ADE_Utils_memset_blasconfig(p_blas_l1,vec,len,p_val);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_conf==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_float,ret_conf,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_float,ret_init);
 
-//    ADE_Blas_level1_SetN(p_blas_l1,len);
-//    ADE_Blas_level1_SetINCX(p_blas_l1,0);
-//    ADE_Blas_level1_SetINCY(p_blas_l1,1);
-//    ADE_Blas_level1_SetX(p_blas_l1,&memset_val);
-//    ADE_Blas_level1_SetY(p_blas_l1,vec);
+    ret_conf=ADE_Utils_memset_blasconfig(p_blas_l1,vec,len,p_val);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_float,ret_conf);
+
     ret_copy=ADE_Blas_level1_copy(p_blas_l1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_copy==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_float,ret_copy,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_float,ret_copy);
 
-    #endif
     ADE_Blas_level1_Release(p_blas_l1);
 
     #elif (ADE_UTILS_IMP==ADE_UTILS_USE_CUSTOM)
@@ -427,43 +316,23 @@ ADE_API_RET_T ADE_Utils_memset_cplx(ADE_CPLX_T *vec,ADE_UINT32_T len, ADE_CPLX_T
     ADE_API_RET_T ret = ADE_RET_SUCCESS;
     ADE_UINT32_T vec_idx=0;
     ADE_blas_level1_T *p_blas_l1=NULL;
- ADE_API_RET_T ret_conf=ADE_RET_ERROR;
+    ADE_API_RET_T ret_conf=ADE_RET_ERROR;
     ADE_API_RET_T ret_init=ADE_RET_ERROR;
     ADE_API_RET_T ret_copy=ADE_RET_ERROR;
     ADE_VOID_T *p_val=&memset_val;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memset_cplx,vec);
+
     #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
     ret_init=ADE_Blas_level1_Init(&p_blas_l1,ADE_CPLX);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_init==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_cplx,ret_init,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
-        ret_conf=ADE_Utils_memset_blasconfig(p_blas_l1,vec,len,p_val);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_conf==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_cplx,ret_conf,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_cplx,ret_init);
 
-//    ADE_Blas_level1_SetN(p_blas_l1,len);
-//    ADE_Blas_level1_SetINCX(p_blas_l1,0);
-//    ADE_Blas_level1_SetINCY(p_blas_l1,1);
-//    ADE_Blas_level1_SetX(p_blas_l1,&memset_val);
-//    ADE_Blas_level1_SetY(p_blas_l1,vec);
+    ret_conf=ADE_Utils_memset_blasconfig(p_blas_l1,vec,len,p_val);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_cplx,ret_conf);
+
     ret_copy=ADE_Blas_level1_copy(p_blas_l1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_copy==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_cplx,ret_copy,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_cplx,ret_copy);
 
-    #endif
     ADE_Blas_level1_Release(p_blas_l1);
 
     #elif (ADE_UTILS_IMP==ADE_UTILS_USE_CUSTOM)
@@ -494,40 +363,19 @@ ADE_API_RET_T ADE_Utils_memcpy_float(ADE_FLOATING_T *p_dst,ADE_FLOATING_T *p_src
      ADE_API_RET_T ret_conf=ADE_RET_ERROR;
 
 
-
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memcpy_float,p_dst);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memcpy_float,p_src);
 
      #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
     ret_init=ADE_Blas_level1_Init(&p_blas_l1,ADE_REAL);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_init==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_float,ret_init,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
-        ret_conf=ADE_Utils_memcpy_blasconfig(p_blas_l1,p_dst,p_src,len);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_conf==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_float,ret_conf,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_float,ret_init);
 
-//    ADE_Blas_level1_SetN(p_blas_l1,len);
-//    ADE_Blas_level1_SetINCX(p_blas_l1,0);
-//    ADE_Blas_level1_SetINCY(p_blas_l1,1);
-//    ADE_Blas_level1_SetX(p_blas_l1,&memset_val);
-//    ADE_Blas_level1_SetY(p_blas_l1,vec);
+    ret_conf=ADE_Utils_memcpy_blasconfig(p_blas_l1,p_dst,p_src,len);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_float,ret_conf);
+
     ret_copy=ADE_Blas_level1_copy(p_blas_l1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_copy==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_float,ret_copy,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_float,ret_copy);
 
-    #endif
     ADE_Blas_level1_Release(p_blas_l1);
 
 
@@ -553,45 +401,24 @@ ADE_API_RET_T ADE_Utils_memcpy_cplx(ADE_CPLX_T *p_dst,ADE_CPLX_T *p_src,ADE_UINT
     ADE_API_RET_T ret = ADE_RET_SUCCESS;
     ADE_UINT32_T vec_idx=0;
     ADE_blas_level1_T *p_blas_l1=NULL;
- ADE_API_RET_T ret_init=ADE_RET_ERROR;
+    ADE_API_RET_T ret_init=ADE_RET_ERROR;
     ADE_API_RET_T ret_copy=ADE_RET_ERROR;
-     ADE_API_RET_T ret_conf=ADE_RET_ERROR;
+    ADE_API_RET_T ret_conf=ADE_RET_ERROR;
 
-
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memcpy_cplx,p_dst);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memcpy_cplx,p_src);
 
 
      #if (ADE_UTILS_IMP==ADE_UTILS_USE_BLAS)
     ret_init=ADE_Blas_level1_Init(&p_blas_l1,ADE_CPLX);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_init==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_cplx,ret_init,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
-        ret_conf=ADE_Utils_memcpy_blasconfig(p_blas_l1,p_dst,p_src,len);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_conf==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_cplx,ret_conf,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-        #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_cplx,ret_init);
 
-//    ADE_Blas_level1_SetN(p_blas_l1,len);
-//    ADE_Blas_level1_SetINCX(p_blas_l1,0);
-//    ADE_Blas_level1_SetINCY(p_blas_l1,1);
-//    ADE_Blas_level1_SetX(p_blas_l1,&memset_val);
-//    ADE_Blas_level1_SetY(p_blas_l1,vec);
+    ret_conf=ADE_Utils_memcpy_blasconfig(p_blas_l1,p_dst,p_src,len);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_cplx,ret_conf);
+
     ret_copy=ADE_Blas_level1_copy(p_blas_l1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_copy==ADE_RET_ERROR)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_cplx,ret_copy,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_cplx,ret_copy);
 
-    #endif
     ADE_Blas_level1_Release(p_blas_l1);
 
     #elif (ADE_UTILS_IMP==ADE_UTILS_USE_CUSTOM)
@@ -781,25 +608,10 @@ ADE_API_RET_T ADE_Utils_memoryless_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T
     ADE_UINT32_T coeffs_row_idx=0, coeffs_col_idx=0;
     ADE_UINT32_T n_coeff_per_piece = p_poly->poly_order+1;
 
- #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
-if (p_poly==NULL)
-{
-    ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,memoryless_expander,p_poly,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;
-}
-if (frame_i==NULL)
-{
-    ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,memoryless_expander,frame_i,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;
-}
-if (y_o==NULL)
-{
-    ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,memoryless_expander,y_o,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;
-}
-
- #endif
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memoryless_expander,p_poly);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memoryless_expander,frame_i);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memoryless_expander,y_o);
 
 //for (i=0;i<frame_size;i++)
 //{
@@ -872,15 +684,14 @@ if (y_o==NULL)
 static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,ADE_UINT32_T n_var_per_printrow, ADE_UTILS_ROW_INFO_T row_info,FILE *p_stream)
 {
     ADE_UINT32_T i=0,k=0,incremental_idx=0;
-    //ADE_INT32_T lines=0,columns=0;
-    //ADE_UINT32_T n_var_per_printrow=0;
-
-    //ADE_Get_Terminal_size(&lines ,&columns  );
     ADE_UINT32_T len = 0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintRowArrayReal,p_var);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintRowArrayReal,p_stream);
+
 
     if (stop_0based_col_idx<start_0based_col_idx)
     {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,stop_0based_col_idx,"%u",ADE_Utils_PrintRowArrayReal);
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,PrintRowArrayReal,stop_0based_col_idx,"%u",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;//34;
     }
@@ -963,15 +774,13 @@ static ADE_API_RET_T ADE_Utils_PrintRowArrayCplx(ADE_CPLX_T *p_var,ADE_UINT32_T 
 {
 
     ADE_UINT32_T i=0,k=0,incremental_idx=0;
-    //ADE_INT32_T lines=0,columns=0;
-    //ADE_UINT32_T n_var_per_printrow=0;
-
-    //ADE_Get_Terminal_size(&lines ,&columns  );
     ADE_UINT32_T len = 0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintRowArrayCplx,p_var);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintRowArrayCplx,p_stream);
 
     if (stop_0based_col_idx<start_0based_col_idx)
     {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,stop_0based_col_idx,"%u",ADE_Utils_PrintRowArrayReal);
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,PrintRowArrayCplx,stop_0based_col_idx,"%u",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;//34;
     }
@@ -1050,11 +859,13 @@ static ADE_API_RET_T ADE_Utils_PrintRowArrayCplx(ADE_CPLX_T *p_var,ADE_UINT32_T 
 
 static ADE_API_RET_T ADE_Utils_PrintColArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx,   FILE *p_stream)
 {
-    ADE_UINT32_T i=0;//,k=0;
+    ADE_UINT32_T i=0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintColArrayReal,p_var);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintColArrayReal,p_stream);
 
     if (stop_0based_row_idx<start_0based_row_idx)
     {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,stop_0based_row_idx,"%u",ADE_Utils_PrintColArrayReal);
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,PrintColArrayReal,stop_0based_row_idx,"%u",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;//34;
     }
@@ -1070,12 +881,14 @@ static ADE_API_RET_T ADE_Utils_PrintColArrayReal(ADE_FLOATING_T *p_var,ADE_UINT3
 
 static ADE_API_RET_T ADE_Utils_PrintColArrayCplx(ADE_CPLX_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, FILE *p_stream)
 {
-    ADE_UINT32_T i=0;//,k=0;
+    ADE_UINT32_T i=0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintColArrayCplx,p_var);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintColArrayCplx,p_stream);
 
     if (stop_0based_row_idx<start_0based_row_idx)
     {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,stop_0based_row_idx,"%u",ADE_Utils_PrintColArrayCplx);
-        return ADE_RET_ERROR;//34;
+        return ADE_RET_ERROR;
     }
 
     for (i=start_0based_row_idx; i<=stop_0based_row_idx; i++)
@@ -1097,8 +910,12 @@ static ADE_API_RET_T ADE_Utils_PrintRowArray(ADE_VOID_T *p_var,ADE_UINT32_T star
     ADE_UTILS_ROW_INFO_T row_info=ADE_UTILS_FIRST_PRINT_ROW;
     ADE_UINT32_T len = stop_0based_col_idx-start_0based_col_idx+1;
 
-    ADE_Utils_Get_Terminal_size(&lines ,&columns);
 
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintRowArray,p_var);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintRowArray,p_varname);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintRowArray,p_stream);
+
+    ADE_Utils_Get_Terminal_size(&lines ,&columns);
 
     if (math_type==ADE_REAL)
     {
@@ -1130,9 +947,8 @@ static ADE_API_RET_T ADE_Utils_PrintRowArray(ADE_VOID_T *p_var,ADE_UINT32_T star
     }
     else
     {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,math_type,"%d",ADE_Utils_PrintArray);
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,PrintRowArray,math_type,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
+        return ADE_RET_ERROR;
     }
 
     return ADE_RET_SUCCESS;
@@ -1142,6 +958,10 @@ static ADE_API_RET_T ADE_Utils_PrintRowArray(ADE_VOID_T *p_var,ADE_UINT32_T star
 static ADE_API_RET_T ADE_Utils_PrintColArray(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATH_ATTRIBUTE_T math_type)
 {
     ADE_UINT32_T len = stop_0based_row_idx-start_0based_row_idx+1;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintColArray,p_var);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintColArray,p_varname);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintColArray,p_stream);
 
     if (math_type==ADE_REAL)
     {
@@ -1193,6 +1013,9 @@ static ADE_VOID_T ADE_Utils_PrintMatrixReal(ADE_FLOATING_T *p_var,ADE_UINT32_T s
     ADE_INT32_T check_col=0;
     ADE_UTILS_ROW_INFO_T row_info;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintMatrixReal,p_var);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintMatrixReal,p_stream);
+
     ADE_Utils_Get_Terminal_size(&lines ,&columns  );
 
     n_col=stop_0based_col_idx-start_0based_col_idx+1;
@@ -1242,6 +1065,10 @@ static ADE_VOID_T ADE_Utils_PrintMatrixCplx(ADE_CPLX_T *p_var,ADE_UINT32_T start
     ADE_INT32_T check_col=0;
     ADE_UTILS_ROW_INFO_T row_info;
 
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintMatrixCplx,p_var);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintMatrixCplx,p_stream);
+
+
     ADE_Utils_Get_Terminal_size(&lines ,&columns  );
 
     n_col=stop_0based_col_idx-start_0based_col_idx+1;
@@ -1281,6 +1108,11 @@ static ADE_VOID_T ADE_Utils_PrintMatrixCplx(ADE_CPLX_T *p_var,ADE_UINT32_T start
 
 static ADE_API_RET_T ADE_Utils_PrintMatrix(ADE_VOID_T *p_var,ADE_UINT32_T start_0based_row_idx,ADE_UINT32_T stop_0based_row_idx, ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx, ADE_CHAR_T *p_varname, FILE *p_stream,ADE_MATH_ATTRIBUTE_T math_type)
 {
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintMatrix,p_var);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintMatrix,p_varname);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,PrintMatrix,p_stream);
+
     if (math_type==ADE_REAL)
     {
         fprintf(p_stream,"\n%s(%u:%u,%u:%u) =\n",p_varname,start_0based_row_idx+1,stop_0based_row_idx+1,start_0based_col_idx+1,stop_0based_col_idx+1);
@@ -1293,9 +1125,8 @@ static ADE_API_RET_T ADE_Utils_PrintMatrix(ADE_VOID_T *p_var,ADE_UINT32_T start_
     }
     else
     {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,math_type,"%d",ADE_Utils_PrintMatrix);
          ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,PrintMatrix,math_type,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//34;
+        return ADE_RET_ERROR;
     }
 
     return ADE_RET_SUCCESS;
@@ -1311,56 +1142,23 @@ ADE_API_RET_T ret_INCY=ADE_RET_ERROR;
 ADE_API_RET_T ret_X=ADE_RET_ERROR;
 ADE_API_RET_T ret_Y=ADE_RET_ERROR;
 
-    #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
-        if (p_blas_l1==NULL)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,memset_blasconfig,p_blas_l1,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-    #endif
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memset_blasconfig,p_blas_l1);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memset_blasconfig,vec);
 
     ret_N=ADE_Blas_level1_SetN(p_blas_l1,len);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-        if (ret_N==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_blasconfig,ret_N,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_blasconfig,ret_N);
 
-    #endif
     ret_INCX=ADE_Blas_level1_SetINCX(p_blas_l1,0);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_INCX==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_blasconfig,ret_INCX,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
-    ret_INCY=ADE_Blas_level1_SetINCY(p_blas_l1,1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_INCY==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_blasconfig,ret_INCY,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
-    ret_X=ADE_Blas_level1_SetX(p_blas_l1,memset_val);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_X==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_blasconfig,ret_X,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
-    ret_Y=ADE_Blas_level1_SetY(p_blas_l1,vec);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_Y==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memset_blasconfig,ret_Y,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_blasconfig,ret_INCX);
 
+    ret_INCY=ADE_Blas_level1_SetINCY(p_blas_l1,1);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_blasconfig,ret_INCY);
+
+    ret_X=ADE_Blas_level1_SetX(p_blas_l1,memset_val);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_blasconfig,ret_X);
+
+    ret_Y=ADE_Blas_level1_SetY(p_blas_l1,vec);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memset_blasconfig,ret_Y);
 
     return ADE_RET_SUCCESS;
 
@@ -1375,58 +1173,28 @@ ADE_API_RET_T ret_INCY=ADE_RET_ERROR;
 ADE_API_RET_T ret_X=ADE_RET_ERROR;
 ADE_API_RET_T ret_Y=ADE_RET_ERROR;
 
-     #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
-        if (p_blas_l1==NULL)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_UTILS,memcpy_blasconfig,p_blas_l1,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-    #endif
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memcpy_blasconfig,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memcpy_blasconfig,p_dst);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,memcpy_blasconfig,p_src);
 
     ret_N=ADE_Blas_level1_SetN(p_blas_l1,len);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_N==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_blasconfig,ret_N,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_blasconfig,ret_N);
+
     ret_INCX=ADE_Blas_level1_SetINCX(p_blas_l1,1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_INCX==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_blasconfig,ret_INCX,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_blasconfig,ret_INCX);
+
     ret_INCY=ADE_Blas_level1_SetINCY(p_blas_l1,1);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_INCY==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_blasconfig,ret_INCY,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_blasconfig,ret_INCY);
+
     ret_X=ADE_Blas_level1_SetX(p_blas_l1,p_src);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_X==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_blasconfig,ret_X,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_blasconfig,ret_X);
+
     ret_Y=ADE_Blas_level1_SetY(p_blas_l1,p_dst);
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-    if (ret_Y==ADE_RET_ERROR)
-        {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_UTILS,memcpy_blasconfig,ret_Y,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-        }
-    #endif
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,memcpy_blasconfig,ret_Y);
 
 
    return ADE_RET_SUCCESS;
 
-   }
+}
 
 

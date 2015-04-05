@@ -9,12 +9,11 @@
 
 struct ADE_BLOW_S
 {
-    //ADE_UINT32_T n_registered_funcs;
-    ADE_FLOATING_T Fs;
+    ADE_FLOATING_T Fs_i;
+    ADE_UINT32_T buff_len_i;
+    ADE_FLOATING_T Fs_o;
+    ADE_UINT32_T buff_len_o;
     ADE_UINT32_T fir_order;
-    //ADE_UINT32_T iir_order;
-    //ADE_UINT32_T iir2_order;
-    ADE_UINT32_T buff_len;
     ADE_FIR_T *p_fir;
     ADE_IIR_T *p_iir;
     ADE_IIR_T *p_iir2;
@@ -23,7 +22,8 @@ struct ADE_BLOW_S
     ADE_FLOATING_T *p_pow_fast;//allocato dentro
     ADE_FLOATING_T *p_pow_slow;//allocato dentro
     ADE_FLOATING_T *p_pow_slow_filtered;//allocato dentro
-    ADE_FLOATING_T *p_out;//allocato fuori
+    ADE_FLOATING_T *p_out;//allocato dentro
+    ADE_BOOL_T state;
     ADE_FLOATING_T pow_thresh_high;
     ADE_FLOATING_T pow_thresh_low;
     ADE_FLOATING_T sat_thresh;
@@ -53,11 +53,11 @@ struct ADE_BLOW_S
     extern "C" {
 #endif
 
-ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOATING_T Fs_i);
+ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o_i);
 ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow);
 ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow);
 ADE_API_RET_T ADE_Blow_SetInBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff);
-ADE_API_RET_T ADE_Blow_SetOutBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff);
+ADE_API_RET_T ADE_Blow_GetOutBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T **dp_buff);
 
 #ifdef __cplusplus
     }   /* extern "C" */

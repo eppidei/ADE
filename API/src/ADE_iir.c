@@ -31,10 +31,9 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
     ADE_blas_level1_T *p_Blas_L1;
 
     ADE_IIR_T* pthis = calloc(1,sizeof(ADE_IIR_T));
+    ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init,pthis);
 
 
-    if (pthis!=NULL)
-    {
         pthis->buff_len=buff_len;
 
         pthis->n_SOS_sections=n_SOS_sections;
@@ -45,41 +44,21 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         /************ GAIN ALLOC ***************/
         (pthis->p_gains) = calloc(n_SOS_sections,sizeof(ADE_FLOATING_T));
-
-        if (pthis->p_gains==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->p_gains,"%p",ADE_Iir_Init);
-             ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->p_gains,"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-        }
+        ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init,pthis->p_gains);
 
         /************ NUMS ALLOC ***************/
 //
         dp_nums = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
 
+         ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init,dp_nums);
+
         (pthis->dp_nums)=dp_nums;
-
-        if (pthis->dp_nums==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_nums,"%p",ADE_Iir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_nums,"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-        }
-
 
         for (i=0;i<(n_SOS_sections);i++)
         {
             (pthis->dp_nums)[i] = calloc(1,(order+1)*sizeof(ADE_FLOATING_T));
 
-            if ( (pthis->dp_nums)[i]==NULL)
-            {
-            //ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_nums)[i],"%p",ADE_Iir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_nums[i],"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-            }
+            ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, (pthis->dp_nums)[i]);
 
         }
 
@@ -87,27 +66,15 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         dp_denoms = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
 
-        (pthis->dp_denoms)=dp_denoms;
+        ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init,dp_denoms);
 
-        if (pthis->dp_denoms==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_denoms,"%p",ADE_Iir_Init);
-               // #endif
-                ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_nums[i],"%p",(FILE*)ADE_STD_STREAM);
-                return ADE_RET_ERROR;//3;
-        }
+        (pthis->dp_denoms)=dp_denoms;
 
         for (i=0;i<(n_SOS_sections);i++)
         {
             (pthis->dp_denoms)[i] = calloc(1,(order+1)*sizeof(ADE_FLOATING_T));
 
-             if ( (pthis->dp_denoms)[i]==NULL)
-            {
-            //ADE_PRINT_ERRORS(ADE_MEM,(pthis->dp_denoms)[i],"%p",ADE_Iir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_denoms[i],"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-            }
+             ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, (pthis->dp_denoms)[i]);
 
         }
 
@@ -115,33 +82,20 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         dp_sec_buff = (ADE_FLOATING_T**)calloc(n_SOS_sections+1,sizeof(ADE_FLOATING_T*));
 
+         ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, dp_sec_buff);
+
         (pthis->dp_section_buffers)=dp_sec_buff;
 
-        if (pthis->dp_section_buffers==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_section_buffers,"%p",ADE_Iir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_section_buffers,"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-        }
 
         for (i=0;i<(n_SOS_sections+1);i++)
         {
 
             p_sec_buff = calloc(1,buff_len*sizeof(ADE_FLOATING_T));
 
-            if (p_sec_buff!=NULL)
-            {
-                (pthis->dp_section_buffers)[i]=p_sec_buff;
-            }
-            else
-            {
-               // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-                //ADE_PRINT_ERRORS(ADE_MEM,p_sec_buff,"%p",ADE_Iir_Init);
-                ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,p_sec_buff,"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-            }
+            ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, p_sec_buff);
+
+            (pthis->dp_section_buffers)[i]=p_sec_buff;
+
 
 
         }
@@ -150,55 +104,30 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         dp_states = (ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
 
+        ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, dp_states);
+
         (pthis->dp_states)=dp_states;
 
-        if (pthis->dp_states==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_states,"%p",ADE_Iir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_states,"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-        }
 
         for (i=0;i<(n_SOS_sections);i++)
         {
             p_states = calloc(n_SOS_sections,(order+n_padd_zeros)*sizeof(ADE_FLOATING_T));
 
-            if (p_states!=NULL)
-            {
-                (pthis->dp_states)[i]=p_states;
-            }
-            else
-            {
-               // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-                    //ADE_PRINT_ERRORS(ADE_MEM,p_states,"%p",ADE_Iir_Init);
-                    ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,p_states,"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-            }
+            ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, p_states);
+
+            (pthis->dp_states)[i]=p_states;
 
         }
            /*********** Temp buffer allocation ***********/
 
         pthis->dp_tempbuff=(ADE_FLOATING_T**)calloc(n_SOS_sections,sizeof(ADE_FLOATING_T*));
-        if (pthis->dp_tempbuff==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff,"%d",ADE_Iir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_tempbuff,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//3;
-        }
+         ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, pthis->dp_tempbuff);
         for (i=0;i<(n_SOS_sections);i++)
         {
             pthis->dp_tempbuff[i] = calloc(order,sizeof(ADE_FLOATING_T));
 
-            if (pthis->dp_tempbuff[i]==NULL)
-            {
-               // #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-                    //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_tempbuff[i],"%p",ADE_Iir_Init);
-                    ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_tempbuff[i],"%p",(FILE*)ADE_STD_STREAM);
-               // #endif
-                return ADE_RET_ERROR;//3;
-            }
+             ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init, pthis->dp_tempbuff[i]);
+
 
         }
 
@@ -207,12 +136,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         pthis->dp_Blas_L1=(ADE_blas_level1_T**)calloc(n_SOS_sections,sizeof(ADE_blas_level1_T*));
 
-         if (pthis->dp_Blas_L1==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->dp_Blas_L1,"%p",ADE_Iir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis->dp_Blas_L1,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//3;
-        }
+        ADE_CHECK_MEMALLOC(ADE_CLASS_IIR,Init,  pthis->dp_Blas_L1);
 
          for (i=0;i<(n_SOS_sections);i++)
         {
@@ -239,17 +163,6 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
         *dp_this=pthis;
 
-    }
-    else
-    {
-
-        //ADE_PRINT_ERRORS(ADE_MEM,pthis,"%p",ADE_Iir_Init);
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_IIR,Init,pthis,"%p",(FILE*)ADE_STD_STREAM);
-        return  ADE_RET_ERROR;//3;
-
-    }
-
-
 
     return ADE_RET_SUCCESS;
 }
@@ -258,7 +171,6 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir)
 {
     ADE_UINT32_T i=0;
-    //ADE_FLOATING_T *dummy_address = 1;
 
 
     for (i=0;i<( p_iir->n_SOS_sections+1);i++)
@@ -299,22 +211,11 @@ ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir)
 
 ADE_API_RET_T ADE_Iir_setGains(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_gains)
 {
-    if (p_gains==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_gains,"%p",ADE_Iir_setGains);
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setGains,p_gains,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
 
-    if (p_iir==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setGains);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setGains,p_iir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,setGains,p_gains);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,setGains,p_iir);
 
-
-        memcpy((p_iir->p_gains),p_gains,p_iir->n_SOS_sections*sizeof(ADE_FLOATING_T));
+    memcpy((p_iir->p_gains),p_gains,p_iir->n_SOS_sections*sizeof(ADE_FLOATING_T));
 
 
     return ADE_RET_SUCCESS;
@@ -323,20 +224,8 @@ ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums)
 {
     ADE_UINT32_T i=0;
 
-    if (p_iir==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setNums);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setNums,p_iir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
-
-    if (dp_nums==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,dp_nums,"%p",ADE_Iir_setNums);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setNums,dp_nums,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
-
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,setNums,dp_nums);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,setNums,p_iir);
 
     for (i=0;i<p_iir->n_SOS_sections;i++)
     {
@@ -352,19 +241,8 @@ ADE_API_RET_T ADE_Iir_setDenoms(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_denoms)
 {
     ADE_UINT32_T i=0;
 
-     if (p_iir==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_setDenoms);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setDenoms,p_iir,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//4;
-        }
-
-        if (dp_denoms==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_INCHECKS,dp_denoms,"%p",ADE_Iir_setDenoms);
-             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setDenoms,dp_denoms,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//4;
-        }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,setDenoms,dp_denoms);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,setDenoms,p_iir);
 
     for (i=0;i<p_iir->n_SOS_sections;i++)
     {
@@ -377,20 +255,8 @@ ADE_API_RET_T ADE_Iir_setDenoms(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_denoms)
 
 ADE_API_RET_T ADE_Iir_SetInBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 {
-
-    if (p_iir==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_SetInBuff);
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetInBuff,p_iir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
-
-    if (p_buff==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Iir_SetInBuff);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetInBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,SetInBuff,p_buff);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,SetInBuff,p_iir);
 
     p_iir->p_in=p_buff;
 
@@ -400,19 +266,8 @@ ADE_API_RET_T ADE_Iir_SetInBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 ADE_API_RET_T ADE_Iir_SetOutBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 {
 
-    if (p_iir==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_iir,"%p",ADE_Iir_SetOutBuff);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetOutBuff,p_iir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
-
-    if (p_buff==NULL)
-    {
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,p_buff,"%p",ADE_Iir_SetOutBuff);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,SetOutBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//4;
-    }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,SetOutBuff,p_buff);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,SetOutBuff,p_iir);
 
     p_iir->p_out=p_buff;
 
@@ -422,6 +277,8 @@ ADE_API_RET_T ADE_Iir_SetOutBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff)
 ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir)
 {
     ADE_UINT32_T i=0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ResetState,p_iir);
 
     for(i=0;i<p_iir->n_SOS_sections;i++)
     {
@@ -437,18 +294,18 @@ ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir)
 static ADE_API_RET_T ADE_Iir_setFilt_Implementation(ADE_IIR_T* p_iir,ADE_IIR_IMP_CHOICE_T filt_imp_type)
 {
 
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,setFilt_Implementation,p_iir);
+
     if (filt_imp_type==ADE_IIR_TRASP_II_B)
    {
        p_iir->filter_func=filter_DII_T_b;
    }
    else
    {
-       #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,filt_imp_type,"%d",ADE_Iir_setFilt_Implementation);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setFilt_Implementation,filt_imp_type,"%d",(FILE*)ADE_STD_STREAM);
-        #endif
 
-            return ADE_RET_ERROR;//4;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,setFilt_Implementation,filt_imp_type,"%d",(FILE*)ADE_STD_STREAM);
+
+        return ADE_RET_ERROR;
    }
 
     return ADE_RET_SUCCESS;
@@ -457,63 +314,11 @@ static ADE_API_RET_T ADE_Iir_setFilt_Implementation(ADE_IIR_T* p_iir,ADE_IIR_IMP
 ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir)
 {
     ADE_UINT32_T i=0;
-   // ADE_UINT32_T order=2;
-    //ADE_FLOATING_T* p_in_buff;
-   // ADE_FLOATING_T* p_out_buff;
 
 
-    /**** set static params blas ****/
-#if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,Step,p_iir);
 
-if ((p_iir->filter_func)==NULL)
-{
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->filter_func),"%p",ADE_Iir_Step);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->filter_func,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//4;
-}
 
-if (*(p_iir->dp_denoms)==NULL)
-{
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_denoms),"%p",ADE_Iir_Step);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,*(p_iir->dp_denoms),"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//4;
-}
-if (*(p_iir->dp_nums)==NULL)
-{
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_nums),"%p",ADE_Iir_Step);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,*(p_iir->dp_nums),"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//4;
-}
-if ((p_iir->p_gains)==NULL)
-{
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_gains),"%p",ADE_Iir_Step);
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->p_gains,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//4;
-}
-
-if ((p_iir->p_in)==NULL)
-{
-      ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->p_in,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//4;
-}
-
-if ((p_iir->p_out)==NULL)
-{
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,(p_iir->p_out),"%p",ADE_Iir_Step);
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,p_iir->p_out,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//4;
-}
-
-if (*(p_iir->dp_states)==NULL)
-{
-        //ADE_PRINT_ERRORS(ADE_INCHECKS,*(p_iir->dp_states),"%p",ADE_Iir_Step);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_IIR,Step,*(p_iir->dp_states),"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//4;
-}
-
-#endif
-
- //memcpy( ((p_iir-> dp_section_buffers)[0]),p_iir->p_in,(p_iir->buff_len)*sizeof(ADE_FLOATING_T));
  ADE_Utils_memcpy_float(((p_iir-> dp_section_buffers)[0]),p_iir->p_in,p_iir->buff_len);
 
     for (i=0;i<p_iir->n_SOS_sections;i++)
@@ -521,7 +326,6 @@ if (*(p_iir->dp_states)==NULL)
 	    /*** set dynamic params blas ***/
        p_iir->active_section = i;
        (p_iir->filter_func)(p_iir);//(p_iir-> dp_section_buffers)[i], (p_iir-> dp_section_buffers)[i+1], (p_iir-> dp_denoms)[i], order, (p_iir-> dp_nums)[i], (p_iir-> p_gains)[i],(p_iir-> dp_states)[i],p_iir->buff_len,p_iir->p_Blas_L1);
-
 
 	}
 
@@ -532,24 +336,43 @@ ADE_Utils_memcpy_float(p_iir->p_out ,(p_iir-> dp_section_buffers)[p_iir->n_SOS_s
 }
 //
 //
- static ADE_API_RET_T filter_DII_T_b (ADE_IIR_T* p_iir)//(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame,ADE_blas_level1_T *p_Blas_L1;)
+ static ADE_API_RET_T ADE_Iir_filter_DII_T_b (ADE_IIR_T* p_iir)//(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame,ADE_blas_level1_T *p_Blas_L1;)
 {
     ADE_UINT32_T k=0,i=0;
-    ADE_UINT32_T active_section = p_iir->active_section;
-    ADE_FLOATING_T *in = (p_iir-> dp_section_buffers)[active_section];
-    ADE_FLOATING_T *out = (p_iir-> dp_section_buffers)[active_section+1];
-    ADE_FLOATING_T *a = (p_iir-> dp_denoms)[active_section];
-    ADE_UINT32_T order = p_iir->section_order;
-    ADE_FLOATING_T *b = (p_iir-> dp_nums)[active_section];
-    ADE_FLOATING_T gain = (p_iir-> p_gains)[active_section];
-    ADE_FLOATING_T *state = (p_iir-> dp_states)[active_section];
-    ADE_UINT32_T len_frame = p_iir->buff_len;
+    ADE_UINT32_T active_section = 0;
+    ADE_FLOATING_T *in = NULL;
+    ADE_FLOATING_T *out = NULL;
+    ADE_FLOATING_T *a =NULL;
+    ADE_UINT32_T order =0;
+    ADE_FLOATING_T *b = NULL;
+    ADE_FLOATING_T gain = 0;
+    ADE_FLOATING_T *state = NULL;
+    ADE_UINT32_T len_frame = NULL;
     #if (ADE_IIR_IMP==ADE_IIR_USE_BLAS)
-    ADE_blas_level1_T *p_Blas_L1 = p_iir->dp_Blas_L1[active_section];
+    ADE_blas_level1_T *p_Blas_L1 = NULL;
     #endif
-    ADE_FLOATING_T *temp_buffer = p_iir->dp_tempbuff[active_section];//calloc(order,sizeof(ADE_FLOATING_T));
-    ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
+    ADE_FLOATING_T *temp_buffer = NULL;//calloc(order,sizeof(ADE_FLOATING_T));
+    ADE_UINT32_T temp_buff_size = 0;
     ADE_FLOATING_T ALPHA=0.0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,filter_DII_T_b,p_iir);
+
+
+    active_section = p_iir->active_section;
+    in = (p_iir-> dp_section_buffers)[active_section];
+    out = (p_iir-> dp_section_buffers)[active_section+1];
+    a = (p_iir-> dp_denoms)[active_section];
+    order = p_iir->section_order;
+    b = (p_iir-> dp_nums)[active_section];
+    gain = (p_iir-> p_gains)[active_section];
+    state = (p_iir-> dp_states)[active_section];
+    len_frame = p_iir->buff_len;
+    #if (ADE_IIR_IMP==ADE_IIR_USE_BLAS)
+    p_Blas_L1 = p_iir->dp_Blas_L1[active_section];
+    #endif
+    temp_buffer = p_iir->dp_tempbuff[active_section];//calloc(order,sizeof(ADE_FLOATING_T));
+    temp_buff_size = order*sizeof(ADE_FLOATING_T);
+
 
 #if (ADE_IIR_IMP==ADE_IIR_USE_BLAS)
     for (k=0;k<len_frame;k++)
@@ -607,4 +430,4 @@ ADE_Utils_memcpy_float(p_iir->p_out ,(p_iir-> dp_section_buffers)[p_iir->n_SOS_s
 
 }
 
-
+static ADE_API_RET_T ADE_Iir_dofilter_DII_T_b_blas (ADE_IIR_T* p_iir)
