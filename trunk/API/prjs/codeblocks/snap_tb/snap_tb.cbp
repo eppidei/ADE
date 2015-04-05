@@ -93,6 +93,7 @@
 		<Unit filename="../../../src/headers/ADE.h" />
 		<Unit filename="../../../src/headers/ADE_Blow.h" />
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
+		<Unit filename="../../../src/headers/ADE_SCDF_Interface.h" />
 		<Unit filename="../../../src/headers/ADE_Snap.h" />
 		<Unit filename="../../../src/headers/ADE_Utils.h" />
 		<Unit filename="../../../src/headers/ADE_accelerate_framework_wrapper.h" />

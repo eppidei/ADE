@@ -5,6 +5,14 @@
 #include "headers/ADE_errors.h"
 #include <stdio.h>
 
+
+static ADE_Error_Handler_T ade_error_handler;
+
+#define ADE_PRINT_ERRORS(sev,type,class,met,var,format,stream)  ADE_Error_Handler_SetError(sev,type,class,met,format,&(var),#var,(FILE*)stream)
+#define ADE_CHECK_MEMALLOC(class,met,var) ADE_Error_Handler_CheckMemAlloc(class,met,"%p",&(var),#var);return ADE_RET_ERROR
+#define ADE_CHECK_INPUTPOINTER(class,met,var) ADE_Error_Handler_CheckInputPointer(class,met,"%p",&(var),#var);return ADE_RET_ERROR
+#define ADE_CHECK_ADERETVAL(class,met,var) ADE_Error_Handler_CheckReturn(class,met,"%p",&(var),#var);return ADE_RET_ERROR
+
 #ifdef __cplusplus
     extern "C" {
 #endif

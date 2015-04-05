@@ -17,43 +17,25 @@ ADE_API_RET_T ADE_Polyfit_Init (ADE_POLYFIT_T **dp_poly,ADE_UINT32_T poly_order_
     ADE_UINT32_T poly_pieces = 0;
 
     p_this=calloc(1,sizeof(ADE_POLYFIT_T));
+     ADE_CHECK_MEMALLOC(ADE_CLASS_POLYFIT,Init,  p_this);
 
-    if (p_this!=NULL)
-    {
+
         p_this->n_breaks=n_breaks_i;
         p_this->p_breaks=calloc(n_breaks_i,sizeof(ADE_FLOATING_T));
-        if (p_this->p_breaks==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,p_this->p_breaks,"%p",ADE_Polyfit_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_POLYFIT,Init,p_this->p_breaks,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//21;
-        }
+        ADE_CHECK_MEMALLOC(ADE_CLASS_POLYFIT,Init,  p_this->p_breaks);
+
         poly_pieces = p_this->n_breaks-1;
         if (poly_pieces<=0)
         {
-            //ADE_PRINT_ERRORS(ADE_INCHECKS,poly_pieces,"%d",ADE_Polyfit_Init);
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_POLYFIT,Init,poly_pieces,"%d",(FILE*)ADE_STD_STREAM);
             return ADE_RET_ERROR;//22;
         }
 
         p_this->poly_order=poly_order_i;
         p_this->p_poly_coeffs=calloc(poly_pieces*(poly_order_i+1),sizeof(ADE_FLOATING_T));
-        if (p_this->p_poly_coeffs==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,p_this->p_poly_coeffs,"%p",ADE_Polyfit_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_POLYFIT,Init,p_this->p_poly_coeffs,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//21;
-        }
+        ADE_CHECK_MEMALLOC(ADE_CLASS_POLYFIT,Init, p_this->p_poly_coeffs);
 
         *dp_poly=p_this;
-    }
-    else
-    {
-        //ADE_PRINT_ERRORS(ADE_MEM,p_this,"%p",ADE_Polyfit_Init);
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_POLYFIT,Init,p_this,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//21;
-    }
-
 
     return ADE_RET_SUCCESS;
 

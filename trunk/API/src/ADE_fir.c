@@ -26,9 +26,8 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
 
 
     ADE_FIR_T* pthis = calloc(1,sizeof(ADE_FIR_T));
+    ADE_CHECK_MEMALLOC(ADE_CLASS_FIR,Init,pthis);
 
-    if (pthis!=NULL)
-    {
         pthis->buff_len=buff_len;
         pthis->gain=default_gain;
         pthis->filter_order = fir_order;
@@ -37,22 +36,13 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
 
         /******** state buffer allocation ***********/
         p_state=calloc(fir_order+1,sizeof(ADE_FLOATING_T));
-        if (p_state==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,p_state,"%d",ADE_Fir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,p_state,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//17;
-        }
+        ADE_CHECK_MEMALLOC(ADE_CLASS_FIR,Init,p_state);
+
         pthis->p_state=p_state;
 
         /********** numerator buffer allocation *************/
         pthis->p_num=calloc(fir_order+1,sizeof(ADE_FLOATING_T));
-        if (pthis->p_num==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->p_num,"%d",ADE_Fir_Init);
-             ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,pthis->p_num,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//17;
-        }
+        ADE_CHECK_MEMALLOC(ADE_CLASS_FIR,Init,pthis->p_num);
 
         /********* Blas1 Allocation ***************/
 
@@ -71,32 +61,17 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
         else
         {
 
-             //ADE_PRINT_ERRORS(ADE_INCHECKS,pthis->filt_imp_type,"%d",ADE_Fir_Init);
              ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Init,pthis->filt_imp_type,"%d",(FILE*)ADE_STD_STREAM);
-             return ADE_RET_ERROR;//13;
+             return ADE_RET_ERROR;
 
         }
 
         /*********** Temp buffer allocation ***********/
 
         pthis->p_tempbuff=calloc(fir_order,sizeof(ADE_FLOATING_T));
-        if (pthis->p_tempbuff==NULL)
-        {
-            //ADE_PRINT_ERRORS(ADE_MEM,pthis->p_tempbuff,"%d",ADE_Fir_Init);
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,pthis->p_tempbuff,"%p",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;//17;
-        }
+        ADE_CHECK_MEMALLOC(ADE_CLASS_FIR,Init,pthis->p_tempbuff);
 
          *dp_this=pthis;
-    }
-    else
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_FIR,Init,pthis,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//17;
-    }
-
-
-
 
     return ADE_RET_SUCCESS;
 }
@@ -115,20 +90,10 @@ ADE_VOID_T ADE_Fir_Release(ADE_FIR_T* p_fir)
 
 ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num)
 {
-    if (p_num==NULL)
-    {
-     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,setNum,p_num,"%p",(FILE*)ADE_STD_STREAM);
-     return ADE_RET_ERROR;//13;
-    }
 
-    if (p_fir==NULL)
-    {
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,setNum,p_fir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//13;
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,setNum,p_num);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,setNum,p_fir);
 
-    }
-
-    //memcpy(p_fir->p_num,p_num,(p_fir->filter_order+1)*sizeof(ADE_FLOATING_T));
     ADE_Utils_memcpy_float(p_fir->p_num,p_num,(p_fir->filter_order+1));
 
     return ADE_RET_SUCCESS;
@@ -137,12 +102,8 @@ ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num)
 
 ADE_API_RET_T ADE_Fir_ResetState(ADE_FIR_T* p_fir,ADE_FLOATING_T rst_val)
 {
-    if (p_fir==NULL)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,ResetState,p_fir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//13;
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ResetState,p_fir);
 
-    }
     ADE_Utils_memset_float(p_fir->p_state,(p_fir->filter_order+1),rst_val);
    // memset(p_fir->p_state,0,(p_fir->filter_order+1)*sizeof(ADE_FLOATING_T));
 
@@ -151,37 +112,19 @@ ADE_API_RET_T ADE_Fir_ResetState(ADE_FIR_T* p_fir,ADE_FLOATING_T rst_val)
 
 ADE_API_RET_T ADE_Fir_SetInBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
 {
-    if (p_buff==NULL)
-    {
-     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetInBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
-     return ADE_RET_ERROR;//13;
-    }
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,SetInBuff,p_num);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,SetInBuff,p_fir);
 
-    if (p_fir==NULL)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetInBuff,p_fir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//13;
-
-    }
-    p_fir->p_in=p_buff;
+     p_fir->p_in=p_buff;
 
     return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Fir_SetOutBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
 {
-     if (p_buff==NULL)
-    {
-     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetOutBuff,p_buff,"%p",(FILE*)ADE_STD_STREAM);
-     return ADE_RET_ERROR;//13;
-    }
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,SetOutBuff,p_num);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,SetOutBuff,p_fir);
 
-    if (p_fir==NULL)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,SetOutBuff,p_fir,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;//13;
-
-    }
     p_fir->p_out=p_buff;
 
     return ADE_RET_SUCCESS;
@@ -192,40 +135,10 @@ ADE_API_RET_T ADE_Fir_SetOutBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
 
 ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir)
 {
-//    ADE_UINT32_T i=0;
 
-#if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,Step,p_fir);
 
-if ((p_fir->p_state)==NULL)
-{
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->p_state,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//13;
-}
-
-if ((p_fir->p_in)==NULL)
-{
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->p_in,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//13;
-}
-if ((p_fir->p_out)==NULL)
-{
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->p_out,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//13;
-}
-
-if ((p_fir->filter_func)==NULL)
-{
-     ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,Step,p_fir->filter_func,"%p",(FILE*)ADE_STD_STREAM);
-    return ADE_RET_ERROR;//13;
-
-}
-
-#endif
-
-
-       (p_fir->filter_func)(p_fir);//(p_iir-> dp_section_buffers)[i], (p_iir-> dp_section_buffers)[i+1], (p_iir-> dp_denoms)[i], order, (p_iir-> dp_nums)[i], (p_iir-> p_gains)[i],(p_iir-> dp_states)[i],p_iir->buff_len,p_iir->p_Blas_L1);
-
-	//memcpy(p_fir->p_out ,(p_fir-> dp_section_buffers)[p_fir->n_SOS_sections],p_fir->buff_len*sizeof(ADE_FLOATING_T));
+    (p_fir->filter_func)(p_fir);
 
 	return ADE_RET_SUCCESS;
 
@@ -234,48 +147,65 @@ if ((p_fir->filter_func)==NULL)
 
 /************** static methods *********************/
 
-static ADE_API_RET_T filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame,ADE_blas_level1_T *p_Blas_L1;)
+static ADE_API_RET_T ADE_Fir_filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *in, ADE_FLOATING_T *out, ADE_FLOATING_T *a, ADE_UINT32_T order, ADE_FLOATING_T *b,ADE_FLOATING_T gain, ADE_FLOATING_T *state,ADE_UINT32_T len_frame,ADE_blas_level1_T *p_Blas_L1;)
 {
     ADE_UINT32_T i=0,k=0;
-    //ADE_UINT32_T active_section = p_iir->active_section;
-    ADE_FLOATING_T *p_in = p_fir->p_in;
-    ADE_FLOATING_T *p_out = p_fir->p_out;
-    //ADE_FLOATING_T *a = (p_iir-> dp_denoms)[active_section];
-    ADE_UINT32_T order = p_fir->filter_order;
-    ADE_FLOATING_T *p_b = (p_fir-> p_num);
-    ADE_FLOATING_T gain = (p_fir-> gain);
-    ADE_FLOATING_T *p_state = (p_fir-> p_state);
-    ADE_UINT32_T len_frame = p_fir->buff_len;
+    ADE_FLOATING_T *p_in =NULL;
+    ADE_FLOATING_T *p_out = NULL;
+    ADE_UINT32_T order = 0;
+    ADE_FLOATING_T *p_b = NULL;
+    ADE_FLOATING_T gain = 0;
+    ADE_FLOATING_T *p_state = NULL;
+    ADE_UINT32_T len_frame = 0;
+   #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
+    ADE_blas_level1_T *p_Blas_L1 = NULL;
+    #endif
+    ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
+    ADE_FLOATING_T *p_temp_buffer=NULL;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,filter_DII_T,p_fir);
+
+    p_in = p_fir->p_in;
+    p_out = p_fir->p_out;
+    order = p_fir->filter_order;
+    p_b = (p_fir-> p_num);
+    gain = (p_fir-> gain);
+    p_state = (p_fir-> p_state);
+    len_frame = p_fir->buff_len;
+    p_temp_buffer=p_fir->p_tempbuff;
+     #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
+    p_Blas_L1 = p_fir->p_Blas_L1;
+    #endif
+
    #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
     ADE_blas_level1_T *p_Blas_L1 = p_fir->p_Blas_L1;
-    #endif
-    //ADE_FLOATING_T *temp_buffer = calloc(order,sizeof(ADE_FLOATING_T));
-    ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
-
-    ADE_FLOATING_T *p_temp_buffer=p_fir->p_tempbuff;
 
 #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
 
-dofilter_DII_T_blas (p_Blas_L1, p_in,p_b,len_frame,p_out, p_state,gain,p_temp_buffer,temp_buff_size);
+ADE_Fir_dofilter_DII_T_blas (p_Blas_L1, p_in,p_b,len_frame,p_out, p_state,gain,p_temp_buffer,temp_buff_size);
 
     #elif (ADE_FIR_IMP==ADE_FIR_USE_CUSTOM)
 
-   dofilter_DII_T_custom(p_in,p_b, len_frame,p_out, p_state, gain,order) ;
+   ADE_Fir_dofilter_DII_T_custom(p_in,p_b, len_frame,p_out, p_state, gain,order) ;
     #else
 
         #error ADE_FIR_IMP in filter_DII_T
     #endif
 
-    //ADE_CHECKNFREE(temp_buffer);
-
     return ADE_RET_SUCCESS;
 
 }
-static ADE_VOID_T dofilter_DII_T_blas (ADE_blas_level1_T *p_Blas_L1, ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_FLOATING_T *p_temp_buffer,ADE_UINT32_T temp_buff_size)
+static ADE_VOID_T ADE_Fir_dofilter_DII_T_blas (ADE_blas_level1_T *p_Blas_L1, ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_FLOATING_T *p_temp_buffer,ADE_UINT32_T temp_buff_size)
 {
 
 ADE_UINT32_T k=0;
 ADE_FLOATING_T ALPHA=0;
+
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_Blas_L1);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_in);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_out);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_state);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_temp_buffer);
 
  for (k=0;k<len_frame;k++)
     {
@@ -300,6 +230,11 @@ static ADE_VOID_T dofilter_DII_T_custom(ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b
 {
 ADE_UINT32_T k=0,i=0;
 
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_in);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_b);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_out);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,dofilter_DII_T_blas,p_state);
+
  for (k=0;k<len_frame;k++)
     {
 
@@ -321,6 +256,8 @@ ADE_UINT32_T k=0,i=0;
 static ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FIR_IMP_CHOICE_T filt_imp_type)
 {
 
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,setFilt_Implementation,p_fir);
+
     if (filt_imp_type==ADE_FIR_TRASP_II)
    {
        p_fir->filter_func=filter_DII_T;
@@ -329,8 +266,7 @@ static ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FIR_IMP
    {
 
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,setFilt_Implementation,filt_imp_type,"%d",(FILE*)ADE_STD_STREAM);
-
-            return ADE_RET_ERROR;//13;
+        return ADE_RET_ERROR;
    }
 
     return ADE_RET_SUCCESS;

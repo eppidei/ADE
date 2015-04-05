@@ -7,8 +7,12 @@
 #include <stdlib.h>
 #include "headers/ADE_Error_Handler.h"
 
+/******** static headers **********/
+static ADE_BOOL_T ADE_IsInactiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i);
+static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i);
+static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i);
 
-ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T buff_size_i,ADE_FLOATING_T Fs_i)
+ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T in_buff_len,ADE_FLOATING_T input_rate)
 {
 
     ADE_UINT32_T blow_flag = BLOW_FLAG;
@@ -23,44 +27,56 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
     ADE_UINT32_T fft_len_i=512;
 
 
+
     if (*dp_ADE_Handle==NULL)//if still not allocated to protected againt a new call for a different alg
     {
         *dp_ADE_Handle = calloc(1,sizeof(ADE_T));
+         ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,Init,(*dp_ADE_Handle));
 
     }
 
+   /** Only One alg at time check **/
+   if (!ADE_IsOneFlag(Sel_Flag_i))
+   {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,Init,Sel_Flag_i,"%d",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+   }
+//   if (p_in_struct==NULL)
+//   {
+//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,Init,p_in_struct,"%p",(FILE*)ADE_STD_STREAM);
+//        return ADE_RET_ERROR;
+//
+//   }
+//   if (p_in_struct->num_channels>1) /* now only mono*/
+//   {
+//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,Init,p_in_struct->num_channels,"%d",(FILE*)ADE_STD_STREAM);
+//        return ADE_RET_ERROR;
+//
+//   }
+//
 
-    if (*dp_ADE_Handle!=NULL)
-    {
-        if ( ( (Sel_Flag_i & blow_flag)==blow_flag ) &&  ( ( (*dp_ADE_Handle)->active_algs_flag & blow_flag ) == 0 ) )
+
+        if (  ADE_IsInactiveAlg( (*dp_ADE_Handle)->active_algs_flag,Sel_Flag_i,blow_flag ))
         {
             (*dp_ADE_Handle)->active_algs_flag |= blow_flag; //accendo flag
-            ret_blow = ADE_Blow_Init( &((*dp_ADE_Handle)->p_blow),buff_size_i,Fs_i);
+            ret_blow = ADE_Blow_Init( &((*dp_ADE_Handle)->p_blow),in_buff_len,input_rate,input_rate);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,ret_blow);
 
-            if (ret_blow==ADE_RET_ERROR)
-            {
-                 ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_ADE,Init,ret_blow,"%d",(FILE*)ADE_STD_STREAM);
-                return ADE_RET_ERROR;
-            }
+
+            (*dp_ADE_Handle)->p_blow_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
+            ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,Init,(*dp_ADE_Handle)->p_blow_out_struct);
+
         }
 
-        if ( ( (Sel_Flag_i & snap_flag)==snap_flag ) &&  ( ( (*dp_ADE_Handle)->active_algs_flag & snap_flag ) == 0 ) )
+        else if  (  ADE_IsInactiveAlg( (*dp_ADE_Handle)->active_algs_flag,Sel_Flag_i,snap_flag ))
         {
             (*dp_ADE_Handle)->active_algs_flag |= snap_flag; //accendo flag
-            ret_snap = ADE_Snap_Init( &((*dp_ADE_Handle)->p_snap),buff_size_i,Fs_i,n_pow_slots_i,n_max_indexes_i,time_left_i,time_right_i,fft_len_i);
-            if (ret_snap==ADE_RET_ERROR)
-            {
-                 ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_ADE,Init,ret_snap,"%d",(FILE*)ADE_STD_STREAM);
-                return ADE_RET_ERROR;
-            }
-        }
+            ret_snap = ADE_Snap_Init( &((*dp_ADE_Handle)->p_snap),in_buff_len,input_rate,n_pow_slots_i,n_max_indexes_i,time_left_i,time_right_i,fft_len_i);
+           ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,ret_snap);
 
-    }
-    else
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_ADE,Init,*dp_ADE_Handle,"%p",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
+            (*dp_ADE_Handle)->p_snap_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
+            ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,Init,(*dp_ADE_Handle)->p_snap_out_struct);
+        }
 
     return ADE_RET_SUCCESS;
 
@@ -73,95 +89,188 @@ ADE_VOID_T ADE_Release(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
      ADE_UINT32_T blow_flag = BLOW_FLAG;
      ADE_UINT32_T snap_flag = SNAP_FLAG;
 
-    if ( ( (Sel_Flag_i & blow_flag)==blow_flag ) &&  ( ( p_ADE->active_algs_flag & blow_flag ) == 1 ) )
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
     {
         p_ADE->active_algs_flag &= ~blow_flag; //spengo flag
         ADE_Blow_Release( p_ADE->p_blow);
     }
 
-    if ( ( (Sel_Flag_i & snap_flag)==snap_flag ) &&  ( ( p_ADE->active_algs_flag & snap_flag ) == 1 ) )
+    if(  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
     {
         p_ADE->active_algs_flag &= ~snap_flag; //spengo flag
         ADE_Snap_Release( p_ADE->p_snap);
     }
 
-}
-
-ADE_VOID_T ADE_SetInBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_buff)
-{
-    ADE_UINT32_T blow_flag = BLOW_FLAG;
-    ADE_UINT32_T snap_flag = SNAP_FLAG;
-
-     if  ( (Sel_Flag_i & blow_flag)==blow_flag )
-     {
-        ADE_Blow_SetInBuff(p_ADE->p_blow, p_buff);
-     }
-
-     if  ( (Sel_Flag_i & snap_flag)==snap_flag )
-     {
-        ADE_Snap_SetInBuff(p_ADE->p_snap, p_buff);
-     }
+    ADE_CHECKNFREE(p_ADE);
 
 }
 
-ADE_VOID_T ADE_SetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_buff)
-{
-    ADE_UINT32_T blow_flag = BLOW_FLAG;
-     ADE_UINT32_T snap_flag = SNAP_FLAG;
 
-     if  ( (Sel_Flag_i & blow_flag)==blow_flag )
-     {
-        ADE_Blow_SetOutBuff(p_ADE->p_blow, p_buff);
-     }
+//
+//ADE_VOID_T ADE_GetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
+//{
+//    ADE_UINT32_T blow_flag = BLOW_FLAG;
+//     ADE_UINT32_T snap_flag = SNAP_FLAG;
+//
+//     if  ( (Sel_Flag_i & blow_flag)==blow_flag )
+//     {
+//        ADE_Blow_SetOutBuff(p_ADE->p_blow, p_buff);
+//     }
+//
+//      if  ( (Sel_Flag_i & snap_flag)==snap_flag )
+//     {
+//        fprintf(stderr,"****Warning empty method*****\n");
+//     }
+//
+//}
 
-      if  ( (Sel_Flag_i & snap_flag)==snap_flag )
-     {
-        fprintf(stderr,"****Warning empty method*****\n");
-     }
-
-}
-
-ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
+ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T *p_in_struct)
 {
 
     ADE_UINT32_T blow_flag = BLOW_FLAG;
     ADE_UINT32_T snap_flag = SNAP_FLAG;
-    ADE_API_RET_T blow_ret = ADE_RET_SUCCESS;
-    ADE_API_RET_T snap_ret = ADE_RET_SUCCESS;
+    ADE_API_RET_T blow_ret = ADE_RET_ERROR;
+    ADE_API_RET_T snap_ret = ADE_RET_ERROR;
+
+    if (p_in_struct!=NULL)
+    {
 
      if  ( (Sel_Flag_i & blow_flag)==blow_flag )
      {
+        blow_ret = ADE_Blow_SetInBuff(p_ADE->p_blow, p_in_struct->data);
+        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,blow_ret);
+        #endif
         blow_ret = ADE_Blow_Step(p_ADE->p_blow);
-
         #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-
-        if (blow_ret==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_ADE,Step,blow_ret,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-
-
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,blow_ret);
         #endif
+     } else if  ( (Sel_Flag_i & snap_flag)==snap_flag )
+        {
+            snap_ret = ADE_Snap_SetInBuff(p_ADE->p_snap, p_in_struct->data);
+            #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,snap_ret);
+            #endif
+            snap_ret = ADE_Snap_Step(p_ADE->p_snap);
+            #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,snap_ret);
+            #endif
      }
-
-
-      if  ( (Sel_Flag_i & snap_flag)==snap_flag )
-     {
-        snap_ret = ADE_Snap_Step(p_ADE->p_snap);
-
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-
-        if (snap_ret==ADE_RET_ERROR)
-        {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_ADE,Step,snap_ret,"%d",(FILE*)ADE_STD_STREAM);
-            return ADE_RET_ERROR;
-        }
-
-
-        #endif
      }
 
       return ADE_RET_SUCCESS;
 
 }
+
+ADE_SCDF_Output_Int_T* ADE_GetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
+{
+
+ADE_SCDF_Output_Int_T* p_out;
+
+#if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+
+/** Only One alg at time check **/
+   if (!ADE_IsOneFlag(Sel_Flag_i))
+   {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,GetOutBuff,Sel_Flag_i,"%d",(FILE*)ADE_STD_STREAM);
+       // return ADE_RET_ERROR;
+   }
+
+#endif
+
+if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
+{
+
+    p_out=(p_ADE->p_blow_out_struct);
+
+    p_out->Fs_data=p_ADE->p_blow->Fs_o;
+    p_out->p_data=p_ADE->p_blow->p_out;
+    p_out->n_data=p_ADE->p_blow->buff_len_o;
+    p_out->state=p_ADE->p_blow->state;
+
+}
+else if (Sel_Flag_i==SNAP_FLAG)
+{
+    p_out=(p_ADE->p_snap_out_struct);
+
+    //p_out->Fs_data=p_ADE->p_snap->Fs;
+    //p_out->p_data=p_ADE->p_snap->p_out;
+   // p_out->n_data=p_ADE->p_snap->buff_len_o;
+    p_out->state=p_ADE->p_snap->state;
+
+}
+
+return p_out;
+
+
+}
+
+
+/************************ Static Methods **********************/
+
+
+static ADE_BOOL_T ADE_IsInactiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i)
+{
+    if ( ( (Sel_Flag_i & defined_Flag_i)==defined_Flag_i ) &&  ( ( active_algs_flag & defined_Flag_i ) == 0 ) )
+    {
+
+        return ADE_TRUE;
+    }
+    else
+    {
+        return ADE_FALSE;
+    }
+}
+
+static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i)
+{
+    if ( ( (Sel_Flag_i & defined_Flag_i)==defined_Flag_i ) &&  ( ( active_algs_flag & defined_Flag_i ) == 1 ) )
+    {
+
+        return ADE_TRUE;
+    }
+    else
+    {
+        return ADE_FALSE;
+    }
+}
+
+static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i)
+{
+    ADE_UINT32_T i=0;
+    ADE_UINT32_T bit_len = sizeof(Sel_Flag_i)*8;
+    ADE_UINT32_T count=0;
+    ADE_UINT32_T tmp_val=0;
+
+    for (i=0;i<bit_len;i++)
+    {
+        tmp_val=(Sel_Flag_i>>i) & (0x0001);
+        count = count + tmp_val;
+    }
+
+    if (count==1)
+    {
+        return ADE_TRUE;
+    }
+    else
+    {
+        return ADE_FALSE;
+    }
+
+}
+
+//static ADE_API_RET_T ADE_AllocateOutBuff(ADE_SCDF_Output_Int_T* p_out_struct)
+//{
+//
+//     p_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
+//
+//     if (p_out_struct==NULL)
+//    {
+//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_ADE,AllocateOutBuff,p_out_struct,"%p",(FILE*)ADE_STD_STREAM);
+//        return ADE_RET_ERROR;
+//
+//    }
+//
+//    return ADE_RET_SUCCESS;
+//
+//}

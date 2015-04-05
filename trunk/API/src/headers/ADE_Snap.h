@@ -54,6 +54,7 @@ struct ADE_SNAP_S
     ADE_CPLX_T **dp_spectrum;//lungo n_max_indexes*extract_len*2
     ADE_FLOATING_T *p_percent_pow;
     ADE_BOOL_T *p_snaps;
+    ADE_BOOL_T state;
   //  ADE_FLOATING_T *p_tgk_temp;
     /*Friend Classes*/
     ADE_IIR_T *p_iir;

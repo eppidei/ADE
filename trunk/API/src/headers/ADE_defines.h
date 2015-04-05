@@ -52,6 +52,9 @@
 #define ADE_CHECK_RETURNS_TRUE (1)
 #define ADE_CHECK_RETURNS_FALSE (0)
 
+#define ADE_CHECK_MEM_TRUE (1)
+#define ADE_CHECK_MEM_FALSE (0)
+
 /* Control */
 
 #ifndef ADE_TARGET_TYPE
@@ -114,11 +117,13 @@
 
 
 #if (ADE_TARGET_MODE==ADE_DEBUG)
-#define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_TRUE //1 true 0 false
-#define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_TRUE //1 true 0 false
+#define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_TRUE
+#define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_TRUE
+#define ADE_CHECK_MEM ADE_MEM_TRUE
 #elif  (ADE_TARGET_MODE==ADE_RELEASE)
-#define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_FALSE //1 true 0 false
-#define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_FALSE //1 true 0 false
+#define ADE_CHECK_INPUTS ADE_CHECK_INPUTS_FALSE
+#define ADE_CHECK_RETURNS ADE_CHECK_RETURNS_FALSE
+#define ADE_CHECK_MEM ADE_MEM_FALSE
 #endif
 
 
@@ -150,12 +155,7 @@
 //#define ADE_BLOW_MATLAB_PATH "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts/"
 //#define ADE_BLOW_MAT_SCRIPT "blow_fine_control_swlike.m"
 /***************************** ENVIRONMENT *******************************/
-/*one based*/
-#define BLOW_BIT (0)
-#define SNAP_BIT (1)
 
-#define BLOW_FLAG (1<<(BLOW_BIT))
-#define SNAP_FLAG (1<<(SNAP_BIT))
 
 /*************************** MATLAB *******************************/
 #define ADE_MAX_CHARS (128)
