@@ -19,14 +19,14 @@ static ADE_API_RET_T ADE_Blas_level1_launch_type1 (ADE_blas_level1_T *p_blas_l1)
 static ADE_FLOATING_T ADE_Blas_level1_launch_type2 (ADE_blas_level1_T *p_blas_l1);
 static ADE_CPLX_T ADE_Blas_level1_launch_type3 (ADE_blas_level1_T *p_blas_l1);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-static ADE_API_RET_T ADE_Blas_level1_Saxpy (ADE_blas_level1_T *p_blas_l1);
-static ADE_API_RET_T ADE_Blas_level1_Scopy (ADE_blas_level1_T *p_blas_l1);
+static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1);
+static ADE_API_RET_T ADE_Blas_level1_scopy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_caxpy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1);
-static ADE_FLOATING_T ADE_Blas_level1_Sdot (ADE_blas_level1_T *p_blas_l1);
+static ADE_FLOATING_T ADE_Blas_level1_sdot (ADE_blas_level1_T *p_blas_l1);
 static ADE_CPLX_T ADE_Blas_level1_cdotu (ADE_blas_level1_T *p_blas_l1);
 static ADE_CPLX_T ADE_Blas_level1_cdotc (ADE_blas_level1_T *p_blas_l1);
-static ADE_FLOATING_T ADE_Blas_level1_Snrm2 (ADE_blas_level1_T *p_blas_l1);
+static ADE_FLOATING_T ADE_Blas_level1_snrm2 (ADE_blas_level1_T *p_blas_l1);
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 static ADE_API_RET_T ADE_Blas_level1_daxpy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_dcopy (ADE_blas_level1_T *p_blas_l1);
@@ -519,7 +519,7 @@ ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
     if(math_type==ADE_REAL)
     {
-        p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_Saxpy;
+        p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_saxpy;
     }
     else if (math_type==ADE_CPLX)
     {
@@ -559,7 +559,7 @@ ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
     if(math_type==ADE_REAL)
     {
-        p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_Scopy;
+        p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_scopy;
     }
     else if (math_type==ADE_CPLX)
     {
@@ -567,7 +567,7 @@ ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
     }
     else
     {
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL1,copy,p_blas_l1->math_type,"%d",(FILE*)ADE_STD_STREAM);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_copy,p_blas_l1->math_type,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
 
@@ -600,7 +600,7 @@ ADE_FLOATING_T ADE_Blas_level1_dot(ADE_blas_level1_T* p_blas_l1
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-    p_blas_l1->blas_level1_fcn_type2=ADE_Blas_level1_Sdot;
+    p_blas_l1->blas_level1_fcn_type2=ADE_Blas_level1_sdot;
 
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 
@@ -676,7 +676,7 @@ ADE_FLOATING_T ADE_Blas_level1_nrm2(ADE_blas_level1_T* p_blas_l1)
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-    p_blas_l1->blas_level1_fcn_type2=ADE_Blas_level1_Snrm2;
+    p_blas_l1->blas_level1_fcn_type2=ADE_Blas_level1_snrm2;
 
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 
@@ -749,7 +749,7 @@ static ADE_FLOATING_T ADE_Blas_level1_launch_type2 (ADE_blas_level1_T *p_blas_l1
     ADE_FLOATING_T ret = 0;
    // static unsigned short flag= 0;
 
-    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,launch_type2,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_launch_type2,p_blas_l1);
 
     ret = (p_blas_l1->blas_level1_fcn_type2)(p_blas_l1);
 
@@ -761,7 +761,7 @@ static ADE_CPLX_T ADE_Blas_level1_launch_type3 (ADE_blas_level1_T *p_blas_l1)
     ADE_CPLX_T ret ;
 //    static unsigned short flag= 0;
 
-    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,launch_type3,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_launch_type3,p_blas_l1);
 
     ret = (p_blas_l1->blas_level1_fcn_type3)(p_blas_l1);
 
@@ -772,10 +772,10 @@ static ADE_CPLX_T ADE_Blas_level1_launch_type3 (ADE_blas_level1_T *p_blas_l1)
 
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
-static ADE_API_RET_T ADE_Blas_level1_Saxpy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
- ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,Saxpy,p_blas_l1);
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_saxpy,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -875,10 +875,10 @@ static ADE_API_RET_T ADE_Blas_level1_Saxpy (ADE_blas_level1_T *p_blas_l1)// (ADE
 
 }
 
-static ADE_API_RET_T ADE_Blas_level1_Scopy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+static ADE_API_RET_T ADE_Blas_level1_scopy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
- ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,Scopy,p_blas_l1);
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_scopy,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -905,7 +905,7 @@ static ADE_API_RET_T ADE_Blas_level1_Scopy (ADE_blas_level1_T *p_blas_l1)// (ADE
 static ADE_API_RET_T ADE_Blas_level1_caxpy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,caxpy,p_blas_l1);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_caxpy,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -933,7 +933,7 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,caxpy,p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ccopy,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_ccopy,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -959,12 +959,12 @@ static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1)// (ADE
 
 }
 
-static ADE_FLOATING_T ADE_Blas_level1_Sdot (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
+static ADE_FLOATING_T ADE_Blas_level1_sdot (ADE_blas_level1_T *p_blas_l1)// (ADE_INT32_T *N,ADE_FLOATING_SP_T *SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T *INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T *INCY)
 {
 
 ADE_FLOATING_T ret=0;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,Sdot,p_blas_l1);
+ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_sdot,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -995,7 +995,7 @@ static ADE_CPLX_T ADE_Blas_level1_cdotu (ADE_blas_level1_T *p_blas_l1)// (ADE_IN
 
 ADE_CPLX_T ret ;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,cdotu,p_blas_l1);
+ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_cdotu,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -1023,7 +1023,7 @@ static ADE_CPLX_T ADE_Blas_level1_cdotc (ADE_blas_level1_T *p_blas_l1)// (ADE_IN
 
 ADE_CPLX_T ret ;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,cdotc,p_blas_l1);
+ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_cdotc,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -1051,12 +1051,12 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,cdotc,p_blas_l1);
 
 
 
-static ADE_FLOATING_T ADE_Blas_level1_Snrm2 (ADE_blas_level1_T *p_blas_l1)
+static ADE_FLOATING_T ADE_Blas_level1_snrm2 (ADE_blas_level1_T *p_blas_l1)
 {
 
 ADE_FLOATING_T ret=0;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,Snrm2,p_blas_l1);
+ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_snrm2,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 

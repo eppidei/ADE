@@ -27,6 +27,8 @@ ADE_FLOATING_T *p_cycle_outbuff=NULL;
 
 	ADE_Blow_GetOutBuff(p_blow,&p_cycle_outbuff);
 
+	#ifdef ADE_CONFIGURATION_INTERACTIVE
+
 n_iterations=ADE_Matlab_GetScalar(p_blow->p_mat,"n_iterations");
 p_global_outbuff=(ADE_FLOATING_T*)calloc(Frame_len*n_iterations,sizeof(ADE_FLOATING_T));
 
@@ -45,7 +47,7 @@ ADE_Matlab_Evaluate_StringnWait(p_blow->p_mat, "figure;hold on;plot(outt,'or');p
    free(p_global_outbuff);
 
 
-
+#endif
 
 
 return EXIT_SUCCESS;

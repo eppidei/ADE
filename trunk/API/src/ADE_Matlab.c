@@ -311,15 +311,15 @@ ADE_UINT32_T ADE_Matlab_GetNElements(ADE_MATLAB_T* p_mat, char *varname)
 
 double* ADE_Matlab_GetDataPointer(ADE_MATLAB_T* p_mat, char *varname)
 {
-    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetDataPointer,p_mat);
-    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetDataPointer,varname);
+    ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_MATLAB,ADE_METHOD_GetDataPointer,p_mat);
+    ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_MATLAB,ADE_METHOD_GetDataPointer,varname);
     return p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)];
 }
 
 double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname)
 {
-     //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetScalar,p_mat);
-    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetScalar,varname);
+     ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_MATLAB,ADE_METHOD_GetScalar,p_mat);
+    ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_MATLAB,ADE_METHOD_GetScalar,varname);
     return *(p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)]);
 }
 
@@ -519,8 +519,8 @@ static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned i
     double *p_src_r = NULL;
     double *p_src_i = NULL;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Mat2C_copy,p_dst);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Mat2C_copy,p_mx);
+    ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_MATLAB,ADE_METHOD_Mat2C_copy,p_dst);
+    ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_MATLAB,ADE_METHOD_Mat2C_copy,p_mx);
 
     if (mxIsComplex(p_mx))
     {
