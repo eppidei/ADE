@@ -36,7 +36,7 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
 ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stopword);
 double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname);
 ADE_UINT32_T ADE_Matlab_GetLength(ADE_MATLAB_T* p_mat, char *varname);
-ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat);
+ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat, FILE *p_fid);
 
 #ifdef __cplusplus
     }   /* extern "C" */

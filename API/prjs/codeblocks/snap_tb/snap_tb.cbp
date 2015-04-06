@@ -92,6 +92,7 @@
 		</Unit>
 		<Unit filename="../../../src/headers/ADE.h" />
 		<Unit filename="../../../src/headers/ADE_Blow.h" />
+		<Unit filename="../../../src/headers/ADE_Error_Handler.h" />
 		<Unit filename="../../../src/headers/ADE_Matlab.h" />
 		<Unit filename="../../../src/headers/ADE_SCDF_Interface.h" />
 		<Unit filename="../../../src/headers/ADE_Snap.h" />

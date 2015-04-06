@@ -17,9 +17,6 @@ static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft);
 static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T fft_dir);
 static ADE_API_RET_T ADE_Fft_SetType(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type);
 
-//static ADE_API_RET_T ADE_Fft_SetSplitIn(ADE_FFT_T* p_fft,ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split);
-//static ADE_API_RET_T ADE_Fft_SetSplitOut(ADE_FFT_T* p_fft,ADE_VOID_T *p_buff,ADE_UINT32_T buff_len,ADE_SplitComplex_T *p_split);
-
 
 ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 {
@@ -27,7 +24,7 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
     ADE_INT32_T ret_fftw = 0;
 
     p_this=calloc(1,sizeof(ADE_FFT_T));
-     ADE_CHECK_MEMALLOC(ADE_CLASS_FFT,Init,p_this;
+     ADE_CHECK_MEMALLOC(ADE_CLASS_FFT,ADE_METHOD_Init,p_this);
 
         p_this->buff_len=buff_len;
 
@@ -39,7 +36,7 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 
                 if (ret_fftw<0)
                 {
-                    ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_FFT,Init,ret_fftw,"%d",(FILE*)ADE_STD_STREAM);
+                    ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_FFT,ADE_METHOD_Init,ret_fftw,"%d",(FILE*)ADE_STD_STREAM);
                     return ADE_RET_ERROR;
                 }
 
@@ -60,10 +57,17 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FFT_DIRECTION_T fft_dir,ADE_VOID_T *p_inbuff,ADE_VOID_T *p_outbuff)
 {
 
-    ADE_API_RET_T plan_ret= ADE_RET_SUCCESS;
+    ADE_API_RET_T plan_ret= ADE_RET_ERROR;
+    ADE_API_RET_T ret_set= ADE_RET_ERROR;
 
-     ADE_Fft_SetInBuff(p_fft,p_inbuff);
-     ADE_Fft_SetOutBuff(p_fft,p_outbuff);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Configure,p_fft);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Configure,p_inbuff);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Configure,p_outbuff);
+
+     ret_set=ADE_Fft_SetInBuff(p_fft,p_inbuff);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
+     ret_set=ADE_Fft_SetOutBuff(p_fft,p_outbuff);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
 
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
           #if (ADE_FFTW_NTHREADS>0)
@@ -71,12 +75,14 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
                 fftw_plan_with_nthreads(ADE_FFTW_NTHREADS);
           #endif
       #endif
-    ADE_Fft_SetType(p_fft,fft_type);
-    ADE_Fft_SetDirection(p_fft,fft_dir);
+    ret_set=ADE_Fft_SetType(p_fft,fft_type);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
+    ret_set=ADE_Fft_SetDirection(p_fft,fft_dir);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
 
 
     plan_ret=ADE_Fft_SetPlan(p_fft);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,Configure,plan_ret);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,plan_ret);
 
 
      return ADE_RET_SUCCESS;
@@ -87,20 +93,14 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
 ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 {
 
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,Step,p_fft);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Step,p_fft);
 
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
-
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,Step,p_fft->p_in);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,Step,p_fft->p_out);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,Step,(p_fft->plan);
 
         fftw_execute(p_fft->plan);
 
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
 
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,Step,&(p_fft->split_in));
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,Step,&(p_fft->split_out));
 
         if (p_fft->type==ADE_FFT_C2C)
         {
@@ -139,8 +139,7 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
 {
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,FillSplitIn,p_fft);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,FillSplitIn,&(p_fft->split_in));
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_FillSplitIn,p_fft);
 
     if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_C2R)
     {
@@ -158,8 +157,7 @@ ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOAT
 ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
 {
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,FillSplitOut,p_fft);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,FillSplitOut,&(p_fft->split_out));
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_FillSplitOut,p_fft);
 
     if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_R2C)
     {
@@ -206,8 +204,8 @@ ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
 
 static ADE_API_RET_T ADE_Fft_SetInBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_inbuff)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetInBuff,p_fft);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetInBuff,p_inbuff);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetInBuff,p_fft);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetInBuff,p_inbuff);
 
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     p_fft->p_in=p_inbuff;
@@ -223,8 +221,8 @@ static ADE_API_RET_T ADE_Fft_SetInBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_inbuff)
 
 static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetOutBuff,p_fft);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetOutBuff,p_outbuff);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetOutBuff,p_fft);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetOutBuff,p_outbuff);
 
      #if (ADE_FFT_IMP==ADE_USE_FFTW)
     p_fft->p_out=p_outbuff;
@@ -239,21 +237,21 @@ static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
 
 static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T fft_dir)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetDirection,p_fft);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetDirection,p_fft);
 
     if (fft_dir!=ADE_FFT_FORWARD && fft_dir!=ADE_FFT_BACKWARD)
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,ADE_METHOD_SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
     else if (p_fft->type==ADE_FFT_R2C && fft_dir==ADE_FFT_BACKWARD)
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,ADE_METHOD_SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
     else if (p_fft->type==ADE_FFT_C2R && fft_dir==ADE_FFT_FORWARD)
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,ADE_METHOD_SetDirection,fft_dir,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
 
@@ -285,10 +283,10 @@ return ADE_RET_SUCCESS;
 
 static ADE_API_RET_T ADE_Fft_SetType(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type)
 {
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetType,p_fft);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetType,p_fft);
     if (fft_type!=ADE_FFT_C2C && fft_type!=ADE_FFT_C2R && fft_type!=ADE_FFT_R2C && fft_type!=ADE_FFT_R2R)
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetType,fft_type,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,ADE_METHOD_SetType,fft_type,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
     p_fft->type=fft_type;
@@ -345,11 +343,11 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
         }
         else
         {
-           ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,SetPlan,p_fft->type,"%d",(FILE*)ADE_STD_STREAM);
+           ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FFT,ADE_METHOD_SetPlan,p_fft->type,"%d",(FILE*)ADE_STD_STREAM);
             return ADE_RET_ERROR;
         }
 
-       ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetPlan, p_fft->plan);
+       ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetPlan, p_fft->plan);
 
         #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
 
@@ -366,7 +364,7 @@ ADE_kFFTRadix_T Ios_radix=ADE_kFFTRadix2;
 
             #endif
 
-        ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,SetPlan, p_fft->p_setup);
+        ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetPlan, p_fft->p_setup);
 
         #else
 

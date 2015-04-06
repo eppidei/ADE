@@ -19,6 +19,9 @@ static ADE_Error_Handler_T ade_error_handler;
 
 ADE_VOID_T ADE_Error_Handler_SetError(ADE_ERRSEVERITY_T severity,ADE_ERRTYPE_T type , ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_var,ADE_CHAR_T *var_name_str, FILE* p_stream);
 ADE_VOID_T ADE_Error_Handler_Decoder(ADE_UINT32_T err_code, ADE_CHAR_T* p_decod_string);
+ADE_VOID_T ADE_Error_Handler_CheckMemAlloc(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_var, ADE_CHAR_T *var_name_str);
+ADE_VOID_T ADE_Error_Handler_CheckInputPointer(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_var, ADE_CHAR_T *var_name_str);
+ADE_VOID_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_INT32_T *p_ret_val, ADE_CHAR_T *var_name_str);
 
 #ifdef __cplusplus
     }   /* extern "C" */
