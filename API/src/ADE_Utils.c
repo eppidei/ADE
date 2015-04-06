@@ -1052,6 +1052,8 @@ static ADE_API_RET_T ADE_Utils_PrintMatrixReal(ADE_FLOATING_T *p_var,ADE_UINT32_
 
     }
 
+    return ADE_RET_SUCCESS;
+
 }
 
 
@@ -1103,6 +1105,8 @@ static ADE_API_RET_T ADE_Utils_PrintMatrixCplx(ADE_CPLX_T *p_var,ADE_UINT32_T st
         }
 
     }
+
+    return ADE_RET_SUCCESS;
 }
 
 
