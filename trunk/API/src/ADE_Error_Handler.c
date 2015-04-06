@@ -156,14 +156,14 @@ ADE_VOID_T ADE_Error_Handler_CheckInputPointer(ADE_ERRCLASS_T _class,ADE_ERRMETH
 
 }
 
-ADE_VOID_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_INT32_T ret_val, ADE_CHAR_T *var_name_str)
+ADE_VOID_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_INT32_T *p_ret_val, ADE_CHAR_T *var_name_str)
 {
     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
         FILE *p_stream=ADE_STDOUT_STREAM;
 
-        if (ret_val==ADE_RET_ERROR)
+        if (*p_ret_val==ADE_RET_ERROR)
         {
-            ADE_Error_Handler_SetError(ADE_ERROR,ADE_RETCHECKS,_class,method,format,p_var, var_name_str,p_stream);
+            ADE_Error_Handler_SetError(ADE_ERROR,ADE_RETCHECKS,_class,method,format,p_ret_val, var_name_str,p_stream);
         }
     #elif (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_FALSE)
 

@@ -78,10 +78,10 @@ ADE_VOID_T ADE_Downsampler_Release(ADE_DOWNSAMPLER_T *p_downsampler)
 ADE_API_RET_T ADE_Downsampler_SetInBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_buff)
 {
     ADE_API_RET_T ret_blas1=ADE_RET_ERROR;
-     ADE_API_RET_T ret_fir=ADE_RET_ERROR;
+    ADE_API_RET_T ret_fir=ADE_RET_ERROR;
 
-      ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,SetInBuff,p_downsampler);
-       ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,SetInBuff,p_buff);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,SetInBuff,p_downsampler);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,SetInBuff,p_buff);
 
     /* Do */
 

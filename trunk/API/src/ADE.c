@@ -31,25 +31,25 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
     if (*dp_ADE_Handle==NULL)//if still not allocated to protected againt a new call for a different alg
     {
         *dp_ADE_Handle = calloc(1,sizeof(ADE_T));
-         ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,Init,(*dp_ADE_Handle));
+         ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,ADE_METHOD_Init,(*dp_ADE_Handle));
 
     }
 
    /** Only One alg at time check **/
    if (!ADE_IsOneFlag(Sel_Flag_i))
    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,Init,Sel_Flag_i,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,ADE_METHOD_Init,Sel_Flag_i,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
    }
 //   if (p_in_struct==NULL)
 //   {
-//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,Init,p_in_struct,"%p",(FILE*)ADE_STD_STREAM);
+//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,ADE_METHOD_Init,p_in_struct,"%p",(FILE*)ADE_STD_STREAM);
 //        return ADE_RET_ERROR;
 //
 //   }
 //   if (p_in_struct->num_channels>1) /* now only mono*/
 //   {
-//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,Init,p_in_struct->num_channels,"%d",(FILE*)ADE_STD_STREAM);
+//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,ADE_METHOD_Init,p_in_struct->num_channels,"%d",(FILE*)ADE_STD_STREAM);
 //        return ADE_RET_ERROR;
 //
 //   }
@@ -60,11 +60,11 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
         {
             (*dp_ADE_Handle)->active_algs_flag |= blow_flag; //accendo flag
             ret_blow = ADE_Blow_Init( &((*dp_ADE_Handle)->p_blow),in_buff_len,input_rate,input_rate);
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,ret_blow);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,ret_blow);
 
 
             (*dp_ADE_Handle)->p_blow_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
-            ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,Init,(*dp_ADE_Handle)->p_blow_out_struct);
+            ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,ADE_METHOD_Init,(*dp_ADE_Handle)->p_blow_out_struct);
 
         }
 
@@ -72,10 +72,10 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
         {
             (*dp_ADE_Handle)->active_algs_flag |= snap_flag; //accendo flag
             ret_snap = ADE_Snap_Init( &((*dp_ADE_Handle)->p_snap),in_buff_len,input_rate,n_pow_slots_i,n_max_indexes_i,time_left_i,time_right_i,fft_len_i);
-           ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,ret_snap);
+           ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,ret_snap);
 
             (*dp_ADE_Handle)->p_snap_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
-            ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,Init,(*dp_ADE_Handle)->p_snap_out_struct);
+            ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,ADE_METHOD_Init,(*dp_ADE_Handle)->p_snap_out_struct);
         }
 
     return ADE_RET_SUCCESS;
@@ -139,21 +139,21 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
      {
         blow_ret = ADE_Blow_SetInBuff(p_ADE->p_blow, p_in_struct->data);
         #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,blow_ret);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,blow_ret);
         #endif
         blow_ret = ADE_Blow_Step(p_ADE->p_blow);
         #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,blow_ret);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,blow_ret);
         #endif
      } else if  ( (Sel_Flag_i & snap_flag)==snap_flag )
         {
             snap_ret = ADE_Snap_SetInBuff(p_ADE->p_snap, p_in_struct->data);
             #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,snap_ret);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,snap_ret);
             #endif
             snap_ret = ADE_Snap_Step(p_ADE->p_snap);
             #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,Init,snap_ret);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,snap_ret);
             #endif
      }
      }
@@ -172,8 +172,7 @@ ADE_SCDF_Output_Int_T* p_out;
 /** Only One alg at time check **/
    if (!ADE_IsOneFlag(Sel_Flag_i))
    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,GetOutBuff,Sel_Flag_i,"%d",(FILE*)ADE_STD_STREAM);
-       // return ADE_RET_ERROR;
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,Sel_Flag_i,"%d",(FILE*)ADE_STD_STREAM);
    }
 
 #endif

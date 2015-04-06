@@ -33,16 +33,16 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 
      if (!(p_mateng = engOpen(p_matpath))) {
 		fprintf(stderr, "\nCan't start MATLAB engine\n");
-		ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,Init,p_mateng,"%p",(FILE*)ADE_STD_STREAM);
+		ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,ADE_METHOD_Init,p_mateng,"%p",(FILE*)ADE_STD_STREAM);
 	    return ADE_RET_ERROR;
 	}
 
 
     p_this=calloc(1,sizeof(ADE_MATLAB_T));
-    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init,  p_this);
+    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,  p_this);
 
          script_fid=fopen(filename,"r");
-         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, script_fid);
+         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, script_fid);
 
         p_this->p_matscript=script_fid;
         p_this->p_eng=p_mateng;
@@ -54,27 +54,27 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 
          /****************ALLOC VAR NAMES************/
           p_matfile = matOpen(p_matfname, "r");
-          ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, p_matfile);
+          ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, p_matfile);
 
          dp_dir=matGetDir(p_matfile, &n_arrays);
          mxFree(dp_dir);
           matClose(p_matfile);
 
            dp_mxarray=(mxArray**)mxCalloc(n_arrays, sizeof(mxArray*));
-           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, dp_mxarray);
+           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, dp_mxarray);
            dp_temp_names=(char**)calloc(n_arrays,sizeof(char*));
-           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, dp_temp_names);
+           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, dp_temp_names);
 
             /* Calcola il numero delle variabili double*/
              p_matfile = matOpen(p_matfname, "r");
-             ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, p_matfile);
+             ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, p_matfile);
 
               for (i=0;i<n_arrays;i++)
               {
                  // array_name=&(dp_dir[i][0]);
                   dp_mxarray[i]=matGetNextVariable(p_matfile,(const char**) &array_name);
                   dp_temp_names[i]=calloc(strlen(array_name)+1,sizeof(char));
-                  ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, dp_temp_names[i]);
+                  ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, dp_temp_names[i]);
                   strcpy(dp_temp_names[i],array_name);
 
                     if (mxIsDouble(dp_mxarray[i]) )
@@ -88,9 +88,9 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 
            p_this->n_vars=k_valid_array;
            p_valid_arr_idx=calloc(k_valid_array,sizeof(unsigned int));
-           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, p_valid_arr_idx);
+           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, p_valid_arr_idx);
            p_this->dp_var_list=(char**)calloc(k_valid_array,sizeof(char*));
-           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, p_this->dp_var_list);
+           ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, p_this->dp_var_list);
 
         k_valid_array=0;
         /* Salva i nomi nella struttura interna  MECHANISM 2 IMPROVE */
@@ -102,7 +102,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
                      n_chars=strlen(dp_temp_names[i])+1;//strlen(array_name)+1;
                 //      fprintf(stdout,"%d\n",n_chars);
                      p_this->dp_var_list[k_valid_array]=calloc(n_chars,sizeof(char));
-                     ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init,  p_this->dp_var_list[k_valid_array]);
+                     ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,  p_this->dp_var_list[k_valid_array]);
                      strcpy(p_this->dp_var_list[k_valid_array],dp_temp_names[i]);
                    //  fprintf(stdout,"%s\n",p_this->dp_var_list[k_valid_array]);
                      p_valid_arr_idx[k_valid_array]=i;
@@ -115,13 +115,13 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 
          /****************ALLOC SIZES AND TYPE*****************************/
          p_this->n_row      =calloc(k_valid_array,sizeof(unsigned int));
-         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init,  p_this->n_row);
+         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,  p_this->n_row);
          p_this->n_col      =calloc(k_valid_array,sizeof(unsigned int));
-         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init,  p_this->n_col);
+         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,  p_this->n_col);
          p_this->data_size  =calloc(k_valid_array,sizeof(size_t));
-         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init,  p_this->data_size);
+         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,  p_this->data_size);
          p_this->p_vartype =calloc(k_valid_array,sizeof(ADE_MATH_ATTRIBUTE_T));
-         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init,  p_this->p_vartype);
+         ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,  p_this->p_vartype);
 
          for (i=0;i<k_valid_array;i++)
          {
@@ -154,7 +154,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
             {
             p_temp_name=mxGetClassName(dp_mxarray[k]);
               //  ADE_PRINT_WARNINGS(ADE_INCHECKS,mxGetClassName(dp_mxarray[k]),"%s",ADE_Matlab_Init);
-               ADE_PRINT_ERRORS(ADE_WARNING,ADE_INCHECKS,ADE_CLASS_MATLAB,Init,p_temp_name,"%s",(FILE*)ADE_STD_STREAM);
+               ADE_PRINT_ERRORS(ADE_WARNING,ADE_INCHECKS,ADE_CLASS_MATLAB,ADE_METHOD_Init,p_temp_name,"%s",(FILE*)ADE_STD_STREAM);
                 return ADE_RET_WARNING;
             }
          }
@@ -164,7 +164,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 
 
          p_this->dp_vardouble=(double**)calloc(k_valid_array,sizeof(double*));
-          ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init, p_this->dp_vardouble);
+          ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, p_this->dp_vardouble);
 
          for (i=0;i<k_valid_array;i++)
          {
@@ -177,7 +177,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
 //             }
             k=p_valid_arr_idx[i];
              p_this->dp_vardouble[i]=calloc(1,p_this->data_size[i]);
-             ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,Init,p_this->dp_vardouble[i]);
+             ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,p_this->dp_vardouble[i]);
              //memcpy(p_this->dp_vardouble[i],(double*)mxGetData(p_mxarr),p_this->data_size[i]);
              if (mxIsComplex(dp_mxarray[k]))
              {
@@ -240,6 +240,9 @@ ADE_UINT32_T ADE_Matlab_GetVarIndex(ADE_MATLAB_T* p_mat, char *varname)
 
     ADE_UINT32_T i=0;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetVarIndex,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetVarIndex,varname);
+
     for (i=0;i<p_mat->n_vars;i++)
     {
         if (!strcmp(varname,p_mat->dp_var_list[i]))
@@ -249,31 +252,38 @@ ADE_UINT32_T ADE_Matlab_GetVarIndex(ADE_MATLAB_T* p_mat, char *varname)
 
     }
 
-
     fprintf(stderr,"WARNING - ADE_Matlab_GetVarIndex -> Variable \"%s\" not found \n",varname);
     return ADE_RET_ERROR;//29;
 }
 
 ADE_UINT32_T ADE_Matlab_GetNRows(ADE_MATLAB_T* p_mat, char *varname)
 {
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetNRows,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetNRows,varname);
 
     return p_mat->n_row[ADE_Matlab_GetVarIndex(p_mat,varname)];
 }
 
 ADE_UINT32_T ADE_Matlab_GetNCols(ADE_MATLAB_T* p_mat, char *varname)
 {
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetNCols,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetNCols,varname);
 
     return p_mat->n_col[ADE_Matlab_GetVarIndex(p_mat,varname)];
 }
 
 ADE_UINT32_T ADE_Matlab_GetSize(ADE_MATLAB_T* p_mat, char *varname)
 {
-
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetSize,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetSize,varname);
     return p_mat->data_size[ADE_Matlab_GetVarIndex(p_mat,varname)];
 }
 
 ADE_UINT32_T ADE_Matlab_GetLength(ADE_MATLAB_T* p_mat, char *varname)
 {
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetLength,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetLength,varname);
+
     if (ADE_Matlab_GetNCols(p_mat,varname)==1)
     {
        return  ADE_Matlab_GetNRows(p_mat,varname);
@@ -293,19 +303,23 @@ ADE_UINT32_T ADE_Matlab_GetLength(ADE_MATLAB_T* p_mat, char *varname)
 
 ADE_UINT32_T ADE_Matlab_GetNElements(ADE_MATLAB_T* p_mat, char *varname)
 {
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetNElements,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetNElements,varname);
 
     return (p_mat->n_col[ADE_Matlab_GetVarIndex(p_mat,varname)])*(p_mat->n_row[ADE_Matlab_GetVarIndex(p_mat,varname)]);
 }
 
 double* ADE_Matlab_GetDataPointer(ADE_MATLAB_T* p_mat, char *varname)
 {
-
+    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetDataPointer,p_mat);
+    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetDataPointer,varname);
     return p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)];
 }
 
 double ADE_Matlab_GetScalar(ADE_MATLAB_T* p_mat, char *varname)
 {
-
+     //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetScalar,p_mat);
+    //ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_GetScalar,varname);
     return *(p_mat->dp_vardouble[ADE_Matlab_GetVarIndex(p_mat,varname)]);
 }
 
@@ -314,6 +328,10 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
 
     mxArray *p_tmp=NULL;
     int ret_engPutVariable=0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_PutVarintoWorkspace,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_PutVarintoWorkspace,p_var);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_PutVarintoWorkspace,var_matname);
 
     if (comp_type==ADE_REAL)
     {
@@ -325,7 +343,7 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_MATLAB,PutVarintoWorkspace,comp_type,"%u",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_MATLAB,ADE_METHOD_PutVarintoWorkspace,comp_type,"%u",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
 
@@ -336,7 +354,7 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
 
     if (ret_engPutVariable==1)
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,PutVarintoWorkspace,ret_engPutVariable,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,ADE_METHOD_PutVarintoWorkspace,ret_engPutVariable,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
 
@@ -350,11 +368,14 @@ ADE_API_RET_T ADE_Matlab_Evaluate_String(ADE_MATLAB_T* p_mat, char *matcode)
 
     int ret_engEvalString = 0;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Evaluate_String,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Evaluate_String,matcode);
+
     ret_engEvalString = engEvalString(p_mat->p_eng, matcode);
 
     if (ret_engEvalString==1)
     {
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,Evaluate_String,ret_engEvalString,"%d",(FILE*)ADE_STD_STREAM);
+         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,ADE_METHOD_Evaluate_String,ret_engEvalString,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
 
@@ -367,8 +388,11 @@ ADE_API_RET_T ADE_Matlab_Evaluate_StringnWait(ADE_MATLAB_T* p_mat, char *matcode
 
     ADE_API_RET_T ret_Matlab_Evaluate_String = ADE_RET_SUCCESS;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Evaluate_StringnWait,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Evaluate_StringnWait,matcode);
+
     ret_Matlab_Evaluate_String=ADE_Matlab_Evaluate_String(p_mat,matcode);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,Evaluate_StringnWait,ret_Matlab_Evaluate_String);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Evaluate_StringnWait,ret_Matlab_Evaluate_String);
 
     ADE_MAT_WAIT;
 
@@ -382,11 +406,20 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
     double **dp_num=NULL ,**dp_denom=NULL;
     ADE_UINT32_T n_sos_sections=0,section_n_apb_coeffs=0,i=0;
     double *p_gains=NULL;
+    ADE_API_RET_T ret_set=ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,p_iir);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,sosmatrix_varname);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,scalevalues_varname);
 
     n_sos_sections=ADE_Matlab_GetNRows(p_mat,sosmatrix_varname);
 
     dp_num=(double**)calloc(n_sos_sections,sizeof(double*));
+    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,dp_num);
+
     dp_denom=(double**)calloc(n_sos_sections,sizeof(double*));
+    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,dp_denom);
 
     section_n_apb_coeffs=ADE_Matlab_GetNCols(p_mat,sosmatrix_varname);
 
@@ -398,9 +431,14 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
 
     p_gains = ADE_Matlab_GetDataPointer(p_mat,scalevalues_varname);
 
-    ADE_Iir_setGains( p_iir, (ADE_FLOATING_T*)p_gains);
-    ADE_Iir_setNums( p_iir,  (ADE_FLOATING_T**)dp_num);
-    ADE_Iir_setDenoms( p_iir, (ADE_FLOATING_T**)dp_denom);
+    ret_set=ADE_Iir_setGains( p_iir, (ADE_FLOATING_T*)p_gains);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
+
+    ret_set=ADE_Iir_setNums( p_iir,  (ADE_FLOATING_T**)dp_num);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
+
+    ret_set=ADE_Iir_setDenoms( p_iir, (ADE_FLOATING_T**)dp_denom);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
 
     ADE_CHECKNFREE(dp_num);
     ADE_CHECKNFREE(dp_denom);
@@ -417,14 +455,17 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
     unsigned int i=0;
     int ret_eng=0;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_launch_script_segment,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_launch_script_segment,p_stopword);
+
     temp_str=calloc(ADE_MAX_CHARS,sizeof(char));
-    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,launch_script_segment,temp_str);
+    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_launch_script_segment,temp_str);
 
     test_str=calloc(ADE_MAX_CHARS,sizeof(char));
-    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,launch_script_segment,test_str);
+    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_launch_script_segment,test_str);
 
     segment_str=calloc(ADE_MAX_CHARS*ADE_MAX_SEGMENT_LINES,sizeof(char));
-    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,launch_script_segment,segment_str);
+    ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_launch_script_segment,segment_str);
 
     strcpy(test_str,p_prefix);
     strcat(test_str,p_stopword);
@@ -478,6 +519,9 @@ static ADE_VOID_T ADE_Matlab_Mat2C_copy(double *p_dst, mxArray *p_mx, unsigned i
     double *p_src_r = NULL;
     double *p_src_i = NULL;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Mat2C_copy,p_dst);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Mat2C_copy,p_mx);
+
     if (mxIsComplex(p_mx))
     {
         p_src_r=(double*)mxGetData(p_mx);
@@ -519,6 +563,9 @@ static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigne
 {
     unsigned int i=0,k=0,idx_dst=0,idx_src=0;
 
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_C2Mat_copy,p_dst);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_C2Mat_copy,p_src);
+
     if (comp_type==ADE_REAL)
     {
          for (i=0;i<n_rows;i++)
@@ -551,7 +598,7 @@ static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigne
     else
     {
 
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_MATLAB,C2Mat_copy,comp_type,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_MATLAB,ADE_METHOD_C2Mat_copy,comp_type,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
 
@@ -561,9 +608,9 @@ return ADE_RET_SUCCESS;
 
 }
 
-ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
+ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat, FILE *p_fid)
 {
-    FILE *p_fid;
+   // FILE *p_fid;
     ADE_UINT32_T i=0;
     ADE_UINT32_T n_vars=p_mat->n_vars;
     ADE_CHAR_T *p_varname=NULL;
@@ -573,7 +620,9 @@ ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
     ADE_API_RET_T ret = ADE_RET_SUCCESS;
     ADE_UINT32_T n_row=0,n_col=0;
 
-    p_fid=fopen("./mat2C_variables.txt","w");
+    //p_fid=fopen("./mat2C_variables.txt","w");
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Print,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Print,p_fid);
 
     if (p_fid!=NULL)
     {
@@ -587,11 +636,11 @@ ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat)
             n_col=p_mat->n_col[i];
 
           ret = ADE_Utils_PrintArray(p_data,0,(n_row-1),0,(n_col-1) , p_varname, stdout,var_type);
-          ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,Print,ret);
+          ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Print,ret);
 
         }
 
-        fclose(p_fid);
+       // fclose(p_fid);
 
         return ADE_RET_SUCCESS;
     }

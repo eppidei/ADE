@@ -16,7 +16,7 @@
 /***************** Private methods prototypes *********************/
 
 static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2);
-static ADE_VOID_T ADE_Blas_level2_doElewiseCustom(ADE_FLOATING_T* p_Y, ADE_FLOATING_T* p_X,ADE_FLOATING_T* p_A,ADE_UINT32_T N);
+static ADE_API_RET_T ADE_Blas_level2_doElewiseCustom(ADE_FLOATING_T* p_Y, ADE_FLOATING_T* p_X,ADE_FLOATING_T* p_A,ADE_UINT32_T N);
 #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
 static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2);
@@ -27,11 +27,11 @@ static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2);
 #else
 #error(ADE_FP_PRECISION);
 #endif
-/***************** Init methods  *********************/
+/***************** ADE_METHOD_Init methods  *********************/
 ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type )
 {
     ADE_blas_level2_T* p_this = calloc(1,sizeof(ADE_blas_level2_T));
-     ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL2,Initp_this);
+     ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Init,p_this);
 
         p_this->math_type=math_type;
         /**************ALPHA ALLOC ******************/
@@ -45,12 +45,12 @@ ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUT
         }
         else
         {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Init,math_type,"%d",(FILE*)ADE_STD_STREAM);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Init,math_type,"%d",(FILE*)ADE_STD_STREAM);
             return ADE_RET_ERROR;
         }
 
 
-         ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL2,Init,p_this->p_ALPHA);
+         ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Init,p_this->p_ALPHA);
 
 
 
@@ -67,11 +67,11 @@ ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUT
         }
         else
         {
-            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,Init,math_type,"%d",(FILE*)ADE_STD_STREAM);
+            ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Init,math_type,"%d",(FILE*)ADE_STD_STREAM);
             return ADE_RET_ERROR;
         }
 
-         ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL2,Init,p_this->p_BETA);
+         ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Init,p_this->p_BETA);
 
 
         *dp_this=p_this;
@@ -91,18 +91,19 @@ ADE_VOID_T ADE_Blas_level2_Release (ADE_blas_level2_T* p_Blas_l2)
 ADE_API_RET_T ADE_Blas_Level2_SetUplo(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T UPLO)
 {
 
-FILE * p_stream=ADE_STDERR_STREAM;
+//FILE * p_stream=ADE_STDERR_STREAM;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetUplo,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetUplo,p_Blas_l2);
 
     if (UPLO!='U' && UPLO!='u' && UPLO!='L' && UPLO!='l')
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetUplo,UPLO,"%c",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetUplo,UPLO,"%c",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
     else
     {
         #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
+        /* UPLO value is being inverted for typical C row major for coherence with column major Fortran Interface */
         if (UPLO=='L' || UPLO=='l')
         {
             p_Blas_l2->UPLO='U';
@@ -113,8 +114,8 @@ FILE * p_stream=ADE_STDERR_STREAM;
         }
 
 
-         fprintf(p_stream,"REMEMBER 2 ADD VERBOSITY LEVEL CTRL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-        fprintf(p_stream,"*****WARNING UPLO value is being inverted for typical C row major for coherence with column major Fortran Interface **********\n");
+     //    fprintf(p_stream,"REMEMBER 2 ADD VERBOSITY LEVEL CTRL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+      //  fprintf(p_stream,"*****WARNING UPLO value is being inverted for typical C row major for coherence with column major Fortran Interface **********\n");
 
         #else
         p_Blas_l2->UPLO=UPLO;
@@ -128,12 +129,12 @@ FILE * p_stream=ADE_STDERR_STREAM;
 ADE_API_RET_T ADE_Blas_Level2_SetTrans(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T TRANS)
 {
 
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetTrans,p_Blas_l2);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetTrans,p_Blas_l2);
 
     if (TRANS!='N' && TRANS!='n' && TRANS!='T' && TRANS!='t' && TRANS!='C' && TRANS!='c')
     {
 
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetTrans,TRANS,"%c",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetTrans,TRANS,"%c",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
     else
@@ -146,11 +147,11 @@ ADE_API_RET_T ADE_Blas_Level2_SetTrans(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T 
 ADE_API_RET_T ADE_Blas_Level2_SetDiag(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T DIAG)
 {
 
-   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetDiag,p_Blas_l2);
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetDiag,p_Blas_l2);
 
     if (DIAG!='U' && DIAG!='u' && DIAG!='N' && DIAG!='n')
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetDiag,DIAG,"%c",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetDiag,DIAG,"%c",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
     else
@@ -163,7 +164,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetDiag(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T D
 
 ADE_API_RET_T ADE_Blas_Level2_SetM(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T M)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetM,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetM,p_Blas_l2);
 
     p_Blas_l2->M=M;
 
@@ -172,14 +173,14 @@ ADE_API_RET_T ADE_Blas_Level2_SetM(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T M)
 
 ADE_API_RET_T ADE_Blas_Level2_SetN(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T N)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetN,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetN,p_Blas_l2);
         p_Blas_l2->N=N;
      return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Blas_Level2_SetK(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K)
 {
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetK,p_Blas_l2);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetK,p_Blas_l2);
 
     p_Blas_l2->K=K;
 
@@ -188,7 +189,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetK(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K)
 
 ADE_API_RET_T ADE_Blas_Level2_SetKl(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KL)
 {
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetKl,p_Blas_l2);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetKl,p_Blas_l2);
 
      p_Blas_l2->KL=KL;
 
@@ -197,7 +198,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetKl(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K
 
 ADE_API_RET_T ADE_Blas_Level2_SetKu(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KU)
 {
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetKu,p_Blas_l2);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetKu,p_Blas_l2);
         p_Blas_l2->KU=KU;
      return ADE_RET_SUCCESS;
 }
@@ -205,7 +206,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetKu(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K
 
 ADE_API_RET_T ADE_Blas_Level2_SetLda(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
 {
-   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetLda,p_Blas_l2);
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetLda,p_Blas_l2);
         p_Blas_l2->LDA=val;
      return ADE_RET_SUCCESS;
 }
@@ -213,7 +214,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetLda(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T 
 
 ADE_API_RET_T ADE_Blas_Level2_SetINCX(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
 {
-   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetINCX,p_Blas_l2);
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetINCX,p_Blas_l2);
         p_Blas_l2->INCX=val;
      return ADE_RET_SUCCESS;
 }
@@ -221,7 +222,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetINCX(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T
 
 ADE_API_RET_T ADE_Blas_Level2_SetINCY(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
 {
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetINCY,p_Blas_l2);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetINCY,p_Blas_l2);
         p_Blas_l2->INCY=val;
      return ADE_RET_SUCCESS;
 }
@@ -230,22 +231,20 @@ ADE_API_RET_T ADE_Blas_level2_SetALPHA(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING
 {
     ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
+     ADE_MATH_ATTRIBUTE_T math_type=ADE_REAL;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetALPHA,p_Blas_l2);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetALPHA,p_val);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetALPHA,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetALPHA,p_val);
 
-    if (p_Blas_l2->math_type==ADE_REAL)
+    math_type=p_Blas_l2->math_type;
+
+    if (math_type==ADE_REAL)
     {
         n_elements=1;
     }
-    else if (p_Blas_l2->math_type==ADE_CPLX)
+    else if (math_type==ADE_CPLX)
     {
          n_elements=2;
-    }
-    else
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetALPHA,p_Blas_l2->math_type,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
     }
 
     for (i=0;i<n_elements;i++)
@@ -260,22 +259,20 @@ ADE_API_RET_T ADE_Blas_level2_SetBeta(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_
 {
     ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
+     ADE_MATH_ATTRIBUTE_T math_type=ADE_REAL;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetBETA,p_Blas_l2);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetBETA,p_val);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetBeta,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetBeta,p_val);
 
-    if (p_Blas_l2->math_type==ADE_REAL)
+    math_type=p_Blas_l2->math_type;
+
+    if (math_type==ADE_REAL)
     {
         n_elements=1;
     }
-    else if (p_Blas_l2->math_type==ADE_CPLX)
+    else if (math_type==ADE_CPLX)
     {
          n_elements=2;
-    }
-    else
-    {
-       ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLAS_LEVEL2,SetBeta,p_Blas_l2->math_type,"%d",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
     }
 
     for (i=0;i<n_elements;i++)
@@ -288,8 +285,8 @@ ADE_API_RET_T ADE_Blas_level2_SetBeta(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_
 
 ADE_API_RET_T ADE_Blas_level2_SetA(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetA,p_Blas_l2);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetA,p_val);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetA,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetA,p_buff);
         p_Blas_l2->p_A=p_buff;
         return ADE_RET_SUCCESS;
 
@@ -297,8 +294,8 @@ ADE_API_RET_T ADE_Blas_level2_SetA(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *
 
 ADE_API_RET_T ADE_Blas_level2_SetY(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetY,p_Blas_l2);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetY,p_val);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetY,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetY,p_buff);
 
         p_Blas_l2->p_Y=p_buff;
         return ADE_RET_SUCCESS;
@@ -308,8 +305,8 @@ ADE_API_RET_T ADE_Blas_level2_SetY(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *
 
 ADE_API_RET_T ADE_Blas_level2_SetX(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff)
 {
-   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetX,p_Blas_l2);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,SetX,p_buff);
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetX,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetX,p_buff);
         p_Blas_l2->p_X=p_buff;
         return ADE_RET_SUCCESS;
 
@@ -336,43 +333,43 @@ ADE_API_RET_T ADE_Blas_level2_Elewise_Config(ADE_blas_level2_T* p_Blas_l2,ADE_FL
       ADE_API_RET_T ret_incx = ADE_RET_ERROR;
       ADE_API_RET_T ret_incy = ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_Blas_l2);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_buff1);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_buff2);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,p_out);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,p_buff1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,p_buff2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,p_out);
 
     ret_uplo = ADE_Blas_Level2_SetUplo(p_Blas_l2,'L');
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_uplo);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_uplo);
 
     ret_N=ADE_Blas_Level2_SetN(p_Blas_l2,buff_len);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_N);
 
     ret_K=ADE_Blas_Level2_SetK(p_Blas_l2,k);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_K);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_K);
 
     ret_Alpha=ADE_Blas_level2_SetALPHA(p_Blas_l2,&alpha);/*it's safe to pass a local pointer because the pointed value is copied, pointer is needed only for complex case*/
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_Alpha);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_Alpha);
 
     ret_A=ADE_Blas_level2_SetA(p_Blas_l2,p_buff1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_A);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_A);
 
     ret_Lda=ADE_Blas_Level2_SetLda(p_Blas_l2,k+1);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_Lda);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_Lda);
 
     ret_x=ADE_Blas_level2_SetX(p_Blas_l2,p_buff2);
-   ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_x);
+   ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_x);
 
     ret_incx=ADE_Blas_Level2_SetINCX(p_Blas_l2,1);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_incx);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_incx);
 
     ret_Beta=ADE_Blas_level2_SetBeta(p_Blas_l2,&beta);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_Beta);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_Beta);
 
     ret_y=ADE_Blas_level2_SetY(p_Blas_l2,p_out);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_y);
 
     ret_incy=ADE_Blas_Level2_SetINCY(p_Blas_l2,1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise_Config,ret_incy);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise_Config,ret_incy);
 
     return ADE_RET_SUCCESS;
 }
@@ -383,7 +380,7 @@ ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
 {
     ADE_API_RET_T ret = ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ger,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_ger,p_Blas_l2);
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -396,7 +393,7 @@ ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_Blas_l2)
     #endif
 
      ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ger,ret);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_ger,ret);
 
     return ret;
 
@@ -407,7 +404,7 @@ ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_Blas_l2)
 
     ADE_API_RET_T ret = ADE_RET_ERROR;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,sbmv,p_Blas_l2);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_sbmv,p_Blas_l2);
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 
@@ -420,7 +417,7 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,sbmv,p_Blas_l2);
     #endif
 
     ret = ADE_Blas_level2_launch_type1(p_Blas_l2);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,smbv,ret);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_sbmv,ret);
 
     return ret;
 
@@ -436,7 +433,7 @@ ADE_FLOATING_T* p_X=NULL;
 ADE_FLOATING_T* p_A=NULL;
 ADE_UINT32_T N=0;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,Elewise,p_Blas_l2);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise,p_Blas_l2);
 
 
  #if (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_CUSTOM)
@@ -448,7 +445,7 @@ p_A=p_Blas_l2->p_A;
  #elif (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_BLAS)
 
     ret = ADE_Blas_level2_sbmv(p_Blas_l2);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,Elewise,ret);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise,ret);
 
  #else
      #error(ADE_LIN_ALG_IMP)
@@ -459,14 +456,14 @@ p_A=p_Blas_l2->p_A;
 
 
 
-ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_Blas_l2)
+ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_Blas_l2,FILE *p_fid)
 {
-    FILE *p_fid=ADE_STDOUT_STREAM;
+    //FILE *p_fid=ADE_STDOUT_STREAM;
 
 
-   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,Print,p_Blas_l2);
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Print,p_Blas_l2);
 
-    ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL2,Print,p_fid);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Print,p_fid);
 
     if (p_fid!=NULL)
     {
@@ -512,9 +509,9 @@ static ADE_API_RET_T ADE_Blas_level2_doElewiseCustom(ADE_FLOATING_T* p_Y, ADE_FL
 
 ADE_UINT32_T i = 0;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,doElewiseCustom,p_Y);
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,doElewiseCustom,p_X);
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,doElewiseCustom,p_A);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_doElewiseCustom,p_Y);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_doElewiseCustom,p_X);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_doElewiseCustom,p_A);
 
  for (i=0;i<N;i++)
  {
@@ -528,12 +525,12 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,doElewiseCustom,p_A);
 static ADE_API_RET_T ADE_Blas_level2_launch_type1 (ADE_blas_level2_T *p_Blas_l2)
 {
     ADE_API_RET_T ret = ADE_RET_ERROR;
-    static unsigned short flag= 0;
+    //static unsigned short flag= 0;
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,launch_type1,p_Blas_l2);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_launch_type1,p_Blas_l2);
 
     ret = (p_Blas_l2->blas_level2_fcn_type1)(p_Blas_l2);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,launch_type1,ret);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_launch_type1,ret);
 
     return ret;
 }
@@ -543,7 +540,7 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,launch_type1,p_Blas_l2);
 static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
 {
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,sger,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_sger,p_Blas_l2);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -569,7 +566,7 @@ static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
 static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
 {
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ssbmv,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_ssbmv,p_Blas_l2);
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
     ADE_MISSING_IMPLEMENTATION(ADE_Blas_level2_ssbmv);
@@ -607,7 +604,7 @@ return ADE_RET_SUCCESS;
 static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2)
 {
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,dger,p_Blas_l2);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_dger,p_Blas_l2);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
@@ -633,7 +630,7 @@ return ADE_RET_SUCCESS;
 static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
 {
 
-        ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,dsbmv,p_Blas_l2);
+        ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_dsbmv,p_Blas_l2);
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
     ADE_MISSING_IMPLEMENTATION(ADE_Blas_level2_dsbmv);
