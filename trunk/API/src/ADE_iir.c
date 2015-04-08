@@ -293,6 +293,29 @@ ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir)
 }
 
 
+ADE_API_RET_T ADE_Iir_Configure(ADE_IIR_T* p_iir,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff)
+{
+     ADE_API_RET_T ret_num=ADE_RET_ERROR;
+     ADE_API_RET_T ret_denoms=ADE_RET_ERROR;
+    ADE_API_RET_T ret_setin=ADE_RET_ERROR;
+    ADE_API_RET_T ret_setout=ADE_RET_ERROR;
+
+     ret_num=ADE_Iir_setNums(p_iir,dp_nums);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_num);
+
+     ret_denoms=ADE_Iir_setDenoms(p_iir,dp_denoms);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_denoms);
+
+     ret_setin=ADE_Iir_SetInBuff(p_iir,p_inbuff);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_setin);
+
+     ret_setout=ADE_Iir_SetOutBuff(p_iir,p_outbuff);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_setout);
+
+
+     return ADE_RET_SUCCESS;
+}
+
 /********* static methods ********/
 
 static ADE_API_RET_T ADE_Iir_setFilt_Implementation(ADE_IIR_T* p_iir,ADE_IIR_IMP_CHOICE_T filt_imp_type)

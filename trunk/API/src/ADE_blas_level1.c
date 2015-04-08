@@ -40,7 +40,7 @@ static ADE_FLOATING_T ADE_Blas_level1_dnrm2 (ADE_blas_level1_T *p_blas_l1);
 #error(ADE_FP_PRECISION);
 #endif
 
-/************ ADE_METHOD_Init Methods ***********/
+/************ Init Methods ***********/
 ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type )
 {
     ADE_blas_level1_T* p_this = calloc(1,sizeof(ADE_blas_level1_T));
@@ -505,7 +505,7 @@ ADE_API_RET_T ADE_Blas_level1_SetY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
 
 }
 
-/**************** Operative Methods ****************************/
+/**************** Processing Methods ****************************/
 
 ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 {

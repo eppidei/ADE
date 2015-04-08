@@ -28,9 +28,10 @@ struct ADE_blas_level1_S
 #ifdef __cplusplus
     extern "C" {
 #endif
-
+/************ Init Methods *****************/
 ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type );
 ADE_VOID_T ADE_Blas_level1_Release (ADE_blas_level1_T* p_blas_l1);
+/************ Set Methods *****************/
 ADE_API_RET_T ADE_Blas_level1_SetA(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_val);
 ADE_API_RET_T ADE_Blas_level1_SetB(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_val);
 ADE_API_RET_T ADE_Blas_level1_SetC(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_val);
@@ -43,10 +44,11 @@ ADE_API_RET_T ADE_Blas_level1_SetINCX(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T v
 ADE_API_RET_T ADE_Blas_level1_SetINCY(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T val);
 ADE_API_RET_T ADE_Blas_level1_SetX(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
 ADE_API_RET_T ADE_Blas_level1_SetY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
-//ADE_API_RET_T ADE_Blas_level1_Set_pOut(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_buf);
 ADE_API_RET_T ADE_Blas_level1_SetPARAM(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_val);
-ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1);
+/************ Utils Methods *****************/
 ADE_API_RET_T ADE_Blas_level1_Print(ADE_blas_level1_T *p_blas_l1,FILE *p_fid);
+/************ Processing Methods *****************/
+ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1);
 ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1);
 ADE_FLOATING_T ADE_Blas_level1_dot(ADE_blas_level1_T* p_blas_l1);
 ADE_CPLX_T ADE_Blas_level1_dotc(ADE_blas_level1_T* p_blas_l1);
