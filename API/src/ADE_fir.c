@@ -131,7 +131,25 @@ ADE_API_RET_T ADE_Fir_SetOutBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff)
     return ADE_RET_SUCCESS;
 }
 
+ADE_API_RET_T ADE_Fir_Configure(ADE_FIR_T* p_fir,ADE_FLOATING_T *p_num,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff)
+{
 
+    ADE_API_RET_T ret_num=ADE_RET_ERROR;
+    ADE_API_RET_T ret_setin=ADE_RET_ERROR;
+    ADE_API_RET_T ret_setout=ADE_RET_ERROR;
+
+    ret_num=ADE_Fir_setNum(p_fir,p_num);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Configure,ret_num);
+
+    ret_setin=ADE_Fir_SetInBuff(p_fir,p_inbuff);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Configure,ret_setin);
+
+    ret_setout=ADE_Fir_SetOutBuff(p_fir,p_outbuff);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Configure,ret_setout);
+
+    return ADE_RET_SUCCESS;
+
+}
 /********** Processing Methods ***********/
 
 ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir)

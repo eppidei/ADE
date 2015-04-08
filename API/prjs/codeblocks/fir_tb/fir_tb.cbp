@@ -68,6 +68,9 @@
 		<Unit filename="../../../src/ADE_iir.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_interpolator.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_nrutil.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -88,6 +91,7 @@
 		<Unit filename="../../../src/headers/ADE_errors.h" />
 		<Unit filename="../../../src/headers/ADE_fir.h" />
 		<Unit filename="../../../src/headers/ADE_iir.h" />
+		<Unit filename="../../../src/headers/ADE_interpolator.h" />
 		<Unit filename="../../../src/headers/ADE_nrutil.h" />
 		<Unit filename="../../../src/headers/ADE_polyfit.h" />
 		<Unit filename="../../../src/headers/ADE_typedefs.h" />

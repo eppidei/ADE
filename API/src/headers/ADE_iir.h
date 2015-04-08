@@ -32,8 +32,8 @@ ADE_API_RET_T ADE_Iir_setNums(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_nums);
 ADE_API_RET_T ADE_Iir_setDenoms(ADE_IIR_T* p_iir, ADE_FLOATING_T** dp_denoms);
 ADE_API_RET_T ADE_Iir_SetInBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
 ADE_API_RET_T ADE_Iir_SetOutBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
-
-
+/************ Configure Methods **************/
+ADE_API_RET_T ADE_Iir_Configure(ADE_IIR_T* p_iir,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff);
 /******** Processing Methods **********/
 ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir);
 
