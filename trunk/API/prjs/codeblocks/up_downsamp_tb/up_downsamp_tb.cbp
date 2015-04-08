@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="tb_model" />
+		<Option title="up_downsamp_tb" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/tb_model" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/up_downsamp_tb" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -25,7 +25,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/tb_model" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/up_downsamp_tb" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -46,6 +46,29 @@
 		<Compiler>
 			<Add option="-Wall -Wextra" />
 		</Compiler>
+		<Unit filename="../../../src/ADE_Error_Handler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_Utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_blas_level1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_complex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_downsampler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_nrutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_upsampler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/headers/ADE_downsampler.h" />
+		<Unit filename="../../../src/headers/ADE_upsampler.h" />
 		<Unit filename="main.cpp">
 			<Option compilerVar="CC" />
 		</Unit>

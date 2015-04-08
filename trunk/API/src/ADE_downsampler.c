@@ -7,6 +7,8 @@ static ADE_API_RET_T ADE_Downsampler_doStep_blas(ADE_blas_level1_T *p_b1);
 static ADE_API_RET_T ADE_Downsampler_doStep_custom (ADE_UINT32_T in_buff_len,ADE_FLOATING_T *p_out,ADE_FLOATING_T *p_in,ADE_UINT32_T upfact);
 static ADE_API_RET_T ADE_Downsampler_doStep(ADE_DOWNSAMPLER_T *p_downsampler);
 static ADE_API_RET_T ADE_Downsampler_Config_blas_memcpy(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff);
+static ADE_API_RET_T ADE_Downsampler_SetInBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_buff);
+static ADE_API_RET_T ADE_Downsampler_SetOutBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_buff, ADE_SIZE_T buff_size);
 
 /*************** ADE_METHOD_Init Methods ****************/
 
@@ -44,44 +46,6 @@ ADE_VOID_T ADE_Downsampler_Release(ADE_DOWNSAMPLER_T *p_downsampler)
     ADE_CHECKNFREE(p_downsampler);
 }
 /*************** Set Methods ****************/
-ADE_API_RET_T ADE_Downsampler_SetInBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_buff)
-{
-    ADE_API_RET_T ret_blas1=ADE_RET_ERROR;
-    ADE_API_RET_T ret_blas_conf=ADE_RET_ERROR;
-
-   ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetInBuff,p_downsampler);
-   ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetInBuff,p_buff);
-
-    /* Do */
-
-    p_downsampler->p_in=p_buff;
-
-    return ADE_RET_SUCCESS;
-
-}
-
-ADE_API_RET_T ADE_Downsampler_SetOutBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_buff, ADE_SIZE_T buff_size)
-{
-
-    ADE_API_RET_T ret_blas1=ADE_RET_ERROR;
-    ADE_API_RET_T ret_fir=ADE_RET_ERROR;
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetOutBuff,p_downsampler);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetOutBuff,p_buff);
-
-    if (buff_size!=(p_downsampler->out_buff_len*sizeof(ADE_FLOATING_T)))
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetOutBuff,buff_size,"%u",(FILE*)ADE_STD_STREAM);
-        return ADE_RET_ERROR;
-    }
-
-    p_downsampler->p_out=p_buff;
-
-
-
-    return ADE_RET_SUCCESS;
-
-}
 
 /***************** Config Methods **************/
 ADE_API_RET_T ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size)
@@ -120,6 +84,44 @@ ADE_API_RET_T ADE_Downsampler_Step(ADE_DOWNSAMPLER_T *p_downsampler)
 }
 
 /********************* Static Methods *******************************/
+ADE_API_RET_T ADE_Downsampler_SetInBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_buff)
+{
+    ADE_API_RET_T ret_blas1=ADE_RET_ERROR;
+    ADE_API_RET_T ret_blas_conf=ADE_RET_ERROR;
+
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetInBuff,p_downsampler);
+   ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetInBuff,p_buff);
+
+    /* Do */
+
+    p_downsampler->p_in=p_buff;
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Downsampler_SetOutBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_buff, ADE_SIZE_T buff_size)
+{
+
+    ADE_API_RET_T ret_blas1=ADE_RET_ERROR;
+    ADE_API_RET_T ret_fir=ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetOutBuff,p_downsampler);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetOutBuff,p_buff);
+
+    if (buff_size!=(p_downsampler->out_buff_len*sizeof(ADE_FLOATING_T)))
+    {
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetOutBuff,buff_size,"%u",(FILE*)ADE_STD_STREAM);
+        return ADE_RET_ERROR;
+    }
+
+    p_downsampler->p_out=p_buff;
+
+
+
+    return ADE_RET_SUCCESS;
+
+}
 
 
 static ADE_API_RET_T ADE_Downsampler_Config_blas_memcpy(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff)
