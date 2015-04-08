@@ -179,7 +179,7 @@ static ADE_API_RET_T ADE_Fir_filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *i
    #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
     ADE_blas_level1_T *p_Blas_L1 = NULL;
     #endif
-    ADE_UINT32_T temp_buff_size = order*sizeof(ADE_FLOATING_T);
+    ADE_UINT32_T temp_buff_size = 0;
     ADE_FLOATING_T *p_temp_buffer=NULL;
     ADE_API_RET_T ret=ADE_RET_ERROR;
 
@@ -196,6 +196,7 @@ static ADE_API_RET_T ADE_Fir_filter_DII_T (ADE_FIR_T* p_fir)//(ADE_FLOATING_T *i
      #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
     p_Blas_L1 = p_fir->p_Blas_L1;
     #endif
+    temp_buff_size = order*sizeof(ADE_FLOATING_T);
 
 
 
@@ -216,7 +217,8 @@ ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_filter_DII_T,ret);
     return ADE_RET_SUCCESS;
 
 }
-static ADE_API_RET_T ADE_Fir_dofilter_DII_T_blas (ADE_blas_level1_T *p_Blas_L1, ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_FLOATING_T *p_temp_buffer,ADE_UINT32_T temp_buff_size)
+static ADE_API_RET_T ADE_Fir_dofilter_DII_T_blas (ADE_blas_level1_T *p_Blas_L1, ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out,
+ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_FLOATING_T *p_temp_buffer,ADE_UINT32_T temp_buff_size)
 {
 
 ADE_UINT32_T k=0;
@@ -227,6 +229,15 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_dofilter_DII_T_blas,p_in);
 ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_dofilter_DII_T_blas,p_out);
 ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_dofilter_DII_T_blas,p_state);
 ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_dofilter_DII_T_blas,p_temp_buffer);
+#if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+if (temp_buff_size==0)
+{
+    ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,ADE_METHOD_dofilter_DII_T_blas,temp_buff_size,"%u",(FILE*)ADE_STD_STREAM);
+    fprintf((FILE*)ADE_STD_STREAM," ERROR : temp_buff_size is zero \n");
+}
+
+
+#endif
 
  for (k=0;k<len_frame;k++)
     {
@@ -247,7 +258,8 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_dofilter_DII_T_blas,p_temp_buffe
      return ADE_RET_SUCCESS;
 }
 
-static ADE_API_RET_T ADE_Fir_dofilter_DII_T_custom(ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_UINT32_T order)
+static ADE_API_RET_T ADE_Fir_dofilter_DII_T_custom(ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,
+ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_UINT32_T order)
 
 {
 ADE_UINT32_T k=0,i=0;

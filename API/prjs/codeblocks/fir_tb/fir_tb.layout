@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="../../../src/ADE_complex.c" open="1" top="0" tabpos="23" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../src/ADE_polyfit.c" open="1" top="0" tabpos="24" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="21" />
+			<Cursor1 position="1172" topLine="24" />
 		</Cursor>
-		<Folding>
-			<Collapse line="4" />
-			<Collapse line="15" />
-			<Collapse line="26" />
-		</Folding>
+	</File>
+	<File name="../../../src/headers/ADE_upsampler.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="272" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../../../src/ADE_fir.c" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7322" topLine="219" />
+		</Cursor>
+	</File>
+	<File name="../../../src/headers/ADE_blas_level1.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1892" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="../../../src/headers/ADE_interpolator.h" open="1" top="0" tabpos="29" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1567" topLine="10" />
+		</Cursor>
+	</File>
+	<File name="../../../src/headers/ADE_downsampler.h" open="1" top="0" tabpos="27" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="87" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../../../src/ADE_Utils.c" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="11940" topLine="354" />
+		</Cursor>
 	</File>
 	<File name="../../../src/headers/ADE_iir.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1534" topLine="20" />
+			<Cursor1 position="1534" topLine="19" />
 		</Cursor>
 	</File>
 	<File name="../../../src/ADE_Error_Handler.c" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -33,14 +58,9 @@
 			<Collapse line="69" />
 		</Folding>
 	</File>
-	<File name="../../../src/ADE_nrutil.c" open="1" top="0" tabpos="25" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../src/ADE_Matlab.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="425" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../../src/headers/ADE_downsampler.h" open="1" top="0" tabpos="27" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="87" topLine="0" />
+			<Cursor1 position="2510" topLine="68" />
 		</Cursor>
 	</File>
 	<File name="../../../src/headers/ADE_typedefs.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -48,30 +68,9 @@
 			<Cursor1 position="6262" topLine="149" />
 		</Cursor>
 	</File>
-	<File name="../../../src/headers/ADE_blas_wrapper.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../src/ADE_interpolator.c" open="1" top="0" tabpos="28" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="59" />
-		</Cursor>
-	</File>
-	<File name="../../../src/ADE_Utils.c" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="11940" topLine="354" />
-		</Cursor>
-		<Folding>
-			<Collapse line="443" />
-			<Collapse line="445" />
-			<Collapse line="521" />
-			<Collapse line="523" />
-		</Folding>
-	</File>
-	<File name="../../../src/ADE_polyfit.c" open="1" top="0" tabpos="24" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1172" topLine="24" />
-		</Cursor>
-	</File>
-	<File name="../../../src/headers/ADE_blas_level1.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1892" topLine="31" />
+			<Cursor1 position="8652" topLine="191" />
 		</Cursor>
 	</File>
 	<File name="../../../src/headers/ADE_errors.h" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -79,29 +78,19 @@
 			<Cursor1 position="8733" topLine="232" />
 		</Cursor>
 	</File>
-	<File name="../../../src/headers/ADE_polyfit.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../src/ADE_complex.c" open="1" top="0" tabpos="23" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="732" topLine="0" />
+			<Cursor1 position="0" topLine="21" />
 		</Cursor>
+		<Folding>
+			<Collapse line="4" />
+			<Collapse line="15" />
+			<Collapse line="26" />
+		</Folding>
 	</File>
-	<File name="../../../src/ADE_interpolator.c" open="1" top="1" tabpos="28" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../src/headers/ADE_Utils.h" open="1" top="0" tabpos="22" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7691" topLine="191" />
-		</Cursor>
-	</File>
-	<File name="../../../src/headers/ADE_upsampler.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="272" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../../src/headers/ADE_interpolator.h" open="1" top="0" tabpos="29" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1567" topLine="10" />
-		</Cursor>
-	</File>
-	<File name="../../../src/ADE_Matlab.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="20210" topLine="591" />
+			<Cursor1 position="1238" topLine="6" />
 		</Cursor>
 	</File>
 	<File name="../../../src/headers/ADE_complex.h" open="1" top="0" tabpos="20" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -109,9 +98,50 @@
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="../../../src/ADE_iir.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8801" topLine="248" />
+		</Cursor>
+		<Folding>
+			<Collapse line="227" />
+			<Collapse line="244" />
+			<Collapse line="260" />
+			<Collapse line="270" />
+		</Folding>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3173" topLine="69" />
+		</Cursor>
+	</File>
+	<File name="../../../src/headers/ADE_fir.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1230" topLine="16" />
+		</Cursor>
+	</File>
+	<File name="../../../src/ADE_nrutil.c" open="1" top="0" tabpos="25" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="425" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../../../src/headers/ADE_polyfit.h" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="732" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../../../src/headers/ADE_defines.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1920" topLine="63" />
+		</Cursor>
+	</File>
 	<File name="../../../src/headers/ADE_nrutil.h" open="1" top="0" tabpos="21" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="3532" topLine="32" />
+		</Cursor>
+	</File>
+	<File name="../../../src/ADE_upsampler.c" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6722" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../../../src/ADE_blas_level1.c" open="1" top="0" tabpos="19" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -144,118 +174,16 @@
 			<Collapse line="183" />
 			<Collapse line="187" />
 			<Collapse line="191" />
-			<Collapse line="205" />
-			<Collapse line="220" />
-			<Collapse line="228" />
-			<Collapse line="232" />
-			<Collapse line="236" />
-			<Collapse line="243" />
-			<Collapse line="251" />
-			<Collapse line="259" />
-			<Collapse line="263" />
-			<Collapse line="267" />
-			<Collapse line="273" />
-			<Collapse line="279" />
-			<Collapse line="287" />
-			<Collapse line="291" />
-			<Collapse line="295" />
-			<Collapse line="301" />
-			<Collapse line="307" />
-			<Collapse line="315" />
-			<Collapse line="319" />
-			<Collapse line="323" />
-			<Collapse line="329" />
-			<Collapse line="336" />
-			<Collapse line="344" />
-			<Collapse line="348" />
-			<Collapse line="352" />
-			<Collapse line="358" />
-			<Collapse line="365" />
-			<Collapse line="373" />
-			<Collapse line="377" />
-			<Collapse line="381" />
-			<Collapse line="387" />
-			<Collapse line="395" />
-			<Collapse line="403" />
-			<Collapse line="407" />
-			<Collapse line="411" />
-			<Collapse line="417" />
-			<Collapse line="425" />
-			<Collapse line="433" />
-			<Collapse line="437" />
-			<Collapse line="441" />
-			<Collapse line="447" />
-			<Collapse line="456" />
-			<Collapse line="467" />
-			<Collapse line="478" />
-			<Collapse line="487" />
-			<Collapse line="498" />
-			<Collapse line="510" />
-			<Collapse line="520" />
-			<Collapse line="524" />
-			<Collapse line="530" />
-			<Collapse line="534" />
-			<Collapse line="550" />
-			<Collapse line="560" />
-			<Collapse line="564" />
-			<Collapse line="568" />
-			<Collapse line="575" />
-			<Collapse line="579" />
-			<Collapse line="595" />
-			<Collapse line="619" />
-			<Collapse line="644" />
-			<Collapse line="671" />
-			<Collapse line="697" />
-			<Collapse line="733" />
-			<Collapse line="747" />
-			<Collapse line="759" />
-			<Collapse line="775" />
-			<Collapse line="878" />
-			<Collapse line="905" />
-			<Collapse line="933" />
-			<Collapse line="962" />
-			<Collapse line="993" />
-			<Collapse line="1021" />
-			<Collapse line="1054" />
-			<Collapse line="1089" />
-			<Collapse line="1116" />
-			<Collapse line="1144" />
-			<Collapse line="1168" />
-			<Collapse line="1193" />
-			<Collapse line="1221" />
-			<Collapse line="1249" />
-			<Collapse line="1277" />
 		</Folding>
 	</File>
-	<File name="../../../src/ADE_downsampler.c" open="1" top="0" tabpos="26" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../src/headers/ADE_blas_wrapper.h" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4034" topLine="64" />
+			<Cursor1 position="0" topLine="59" />
 		</Cursor>
-		<Folding>
-			<Collapse line="41" />
-			<Collapse line="47" />
-			<Collapse line="63" />
-		</Folding>
 	</File>
 	<File name="../../../src/headers/ADE_Matlab.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1552" topLine="22" />
-		</Cursor>
-	</File>
-	<File name="../../../src/ADE_fir.c" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4469" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="92" />
-			<Collapse line="104" />
-			<Collapse line="114" />
-			<Collapse line="124" />
-		</Folding>
-	</File>
-	<File name="../../../src/headers/ADE_defines.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1920" topLine="63" />
 		</Cursor>
 	</File>
 	<File name="../../../src/headers/ADE_Error_Handler.h" open="1" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -263,42 +191,12 @@
 			<Cursor1 position="505" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../../../src/headers/ADE_Utils.h" open="1" top="0" tabpos="22" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../../src/ADE_downsampler.c" open="1" top="0" tabpos="26" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1238" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2821" topLine="81" />
-		</Cursor>
-	</File>
-	<File name="../../../src/ADE_iir.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8801" topLine="248" />
+			<Cursor1 position="4034" topLine="64" />
 		</Cursor>
 		<Folding>
-			<Collapse line="227" />
-			<Collapse line="244" />
-			<Collapse line="260" />
-			<Collapse line="270" />
-		</Folding>
-	</File>
-	<File name="../../../src/headers/ADE_fir.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1230" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="../../../src/ADE_upsampler.c" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6722" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="35" />
-			<Collapse line="41" />
-			<Collapse line="57" />
-			<Collapse line="66" />
-			<Collapse line="202" />
+			<Collapse line="51" />
 		</Folding>
 	</File>
 </CodeBlocks_layout_file>
