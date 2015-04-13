@@ -58,7 +58,7 @@
 /* Control */
 
 #ifndef ADE_TARGET_TYPE
-#define ADE_TARGET_TYPE ADE_PC_MATLAB
+#define ADE_TARGET_TYPE ADE_ANDROID
 #endif //ADE_TARGET_TYPE
 
 #ifndef ADE_TARGET_MODE
@@ -106,7 +106,7 @@
 #elif (ADE_TARGET_TYPE==ADE_IOS)
     #undef ADE_CONFIGURATION_INTERACTIVE
     #ifndef ADE_FP_PRECISION
-        #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC
+        #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
     #endif
     #define ADE_FFT_IMP ADE_USE_ACCEL_FMW_FFT
     #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile

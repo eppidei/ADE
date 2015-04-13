@@ -19,9 +19,10 @@
 					<Add directory="../../../lib/xianyi-OpenBLAS-v0.2.13-0-g51ce5ef/xianyi-OpenBLAS-51ce5ef" />
 				</Compiler>
 				<Linker>
-					<Add option="-lrt -lgfortran -lfftw -lfftw_threads -lfftwf" />
+					<Add option="-lrt -lgfortran" />
 					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
 					<Add library="../../../lib/blas/BLAS/blas_LINUX.a" />
+					<Add library="../../../lib/fftw-3.3.4/api" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -45,6 +46,9 @@
 			<Add option="-Wall -Wextra" />
 		</Compiler>
 		<Unit filename="../../../src/ADE_Bench_Utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_Error_Handler.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/ADE_Utils.c">

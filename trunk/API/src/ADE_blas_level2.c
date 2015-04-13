@@ -548,14 +548,19 @@ static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    sger(&(p_Blas_l2->M),&(p_Blas_l2->N),p_Blas_l2->p_ALPHA,p_Blas_l2->p_X,&(p_Blas_l2->INCX),p_Blas_l2->p_Y,&(p_Blas_l2->INCY),p_Blas_l2->p_A,&(p_Blas_l2->LDA));
+    sger(&(p_Blas_l2->M),&(p_Blas_l2->N),(ADE_VOID_T*)p_Blas_l2->p_ALPHA,(ADE_VOID_T*)p_Blas_l2->p_X,&(p_Blas_l2->INCX),(ADE_VOID_T*)p_Blas_l2->p_Y,&(p_Blas_l2->INCY),(ADE_VOID_T*)p_Blas_l2->p_A,&(p_Blas_l2->LDA));
 
-     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
     cblas_sger(CblasRowMajor,(p_Blas_l2->M),(p_Blas_l2->N),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_X,(p_Blas_l2->INCX),p_Blas_l2->p_Y,(p_Blas_l2->INCY),p_Blas_l2->p_A,(p_Blas_l2->LDA));
+
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+      cblas_sger(CblasRowMajor,(p_Blas_l2->M),(p_Blas_l2->N),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_X,(p_Blas_l2->INCX),p_Blas_l2->p_Y,(p_Blas_l2->INCY),p_Blas_l2->p_A,(p_Blas_l2->LDA));
+
      #else
 
-        #error(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level2_sger);
 
     #endif
 
@@ -573,9 +578,9 @@ static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    ssbmv(&(p_Blas_l2->UPLO),&(p_Blas_l2->N),&(p_Blas_l2->K),p_Blas_l2->p_ALPHA,p_Blas_l2->p_A,&(p_Blas_l2->LDA),p_Blas_l2->p_X,&(p_Blas_l2->INCX),p_Blas_l2->p_BETA,p_Blas_l2->p_Y,&(p_Blas_l2->INCY));
+    ssbmv(&(p_Blas_l2->UPLO),&(p_Blas_l2->N),&(p_Blas_l2->K),(ADE_VOID_T*)p_Blas_l2->p_ALPHA,(ADE_VOID_T*)p_Blas_l2->p_A,&(p_Blas_l2->LDA),(ADE_VOID_T*)p_Blas_l2->p_X,&(p_Blas_l2->INCX),(ADE_VOID_T*)p_Blas_l2->p_BETA,(ADE_VOID_T*)p_Blas_l2->p_Y,&(p_Blas_l2->INCY));
 
-     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
 
 
@@ -588,11 +593,20 @@ static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2)
          cblas_ssbmv(CblasRowMajor,CblasUpper,(p_Blas_l2->N),(p_Blas_l2->K),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_A,(p_Blas_l2->LDA),p_Blas_l2->p_X,(p_Blas_l2->INCX),*(p_Blas_l2->p_BETA),p_Blas_l2->p_Y,(p_Blas_l2->INCY));
      }
 
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 
+     if (p_Blas_l2->UPLO=='L' || p_Blas_l2->UPLO=='l')
+     {
+          cblas_ssbmv(CblasRowMajor,CblasLower,(p_Blas_l2->N),(p_Blas_l2->K),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_A,(p_Blas_l2->LDA),p_Blas_l2->p_X,(p_Blas_l2->INCX),*(p_Blas_l2->p_BETA),p_Blas_l2->p_Y,(p_Blas_l2->INCY));
+     }
+     else
+     {
+         cblas_ssbmv(CblasRowMajor,CblasUpper,(p_Blas_l2->N),(p_Blas_l2->K),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_A,(p_Blas_l2->LDA),p_Blas_l2->p_X,(p_Blas_l2->INCX),*(p_Blas_l2->p_BETA),p_Blas_l2->p_Y,(p_Blas_l2->INCY));
+     }
 
      #else
 
-        #error(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level2_ssbmv);
 
     #endif
 
@@ -612,14 +626,19 @@ static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    dger(&(p_Blas_l2->M),&(p_Blas_l2->N),p_Blas_l2->p_ALPHA,p_Blas_l2->p_X,&(p_Blas_l2->INCX),p_Blas_l2->p_Y,&(p_Blas_l2->INCY),p_Blas_l2->p_A,&(p_Blas_l2->LDA));
+    dger(&(p_Blas_l2->M),&(p_Blas_l2->N),(ADE_VOID_T*)p_Blas_l2->p_ALPHA,(ADE_VOID_T*)p_Blas_l2->p_X,&(p_Blas_l2->INCX),(ADE_VOID_T*)p_Blas_l2->p_Y,&(p_Blas_l2->INCY),(ADE_VOID_T*)p_Blas_l2->p_A,&(p_Blas_l2->LDA));
 
-     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
     cblas_dger(CblasRowMajor,(p_Blas_l2->M),(p_Blas_l2->N),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_X,(p_Blas_l2->INCX),p_Blas_l2->p_Y,(p_Blas_l2->INCY),p_Blas_l2->p_A,(p_Blas_l2->LDA));
+
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+     cblas_dger(CblasRowMajor,(p_Blas_l2->M),(p_Blas_l2->N),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_X,(p_Blas_l2->INCX),p_Blas_l2->p_Y,(p_Blas_l2->INCY),p_Blas_l2->p_A,(p_Blas_l2->LDA));
+
      #else
 
-        #error(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level2_dger);
 
     #endif
 
@@ -637,11 +656,9 @@ static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    dsbmv(&(p_Blas_l2->UPLO),&(p_Blas_l2->N),&(p_Blas_l2->K),p_Blas_l2->p_ALPHA,p_Blas_l2->p_A,&(p_Blas_l2->LDA),p_Blas_l2->p_X,&(p_Blas_l2->INCX),p_Blas_l2->p_BETA,p_Blas_l2->p_Y,&(p_Blas_l2->INCY));
+    dsbmv(&(p_Blas_l2->UPLO),&(p_Blas_l2->N),&(p_Blas_l2->K),(ADE_VOID_T*)p_Blas_l2->p_ALPHA,(ADE_VOID_T*)p_Blas_l2->p_A,&(p_Blas_l2->LDA),(ADE_VOID_T*)p_Blas_l2->p_X,&(p_Blas_l2->INCX),(ADE_VOID_T*)p_Blas_l2->p_BETA,(ADE_VOID_T*)p_Blas_l2->p_Y,&(p_Blas_l2->INCY));
 
-     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
-
-
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
      if (p_Blas_l2->UPLO=='L' || p_Blas_l2->UPLO=='l')
      {
@@ -652,9 +669,19 @@ static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2)
          cblas_dsbmv(CblasRowMajor,CblasUpper,(p_Blas_l2->N),(p_Blas_l2->K),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_A,(p_Blas_l2->LDA),p_Blas_l2->p_X,(p_Blas_l2->INCX),*(p_Blas_l2->p_BETA),p_Blas_l2->p_Y,(p_Blas_l2->INCY));
      }
 
+     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+     if (p_Blas_l2->UPLO=='L' || p_Blas_l2->UPLO=='l')
+     {
+          cblas_dsbmv(CblasRowMajor,CblasLower,(p_Blas_l2->N),(p_Blas_l2->K),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_A,(p_Blas_l2->LDA),p_Blas_l2->p_X,(p_Blas_l2->INCX),*(p_Blas_l2->p_BETA),p_Blas_l2->p_Y,(p_Blas_l2->INCY));
+     }
+     else
+     {
+         cblas_dsbmv(CblasRowMajor,CblasUpper,(p_Blas_l2->N),(p_Blas_l2->K),*(p_Blas_l2->p_ALPHA),p_Blas_l2->p_A,(p_Blas_l2->LDA),p_Blas_l2->p_X,(p_Blas_l2->INCX),*(p_Blas_l2->p_BETA),p_Blas_l2->p_Y,(p_Blas_l2->INCY));
+     }
      #else
 
-        #error(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level2_dsbmv);
 
     #endif
 
