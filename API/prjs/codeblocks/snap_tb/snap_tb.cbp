@@ -16,6 +16,7 @@
 					<Add directory="../../../src" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
 					<Add directory="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/fftw-3.3.4/api" />
+					<Add directory="../../../lib/xianyi-OpenBLAS-v0.2.13-0-g51ce5ef/xianyi-OpenBLAS-51ce5ef" />
 				</Compiler>
 				<Linker>
 					<Add option="-lmx -lmat -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -leng -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />

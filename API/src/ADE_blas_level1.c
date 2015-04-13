@@ -856,16 +856,18 @@ static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1)// (ADE
 
 
 
-  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB  )
 
-        saxpy(&(p_blas_l1->N),p_blas_l1->p_ALPHA,p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        saxpy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_ALPHA,(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
         cblas_saxpy((p_blas_l1->N),*(p_blas_l1->p_ALPHA),p_blas_l1->p_X,(p_blas_l1->INCX),p_blas_l1->p_Y,p_blas_l1->INCY );
 
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+         cblas_saxpy((p_blas_l1->N),*(p_blas_l1->p_ALPHA),p_blas_l1->p_X,(p_blas_l1->INCX),p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_saxpy);
 #endif
 
 
@@ -886,14 +888,18 @@ static ADE_API_RET_T ADE_Blas_level1_scopy (ADE_blas_level1_T *p_blas_l1)// (ADE
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        scopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        scopy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB  )
+
+        cblas_scopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 
         cblas_scopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_scopy);
 
 #endif
 
@@ -913,14 +919,18 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_caxpy,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        caxpy(&(p_blas_l1->N),(ADE_CPLX_T*)p_blas_l1->p_ALPHA,(ADE_CPLX_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_CPLX_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        caxpy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_ALPHA,(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
-        cblas_caxpy(p_blas_l1->N,(ADE_CPLX_T*)p_blas_l1->p_ALPHA,(ADE_CPLX_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_CPLX_T*)p_blas_l1->p_Y,p_blas_l1->INCY );
+        cblas_caxpy(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_ALPHA,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY );
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+        cblas_caxpy(p_blas_l1->N,p_blas_l1->p_ALPHA,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+    #error(ADE_BLAS_IMPLEMENTATION) in ADE_Blas_level1_caxpy   ;
 
 #endif
 
@@ -941,14 +951,18 @@ static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1)// (ADE
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ccopy(&(p_blas_l1->N),(ADE_CPLX_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_CPLX_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ccopy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
-        cblas_ccopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+        cblas_ccopy(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY );
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+         cblas_ccopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_ccopy);
 
 #endif
 
@@ -972,14 +986,18 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_sdot,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ret = sdot(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret = sdot(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
+
+        ret =cblas_sdot(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB )
 
         ret =cblas_sdot(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_sdot);
 
 #endif
 
@@ -1003,14 +1021,18 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_cdotu,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ret=cdotu(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=cdotu(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
-        cblas_cdotu_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY,(void*)&ret );
+        cblas_cdotu_sub(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY,(ADE_VOID_T*)&ret );
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+         cblas_cdotu_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY,(openblas_complex_float*)&ret );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_cdotu);
 
 #endif
 
@@ -1031,14 +1053,18 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_cdotc,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ret=cdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=cdotc(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
-        cblas_cdotc_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY ,(void*)&ret);
+        cblas_cdotc_sub(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY ,(ADE_VOID_T*)&ret);
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+         cblas_cdotc_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY ,(openblas_complex_float*)&ret);
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_cdotc);
 
 #endif
 
@@ -1064,14 +1090,17 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_snrm2,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ret=snrm2(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX));
+        ret=snrm2(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX));
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
+        ret=cblas_snrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
         ret=cblas_snrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_snrm2);
 
 #endif
 
@@ -1097,18 +1126,18 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_daxpy,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        daxpy(&(p_blas_l1->N),p_blas_l1->p_ALPHA,p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
-   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        daxpy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_ALPHA,(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
+
+        cblas_daxpy(p_blas_l1->N,*(p_blas_l1->p_ALPHA),p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+    #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 
         cblas_daxpy(p_blas_l1->N,*(p_blas_l1->p_ALPHA),p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_daxpy);
 
 #endif
-
-
-
 
   return ADE_RET_SUCCESS;
 
@@ -1124,14 +1153,18 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_dcopy,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        dcopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        dcopy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
         cblas_dcopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB )
+
+         cblas_dcopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_dcopy);
 
 #endif
 
@@ -1152,13 +1185,15 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_zaxpy,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        zaxpy(&(p_blas_l1->N),(ADE_CPLX_T*)p_blas_l1->p_ALPHA,(ADE_CPLX_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_CPLX_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
-  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        zaxpy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_ALPHA,(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+  #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
-        cblas_zaxpy(p_blas_l1->N,(ADE_CPLX_T*)p_blas_l1->p_ALPHA,(ADE_CPLX_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_CPLX_T*)p_blas_l1->p_Y,p_blas_l1->INCY );
+        cblas_zaxpy(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_ALPHA,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY );
+    #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+    cblas_zaxpy(p_blas_l1->N,p_blas_l1->p_ALPHA,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_zaxpy);
 
 #endif
 
@@ -1176,14 +1211,18 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_zcopy,p_blas_l1);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        zcopy(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        zcopy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
+
+        cblas_zcopy(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY );
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 
         cblas_zcopy(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_zcopy);
 
 #endif
 
@@ -1203,14 +1242,17 @@ ADE_FLOATING_T ret=0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ret=ddot(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=ddot(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
+
+        ret=cblas_ddot(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 
         ret=cblas_ddot(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_ddot);
 
 #endif
 
@@ -1231,14 +1273,18 @@ ADE_CPLX_T ret;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ret=zdotu(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+        ret=zdotu(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
-        cblas_zdotu_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY ,(void*)&ret);
+        cblas_zdotu_sub(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY ,(ADE_VOID_T*)&ret);
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+        cblas_zdotu_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY ,(openblas_complex_double*)&ret);
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_zdotu);
 
 #endif
 
@@ -1259,14 +1305,18 @@ ADE_CPLX_T ret;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-       ret=zdotc(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX),p_blas_l1->p_Y,&(p_blas_l1->INCY) );
+       ret=zdotc(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
 
-        cblas_zdotc_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY,(void*)&ret );
+        cblas_zdotc_sub(p_blas_l1->N,(ADE_VOID_T*)p_blas_l1->p_X,p_blas_l1->INCX,(ADE_VOID_T*)p_blas_l1->p_Y,p_blas_l1->INCY,(ADE_VOID_T*)&ret );
+
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+         cblas_zdotc_sub(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY,(openblas_complex_double*)&ret );
 #else
 
-#error(ADE_BLAS_IMPLEMENTATION);
+#error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level1_zdotc);
 
 #endif
 
@@ -1287,9 +1337,13 @@ ADE_FLOATING_T ret=0;
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-        ret=dnrm2(&(p_blas_l1->N),p_blas_l1->p_X,&(p_blas_l1->INCX));
+        ret=dnrm2(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX));
 
-        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
+
+        ret=cblas_dnrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
+
+        #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 
         ret=cblas_dnrm2(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX);
 #else

@@ -507,10 +507,10 @@ static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
    /*** Att. blas have to invert inputs for Row major operations cinterface.pdf pgg.191****/
-    sgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    sgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),(ADE_VOID_T*)p_Blas_l3->p_ALPHA,(ADE_VOID_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_VOID_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_VOID_T*)p_Blas_l3->p_BETA,(ADE_VOID_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
-    #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+    #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
     ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
     ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
    if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
@@ -539,6 +539,37 @@ static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
     }
     cblas_sgemm(cblas_order,cblas_transposea,cblas_transposeb,p_Blas_l3->M,p_Blas_l3->N,p_Blas_l3->K,*(p_Blas_l3->p_ALPHA),p_Blas_l3->p_A,p_Blas_l3->LDA,p_Blas_l3->p_B,p_Blas_l3->LDB,*(p_Blas_l3->p_BETA),p_Blas_l3->p_C,p_Blas_l3->LDC);
 
+    #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
+    ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
+    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+   if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
+    {
+        cblas_transposea=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='N' || p_Blas_l3->TRANSA=='n' )
+    {
+        cblas_transposea=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='C' || p_Blas_l3->TRANSA=='c' )
+    {
+        cblas_transposea=CblasConjTrans;
+    }
+    if (p_Blas_l3->TRANSB=='T' || p_Blas_l3->TRANSB=='t' )
+    {
+        cblas_transposeb=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='N' || p_Blas_l3->TRANSB=='n' )
+    {
+        cblas_transposeb=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='C' || p_Blas_l3->TRANSB=='c' )
+    {
+        cblas_transposeb=CblasConjTrans;
+    }
+    cblas_sgemm(cblas_order,cblas_transposea,cblas_transposeb,p_Blas_l3->M,p_Blas_l3->N,p_Blas_l3->K,*(p_Blas_l3->p_ALPHA),p_Blas_l3->p_A,p_Blas_l3->LDA,p_Blas_l3->p_B,p_Blas_l3->LDB,*(p_Blas_l3->p_BETA),p_Blas_l3->p_C,p_Blas_l3->LDC);
+
+
      #else
 
         #error(ADE_BLAS_IMPLEMENTATION);
@@ -557,10 +588,41 @@ static ADE_API_RET_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    cgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),(ADE_CPLX_T*)p_Blas_l3->p_ALPHA,(ADE_CPLX_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_CPLX_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_CPLX_T*)p_Blas_l3->p_BETA,(ADE_CPLX_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    cgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),(ADE_VOID_T*)p_Blas_l3->p_ALPHA,(ADE_VOID_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_VOID_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_VOID_T*)p_Blas_l3->p_BETA,(ADE_VOID_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
-    #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
+    #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB )
+     ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
+    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+    if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
+    {
+        cblas_transposea=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='N' || p_Blas_l3->TRANSA=='n' )
+    {
+        cblas_transposea=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='C' || p_Blas_l3->TRANSA=='c' )
+    {
+        cblas_transposea=CblasConjTrans;
+    }
+    if (p_Blas_l3->TRANSB=='T' || p_Blas_l3->TRANSB=='t' )
+    {
+        cblas_transposeb=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='N' || p_Blas_l3->TRANSB=='n' )
+    {
+        cblas_transposeb=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='C' || p_Blas_l3->TRANSB=='c' )
+    {
+        cblas_transposeb=CblasConjTrans;
+    }
+
+
+    cblas_cgemm(cblas_order,cblas_transposea,cblas_transposeb,p_Blas_l3->M,p_Blas_l3->N,p_Blas_l3->K,(ADE_VOID_T*)(p_Blas_l3->p_ALPHA),(ADE_VOID_T*)p_Blas_l3->p_A,p_Blas_l3->LDA,(ADE_VOID_T*)p_Blas_l3->p_B,p_Blas_l3->LDB,(ADE_VOID_T*)(p_Blas_l3->p_BETA),(ADE_VOID_T*)p_Blas_l3->p_C,p_Blas_l3->LDC);
+    #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+
      ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
     ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
     if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
@@ -593,7 +655,7 @@ static ADE_API_RET_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3)
 
      #else
 
-        #error(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level3_cgemm);
 
     #endif
 return ADE_RET_SUCCESS;
@@ -610,7 +672,7 @@ static ADE_API_RET_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    dgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),p_Blas_l3->p_ALPHA,p_Blas_l3->p_B,&(p_Blas_l3->LDB),p_Blas_l3->p_A,&(p_Blas_l3->LDA),p_Blas_l3->p_BETA,p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    dgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),(ADE_VOID_T*)p_Blas_l3->p_ALPHA,(ADE_VOID_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_VOID_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_VOID_T*)p_Blas_l3->p_BETA,(ADE_VOID_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
@@ -642,9 +704,38 @@ if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
     }
     cblas_dgemm(cblas_order,cblas_transposea,cblas_transposeb,p_Blas_l3->M,p_Blas_l3->N,p_Blas_l3->K,*(p_Blas_l3->p_ALPHA),p_Blas_l3->p_A,p_Blas_l3->LDA,p_Blas_l3->p_B,p_Blas_l3->LDB,*(p_Blas_l3->p_BETA),p_Blas_l3->p_C,p_Blas_l3->LDC);
 
+    #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+        ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
+    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
+    {
+        cblas_transposea=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='N' || p_Blas_l3->TRANSA=='n' )
+    {
+        cblas_transposea=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='C' || p_Blas_l3->TRANSA=='c' )
+    {
+        cblas_transposea=CblasConjTrans;
+    }
+    if (p_Blas_l3->TRANSB=='T' || p_Blas_l3->TRANSB=='t' )
+    {
+        cblas_transposeb=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='N' || p_Blas_l3->TRANSB=='n' )
+    {
+        cblas_transposeb=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='C' || p_Blas_l3->TRANSB=='c' )
+    {
+        cblas_transposeb=CblasConjTrans;
+    }
+    cblas_dgemm(cblas_order,cblas_transposea,cblas_transposeb,p_Blas_l3->M,p_Blas_l3->N,p_Blas_l3->K,*(p_Blas_l3->p_ALPHA),p_Blas_l3->p_A,p_Blas_l3->LDA,p_Blas_l3->p_B,p_Blas_l3->LDB,*(p_Blas_l3->p_BETA),p_Blas_l3->p_C,p_Blas_l3->LDC);
+
      #else
 
-        #error(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level3_dgemm);
 
     #endif
 return ADE_RET_SUCCESS;
@@ -659,7 +750,7 @@ static ADE_API_RET_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
-    zgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),(ADE_CPLX_T*)p_Blas_l3->p_ALPHA,(ADE_CPLX_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_CPLX_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_CPLX_T*)p_Blas_l3->p_BETA,(ADE_CPLX_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
+    zgemm(&(p_Blas_l3->TRANSA),&(p_Blas_l3->TRANSB),&(p_Blas_l3->N),&(p_Blas_l3->M),&(p_Blas_l3->K),(ADE_VOID_T*)p_Blas_l3->p_ALPHA,(ADE_VOID_T*)p_Blas_l3->p_B,&(p_Blas_l3->LDB),(ADE_VOID_T*)p_Blas_l3->p_A,&(p_Blas_l3->LDA),(ADE_VOID_T*)p_Blas_l3->p_BETA,(ADE_VOID_T*)p_Blas_l3->p_C,&(p_Blas_l3->LDC));
 
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB)
@@ -667,7 +758,37 @@ static ADE_API_RET_T ADE_Blas_level3_zgemm (ADE_blas_level3_T *p_Blas_l3)
     ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
     ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
 
-if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
+    if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
+    {
+        cblas_transposea=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='N' || p_Blas_l3->TRANSA=='n' )
+    {
+        cblas_transposea=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSA=='C' || p_Blas_l3->TRANSA=='c' )
+    {
+        cblas_transposea=CblasConjTrans;
+    }
+    if (p_Blas_l3->TRANSB=='T' || p_Blas_l3->TRANSB=='t' )
+    {
+        cblas_transposeb=CblasTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='N' || p_Blas_l3->TRANSB=='n' )
+    {
+        cblas_transposeb=CblasNoTrans;
+    }
+    else if (p_Blas_l3->TRANSB=='C' || p_Blas_l3->TRANSB=='c' )
+    {
+        cblas_transposeb=CblasConjTrans;
+    }
+    cblas_zgemm(cblas_order,cblas_transposea,cblas_transposeb,p_Blas_l3->M,p_Blas_l3->N,p_Blas_l3->K,(ADE_VOID_T*)(p_Blas_l3->p_ALPHA),(ADE_VOID_T*)p_Blas_l3->p_A,p_Blas_l3->LDA,(ADE_VOID_T*)p_Blas_l3->p_B,p_Blas_l3->LDB,(ADE_VOID_T*)(p_Blas_l3->p_BETA),(ADE_VOID_T*)p_Blas_l3->p_C,p_Blas_l3->LDC);
+
+    #elif ( ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
+    ADE_CBLAS_ORDER_T cblas_order=CblasRowMajor;
+    ADE_CBLAS_TRANSPOSE_T cblas_transposea,cblas_transposeb;
+
+    if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
     {
         cblas_transposea=CblasTrans;
     }
@@ -695,7 +816,7 @@ if (p_Blas_l3->TRANSA=='T' || p_Blas_l3->TRANSA=='t' )
 
      #else
 
-        #error(ADE_BLAS_IMPLEMENTATION);
+        #error(ADE_BLAS_IMPLEMENTATION in ADE_Blas_level3_zgemm);
 
     #endif
 return ADE_RET_SUCCESS;
