@@ -958,8 +958,8 @@ for (i=0;i<n_indx;i++)
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
     for (j=0;j<actual_calc_len;j++)
     {
-     ret_split=ADE_Fft_FillSplitIn(p_snap->p_fft[i],p_in[p_main_idx[i]],0,j);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,extract_events,ret_split);
+     ret_split=ADE_Fft_FillSplitIn(p_snap->dp_fft[i],p_in[p_main_idx[i]],0,j);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_extract_events,ret_split);
      }
      #else
         #error (ADE_FFT_IMP)

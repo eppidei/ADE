@@ -2,8 +2,10 @@
 #define _ADE_TYPEDEFS_H
 #include <stdint.h>
 #include "headers/ADE_defines.h"
-//#include <complex.h>
+#include <stdio.h>
+#if (ADE_TARGET_TYPE!=ADE_IOS)
 #include "fftw3.h"
+#endif
 #include <stdbool.h>
 
 
@@ -51,6 +53,7 @@ typedef float ADE_FLOATING_SP_T;
 typedef long ADE_LONG_T;
 typedef unsigned long ADE_ULONG_T;
 typedef bool ADE_BOOL_T;
+typedef FILE ADE_FILE_T;
 #define ADE_TRUE true;
 #define ADE_FALSE false;
 
@@ -128,7 +131,9 @@ typedef struct ADE_FFT_S ADE_FFT_T;
 typedef enum {ADE_FFT_C2C=1,ADE_FFT_R2C=2,ADE_FFT_C2R=3,ADE_FFT_R2R=4,ADE_FFT_INVALID_TYPE=-1} ADE_FFT_TYPE_T;
 typedef enum {ADE_FFT_FORWARD=1,ADE_FFT_BACKWARD=-1,ADE_FFT_INVALID_DIR=0} ADE_FFT_DIRECTION_T;
 /****************** FFTW *****************************/
+#if (ADE_TARGET_TYPE!=ADE_IOS)
 typedef enum {ADE_FFTW_FORWARD=FFTW_FORWARD,ADE_FFTW_BACKWARD=FFTW_BACKWARD} ADE_FFTW_DIRECTION_T;
+#endif
 /**************************** UTILS *************************/
 typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_ROW_INFO_T;
 typedef enum {ADE_UTILS_MAJOR,ADE_UTILS_MINOR,ADE_UTILS_EQUAL,ADE_UTILS_MAJEQUAL,ADE_UTILS_MINEQUAL} ADE_UTILS_CONDITION_T;
