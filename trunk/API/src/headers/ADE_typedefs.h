@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "headers/ADE_defines.h"
 #include <stdio.h>
-#if (ADE_TARGET_TYPE!=ADE_IOS)
+#if (ADE_FFT_IMP==ADE_USE_FFTW)
 #include "fftw3.h"
 #endif
 #include <stdbool.h>
@@ -131,7 +131,7 @@ typedef struct ADE_FFT_S ADE_FFT_T;
 typedef enum {ADE_FFT_C2C=1,ADE_FFT_R2C=2,ADE_FFT_C2R=3,ADE_FFT_R2R=4,ADE_FFT_INVALID_TYPE=-1} ADE_FFT_TYPE_T;
 typedef enum {ADE_FFT_FORWARD=1,ADE_FFT_BACKWARD=-1,ADE_FFT_INVALID_DIR=0} ADE_FFT_DIRECTION_T;
 /****************** FFTW *****************************/
-#if (ADE_TARGET_TYPE!=ADE_IOS)
+#if (ADE_FFT_IMP==ADE_USE_FFTW)
 typedef enum {ADE_FFTW_FORWARD=FFTW_FORWARD,ADE_FFTW_BACKWARD=FFTW_BACKWARD} ADE_FFTW_DIRECTION_T;
 #endif
 /**************************** UTILS *************************/

@@ -58,7 +58,7 @@
 /* Control */
 
 #ifndef ADE_TARGET_TYPE
-#define ADE_TARGET_TYPE ADE_IOS
+#define ADE_TARGET_TYPE ADE_PC_MATLAB
 #endif //ADE_TARGET_TYPE
 
 #ifndef ADE_TARGET_MODE
