@@ -627,7 +627,7 @@ static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
         return ADE_RET_ERROR;
     }
 
-    moving_average_coeff = 1/(p_blow->running_pow_win_fast);
+    moving_average_coeff = (ADE_FLOATING_T)(1)/(p_blow->running_pow_win_fast);
 
     /**FILL THE TAPS**/
 
