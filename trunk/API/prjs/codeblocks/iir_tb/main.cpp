@@ -107,7 +107,7 @@ UnitTest1_procedure(p_mat,p_iir,&p_add_params);
 
 /******* CHECK RESULT UNIT TEST 1*************************/
 
-ADE_Matlab_PutVarintoWorkspace(p_mat, outbuff, "outt", 1, input_len, ADE_REAL);
+ADE_Matlab_PutVarintoWorkspace(p_mat, outbuff, "outt", 1, input_len, ADE_MATH_REAL);
 ADE_Matlab_Evaluate_String(p_mat, "figure;plot(out,'or');hold on;");
 ADE_Matlab_Evaluate_StringnWait(p_mat, "plot(outt,'b+');hold off;");
 
@@ -121,7 +121,7 @@ UnitTest1_procedure(p_mat,p_iir,&p_add_params);
 
 /******* CHECK RESULT UNIT TEST 2*************************/
 
-ADE_Matlab_PutVarintoWorkspace(p_mat, outbuff2, "outt", 1, input_len, ADE_REAL);
+ADE_Matlab_PutVarintoWorkspace(p_mat, outbuff2, "outt", 1, input_len, ADE_MATH_REAL);
 ADE_Matlab_Evaluate_String(p_mat, "figure;plot(out,'or');hold on;");
 ADE_Matlab_Evaluate_StringnWait(p_mat, "plot(outt,'b+');hold off;");
 

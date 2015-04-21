@@ -53,7 +53,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 
         p_this->buff_len=buff_len;
         p_this->Fs=Fs_i;
-        p_this->frame_time_len=(buff_len-1)*Fs_i;
+        p_this->frame_time_len=((ADE_FLOATING_T)(buff_len-1))/Fs_i;
         p_this->n_pow_est_slots=n_pow_slots_i;
         p_this->n_max_indexes=n_max_indexes_i;
         p_this->time_left=time_left_i;
@@ -177,14 +177,14 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 
         for (i=0;i<p_this->n_pow_est_slots;i++)
         {
-                blas1_ret_pow=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_est[i]),ADE_REAL);
+                blas1_ret_pow=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_est[i]),ADE_MATH_REAL);
                 ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,blas1_ret_pow);
         }
 
         p_this->p_dot_vals=calloc(p_this->n_pow_est_slots,sizeof(ADE_FLOATING_T));
         ADE_CHECK_MEMALLOC(ADE_CLASS_SNAP,ADE_METHOD_Init,p_this->p_dot_vals);
 
-        blas1_ret_threshold=ADE_Blas_level1_Init(&(p_this->p_blas_l1_threshold),ADE_REAL);
+        blas1_ret_threshold=ADE_Blas_level1_Init(&(p_this->p_blas_l1_threshold),ADE_MATH_REAL);
         ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,blas1_ret_threshold);
 
         /* whole spectrum allocation */
@@ -193,7 +193,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 
         for (i=0;i<p_this->n_max_indexes;i++)
         {
-                blas1_ret_specw=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_spect_whole[i]),ADE_CPLX);
+                blas1_ret_specw=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_spect_whole[i]),ADE_MATH_CPLX);
                 ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,blas1_ret_threshold);
         }
 
@@ -204,7 +204,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 
         for (i=0;i<p_this->n_max_indexes;i++)
         {
-                blas1_ret_specb=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_spect_band[i]),ADE_CPLX);
+                blas1_ret_specb=ADE_Blas_level1_Init(&(p_this->dp_blas_l1_pow_spect_band[i]),ADE_MATH_CPLX);
                 ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,blas1_ret_specb);
         }
 
@@ -223,10 +223,10 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 
        // }
 
-        blas2_ret_tgk1=ADE_Blas_level2_Init(&(p_this->p_blas_l2_tgk1),ADE_REAL);
+        blas2_ret_tgk1=ADE_Blas_level2_Init(&(p_this->p_blas_l2_tgk1),ADE_MATH_REAL);
         ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,blas2_ret_tgk1);
 
-        blas2_ret_tgk2=ADE_Blas_level2_Init(&(p_this->p_blas_l2_tgk2),ADE_REAL);
+        blas2_ret_tgk2=ADE_Blas_level2_Init(&(p_this->p_blas_l2_tgk2),ADE_MATH_REAL);
         ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,blas2_ret_tgk2);
 
 
@@ -397,7 +397,7 @@ spectral_threshold_schiocco  = 0.2;
  thresh_bias = 2e-2;
  attack_time=1e-4;
  release_time=50e-3;
-samp_range_search_time = 80e-3;
+samp_range_search_time = p_snap->frame_time_len/4;//80e-3;
  samp_range_search = ceil(samp_range_search_time*p_snap->Fs)-1;
  max_range[0]  = 2000;
   max_range[1]  = 3000;

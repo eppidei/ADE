@@ -97,7 +97,15 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
 
+        #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
         fftw_execute(p_fft->plan);
+        #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+       fftwf_execute(p_fft->plan);
+        #else
+         #error (ADE_FP_PRECISION in ADE_Fft_Step)
+        #endif
+
+
 
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
 
@@ -127,7 +135,7 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 
 
     #else
-         #error(ADE_FFT_IMP);
+         #error(ADE_FFT_IMP in ADE_Fft_Step);
 
     #endif
 
@@ -182,7 +190,14 @@ ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
            #if (ADE_FFTW_NTHREADS>0)
             fftw_cleanup_threads();
            #endif
+       #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
         fftw_destroy_plan(p_fft->plan);
+        #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+        fftwf_destroy_plan(p_fft->plan);
+        #else
+         #error (ADE_FP_PRECISION in ADE_Fft_Release)
+        #endif
+
         fftw_cleanup();
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
         #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)

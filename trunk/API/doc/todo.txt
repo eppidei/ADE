@@ -8,3 +8,4 @@
 8) separati i metodi privati in PrivateMethod and doPrivateMethods dove nel primo si associano membri oggetto a parametri
    e l'altra funzione vera e propria (legata a quello che volevo dire al punto 5)
 9) fare periodicamente code review
+10) Aggiungere con #ifdef CHECK_INPUT solo valori non permessi delle funzioni doSomething

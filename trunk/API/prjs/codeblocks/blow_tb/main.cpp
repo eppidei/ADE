@@ -40,7 +40,7 @@ p_global_outbuff=(ADE_FLOATING_T*)calloc(Frame_len*n_iterations,sizeof(ADE_FLOAT
          ADE_Blow_Step(p_blow);
          memcpy(p_global_outbuff+i*Frame_len,p_cycle_outbuff,p_blow->buff_len_o*sizeof(ADE_FLOATING_T));
     }
-    ADE_Matlab_PutVarintoWorkspace(p_blow->p_mat, p_global_outbuff, "outt", 1, Frame_len*n_iterations, ADE_REAL);
+    ADE_Matlab_PutVarintoWorkspace(p_blow->p_mat, p_global_outbuff, "outt", 1, Frame_len*n_iterations, ADE_MATH_REAL);
     ADE_Matlab_launch_script_segment(p_blow->p_mat,"Blow");
 ADE_Matlab_Evaluate_StringnWait(p_blow->p_mat, "figure;hold on;plot(outt,'or');plot(expanded_pow_iir,'+b');hold off;");
    ADE_Blow_Release(p_blow);

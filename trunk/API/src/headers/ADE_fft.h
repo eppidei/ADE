@@ -17,7 +17,13 @@ struct ADE_FFT_S {
         ADE_VOID_T *p_in;//allocati fuori con ffttw_malloc
         ADE_VOID_T *p_out;//allocati fuori con ffttw_malloc
         ADE_FFTW_DIRECTION_T direction;
+        #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
         fftw_plan plan;
+        #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+        fftwf_plan plan;
+        #else
+         #error (ADE_FP_PRECISION in ADE_FFT_S)
+        #endif
         #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
         ADE_SplitComplex_T split_in;
         ADE_SplitComplex_T split_out;
@@ -25,7 +31,7 @@ struct ADE_FFT_S {
         ADE_FFTSetup_T p_setup;
 
         #else
-        #error (ADE_FFT_IMP)
+        #error (ADE_FFT_IMP in ADE_FFT_S)
         #endif
         };
 

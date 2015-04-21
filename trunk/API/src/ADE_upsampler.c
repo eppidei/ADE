@@ -26,7 +26,7 @@ ADE_API_RET_T ADE_Upsampler_Init(ADE_UPSAMPLER_T **dp_upsampler,ADE_UINT32_T in_
         p_this->out_buff_len=upfact*in_buff_len;
 
 
-        ret_blas=ADE_Blas_level1_Init(&p_this->p_blas_l1_memcpy,ADE_REAL);
+        ret_blas=ADE_Blas_level1_Init(&p_this->p_blas_l1_memcpy,ADE_MATH_REAL);
         ADE_CHECK_ADERETVAL(ADE_CLASS_UPSAMPLER,ADE_METHOD_Init,ret_blas);
 
         *dp_upsampler=p_this;

@@ -143,11 +143,11 @@ ret=ADE_Fft_Step(p_fft);
 //ADE_Fft_Release(p_fft);
 if (fft_type==ADE_FFT_C2C)
 {
-ret=ADE_Utils_PrintArray(p_out,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_FFTW", stdout,ADE_CPLX);
+ret=ADE_Utils_PrintArray(p_out,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_FFTW", stdout,ADE_MATH_CPLX);
 }
 else if (fft_type==ADE_FFT_R2C)
 {
-    ret=ADE_Utils_PrintArray(p_out,0,(buff_len/2+1)-1, 0,0,(ADE_CHAR_T*) "outR2C_FFTW", stdout,ADE_CPLX);
+    ret=ADE_Utils_PrintArray(p_out,0,(buff_len/2+1)-1, 0,0,(ADE_CHAR_T*) "outR2C_FFTW", stdout,ADE_MATH_CPLX);
 }
 //for (i=0;i<2;i++)
 //{
@@ -159,7 +159,7 @@ ADE_Matlab_Release(p_mat);
 custom_FFT((ADE_FLOATING_T*)p_in-1,buff_len, ADE_CUSTOM_FFT_FORWARD);
 if (fft_type==ADE_FFT_C2C)
 {
-ret=ADE_Utils_PrintArray(p_in,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_Custom", stdout,ADE_CPLX);
+ret=ADE_Utils_PrintArray(p_in,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_Custom", stdout,ADE_MATH_CPLX);
 }
 
 //ADE_Get_Terminal_size(&lin ,&col  );

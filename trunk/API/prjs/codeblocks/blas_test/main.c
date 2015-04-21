@@ -37,7 +37,7 @@ if (!strcmp(test_case,"axpy"))
 {
 
 
-ADE_Blas_level1_Init(&p_Blas_L1,ADE_REAL);
+ADE_Blas_level1_Init(&p_Blas_L1,ADE_MATH_REAL);
 
 ADE_Blas_level1_setALPHA(p_Blas_L1,&alpha);
 ADE_Blas_level1_setN(p_Blas_L1,N);
@@ -60,7 +60,7 @@ PRINT_ARRAY(y,i,DIM,"%f");
 else if (!strcmp(test_case,"sbmv"))
 {
     /*Init*/
-    ADE_Blas_level2_Init(&p_Blas_L2,ADE_REAL);
+    ADE_Blas_level2_Init(&p_Blas_L2,ADE_MATH_REAL);
     /*Config*/
     ADE_Blas_Level2_SetUplo(p_Blas_L2,'L');
     ADE_Blas_Level2_SetN(p_Blas_L2,DIM);

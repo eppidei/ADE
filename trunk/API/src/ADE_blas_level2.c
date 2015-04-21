@@ -35,11 +35,11 @@ ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUT
 
         p_this->math_type=math_type;
         /**************ALPHA ALLOC ******************/
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_ALPHA=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_ALPHA=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -57,11 +57,11 @@ ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUT
 
         /********************ALLOC BETA**********************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_BETA=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_BETA=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -231,18 +231,18 @@ ADE_API_RET_T ADE_Blas_level2_SetALPHA(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING
 {
     ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
-     ADE_MATH_ATTRIBUTE_T math_type=ADE_REAL;
+     ADE_MATH_ATTRIBUTE_T math_type=ADE_MATH_REAL;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetALPHA,p_Blas_l2);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetALPHA,p_val);
 
     math_type=p_Blas_l2->math_type;
 
-    if (math_type==ADE_REAL)
+    if (math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -259,18 +259,18 @@ ADE_API_RET_T ADE_Blas_level2_SetBeta(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_
 {
     ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
-     ADE_MATH_ATTRIBUTE_T math_type=ADE_REAL;
+     ADE_MATH_ATTRIBUTE_T math_type=ADE_MATH_REAL;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetBeta,p_Blas_l2);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetBeta,p_val);
 
     math_type=p_Blas_l2->math_type;
 
-    if (math_type==ADE_REAL)
+    if (math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }

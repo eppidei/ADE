@@ -32,7 +32,7 @@ ADE_API_RET_T ADE_Downsampler_Init(ADE_DOWNSAMPLER_T **dp_downsampler,ADE_UINT32
         p_this->out_buff_len=in_buff_len/downfact;
 
 
-        ret_blas=ADE_Blas_level1_Init(&p_this->p_blas_l1_memcpy,ADE_REAL);
+        ret_blas=ADE_Blas_level1_Init(&p_this->p_blas_l1_memcpy,ADE_MATH_REAL);
         ADE_CHECK_ADERETVAL(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_Init,ret_blas);
 
         *dp_downsampler=p_this;

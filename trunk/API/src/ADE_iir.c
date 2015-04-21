@@ -144,7 +144,7 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
 
          for (i=0;i<(n_SOS_sections);i++)
         {
-            ADE_Blas_level1_Init(&(pthis->dp_Blas_L1[i]),ADE_REAL);
+            ADE_Blas_level1_Init(&(pthis->dp_Blas_L1[i]),ADE_MATH_REAL);
             ADE_Blas_level1_SetN(pthis->dp_Blas_L1[i],order);
             ADE_Blas_level1_SetINCX(pthis->dp_Blas_L1[i],1);
             ADE_Blas_level1_SetINCY(pthis->dp_Blas_L1[i],1);

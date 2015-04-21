@@ -168,7 +168,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOAT
 
     /*********** BLAS L2 Alloc ************/
 
-    ret_b2 = ADE_Blas_level2_Init(&(pthis->p_blas_l2),ADE_REAL);
+    ret_b2 = ADE_Blas_level2_Init(&(pthis->p_blas_l2),ADE_MATH_REAL);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Init,ret_b2);
 
 
@@ -863,6 +863,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Step,iir_step_ret);
 
     state_flag=0;
+    p_blow->state=ADE_FALSE;
 
     for (i=0; i<p_blow->buff_len_i; i++)
     {

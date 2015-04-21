@@ -141,12 +141,12 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
                 if (mxIsComplex(dp_mxarray[k]))
                 {
                      p_this->data_size[i]=2*p_this->n_row[i]*p_this->n_col[i]*8;
-                     p_this->p_vartype[i]=ADE_CPLX;
+                     p_this->p_vartype[i]=ADE_MATH_CPLX;
                 }
                 else
                 {
                     p_this->data_size[i]=p_this->n_row[i]*p_this->n_col[i]*8;
-                     p_this->p_vartype[i]=ADE_REAL;
+                     p_this->p_vartype[i]=ADE_MATH_REAL;
                 }
 
             }
@@ -333,11 +333,11 @@ ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var,
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_PutVarintoWorkspace,p_var);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_PutVarintoWorkspace,var_matname);
 
-    if (comp_type==ADE_REAL)
+    if (comp_type==ADE_MATH_REAL)
     {
         p_tmp=mxCreateDoubleMatrix(var_rows, var_cols, mxREAL);
     }
-    else if (comp_type==ADE_CPLX)
+    else if (comp_type==ADE_MATH_CPLX)
     {
          p_tmp=mxCreateDoubleMatrix(var_rows, var_cols, mxCOMPLEX);
     }
@@ -473,7 +473,7 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
 
     while( strcmp(temp_str,test_str) && (feof(p_mat->p_matscript)==0) )
     {
-        memset(temp_str,'\0',sizeof(temp_str));
+        memset(temp_str,'\0',ADE_MAX_CHARS*sizeof(char));
         fgets(temp_str,ADE_MAX_CHARS,p_mat->p_matscript);
         strcat(segment_str,temp_str);
         if (i==0)
@@ -566,7 +566,7 @@ static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigne
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_C2Mat_copy,p_dst);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_C2Mat_copy,p_src);
 
-    if (comp_type==ADE_REAL)
+    if (comp_type==ADE_MATH_REAL)
     {
          for (i=0;i<n_rows;i++)
             {
@@ -579,7 +579,7 @@ static ADE_API_RET_T ADE_Matlab_C2Mat_copy(double *p_dst, double *p_src, unsigne
             }
 
     }
-    else if (comp_type==ADE_CPLX)
+    else if (comp_type==ADE_MATH_CPLX)
     {
 
         for (i=0;i<n_rows;i++)
