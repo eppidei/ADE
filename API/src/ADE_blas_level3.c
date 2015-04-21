@@ -41,11 +41,11 @@ ADE_API_RET_T ADE_Blas_level3_Init(ADE_blas_level3_T** dp_this,ADE_MATH_ATTRIBUT
     {
         p_this->math_type=math_type;
         /**************ALPHA ALLOC ******************/
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_ALPHA=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_ALPHA=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -62,11 +62,11 @@ ADE_API_RET_T ADE_Blas_level3_Init(ADE_blas_level3_T** dp_this,ADE_MATH_ATTRIBUT
 
         /********************ALLOC BETA**********************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_BETA=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_BETA=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -335,18 +335,18 @@ ADE_API_RET_T ADE_Blas_Level3_SetALPHA(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATIN
 {
       ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
-     ADE_MATH_ATTRIBUTE_T math_type=ADE_REAL;
+     ADE_MATH_ATTRIBUTE_T math_type=ADE_MATH_REAL;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetALPHA,p_Blas_l3);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetALPHA,p_val);
 
     math_type=p_Blas_l3->math_type;
 
-    if (math_type==ADE_REAL)
+    if (math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -362,7 +362,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING
 {
      ADE_UINT32_T n_elements = 0;
      ADE_UINT32_T i = 0;
-      ADE_MATH_ATTRIBUTE_T math_type=ADE_REAL;
+      ADE_MATH_ATTRIBUTE_T math_type=ADE_MATH_REAL;
 
       ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetBeta,p_Blas_l3);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetBeta,p_val);
@@ -370,11 +370,11 @@ ADE_API_RET_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING
     math_type=p_Blas_l3->math_type;
 
 
-    if (math_type==ADE_REAL)
+    if (math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -394,7 +394,7 @@ ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_gemm,p_Blas_l3);
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-     if(p_Blas_l3->math_type==ADE_REAL)
+     if(p_Blas_l3->math_type==ADE_MATH_REAL)
      {
            p_Blas_l3->blas_level3_fcn_type1=ADE_Blas_level3_sgemm;
      }
@@ -406,7 +406,7 @@ ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
 
 
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-    if(p_Blas_l3->math_type==ADE_REAL)
+    if(p_Blas_l3->math_type==ADE_MATH_REAL)
      {
      p_Blas_l3->blas_level3_fcn_type1=ADE_Blas_level3_dgemm;
      }
@@ -444,7 +444,7 @@ ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid)
         fprintf(p_fid,"p_Blas_l3->M = %d\n",p_Blas_l3->M);
         fprintf(p_fid,"p_Blas_l3->N = %d\n",p_Blas_l3->N);
         fprintf(p_fid,"p_Blas_l3->K = %d\n",p_Blas_l3->K);
-        if (p_Blas_l3->math_type==ADE_REAL)
+        if (p_Blas_l3->math_type==ADE_MATH_REAL)
         {
             fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf)\n",p_Blas_l3->p_ALPHA,*(p_Blas_l3->p_ALPHA));
             fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf)\n",p_Blas_l3->p_BETA,*(p_Blas_l3->p_BETA));
@@ -452,7 +452,7 @@ ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid)
             fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf)\n",p_Blas_l3->p_B,(p_Blas_l3->p_B)[0]);
             fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf)\n",p_Blas_l3->p_C,(p_Blas_l3->p_C)[0]);
         }
-        else if (p_Blas_l3->math_type==ADE_CPLX)
+        else if (p_Blas_l3->math_type==ADE_MATH_CPLX)
         {
             fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf+%lfi)\n",p_Blas_l3->p_ALPHA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)));
             fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf+%lfi)\n",p_Blas_l3->p_BETA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)));

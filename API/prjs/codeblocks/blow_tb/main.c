@@ -35,7 +35,7 @@ p_outbuff=calloc(Frame_len*n_iterations,sizeof(ADE_FLOATING_T));
          ADE_Blow_SetOutBuff(p_blow, p_outbuff+i*Frame_len);
          ADE_Blow_Step(p_blow);
     }
-    ADE_Matlab_PutVarintoWorkspace(p_blow->p_mat, p_outbuff, "outt", 1, Frame_len*n_iterations, ADE_REAL);
+    ADE_Matlab_PutVarintoWorkspace(p_blow->p_mat, p_outbuff, "outt", 1, Frame_len*n_iterations, ADE_MATH_REAL);
     ADE_Matlab_launch_script_segment(p_blow->p_mat,"Blow");
 ADE_Matlab_Evaluate_StringnWait(p_blow->p_mat, "figure;hold on;plot(outt,'or');plot(expanded_pow_iir,'+b');hold off;");
    ADE_Blow_Release(p_blow);

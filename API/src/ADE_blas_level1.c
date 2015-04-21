@@ -50,11 +50,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
 
         p_this->math_type=math_type;
         /**************ALPHA ALLOC ******************/
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_ALPHA=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_ALPHA=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -70,11 +70,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
 
         /************** D1 ALLOC *************************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_D1=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_D1=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -87,11 +87,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
          ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_Init,p_this->p_D1);
          /************** D2 ALLOC *************************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_D2=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_D2=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -104,11 +104,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
         ADE_CHECK_MEMALLOC(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_Init,p_this->p_D2);
          /************** A ALLOC *************************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_A=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_A=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -123,11 +123,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
 
          /************** B ALLOC *************************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_B=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_B=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -142,11 +142,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
 
         /************** C ALLOC *************************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_C=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_C=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -161,11 +161,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
 
         /************** S ALLOC *************************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_S=calloc(1,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_S=calloc(1,sizeof(ADE_CPLX_T));
         }
@@ -180,11 +180,11 @@ ADE_API_RET_T ADE_Blas_level1_Init(ADE_blas_level1_T** dp_this,ADE_MATH_ATTRIBUT
 
         /************** PARAM ALLOC *************************/
 
-        if (math_type==ADE_REAL)
+        if (math_type==ADE_MATH_REAL)
         {
              p_this->p_PARAM=calloc(5,sizeof(ADE_FLOATING_T));
         }
-        else if (math_type==ADE_CPLX)
+        else if (math_type==ADE_MATH_CPLX)
         {
             p_this->p_PARAM=calloc(5,sizeof(ADE_CPLX_T));
         }
@@ -225,11 +225,11 @@ ADE_API_RET_T ADE_Blas_level1_SetA(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetA,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetA,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -256,11 +256,11 @@ ADE_API_RET_T ADE_Blas_level1_SetB(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetB,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetB,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -284,11 +284,11 @@ ADE_API_RET_T ADE_Blas_level1_SetC(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
       ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetC,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetC,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -312,11 +312,11 @@ ADE_API_RET_T ADE_Blas_level1_SetS(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
       ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetS,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetS,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -341,11 +341,11 @@ ADE_API_RET_T ADE_Blas_level1_SetD1(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T 
       ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetD1,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetD1,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -370,11 +370,11 @@ ADE_API_RET_T ADE_Blas_level1_SetD2(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T 
       ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetD2,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetD2,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -400,11 +400,11 @@ ADE_API_RET_T ADE_Blas_level1_SetALPHA(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING
       ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetALPHA,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetALPHA,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=1;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=2;
     }
@@ -430,11 +430,11 @@ ADE_API_RET_T ADE_Blas_level1_SetPARAM(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetPARAM,p_blas_l1);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetPARAM,p_val);
 
-    if (p_blas_l1->math_type==ADE_REAL)
+    if (p_blas_l1->math_type==ADE_MATH_REAL)
     {
         n_elements=5;
     }
-    else if (p_blas_l1->math_type==ADE_CPLX)
+    else if (p_blas_l1->math_type==ADE_MATH_CPLX)
     {
          n_elements=10;
     }
@@ -510,28 +510,28 @@ ADE_API_RET_T ADE_Blas_level1_SetY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
 ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 {
     ADE_API_RET_T ret = ADE_RET_ERROR;
-    ADE_MATH_ATTRIBUTE_T math_type = ADE_REAL;
+    ADE_MATH_ATTRIBUTE_T math_type = ADE_MATH_REAL;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_axpy,p_blas_l1);
 
     math_type=p_blas_l1->math_type;
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-    if(math_type==ADE_REAL)
+    if(math_type==ADE_MATH_REAL)
     {
         p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_saxpy;
     }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
         p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_caxpy;
     }
 
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-    if(math_type==ADE_REAL)
+    if(math_type==ADE_MATH_REAL)
     {
      p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_daxpy;
      }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
         p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_zaxpy;
     }
@@ -550,18 +550,18 @@ ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
 {
     ADE_API_RET_T ret = ADE_RET_SUCCESS;
-    ADE_MATH_ATTRIBUTE_T math_type = ADE_REAL;
+    ADE_MATH_ATTRIBUTE_T math_type = ADE_MATH_REAL;
 
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_copy,p_blas_l1);
 
      math_type=p_blas_l1->math_type;
 
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-    if(math_type==ADE_REAL)
+    if(math_type==ADE_MATH_REAL)
     {
         p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_scopy;
     }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
         p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_ccopy;
     }
@@ -572,11 +572,11 @@ ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
     }
 
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-    if(math_type==ADE_REAL)
+    if(math_type==ADE_MATH_REAL)
     {
      p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_dcopy;
      }
-    else if (math_type==ADE_CPLX)
+    else if (math_type==ADE_MATH_CPLX)
     {
         p_blas_l1->blas_level1_fcn_type1=ADE_Blas_level1_zcopy;
     }

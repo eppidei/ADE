@@ -125,7 +125,7 @@ typedef enum  {ADE_BLOW_WAITING,ADE_BLOW_EVALUATION,ADE_BLOW_TRACKING} BLOW_SM_S
 
 /******************************** MATLAB ***************************/
 typedef struct ADE_MATLAB_S ADE_MATLAB_T;
-typedef enum {ADE_CPLX,ADE_REAL} ADE_MATH_ATTRIBUTE_T;
+typedef enum {ADE_MATH_CPLX=0,ADE_MATH_REAL=1,ADE_MATH_UNDEF=-1} ADE_MATH_ATTRIBUTE_T;
 /************************************* FFT ************************/
 typedef struct ADE_FFT_S ADE_FFT_T;
 typedef enum {ADE_FFT_C2C=1,ADE_FFT_R2C=2,ADE_FFT_C2R=3,ADE_FFT_R2R=4,ADE_FFT_INVALID_TYPE=-1} ADE_FFT_TYPE_T;

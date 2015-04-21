@@ -64,7 +64,7 @@ ADE_Interpolator_Step(p_interpolator);
 ADE_Matlab_launch_script_segment(p_mat,"Interpolator");
 
 /************ Check *************/
-ADE_Matlab_PutVarintoWorkspace(p_mat, p_output, "outc", 1, input_len*up_fact, ADE_REAL);
+ADE_Matlab_PutVarintoWorkspace(p_mat, p_output, "outc", 1, input_len*up_fact, ADE_MATH_REAL);
 ADE_Matlab_Evaluate_String(p_mat, "figure;plot(c,'or');hold on;");
 ADE_Matlab_Evaluate_StringnWait(p_mat, "plot(outc,'b+');hold off;");
 /********** RELEASE MEM****************/

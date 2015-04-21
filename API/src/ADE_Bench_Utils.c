@@ -18,7 +18,7 @@ void gemm_checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATI
     ADE_FLOATING_DP_T p_sum=0,result=0;
     ADE_CPLX_T p_csum=ADE_cset(0,0);
    // ADE_CPLX_T cresult=ADE_cset(0,0);
-    ADE_MATH_ATTRIBUTE_T math_att;
+    ADE_MATH_ATTRIBUTE_T math_att=ADE_MATH_UNDEF;
     ADE_VOID_T *p_alpha=p_blas_l3->p_ALPHA;
     ADE_VOID_T *p_beta=p_blas_l3->p_BETA;
     ADE_VOID_T *p_A=p_blas_l3->p_A;
@@ -79,11 +79,11 @@ time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_ns
 
         if (m_type==ADE_BENCH_REAL)
         {
-            math_att=ADE_REAL;
+            math_att=ADE_MATH_REAL;
         }
         else if (m_type==ADE_BENCH_CPLX)
         {
-            math_att=ADE_CPLX;
+            math_att=ADE_MATH_CPLX;
         }
         ADE_Blas_level3_Print(p_blas_l3,p_fid);
         ADE_Utils_PrintArray(p_alpha,0,1-1, 0,1-1, "Alpha", p_fid,math_att);
@@ -288,7 +288,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
             {
                 if (mat_type[type_idx]==ADE_BENCH_REAL)
                 {
-                     ADE_Blas_level3_Init(&p_blas_l3,ADE_REAL );
+                     ADE_Blas_level3_Init(&p_blas_l3,ADE_MATH_REAL );
                      /*** cicla dimensioni***/
                         for (dim_cases_idx=0;dim_cases_idx<n_dim_cases;dim_cases_idx++)
                         {
@@ -355,7 +355,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 
                     for (dim_cases_idx=0;dim_cases_idx<n_dim_cases;dim_cases_idx++)
                     {
-                        ADE_Blas_level3_Init(&p_blas_l3,ADE_CPLX );
+                        ADE_Blas_level3_Init(&p_blas_l3,ADE_MATH_CPLX );
 
                         /**** matrix alloc********/
                             p_A=calloc(1,n_rows_A[dim_cases_idx]*n_cols_A[dim_cases_idx]*sizeof(ADE_CPLX_T));
@@ -487,7 +487,7 @@ void fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,AD
     ADE_UINT32_T row_idx=0;
     ADE_FLOATING_DP_T result=0;
     ADE_CPLX_T p_csum=ADE_cset(0,0);
-    ADE_MATH_ATTRIBUTE_T math_att;
+    ADE_MATH_ATTRIBUTE_T math_att=ADE_MATH_UNDEF;
     ADE_VOID_T * p_desplit=NULL;
     ADE_UINT32_T n_row=p_fft->buff_len;
 
@@ -543,7 +543,7 @@ time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_ns
 
         if (m_type==ADE_FFT_C2C || m_type==ADE_FFT_R2C)
         {
-            math_att=ADE_CPLX;
+            math_att=ADE_MATH_CPLX;
         }
         else
         {

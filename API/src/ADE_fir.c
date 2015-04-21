@@ -50,7 +50,7 @@ ADE_API_RET_T ADE_Fir_Init(ADE_FIR_T** dp_this, ADE_UINT32_T fir_order,ADE_UINT3
         if (pthis->filt_imp_type==ADE_FIR_TRASP_II)
         {
             #if (ADE_FIR_IMP==ADE_FIR_USE_BLAS)
-            ADE_Blas_level1_Init(&p_Blas_L1,ADE_REAL);
+            ADE_Blas_level1_Init(&p_Blas_L1,ADE_MATH_REAL);
              ADE_Blas_level1_SetN(p_Blas_L1,fir_order);
             ADE_Blas_level1_SetINCX(p_Blas_L1,1);
             ADE_Blas_level1_SetINCY(p_Blas_L1,1);

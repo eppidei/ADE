@@ -11,14 +11,15 @@
 static ADE_BOOL_T ADE_IsInactiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i);
 static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i);
 static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i);
+static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i);
 
 ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T in_buff_len,ADE_FLOATING_T input_rate)
 {
 
     ADE_UINT32_T blow_flag = BLOW_FLAG;
     ADE_UINT32_T snap_flag = SNAP_FLAG;
-    ADE_API_RET_T ret_blow = ADE_RET_SUCCESS;
-    ADE_API_RET_T ret_snap = ADE_RET_SUCCESS;
+    ADE_API_RET_T ret_blow = ADE_RET_ERROR;
+    ADE_API_RET_T ret_snap = ADE_RET_ERROR;
     /***snap related****/
     ADE_UINT32_T n_pow_slots_i=2;
     ADE_UINT32_T n_max_indexes_i=1;
@@ -74,6 +75,11 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
             ret_snap = ADE_Snap_Init( &((*dp_ADE_Handle)->p_snap),in_buff_len,input_rate,n_pow_slots_i,n_max_indexes_i,time_left_i,time_right_i,fft_len_i);
            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,ret_snap);
 
+//           ret_snap_conf = ADE_Snap_SetInBuff((*dp_ADE_Handle)->p_snap);
+//            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,ret_snap);
+
+
+
             (*dp_ADE_Handle)->p_snap_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
             ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,ADE_METHOD_Init,(*dp_ADE_Handle)->p_snap_out_struct);
         }
@@ -101,7 +107,10 @@ ADE_VOID_T ADE_Release(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
         ADE_Snap_Release( p_ADE->p_snap);
     }
 
-    ADE_CHECKNFREE(p_ADE);
+    if (ADE_IsEmptyFlag(p_ADE->active_algs_flag))
+    {
+        ADE_CHECKNFREE(p_ADE);
+    }
 
 }
 
@@ -130,7 +139,7 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
     ADE_UINT32_T blow_flag = BLOW_FLAG;
     ADE_UINT32_T snap_flag = SNAP_FLAG;
     ADE_API_RET_T blow_ret = ADE_RET_ERROR;
-    ADE_API_RET_T snap_ret = ADE_RET_ERROR;
+    ADE_API_RET_T snap_ret = ADE_RET_ERROR,ret_snap_conf=ADE_RET_ERROR;
 
     if (p_in_struct!=NULL)
     {
@@ -138,25 +147,23 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
      if  ( (Sel_Flag_i & blow_flag)==blow_flag )
      {
         blow_ret = ADE_Blow_SetInBuff(p_ADE->p_blow, p_in_struct->data);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,blow_ret);
-        #endif
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,blow_ret);
+
         blow_ret = ADE_Blow_Step(p_ADE->p_blow);
-        #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,blow_ret);
-        #endif
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,blow_ret);
+
      } else if  ( (Sel_Flag_i & snap_flag)==snap_flag )
         {
             snap_ret = ADE_Snap_SetInBuff(p_ADE->p_snap, p_in_struct->data);
-            #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,snap_ret);
-            #endif
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,snap_ret);
+
+            ret_snap_conf = ADE_Snap_Configure(p_ADE->p_snap);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,ret_snap_conf);
+
             snap_ret = ADE_Snap_Step(p_ADE->p_snap);
-            #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,snap_ret);
-            #endif
-     }
-     }
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,snap_ret);
+        }
+    }
 
       return ADE_RET_SUCCESS;
 
@@ -165,7 +172,7 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
 ADE_SCDF_Output_Int_T* ADE_GetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 {
 
-ADE_SCDF_Output_Int_T* p_out;
+ADE_SCDF_Output_Int_T* p_out=NULL;
 
 #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
@@ -248,6 +255,30 @@ static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i)
     }
 
     if (count==1)
+    {
+        return ADE_TRUE;
+    }
+    else
+    {
+        return ADE_FALSE;
+    }
+
+}
+
+static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i)
+{
+    ADE_UINT32_T i=0;
+    ADE_UINT32_T bit_len = sizeof(Sel_Flag_i)*8;
+    ADE_UINT32_T count=0;
+    ADE_UINT32_T tmp_val=0;
+
+    for (i=0;i<bit_len;i++)
+    {
+        tmp_val=(Sel_Flag_i>>i) & (0x0001);
+        count = count + tmp_val;
+    }
+
+    if (count==0)
     {
         return ADE_TRUE;
     }

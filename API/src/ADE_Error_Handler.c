@@ -31,7 +31,7 @@ ADE_VOID_T ADE_Error_Handler_SetError(ADE_ERRSEVERITY_T severity,ADE_ERRTYPE_T t
     else
     {
 
-        fprintf(stderr,"ERR STACK OVERFLOW!!!!!!!!!\n");
+        fprintf(stderr,"WARNING : ERROR HANDLER STACK OVERFLOW!!!!!!!!!\n");
     }
 
     #if (ADE_TARGET_MODE==ADE_DEBUG)

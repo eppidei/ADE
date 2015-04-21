@@ -214,8 +214,8 @@ for (i=0;i<n_max_indexes_i;i++)
 
 }
 #if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
-ADE_Matlab_PutVarintoWorkspace(p_snap->p_mat, p_pos_event_idx, "pos_event_idx_C", 1, n_max_indexes_i*n_frames, ADE_REAL);
-ADE_Matlab_PutVarintoWorkspace(p_snap->p_mat, p_neg_event_idx, "neg_event_idx_C", 1, n_max_indexes_i*n_frames, ADE_REAL);
+ADE_Matlab_PutVarintoWorkspace(p_snap->p_mat, p_pos_event_idx, "pos_event_idx_C", 1, n_max_indexes_i*n_frames, ADE_MATH_REAL);
+ADE_Matlab_PutVarintoWorkspace(p_snap->p_mat, p_neg_event_idx, "neg_event_idx_C", 1, n_max_indexes_i*n_frames, ADE_MATH_REAL);
 /*** Run Matlab algorithm****/
 ADE_Matlab_launch_script_segment(p_snap->p_mat,"Snap");
 /* Compare Results */

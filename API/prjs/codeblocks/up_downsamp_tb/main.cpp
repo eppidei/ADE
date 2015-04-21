@@ -29,13 +29,13 @@ int main()
 
     ADE_Upsampler_Step(p_upsamp);
 
-    ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_REAL);
+    ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_MATH_REAL);
 
     ADE_Upsampler_Configure(p_upsamp,c,b,sizeof(b));
 
     ADE_Upsampler_Step(p_upsamp);
 
-    ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_REAL);
+    ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_MATH_REAL);
 
     ADE_Upsampler_Release(p_upsamp);
 
@@ -45,7 +45,7 @@ int main()
 
     ADE_Downsampler_Step(p_downsamp);
 
-     ADE_Utils_PrintArray(a,0,10,0,0,"a",stdout,ADE_REAL);
+     ADE_Utils_PrintArray(a,0,10,0,0,"a",stdout,ADE_MATH_REAL);
 
     ADE_Downsampler_Release(p_downsamp);
 

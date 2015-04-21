@@ -136,7 +136,7 @@ ADE_API_RET_T ADE_Interpolator_SetOutBuff(ADE_INTERPOLATOR_T *p_interpolator,ADE
     if (buff_size!=(p_interpolator->out_buff_len*sizeof(ADE_FLOATING_T)))
     {
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_INTERPOLATOR,ADE_METHOD_SetOutBuff,buff_size,"%u",(FILE*)ADE_STD_STREAM);
-        fprintf((FILE*)ADE_STD_STREAM,"Interpolator Out Buffer size wrong expexted %u , actual %u \n",p_interpolator->out_buff_len*sizeof(ADE_FLOATING_T),buff_size);
+        fprintf((FILE*)ADE_STD_STREAM,"Interpolator Out Buffer size wrong expexted %u , actual %u\n",p_interpolator->out_buff_len*sizeof(ADE_FLOATING_T),buff_size);
         return ADE_RET_ERROR;
     }
 
