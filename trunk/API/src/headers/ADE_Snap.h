@@ -51,7 +51,7 @@ struct ADE_SNAP_S
     ADE_ULONG_T *p_sort_indexes;
     ADE_FLOATING_T *p_index_vals;//lungo n_max_indexes
     ADE_FLOATING_T **dp_segments;//lungo n_max_indexes*extract_len
-    ADE_CPLX_T **dp_spectrum;//lungo n_max_indexes*extract_len*2
+    ADE_VOID_T **dp_spectrum;//lungo n_max_indexes*extract_len*2
     ADE_FLOATING_T *p_percent_pow;
     ADE_BOOL_T *p_snaps;
     ADE_BOOL_T state;
