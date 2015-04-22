@@ -254,7 +254,8 @@ X_ERRMETHODS(ADE_METHOD_Stride_out) \
 X_ERRMETHODS(ADE_METHOD_sgemm) \
 X_ERRMETHODS(ADE_METHOD_cgemm) \
 X_ERRMETHODS(ADE_METHOD_blas3_test_procedure) \
-X_ERRMETHODS(ADE_METHOD_fft_test_procedure)
+X_ERRMETHODS(ADE_METHOD_fft_test_procedure) \
+X_ERRMETHODS(ADE_METHOD_doXrms2)
 
 
 

@@ -53,11 +53,15 @@ struct ADE_BLOW_S
     extern "C" {
 #endif
 
+/***************** Init Methods *************************/
 ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_size,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o_i);
 ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow);
-ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow);
+/************* Set Methods *************************/
 ADE_API_RET_T ADE_Blow_SetInBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff);
+/************* Get Methods *************************/
 ADE_API_RET_T ADE_Blow_GetOutBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T **dp_buff);
+/************ Processing methods ***********************/
+ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow);
 
 #ifdef __cplusplus
     }   /* extern "C" */

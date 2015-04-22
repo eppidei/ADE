@@ -117,7 +117,7 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
             #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
                 vDSP_fft_zop ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
                 #else
-                    #error(ADE_FP_PRECISION)
+                    #error(ADE_FP_PRECISION in ADE_Fft_Step)
                 #endif
         }
         else if (p_fft->type==ADE_FFT_R2C)
@@ -127,7 +127,7 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
         #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
             vDSP_fft_zrop ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
         #else
-            #error(ADE_FP_PRECISION)
+            #error(ADE_FP_PRECISION in ADE_Fft_Step)
         #endif
         }
 
