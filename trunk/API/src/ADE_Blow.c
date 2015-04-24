@@ -24,6 +24,9 @@ static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Static_Params(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow);
+
+
 static ADE_API_RET_T ADE_Blow_Set_SatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T nbit_i,ADE_FLOATING_T Margin_i);
 static ADE_API_RET_T ADE_Blow_Set_EvalTimesample(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i);
 static ADE_API_RET_T ADE_Blow_Set_NSatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T n_sat_thres_i);
@@ -36,7 +39,7 @@ static ADE_API_RET_T ADE_Blow_Set_NPowThreshAttack(ADE_BLOW_T* p_blow,ADE_FLOATI
 static ADE_API_RET_T ADE_Blow_Set_NPowThreshRelease(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T time_pow_thresh_release_i);
 //static ADE_API_RET_T ADE_square_vector(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Set_Expander_static_params(ADE_BLOW_T* p_blow,ADE_UINT32_T n_breaks_i,ADE_UINT32_T poly_order_i);
-static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow);
+
 
 static ADE_API_RET_T ADE_Blow_doSaturation_detector_sm(BLOW_SM_STATES_T state_int,BLOW_SM_STATES_T *p_state,ADE_UINT32_T eval_counter_int,
         ADE_UINT32_T eval_pow_int,ADE_UINT32_T eval_timer_int,ADE_FLOATING_T abs_sample_i,ADE_FLOATING_T pow_thresh_high,ADE_FLOATING_T pow_thresh_low,
@@ -850,7 +853,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Step,p_blow);
 
-    ret_conf = ADE_Blas_level2_Elewise_Config(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len_i);
+    ret_conf = ADE_Blas_level2_configure_elewise(p_blow->p_blas_l2, p_blow->p_in,p_blow->p_in,p_blow->p_in_squared,1.0,0.0,p_blow->buff_len_i);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Step,ret_conf);
 
     ret = ADE_Blas_level2_Elewise(p_blow->p_blas_l2);

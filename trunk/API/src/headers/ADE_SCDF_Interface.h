@@ -1,5 +1,6 @@
 #ifndef _ADE_SCDF_INTERFACE_H
 #define _ADE_SCDF_INTERFACE_H
+#include "headers/ADE_typedefs.h"
 
 #define BLOW_BIT (0)
 #define SNAP_BIT (1)
@@ -8,14 +9,14 @@
 #define SNAP_FLAG (1<<SNAP_BIT)
 
 typedef enum ADE_SensorType_S{
-    Invalid=-1,
-    Accelerometer,
-    Gyroscope,
-    Magnetometer,
-    Proximity,
-    Light,
-    AudioInput,
-    NumTypes }ADE_SensorType_T ;
+    ADE_Invalid=-1,
+    ADE_Accelerometer,
+    ADE_Gyroscope,
+    ADE_Magnetometer,
+    ADE_Proximity,
+    ADE_Light,
+    ADE_AudioInput,
+    ADE_NumTypes }ADE_SensorType_T ;
 
 typedef struct ADE_SCDF_Input_Int_S
 {

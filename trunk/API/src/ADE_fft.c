@@ -17,6 +17,7 @@ static ADE_API_RET_T ADE_Fft_SetPlan(ADE_FFT_T* p_fft);
 static ADE_API_RET_T ADE_Fft_SetDirection(ADE_FFT_T* p_fft,ADE_FFT_DIRECTION_T fft_dir);
 static ADE_API_RET_T ADE_Fft_SetType(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type);
 
+/******** Init Methods ************/
 
 ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 {
@@ -54,6 +55,40 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
 
 }
 
+ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
+{
+    #if (ADE_FFT_IMP==ADE_USE_FFTW)
+        //fftw_free(p_fft->p_in);
+        //fftw_free(p_fft->p_out);
+           #if (ADE_FFTW_NTHREADS>0)
+            fftw_cleanup_threads();
+           #endif
+       #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+        fftw_destroy_plan(p_fft->plan);
+        #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+        fftwf_destroy_plan(p_fft->plan);
+        #else
+         #error (ADE_FP_PRECISION in ADE_Fft_Release)
+        #endif
+
+        fftw_cleanup();
+    #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+        #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+            vDSP_destroy_fftsetup (p_fft->p_setup );
+        #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+            vDSP_destroy_fftsetupD (p_fft->p_setup );
+        #else
+             #error(ADE_FP_PRECISION);
+        #endif
+
+    #else
+         #error(ADE_FFT_IMP);
+    #endif
+    free(p_fft);
+}
+
+/************* Configure Methods ****************/
+
 ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FFT_DIRECTION_T fft_dir,ADE_VOID_T *p_inbuff,ADE_VOID_T *p_outbuff)
 {
 
@@ -90,6 +125,8 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
 
 }
 
+
+/********** Processing Methods *****************/
 ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 {
 
@@ -182,37 +219,6 @@ ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOA
 
 #endif
 
-ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
-{
-    #if (ADE_FFT_IMP==ADE_USE_FFTW)
-        //fftw_free(p_fft->p_in);
-        //fftw_free(p_fft->p_out);
-           #if (ADE_FFTW_NTHREADS>0)
-            fftw_cleanup_threads();
-           #endif
-       #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-        fftw_destroy_plan(p_fft->plan);
-        #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-        fftwf_destroy_plan(p_fft->plan);
-        #else
-         #error (ADE_FP_PRECISION in ADE_Fft_Release)
-        #endif
-
-        fftw_cleanup();
-    #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-        #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-            vDSP_destroy_fftsetup (p_fft->p_setup );
-        #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
-            vDSP_destroy_fftsetupD (p_fft->p_setup );
-        #else
-             #error(ADE_FP_PRECISION);
-        #endif
-
-    #else
-         #error(ADE_FFT_IMP);
-    #endif
-    free(p_fft);
-}
 
 
 /******************** Private Methods *****************************/

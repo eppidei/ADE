@@ -385,7 +385,9 @@ ADE_API_RET_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING
     }
      return ADE_RET_SUCCESS;
 }
-/**************** Operative methods *************************/
+/*****************Configure Methods **************************/
+
+/**************** Processing methods *************************/
 
 ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
 {
@@ -425,7 +427,7 @@ ADE_API_RET_T ADE_Blas_level3_gemm(ADE_blas_level3_T* p_Blas_l3)
 
 }
 
-
+/**************** Utils methods *************************/
 ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid)
 {
 
