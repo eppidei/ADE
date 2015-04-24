@@ -164,7 +164,9 @@ X_ERRMETHODS(ADE_METHOD_SetKl) \
 X_ERRMETHODS(ADE_METHOD_SetKu) \
 X_ERRMETHODS(ADE_METHOD_SetLda) \
 X_ERRMETHODS(ADE_METHOD_SetBeta) \
-X_ERRMETHODS(ADE_METHOD_Elewise_Config) \
+X_ERRMETHODS(ADE_METHOD_configure_elewise) \
+X_ERRMETHODS(ADE_METHOD_configure_elewise_params) \
+X_ERRMETHODS(ADE_METHOD_configure_elewise_inout) \
 X_ERRMETHODS(ADE_METHOD_Elewise) \
 X_ERRMETHODS(ADE_METHOD_launch_type1) \
 X_ERRMETHODS(ADE_METHOD_launch_type2) \
@@ -255,10 +257,19 @@ X_ERRMETHODS(ADE_METHOD_sgemm) \
 X_ERRMETHODS(ADE_METHOD_cgemm) \
 X_ERRMETHODS(ADE_METHOD_blas3_test_procedure) \
 X_ERRMETHODS(ADE_METHOD_fft_test_procedure) \
-X_ERRMETHODS(ADE_METHOD_doXrms2)
-
-
-
+X_ERRMETHODS(ADE_METHOD_doXrms2) \
+X_ERRMETHODS(ADE_METHOD_dofind_local_max) \
+X_ERRMETHODS(ADE_METHOD_configure_axpy_params) \
+X_ERRMETHODS(ADE_METHOD_configure_axpy_inout) \
+X_ERRMETHODS(ADE_METHOD_configure_axpy) \
+X_ERRMETHODS(ADE_METHOD_configure_dotc_params) \
+X_ERRMETHODS(ADE_METHOD_configure_dotc_inout) \
+X_ERRMETHODS(ADE_METHOD_configure_dotc) \
+X_ERRMETHODS(ADE_METHOD_configure_dot_params) \
+X_ERRMETHODS(ADE_METHOD_configure_dot_inout) \
+X_ERRMETHODS(ADE_METHOD_configure_dot) \
+X_ERRMETHODS(ADE_METHOD_Configure_params) \
+X_ERRMETHODS(ADE_METHOD_Configure_inout)
 
 #define X_ERRMETHODS(a) a,
 typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;

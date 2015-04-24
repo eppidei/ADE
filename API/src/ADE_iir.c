@@ -292,26 +292,62 @@ ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir)
     return ADE_RET_SUCCESS;
 }
 
-
-ADE_API_RET_T ADE_Iir_Configure(ADE_IIR_T* p_iir,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff)
+ADE_API_RET_T ADE_Iir_Configure_params(ADE_IIR_T* p_iir,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms)
 {
      ADE_API_RET_T ret_num=ADE_RET_ERROR;
      ADE_API_RET_T ret_denoms=ADE_RET_ERROR;
+
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure_params,p_iir);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure_params,dp_nums);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure_params,dp_denoms);
+
+     ret_num=ADE_Iir_setNums(p_iir,dp_nums);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure_params,ret_num);
+
+     ret_denoms=ADE_Iir_setDenoms(p_iir,dp_denoms);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure_params,ret_denoms);
+
+     return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Iir_Configure_inout(ADE_IIR_T* p_iir,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff)
+{
+
     ADE_API_RET_T ret_setin=ADE_RET_ERROR;
     ADE_API_RET_T ret_setout=ADE_RET_ERROR;
 
-     ret_num=ADE_Iir_setNums(p_iir,dp_nums);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_num);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure_inout,p_iir);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure_inout,p_inbuff);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure_inout,p_outbuff);
 
-     ret_denoms=ADE_Iir_setDenoms(p_iir,dp_denoms);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_denoms);
 
      ret_setin=ADE_Iir_SetInBuff(p_iir,p_inbuff);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_setin);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure_inout,ret_setin);
 
      ret_setout=ADE_Iir_SetOutBuff(p_iir,p_outbuff);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_setout);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure_inout,ret_setout);
 
+
+     return ADE_RET_SUCCESS;
+}
+
+
+ADE_API_RET_T ADE_Iir_Configure(ADE_IIR_T* p_iir,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff)
+{
+     ADE_API_RET_T ret_params=ADE_RET_ERROR;
+     ADE_API_RET_T ret_inout=ADE_RET_ERROR;
+
+      ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure,p_iir);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure,p_inbuff);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure,p_outbuff);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure,dp_nums);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Configure,dp_denoms);
+
+    ret_params=ADE_Iir_Configure_params(p_iir,dp_nums,dp_denoms);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_params);
+
+    ret_inout=ADE_Iir_Configure_inout(p_iir,p_inbuff,p_outbuff);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Configure,ret_inout);
 
      return ADE_RET_SUCCESS;
 }

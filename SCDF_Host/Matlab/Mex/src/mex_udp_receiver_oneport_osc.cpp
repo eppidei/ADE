@@ -19,7 +19,9 @@ static int SOCK_sd2;
 #include <stdint.h>
 #include "mex.h"
 #include "udp_receiver.h"
-#include "my_typedefs.h"
+//#include "my_typedefs.h"
+#include "headers/ADE_SCDF_Interface.h"
+#include "headers/ADE.h"
 #include "osc/OscReceivedElements.h"
 #include "osc/OscPacketListener.h"
 #include "ip/UdpSocket.h"
@@ -27,34 +29,38 @@ static int SOCK_sd2;
 
 
 
-
-void double_convert_matlab (double *mat_buffer, float *inbuffer, int num_samples)
+void Get_Sensor_data(SensorData_T *pkt, char *char_buff)
 {
 
-	unsigned int i = 0;
+	unsigned int i=0;
+	float temp_f = 0.0;
+	s_int32 temp = 0;
+	s_uint64 time_id_temp=0;
+
+	s_int32 num_frames=0,num_chann=0;
+    s_uint32 n_samples_int ;
 	
-	for(i=0;i<num_samples;i++)
 	
+    memcpy(&time_id_temp,&char_buff[8],sizeof(time_id_temp));
+    memcpy(&num_frames,&char_buff[16],sizeof(num_frames));
+    memcpy(&num_chann,&char_buff[20],sizeof(num_chann));
+    
+    n_samples_int=num_frames*num_chann;
+    *n_samples=n_samples_int;
+    
+    memcpy((char*)pkt->data,&char_buff[32],(n_samples_int)*4);
+    
+    *time_id=time_id_temp;
+
+
+	for (i=0;i<n_samples_int;i++)
 	{
-	
-		mat_buffer[i]=(double)inbuffer[i];
+		/*temp=( *(int*)&(pkt->data[i]) );
+		conversione dei bytes in float
+		temp_f=*((float*)(&temp));
+		memcpy(&temp_f,&temp,sizeof(temp_f));*/
+		matarray[i]=(s_float)pkt->data[i];
 	}
-
-
-}
-
-void double_convert_matlab2 (double *mat_buffer, s_uint64 *inbuffer, int num_samples)
-{
-
-	unsigned int i = 0;
-	
-	for(i=0;i<num_samples;i++)
-	
-	{
-	
-		mat_buffer[i]=(double)inbuffer[i];
-	}
-
 
 }
 
@@ -96,8 +102,8 @@ static int SOCK_sd;
     s_uint32  num_samples;
 	SCDFPacketListener Test_Listener(MAX_SENSOR_FLOATS,MAX_AUDIO_FLOAT);
 	IpEndpointName Test_endpoint;
-double *remote_ip1_from_mat,*remote_ip2_from_mat,*remote_ip3_from_mat,*remote_ip4_from_mat;
-unsigned int remote_ip1;
+    double *remote_ip1_from_mat,*remote_ip2_from_mat,*remote_ip3_from_mat,*remote_ip4_from_mat;
+    unsigned int remote_ip1;
 	unsigned int remote_ip2;
 	unsigned int remote_ip3;
 	unsigned int remote_ip4;

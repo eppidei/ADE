@@ -8,6 +8,7 @@ SHELL = /bin/sh
 #  The machine (platform) identifier to append to the library names
 #
 PLAT = _LINUX
+# when PLAT = _MEX add -fPIC in OPTS
 #  
 #  Modify the FORTRAN and OPTS definitions to refer to the
 #  compiler and desired compiler options for your machine.  NOOPT

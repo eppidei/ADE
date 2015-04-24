@@ -23,6 +23,9 @@ static ADE_API_RET_T ADE_Snap_extract_events(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_snap_recognition(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_snap_detector(ADE_SNAP_T *p_snap);
 static ADE_API_RET_T ADE_Snap_doXrms2(ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out,ADE_FLOATING_T attack_time, ADE_FLOATING_T release_time,ADE_INT32_T len);
+static ADE_API_RET_T ADE_Snap_dofind_local_max(ADE_INT32_T samples_range,ADE_INT32_T search_step,ADE_INT32_T look_ahead_step,
+                                                ADE_FLOATING_T *p_min_thresh,ADE_FLOATING_T *p_data,ADE_UINT32_T *p_indexes,ADE_FLOATING_T *p_index_vals,ADE_UINT32_T *p_n_found_idxs,
+                                                ADE_FLOATING_T min_data_sensed,ADE_UINT32_T len);
 /******* ADE_METHOD_Init methods  ***********************/
 ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,ADE_UINT32_T fft_len_i)
 {
@@ -342,8 +345,8 @@ ADE_FLOATING_T time_left=0;
 ADE_FLOATING_T time_right=0;
 
 ADE_UINT32_T b1_idx=0,thresh_idx=0,fft_idx=0;
-ADE_API_RET_T ret_b1a=ADE_RET_ERROR,ret_b2a=ADE_RET_ERROR,ret_b3a=ADE_RET_ERROR,ret_b4a=ADE_RET_ERROR,ret_b5a=ADE_RET_ERROR;
-ADE_API_RET_T ret_b1b=ADE_RET_ERROR,ret_b2b=ADE_RET_ERROR,ret_b3b=ADE_RET_ERROR,ret_b4b=ADE_RET_ERROR,ret_b5b=ADE_RET_ERROR,ret_b6b=ADE_RET_ERROR;
+ADE_API_RET_T ret_b1a=ADE_RET_ERROR;
+ADE_API_RET_T ret_b1b=ADE_RET_ERROR;
 ADE_API_RET_T ret_elew_cfg=ADE_RET_ERROR;
 ADE_API_RET_T ret_fft=ADE_RET_ERROR;
 ADE_API_RET_T ret_specw=ADE_RET_ERROR;
@@ -439,10 +442,10 @@ p_snap->look_ahead_step=look_ahead_step;
 /**** Configuration fro tg ************/
 /*y = x(2:L-1).^2-x(1:L-2).*x(3:L);*/
 
-    ret_elew_cfg=ADE_Blas_level2_Elewise_Config(p_snap->p_blas_l2_tgk1,&((p_snap->p_in)[1]),&((p_snap->p_in)[1]) ,&((p_snap->p_tgk)[1]),1.0,0.0,(p_snap->buff_len)-2);
+    ret_elew_cfg=ADE_Blas_level2_configure_elewise(p_snap->p_blas_l2_tgk1,&((p_snap->p_in)[1]),&((p_snap->p_in)[1]) ,&((p_snap->p_tgk)[1]),1.0,0.0,(p_snap->buff_len)-2);
     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_elew_cfg);
 
-    ret_elew_cfg=ADE_Blas_level2_Elewise_Config(p_snap->p_blas_l2_tgk2,&((p_snap->p_in)[0]),&((p_snap->p_in)[2]) ,&((p_snap->p_tgk)[1]),-1.0,1.0,(p_snap->buff_len)-2);
+    ret_elew_cfg=ADE_Blas_level2_configure_elewise(p_snap->p_blas_l2_tgk2,&((p_snap->p_in)[0]),&((p_snap->p_in)[2]) ,&((p_snap->p_tgk)[1]),-1.0,1.0,(p_snap->buff_len)-2);
     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_elew_cfg);
 /*** Configure Blas1 for pow estimate ********/
 mod_res=fmodf ((ADE_FLOATING_SP_T)p_snap->buff_len ,(ADE_FLOATING_SP_T) p_snap->n_pow_est_slots);
@@ -460,43 +463,14 @@ else
 uslot_len=(ADE_UINT32_T)slot_len;
 for (b1_idx=0;b1_idx<p_snap->n_pow_est_slots;b1_idx++)
 {
-
-    ret_b1a = ADE_Blas_level1_SetN(p_snap->dp_blas_l1_pow_est[b1_idx],uslot_len);
+    ret_b1a = ADE_Blas_level1_configure_dot(p_snap->dp_blas_l1_pow_est[b1_idx],1,1,uslot_len,&(p_snap->p_in[b1_idx*uslot_len]),&(p_snap->p_in[b1_idx*uslot_len]));
     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b1a);
-
-    ret_b2a =  ADE_Blas_level1_SetINCX(p_snap->dp_blas_l1_pow_est[b1_idx],1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b2a);
-
-    ret_b3a =  ADE_Blas_level1_SetINCY(p_snap->dp_blas_l1_pow_est[b1_idx],1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b3a);
-
-    ret_b4a =  ADE_Blas_level1_SetX(p_snap->dp_blas_l1_pow_est[b1_idx],&(p_snap->p_in[b1_idx*uslot_len]));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b4a);
-
-    ret_b5a =  ADE_Blas_level1_SetY(p_snap->dp_blas_l1_pow_est[b1_idx],&(p_snap->p_in[b1_idx*uslot_len]));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b5a);
-
 }
 
     /*** configure threshold blas2***/
 
-ret_b1b = ADE_Blas_level1_SetN(p_snap->p_blas_l1_threshold,p_snap->buff_len);
+ret_b1b = ADE_Blas_level1_configure_axpy(p_snap->p_blas_l1_threshold,&(p_snap->thresh_gain),1,1,p_snap->buff_len,p_snap->p_pow_est,p_snap->p_thresh);
 ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b1b);
-
-ret_b2b = ADE_Blas_level1_SetALPHA(p_snap->p_blas_l1_threshold,&p_snap->thresh_gain);
-ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b2b);
-
-ret_b3b = ADE_Blas_level1_SetINCX(p_snap->p_blas_l1_threshold, 1);
-ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b3b);
-
-ret_b4b = ADE_Blas_level1_SetINCY(p_snap->p_blas_l1_threshold, 1);
-ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b4b);
-
-ret_b5b = ADE_Blas_level1_SetY(p_snap->p_blas_l1_threshold,p_snap->p_thresh);
-ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b5b);
-
-ret_b6b = ADE_Blas_level1_SetX(p_snap->p_blas_l1_threshold,p_snap->p_pow_est);
-ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b6b);
 
 /*** fft config ****/
 for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
@@ -509,50 +483,21 @@ for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 
 for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
-    ret_specw = ADE_Blas_level1_SetN(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(p_snap->fft_len/2));//per essere come matlab forse meglio len/2+1
+ ret_specw = ADE_Blas_level1_configure_dotc(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1,1,(p_snap->fft_len/2),(p_snap->dp_spectrum[fft_idx]),(p_snap->dp_spectrum[fft_idx]));
+   //per essere come matlab forse meglio len/2+1
     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specw);
-
-    ret_specw =  ADE_Blas_level1_SetINCX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specw);
-
-    ret_specw =  ADE_Blas_level1_SetINCY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specw);
-
-    /** to do cast pointer 2 flat or decide to use void in blas **/
-    ret_specw =  ADE_Blas_level1_SetX(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(p_snap->dp_spectrum[fft_idx]));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specw);
-
-    ret_specw =  ADE_Blas_level1_SetY(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],(p_snap->dp_spectrum[fft_idx]));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specw);
-
 }
 
  /*** blas1 spectrum band config ***/
 
  for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
-    ret_specb = ADE_Blas_level1_SetN(p_snap->dp_blas_l1_pow_spect_band[fft_idx],band_len);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specb);
-
-    ret_specb =  ADE_Blas_level1_SetINCX(p_snap->dp_blas_l1_pow_spect_band[fft_idx],1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specb);
-
-    ret_specb =  ADE_Blas_level1_SetINCY(p_snap->dp_blas_l1_pow_spect_band[fft_idx],1);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specb);
-
     p_init_bin = (ADE_CPLX_T*)p_snap->dp_spectrum[fft_idx];
-    ret_specb =  ADE_Blas_level1_SetX(p_snap->dp_blas_l1_pow_spect_band[fft_idx],(p_init_bin+sx_bin));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specb);
-
-    ret_specb =  ADE_Blas_level1_SetY(p_snap->dp_blas_l1_pow_spect_band[fft_idx],(p_init_bin+sx_bin));
+    ret_specb = ADE_Blas_level1_configure_dotc(p_snap->dp_blas_l1_pow_spect_band[fft_idx],1,1,band_len,(p_init_bin+sx_bin),(p_init_bin+sx_bin));
     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specb);
 
 }
-
-
  return ADE_RET_SUCCESS;
-
-
 }
 
 /******* Operative methods  ***********************/
@@ -733,20 +678,20 @@ return ADE_RET_SUCCESS;
 static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap)
 {
    ADE_UINT32_T len=0;
-   ADE_UINT32_T k=0,i=0,j=0,last_idx=0,idx_l=0,idx_r=0;
+   ADE_UINT32_T i=0,j=0,idx_l=0,idx_r=0;
    ADE_UINT32_T look_ahead_step=0;
    ADE_UINT32_T samples_range=0;
    ADE_FLOATING_T *p_min_thresh=NULL;
    ADE_FLOATING_T *p_data=NULL;
    ADE_FLOATING_T min_data_sensed=1e-10;
-   ADE_BOOL_T a1=ADE_FALSE;//,
-   ADE_BOOL_T a2=ADE_FALSE;
-   ADE_BOOL_T skip=ADE_FALSE;
+
    ADE_UINT32_T *p_indexes=NULL;
    ADE_FLOATING_T *p_index_vals=NULL;
    ADE_UINT32_T search_step=0;
    ADE_ULONG_T *p_sort_idx=NULL;
    ADE_UINT32_T index_limit=0;
+   ADE_API_RET_T ret = ADE_RET_ERROR;
+   ADE_UINT32_T n_found_idxs=0;
 
    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_find_local_max,p_snap);
 
@@ -761,8 +706,54 @@ static ADE_API_RET_T ADE_Snap_find_local_max(ADE_SNAP_T *p_snap)
     p_sort_idx=p_snap->p_sort_indexes;
 
 
+ ret = ADE_Snap_dofind_local_max(samples_range,search_step,look_ahead_step,p_min_thresh,p_data,
+ p_indexes,p_index_vals,&n_found_idxs,min_data_sensed,len);
 
-    k=0;
+ ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_find_local_max,ret);
+
+p_snap->n_found_indexes=n_found_idxs;
+
+//[vals,sort_idx]=sort(vals,'descend');
+index_limit=p_snap->n_found_indexes;
+/* Max indexes check */
+if (p_snap->n_found_indexes > p_snap->n_max_indexes)
+{
+    index_limit=p_snap->n_max_indexes;
+}
+if (index_limit>0)
+{
+ADE_Utils_indexx_descend(index_limit,p_index_vals-1,p_sort_idx-1);
+}
+
+for(i=0;i<index_limit;i++)
+{
+    j=p_sort_idx[i]-1;
+    p_indexes[i]=p_indexes[j];
+}
+//indexes=indexes(sort_idx);
+
+p_snap->n_found_indexes=index_limit;
+
+return ADE_RET_SUCCESS;
+
+}
+static ADE_API_RET_T ADE_Snap_dofind_local_max(ADE_INT32_T samples_range,ADE_INT32_T search_step,ADE_INT32_T look_ahead_step,
+ADE_FLOATING_T *p_min_thresh,ADE_FLOATING_T *p_data,ADE_UINT32_T *p_indexes,ADE_FLOATING_T *p_index_vals,ADE_UINT32_T *p_n_found_idxs,
+ADE_FLOATING_T min_data_sensed,ADE_UINT32_T len)
+{
+
+ ADE_UINT32_T k=0,last_idx=0;
+ ADE_INT32_T i=0,j=0;
+ ADE_BOOL_T a1=ADE_FALSE;//,
+ ADE_BOOL_T a2=ADE_FALSE;
+ ADE_BOOL_T skip=ADE_FALSE;
+
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_dofind_local_max,p_min_thresh);
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_dofind_local_max,p_data);
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_dofind_local_max,p_indexes);
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_dofind_local_max,p_index_vals);
+
+   k=0;
 
 for (i = 3-1 ;i<=(samples_range-search_step);i+=search_step)
 {
@@ -894,34 +885,11 @@ for (i =  last_idx+search_step;i<=(len-search_step);i+=search_step)
     }
 
 }
-p_snap->n_found_indexes=k;
 
-//[vals,sort_idx]=sort(vals,'descend');
-index_limit=p_snap->n_found_indexes;
-/* Max indexes check */
-if (p_snap->n_found_indexes > p_snap->n_max_indexes)
-{
-    index_limit=p_snap->n_max_indexes;
-}
-if (index_limit>0)
-{
-/** To substitute with descending **/
-ADE_Utils_indexx_descend(index_limit,p_index_vals-1,p_sort_idx-1);
-}
-
-for(i=0;i<index_limit;i++)
-{
-    j=p_sort_idx[i]-1;
-    p_indexes[i]=p_indexes[j];
-}
-//indexes=indexes(sort_idx);
-
-p_snap->n_found_indexes=index_limit;
+*p_n_found_idxs=k;
 
 return ADE_RET_SUCCESS;
-
 }
-
 
 static ADE_API_RET_T ADE_Snap_extract_events(ADE_SNAP_T *p_snap)
 {
@@ -996,7 +964,6 @@ return ADE_RET_SUCCESS;
 
 }
 static ADE_API_RET_T ADE_Snap_snap_recognition(ADE_SNAP_T *p_snap)
-
 {
 
 ADE_UINT32_T n_events=p_snap->n_found_indexes;

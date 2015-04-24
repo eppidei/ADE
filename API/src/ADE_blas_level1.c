@@ -505,6 +505,174 @@ ADE_API_RET_T ADE_Blas_level1_SetY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
 
 }
 
+/***************** Configure Methods **************************/
+
+ADE_API_RET_T ADE_Blas_level1_configure_axpy_params(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_ALPHA,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N)
+{
+    ADE_API_RET_T ret_alpha = ADE_RET_ERROR;
+    ADE_API_RET_T ret_incx = ADE_RET_ERROR;
+    ADE_API_RET_T ret_incy = ADE_RET_ERROR;
+    ADE_API_RET_T ret_n = ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,p_ALPHA);
+
+
+    ret_alpha = ADE_Blas_level1_SetALPHA(p_blas_l1,p_ALPHA);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_alpha);
+
+    ret_incx  = ADE_Blas_level1_SetINCX(p_blas_l1,INCX);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_incx);
+
+    ret_incy  = ADE_Blas_level1_SetINCY(p_blas_l1,INCY);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_incy);
+
+    ret_n = ADE_Blas_level1_SetN(p_blas_l1,ret_n);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_n);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_axpy_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_setx = ADE_RET_ERROR;
+    ADE_API_RET_T ret_sety = ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,p_X);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,p_Y);
+
+    ret_setx = ADE_Blas_level1_SetX(p_blas_l1,p_X);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,ret_setx);
+
+    ret_sety = ADE_Blas_level1_SetY(p_blas_l1,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,ret_sety);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_axpy(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_ALPHA,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_params = ADE_RET_ERROR;
+    ADE_API_RET_T ret_inout = ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_ALPHA);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_X);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_Y);
+
+    ret_params = ADE_Blas_level1_configure_axpy_params(p_blas_l1,p_ALPHA,INCX,INCY,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,ret_params);
+
+    ret_inout = ADE_Blas_level1_configure_axpy_inout(p_blas_l1,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,ret_inout);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotc_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N)
+{
+
+    ADE_API_RET_T ret_incx = ADE_RET_ERROR;
+    ADE_API_RET_T ret_incy = ADE_RET_ERROR;
+    ADE_API_RET_T ret_n = ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,p_blas_l1);
+
+
+    ret_incx  = ADE_Blas_level1_SetINCX(p_blas_l1,INCX);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,ret_incx);
+
+    ret_incy  = ADE_Blas_level1_SetINCY(p_blas_l1,INCY);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,ret_incy);
+
+    ret_n = ADE_Blas_level1_SetN(p_blas_l1,ret_n);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,ret_n);
+
+    return ADE_RET_SUCCESS;
+
+
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotc_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_setx = ADE_RET_ERROR;
+    ADE_API_RET_T ret_sety = ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,p_X);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,p_Y);
+
+    ret_setx = ADE_Blas_level1_SetX(p_blas_l1,p_X);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,ret_setx);
+
+    ret_sety = ADE_Blas_level1_SetY(p_blas_l1,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,ret_sety);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotc(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+
+    ADE_API_RET_T ret_params = ADE_RET_ERROR;
+    ADE_API_RET_T ret_inout = ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,p_blas_l1);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,p_X);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,p_Y);
+
+    ret_params = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,ret_params);
+
+    ret_inout = ADE_Blas_level1_configure_dotc_inout(p_blas_l1,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,ret_inout);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dot_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N)
+{
+    ADE_API_RET_T ret_dot_conf=ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_params,p_blas_l1);
+
+    ret_dot_conf = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_params,ret_dot_conf);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dot_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_dot_inout=ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_inout,p_blas_l1);
+
+    ret_dot_inout = ADE_Blas_level1_configure_dotc_inout(p_blas_l1,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_inout,ret_dot_inout);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dot(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_dot=ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot,p_blas_l1);
+
+    ret_dot = ADE_Blas_level1_configure_dotc(p_blas_l1,INCX,INCY,N,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot,ret_dot);
+
+    return ADE_RET_SUCCESS;
+
+
+}
+
 /**************** Processing Methods ****************************/
 
 ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)

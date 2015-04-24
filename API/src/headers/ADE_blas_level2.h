@@ -29,7 +29,7 @@ struct ADE_blas_level2_S
 /************************* Init Methods **********************************/
 ADE_API_RET_T ADE_Blas_level2_Init(ADE_blas_level2_T** dp_this,ADE_MATH_ATTRIBUTE_T math_type );
 ADE_VOID_T ADE_Blas_level2_Release (ADE_blas_level2_T* p_blas_l2);
-/*************************** Configuration Methods ***************************************/
+/*************************** Set Methods ***************************************/
 ADE_API_RET_T ADE_Blas_Level2_SetUplo(ADE_blas_level2_T* p_blas_l2, ADE_CHAR_T UPLO);
 ADE_API_RET_T ADE_Blas_Level2_SetTrans(ADE_blas_level2_T* p_blas_l2, ADE_CHAR_T TRANS);
 ADE_API_RET_T ADE_Blas_Level2_SetDiag(ADE_blas_level2_T* p_blas_l2, ADE_CHAR_T DIAG);
@@ -46,12 +46,18 @@ ADE_API_RET_T ADE_Blas_level2_SetBETA(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_
 ADE_API_RET_T ADE_Blas_level2_SetA(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff);
 ADE_API_RET_T ADE_Blas_level2_SetY(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff);
 ADE_API_RET_T ADE_Blas_level2_SetX(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff);
+/******************* Configure Methods **********************************/
+
+ADE_API_RET_T ADE_Blas_level2_configure_elewise_params(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len);
+ADE_API_RET_T ADE_Blas_level2_configure_elewise_inout(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out);
+ADE_API_RET_T ADE_Blas_level2_configure_elewise(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len);
+
 /******************* Operative Methods ******************************/
 ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_blas_l2,FILE *p_fid);
 ADE_API_RET_T ADE_Blas_level2_sbmv(ADE_blas_level2_T* p_blas_l2);
 ADE_API_RET_T ADE_Blas_level2_ger(ADE_blas_level2_T* p_blas_l2);
 ADE_API_RET_T ADE_Blas_level2_Elewise(ADE_blas_level2_T* p_Blas_l2);
-ADE_API_RET_T ADE_Blas_level2_Elewise_Config(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len);
+ADE_API_RET_T ADE_Blas_level2_configure_elewise(ADE_blas_level2_T* p_blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len);
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

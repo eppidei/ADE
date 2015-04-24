@@ -107,7 +107,7 @@ ADE_UINT32_T n_simul_cycles = 1024,cycle_idx=0;
 sensor_data.num_channels=1;
 sensor_data.num_frames=blow_buff_len;
 sensor_data.rate=audio_fs;
-sensor_data.type=AudioInput;
+sensor_data.type=ADE_AudioInput;
 
 p_data=(ADE_FLOATING_T*)calloc(blow_buff_len,sizeof(ADE_FLOATING_T));
 if (p_data==NULL)
