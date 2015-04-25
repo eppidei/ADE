@@ -60,6 +60,10 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow);
 ADE_API_RET_T ADE_Blow_SetInBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff);
 /************* Get Methods *************************/
 ADE_API_RET_T ADE_Blow_GetOutBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T **dp_buff);
+/******************* Configure Methods ************************/
+ADE_API_RET_T ADE_Blow_Configure_params(ADE_BLOW_T* p_blow);
+ADE_API_RET_T ADE_Blow_Configure_inout(ADE_BLOW_T* p_blow,ADE_FLOATING_T *p_inbuff);
+ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow,ADE_FLOATING_T *p_inbuff);
 /************ Processing methods ***********************/
 ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow);
 

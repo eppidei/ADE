@@ -157,12 +157,6 @@ ADE_API_RET_T ADE_Iir_Init(ADE_IIR_T** dp_this, ADE_UINT32_T n_SOS_sections,ADE_
         #endif
 
 
-
-
-
-
-
-
         pthis->section_order=order;
 
         *dp_this=pthis;

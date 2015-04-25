@@ -144,8 +144,11 @@
 #define FORTRAN_WRAPPER(x) x ## _
 #endif
 
-
-
+/************************** FIR ********************************/
+#define ADE_FIR_MAX_ORDER (1024)
+/************************** POLYFIT ********************************/
+#define ADE_POLYFIT_MAX_N_BREAKS (64)
+#define ADE_POLYFIT_MAX_POLY_ORDER (5)
 
 /****************************** BLOW ***********************************/
 #define IIR1_N_SECTIONS (3)

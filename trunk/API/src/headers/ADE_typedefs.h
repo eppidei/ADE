@@ -114,7 +114,7 @@ typedef enum  {ADE_IIR_TRASP_II_B} ADE_IIR_IMP_CHOICE_T;
 /******************************* FIR **************************/
 typedef struct ADE_FIR_S ADE_FIR_T;
 typedef ADE_API_RET_T (*ADE_FIR_FILTER_IMPLEMENTATION_T)(ADE_FIR_T*);
-typedef enum  {ADE_FIR_TRASP_II,ADE_FIR_OVSA} ADE_FIR_IMP_CHOICE_T;
+typedef enum  {ADE_FIR_TRASP_II,ADE_FIR_OVSA,ADE_FIR_IMP_UNDEF=-1} ADE_FIR_IMP_CHOICE_T;
 /**************************** POLYFIT ****************************/
 typedef struct ADE_POLYFIT_S ADE_POLYFIT_T;
 
@@ -173,7 +173,7 @@ typedef struct ADE_DECIMATOR_S ADE_DECIMATOR_T;
 typedef enum {ADE_DECIMATOR_FILTER_FIR,ADE_DECIMATOR_FILTER_IIR} ADE_DECIMATOR_FILTER_T;
 typedef enum {ADE_DECIMATOR_ARCH_STANDARD,ADE_DECIMATOR_ARCH_POLYPHASE} ADE_DECIMATOR_ARCH_T;
 
-/**************** Error **************/
+/**************** Error Handeler**************/
 typedef struct ADE_Error_Handler_S
 {
     ADE_UINT32_T p_error_code[ADE_ERRSTACK_DEPTH];
@@ -181,7 +181,11 @@ typedef struct ADE_Error_Handler_S
    // ADE_CHAR_T p_error_str[64];
 } ADE_Error_Handler_T;
 
-
+typedef enum {ADE_ERROR_HANDLER_CHECKVALUE_MAJOR,ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL,
+              ADE_ERROR_HANDLER_CHECKVALUE_MINOR,ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL,
+               ADE_ERROR_HANDLER_CHECKVALUE_INRANGE,ADE_ERROR_HANDLER_CHECKVALUE_OUTRANGE,
+               ADE_ERROR_HANDLER_CHECKVALUE_EQUAL,ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,
+                ADE_ERROR_HANDLER_CHECKVALUE_UNDEF=-1} ADE_ERROR_HANDLER_CHECKVALUE_T;
 
 
 

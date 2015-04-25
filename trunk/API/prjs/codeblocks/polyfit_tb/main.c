@@ -6,6 +6,7 @@
 #include "headers/ADE_polyfit.h"
 #include "headers/ADE_typedefs.h"
 #include "headers/ADE_Matlab.h"
+#include "headers/ADE_Error_Handler.h"
 #define MAXCHAR (256)
 #define MAXVAR (32)
 
@@ -32,6 +33,7 @@ int main()
 	char *p_scriptpath="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/polyfit/";
 	char *p_script_name="polyfit_test.m";
 	char *p_matf_name="polyfit_test_ws.mat";
+	unsigned int n_breaks=0,n_coeffs=0;
 
 	unsigned int n_var_list = 3;
 	ADE_MATLAB_T *p_mat;
@@ -74,9 +76,11 @@ outbuff=calloc(input_len,sizeof(double));
 //outbuff2=calloc(input_len2,sizeof(double));
 /********** CONFIGURE Poly **************/
 
-ADE_Polyfit_Init (&p_poly,order,break_len);
-ADE_Polyfit_SetBreaks(p_poly,ADE_Matlab_GetDataPointer(p_mat,"breaks"));
-ADE_Polyfit_SetCoeffs(p_poly,ADE_Matlab_GetDataPointer(p_mat,"coeffs"));
+ADE_Polyfit_Init (&p_poly);
+n_breaks=ADE_Matlab_GetNCols(p_mat,"breaks");
+n_coeffs=ADE_Matlab_GetNCols(p_mat,"coeffs");
+ADE_Polyfit_SetBreaks(p_poly,ADE_Matlab_GetDataPointer(p_mat,"breaks"),n_breaks);
+ADE_Polyfit_SetCoeffs(p_poly,ADE_Matlab_GetDataPointer(p_mat,"coeffs"),n_coeffs);
 /************ LAUNCH MATLAB AND C UNIT TEST 1*************/
 ADE_Matlab_launch_script_segment(p_mat,"Unit Test 1");
 p_add_params.uut_idx=1;
@@ -92,6 +96,7 @@ ADE_Matlab_Evaluate_StringnWait(p_mat, "plot(outt,'b+');hold off;");
 
 /********** RELEASE MEM****************/
 
+ADE_Polyfit_Release(p_poly);
 ADE_Matlab_Release(p_mat);
 free(outbuff);
 

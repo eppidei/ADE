@@ -42,7 +42,7 @@ ADE_INTERPOLATOR_FILTER_T filt_type, ADE_INTERPOLATOR_ARCH_T arch_type,ADE_UINT3
             p_this->dp_fir=(ADE_FIR_T**)calloc(1,sizeof(ADE_FIR_T*));
             ADE_CHECK_MEMALLOC(ADE_CLASS_INTERPOLATOR,ADE_METHOD_Init,p_this->dp_fir);
 
-            ret_fir=ADE_Fir_Init(&(p_this->dp_fir[0]),filter_order, p_this->out_buff_len,ADE_FIR_TRASP_II);/*qui dovrebbe essere meglio OVSA*/
+            ret_fir=ADE_Fir_Init(&(p_this->dp_fir[0]));//,filter_order, p_this->out_buff_len,ADE_FIR_TRASP_II);/*qui dovrebbe essere meglio OVSA*/
             ADE_CHECK_ADERETVAL(ADE_CLASS_INTERPOLATOR,ADE_METHOD_Init,ret_fir);
         }
         else if (filt_type==ADE_INTERPOLATOR_FILTER_IIR)
@@ -175,7 +175,7 @@ ADE_SIZE_T out_buff_size,ADE_FLOATING_T *p_num,ADE_FLOATING_T **dp_num,ADE_FLOAT
             {
                 ADE_CHECK_INPUTPOINTER(ADE_CLASS_INTERPOLATOR,ADE_METHOD_Configure,p_num);
 
-                ret_fir=ADE_Fir_Configure(p_interpolator->dp_fir[0],p_num,p_interpolator->p_temp_buffer,p_outbuff);
+                ret_fir=ADE_Fir_Configure(p_interpolator->dp_fir[0],p_num,p_interpolator->filter_order+1,p_interpolator->p_temp_buffer,p_outbuff,p_interpolator->filt_type,p_interpolator->in_buff_len);
                 ADE_CHECK_ADERETVAL(ADE_CLASS_INTERPOLATOR,ADE_METHOD_Configure,ret_fir);
             }
             else if (p_interpolator->filt_type==ADE_INTERPOLATOR_FILTER_IIR)
