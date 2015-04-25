@@ -63,6 +63,8 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
             ret_blow = ADE_Blow_Init( &((*dp_ADE_Handle)->p_blow),in_buff_len,input_rate,input_rate);
             ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,ret_blow);
 
+           // ADE_Downsampler_Init(&((*dp_ADE_Handle)->dp_downsampler,in_buff_len,100);
+
 
             (*dp_ADE_Handle)->p_blow_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
             ADE_CHECK_MEMALLOC(ADE_CLASS_ADE,ADE_METHOD_Init,(*dp_ADE_Handle)->p_blow_out_struct);
@@ -124,6 +126,7 @@ ADE_API_RET_T ADE_Configure_params(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
     {
 
         ret_blow = ADE_Blow_Configure_params( p_ADE->p_blow);
+        ADE_API_RET_T ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size);
 
     }
 
@@ -180,7 +183,7 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
 
      if  ( (Sel_Flag_i & blow_flag)==blow_flag )
      {
-        blow_ret = ADE_Blow_SetInBuff(p_ADE->p_blow, p_in_struct->data);
+        blow_ret = ADE_Blow_Configure_inout(p_ADE->p_blow, p_in_struct->data);
         ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,blow_ret);
 
         blow_ret = ADE_Blow_Step(p_ADE->p_blow);
@@ -222,7 +225,6 @@ if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
 {
 
     p_out=(p_ADE->p_blow_out_struct);
-
     p_out->Fs_data=p_ADE->p_blow->Fs_o;
     p_out->p_data=p_ADE->p_blow->p_out;
     p_out->n_data=p_ADE->p_blow->buff_len_o;

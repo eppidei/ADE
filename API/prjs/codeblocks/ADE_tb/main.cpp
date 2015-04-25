@@ -124,7 +124,7 @@ ADE_Configure_params(p_ade_handle,BLOW_FLAG);
 for (cycle_idx=0;cycle_idx<n_simul_cycles;cycle_idx++)
 {
     fill_buffer(p_data,blow_buff_len);
-    ADE_Configure_inout(p_ade_handle,BLOW_FLAG,p_data);
+    //ADE_Configure_inout(p_ade_handle,BLOW_FLAG,p_data);
     ADE_Step(p_ade_handle,BLOW_FLAG,&sensor_data);
     //ADE_Step(p_ade_handle,SNAP_FLAG,&sensor_data);
     //printf("%u\n",cycle_idx);
