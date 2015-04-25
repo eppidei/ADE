@@ -10,6 +10,9 @@
 #include "headers/ADE_blas_level1.h"
 #include "headers/ADE_polyfit.h"
 #include "headers/ADE_Error_Handler.h"
+
+static ADE_API_RET_T ADE_Utils_domemoryless_expander(ADE_FLOATING_T data,ADE_INT32_T n_pieces,ADE_INT32_T n_coeff_per_piece,ADE_FLOATING_T *p_x_breaks,ADE_FLOATING_T* p_coeffs,ADE_FLOATING_T* y_o);
+
 /**************************** Private prototypes *********************************/
 
 static ADE_API_RET_T ADE_Utils_PrintRowArrayReal(ADE_FLOATING_T *p_var,ADE_UINT32_T start_0based_col_idx,ADE_UINT32_T stop_0based_col_idx,ADE_UINT32_T n_var_per_printrow,ADE_UTILS_ROW_INFO_T row_info, FILE *p_stream);
@@ -600,23 +603,48 @@ ADE_API_RET_T ADE_Utils_memoryless_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T
 {
 
   //  ADE_UINT32_T frame_size = p_blow->buff_size;
-    ADE_UINT32_T i=0, k=0,zz=0;
+
     ADE_FLOATING_T data=0.0;
-    ADE_FLOATING_T* coeffs=p_poly->p_poly_coeffs;
-    ADE_UINT32_T n_pieces = p_poly->n_breaks-1;
-    ADE_FLOATING_T *x_breaks = p_poly->p_breaks;
-    ADE_UINT32_T coeffs_row_idx=0, coeffs_col_idx=0;
-    ADE_UINT32_T n_coeff_per_piece = p_poly->poly_order+1;
+    ADE_FLOATING_T* p_coeffs=NULL;
+    ADE_INT32_T n_pieces = 0;
+    ADE_FLOATING_T *p_x_breaks = NULL;
+    ADE_API_RET_T ret = ADE_RET_ERROR;
+       ADE_INT32_T n_coeff_per_piece = 0;
 
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,ADE_METHOD_memoryless_expander,p_poly);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,ADE_METHOD_memoryless_expander,frame_i);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,ADE_METHOD_memoryless_expander,y_o);
 
+    p_coeffs=p_poly->p_poly_coeffs;
+    n_pieces = p_poly->n_breaks-1;
+    p_x_breaks = p_poly->p_breaks;
+    n_coeff_per_piece = p_poly->poly_order+1;
 //for (i=0;i<frame_size;i++)
 //{
-    *y_o=0;
+   *y_o=0;
     data = *frame_i;
+
+    ret = ADE_Utils_domemoryless_expander(data,n_pieces,n_coeff_per_piece,p_x_breaks,p_coeffs,y_o);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_UTILS,ADE_METHOD_memoryless_expander,ret);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+static ADE_API_RET_T ADE_Utils_domemoryless_expander(ADE_FLOATING_T data,ADE_INT32_T n_pieces,ADE_INT32_T n_coeff_per_piece,ADE_FLOATING_T *p_x_breaks,ADE_FLOATING_T* p_coeffs,ADE_FLOATING_T* y_o)
+{
+
+ ADE_UINT32_T zz=0;
+ ADE_UINT32_T i=0, k=0;
+ ADE_UINT32_T coeffs_row_idx=0, coeffs_col_idx=0;
+ ADE_INT32_T piece_min_val=0;
+
+
+  ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,ADE_METHOD_domemoryless_expander,p_x_breaks);
+  ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,ADE_METHOD_domemoryless_expander,y_o);
+  ADE_CHECK_VALUE_MAJOR(ADE_CLASS_UTILS,ADE_METHOD_domemoryless_expander,n_pieces,"%d",piece_min_val);
+
 
     if ( data>=0 )
     {
@@ -624,7 +652,7 @@ ADE_API_RET_T ADE_Utils_memoryless_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T
         {
              if (k==0)
              {
-                  if ( (data>=x_breaks[k]) && (data<x_breaks[k+1]) )
+                  if ( (data>=p_x_breaks[k]) && (data<p_x_breaks[k+1]) )
                   {
                       zz=k;
                     break;
@@ -634,7 +662,7 @@ ADE_API_RET_T ADE_Utils_memoryless_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T
 
         else if (k==(n_pieces-1))
         {
-             if ( (data>=x_breaks[k]) && (data<=x_breaks[k+1]) )
+             if ( (data>=p_x_breaks[k]) && (data<=p_x_breaks[k+1]) )
              {
                  zz=k;
                  break;
@@ -642,7 +670,7 @@ ADE_API_RET_T ADE_Utils_memoryless_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T
         }
         else
         {
-             if ( (data>=x_breaks[k]) && (data<x_breaks[k+1]) )
+             if ( (data>=p_x_breaks[k]) && (data<p_x_breaks[k+1]) )
              {
                    zz=k;
                     break;
@@ -669,14 +697,13 @@ ADE_API_RET_T ADE_Utils_memoryless_expander(ADE_POLYFIT_T* p_poly,ADE_FLOATING_T
     for(i=0;i<n_coeff_per_piece;i++)
     {
         coeffs_col_idx = n_coeff_per_piece-1-i;
-       *y_o +=coeffs[coeffs_row_idx+coeffs_col_idx]*pow((data-x_breaks[zz]),i);
+       *y_o +=p_coeffs[coeffs_row_idx+coeffs_col_idx]*pow((data-p_x_breaks[zz]),i);
     }
 
-    return ADE_RET_SUCCESS;
+
+      return ADE_RET_SUCCESS;
 
 }
-
-
 
 
 /*********************** Private Functions ******************************/
@@ -1069,6 +1096,7 @@ static ADE_API_RET_T ADE_Utils_PrintMatrixCplx(ADE_CPLX_T *p_var,ADE_UINT32_T st
 
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,ADE_METHOD_PrintMatrixCplx,p_var);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_UTILS,ADE_METHOD_PrintMatrixCplx,p_stream);
+
 
 
     ADE_Utils_Get_Terminal_size(&lines ,&columns  );

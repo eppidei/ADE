@@ -32,12 +32,20 @@ ADE_FLOATING_T *p_cycle_outbuff=NULL;
 n_iterations=ADE_Matlab_GetScalar(p_blow->p_mat,"n_iterations");
 p_global_outbuff=(ADE_FLOATING_T*)calloc(Frame_len*n_iterations,sizeof(ADE_FLOATING_T));
 
+ADE_Blow_Configure_params(p_blow);
+
     for (i=0;i<n_iterations;i++)
     {
         p_inbuffmat=ADE_Matlab_GetDataPointer(p_blow->p_mat,"audio_left")+i*Frame_len;
-        ADE_Blow_SetInBuff(p_blow,p_inbuffmat);
+       // ADE_Blow_SetInBuff(p_blow,p_inbuffmat);
 
-         ADE_Blow_Step(p_blow);
+       ADE_Blow_Configure_inout(p_blow,p_inbuffmat);
+
+         init_ret=ADE_Blow_Step(p_blow);
+         if (init_ret==ADE_RET_ERROR)
+         {
+            return -1;
+         }
          memcpy(p_global_outbuff+i*Frame_len,p_cycle_outbuff,p_blow->buff_len_o*sizeof(ADE_FLOATING_T));
     }
     ADE_Matlab_PutVarintoWorkspace(p_blow->p_mat, p_global_outbuff, "outt", 1, Frame_len*n_iterations, ADE_MATH_REAL);

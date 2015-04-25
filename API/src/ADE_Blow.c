@@ -18,14 +18,17 @@
 
 //#include <string.h>
 
-static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow);
-//static ADE_API_RET_T ADE_saturation_detector_sm(ADE_BLOW_T* p_blow,ADE_FLOATING_T sample_i,ADE_FLOATING_T running_pow_fast_i,ADE_FLOATING_T running_pow_slow_i);
-static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow);
-static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Fir_Configure_params(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Fir_Configure_inout(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Iir_Configure_params(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Iir_Configure_inout(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Iir2_Configure_inout(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Expander_Configure_params(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Expander_Configure_inout(ADE_BLOW_T* p_blow);
+
 static ADE_API_RET_T ADE_Blow_Static_Params(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow);
-static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow);
-
 
 static ADE_API_RET_T ADE_Blow_Set_SatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T nbit_i,ADE_FLOATING_T Margin_i);
 static ADE_API_RET_T ADE_Blow_Set_EvalTimesample(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i);
@@ -47,6 +50,7 @@ static ADE_API_RET_T ADE_Blow_doSaturation_detector_sm(BLOW_SM_STATES_T state_in
         ADE_UINT32_T *p_eval_pow,ADE_UINT32_T *p_eval_counter,ADE_INT32_T *p_eval_timer,
         ADE_FLOATING_T running_pow_fast_i,ADE_FLOATING_T running_pow_slow_i);
 
+/******************* Init Methods ************************/
 
 ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o_i)
 {
@@ -174,26 +178,22 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOAT
     ret_b2 = ADE_Blas_level2_Init(&(pthis->p_blas_l2),ADE_MATH_REAL);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Init,ret_b2);
 
+      /**************** FIR ALLOC (no more depends on static params) *****************************/
 
+    ret_fir = ADE_Fir_Init(&(pthis->p_fir));//, pthis->running_pow_win_fast, buff_len,ADE_FIR_TRASP_II);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Init,ret_fir);
+
+        /**************** POLYFIT ALLOC (depends on static params) *****************************/
+
+    ret_poly=ADE_Polyfit_Init (&(pthis->p_poly));//,pthis->poly_order,pthis->n_breaks);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Init,ret_poly);
 
     /*********  CONFIGURATION *********************/
 
+    //ADE_Blow_Static_Params(pthis);
+   // pthis->fir_order=pthis->running_pow_win_fast-1;
 
-
-    ADE_Blow_Static_Params(pthis);
-    pthis->fir_order=pthis->running_pow_win_fast;
-
-    /**************** FIR ALLOC (depends on static params) *****************************/
-
-    ret_fir = ADE_Fir_Init(&(pthis->p_fir), pthis->running_pow_win_fast, buff_len,ADE_FIR_TRASP_II);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Init,ret_fir);
-
-    /**************** POLYFIT ALLOC (depends on static params) *****************************/
-
-    ret_poly=ADE_Polyfit_Init (&(pthis->p_poly),pthis->poly_order,pthis->n_breaks);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Init,ret_poly);
-
-    ADE_Blow_Configuration(pthis);
+    //ADE_Blow_Configuration(pthis);
 
     /******************* Output allocation *********************/
     pthis->p_out=calloc(pthis->buff_len_o,sizeof(ADE_FLOATING_T));
@@ -206,6 +206,90 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this,ADE_UINT32_T buff_len,ADE_FLOAT
 
 }
 
+ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
+{
+
+    ADE_Iir_Release(p_blow->p_iir);
+    ADE_Iir_Release(p_blow->p_iir2);
+    ADE_Fir_Release(p_blow->p_fir);
+    ADE_Polyfit_Release(p_blow->p_poly);
+    ADE_Blas_level2_Release(p_blow->p_blas_l2);
+    ADE_CHECKNFREE(p_blow->p_in_squared);
+    ADE_CHECKNFREE(p_blow->p_pow_fast);
+    ADE_CHECKNFREE(p_blow->p_pow_slow);
+    ADE_CHECKNFREE(p_blow->p_pow_slow_filtered);
+    // ADE_CHECKNFREE(p_blow->p_blow_functions);
+    // ADE_CHECKNFREE(p_blow->poly_coeffs);
+    //ADE_CHECKNFREE(p_blow->breaks);
+
+    ADE_CHECKNFREE(p_blow->p_eval_counter);
+    ADE_CHECKNFREE(p_blow->p_eval_pow);
+    ADE_CHECKNFREE(p_blow->p_eval_timer);
+    ADE_CHECKNFREE(p_blow->p_blow_state);
+    ADE_CHECKNFREE(p_blow->p_out);
+#ifdef ADE_CONFIGURATION_INTERACTIVE
+    ADE_Matlab_Release(p_blow->p_mat);
+#endif
+    ADE_CHECKNFREE(p_blow);
+
+
+}
+
+/******************* Configure Methods ************************/
+ADE_API_RET_T ADE_Blow_Configure_params(ADE_BLOW_T* p_blow)
+{
+    ADE_Blow_Static_Params(p_blow);
+    ADE_Blow_Fir_Configure_params(p_blow);
+    ADE_Blow_Iir_Configure_params(p_blow);
+    ADE_Blow_Iir2_Configure_params(p_blow);
+    ADE_Blow_Expander_Configure_params(p_blow);
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blow_Configure_inout(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_inbuff)
+{
+
+    ADE_API_RET_T ret_in=ADE_RET_ERROR;
+    ADE_API_RET_T ret_fir=ADE_RET_ERROR;
+    ADE_API_RET_T ret_iir=ADE_RET_ERROR;
+    ADE_API_RET_T ret_iir2=ADE_RET_ERROR;
+    ADE_API_RET_T ret_exp=ADE_RET_ERROR;
+
+    ret_in=ADE_Blow_SetInBuff(p_blow, p_inbuff);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_inout,ret_in);
+
+    ret_fir=ADE_Blow_Fir_Configure_inout(p_blow);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_inout,ret_fir);
+
+    ret_iir=ADE_Blow_Iir_Configure_inout(p_blow);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_inout,ret_iir);
+
+    ret_iir2=ADE_Blow_Iir2_Configure_inout(p_blow);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_inout,ret_iir2);
+
+    ret_exp=ADE_Blow_Expander_Configure_inout(p_blow);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_inout,ret_exp);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_inbuff)
+{
+
+    ADE_API_RET_T ret_params=ADE_RET_ERROR;
+    ADE_API_RET_T ret_inout=ADE_RET_ERROR;
+
+    ret_params=ADE_Blow_Configure_params(p_blow);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure,ret_params);
+
+    ret_inout=ADE_Blow_Configure_inout(p_blow,p_inbuff);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure,ret_inout);
+
+     return ADE_RET_SUCCESS;
+
+}
+
+/******************* Private Methods ************************/
 static ADE_API_RET_T ADE_Blow_Static_Params(ADE_BLOW_T* p_blow)
 {
 
@@ -288,61 +372,37 @@ static ADE_API_RET_T ADE_Blow_Static_Params(ADE_BLOW_T* p_blow)
     ret=ADE_Blow_Set_Expander_static_params(p_blow,n_breaks,poly_order);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Static_Params,ret);
 
+
+      p_blow->fir_order=p_blow->running_pow_win_fast-1;
+
      return ADE_RET_SUCCESS;
 
 }
 
-static ADE_API_RET_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow)
-{
-    ADE_API_RET_T ret=ADE_RET_ERROR;
+//static ADE_API_RET_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow)
+//{
+//    ADE_API_RET_T ret=ADE_RET_ERROR;
+//
+//
+//    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Configuration,p_blow);
+//
+//    ret=ADE_Blow_Fir_Config(p_blow);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
+//
+//    ret=ADE_Blow_Iir_Config(p_blow);
+//     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
+//
+//    ret=ADE_Blow_Iir2_Config(p_blow);
+//     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
+//
+//    ret=ADE_Blow_Expander_Config(p_blow);
+//     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
+//
+//    return ADE_RET_SUCCESS;
+//
+//}
 
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Configuration,p_blow);
-
-    ret=ADE_Blow_Fir_Config(p_blow);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
-
-    ret=ADE_Blow_Iir_Config(p_blow);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
-
-    ret=ADE_Blow_Iir2_Config(p_blow);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
-
-    ret=ADE_Blow_Expander_Config(p_blow);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configuration,ret);
-
-    return ADE_RET_SUCCESS;
-
-}
-
-ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
-{
-
-    ADE_Iir_Release(p_blow->p_iir);
-    ADE_Iir_Release(p_blow->p_iir2);
-    ADE_Fir_Release(p_blow->p_fir);
-    ADE_Polyfit_Release(p_blow->p_poly);
-    ADE_Blas_level2_Release(p_blow->p_blas_l2);
-    ADE_CHECKNFREE(p_blow->p_in_squared);
-    ADE_CHECKNFREE(p_blow->p_pow_fast);
-    ADE_CHECKNFREE(p_blow->p_pow_slow);
-    ADE_CHECKNFREE(p_blow->p_pow_slow_filtered);
-    // ADE_CHECKNFREE(p_blow->p_blow_functions);
-    // ADE_CHECKNFREE(p_blow->poly_coeffs);
-    //ADE_CHECKNFREE(p_blow->breaks);
-
-    ADE_CHECKNFREE(p_blow->p_eval_counter);
-    ADE_CHECKNFREE(p_blow->p_eval_pow);
-    ADE_CHECKNFREE(p_blow->p_eval_timer);
-    ADE_CHECKNFREE(p_blow->p_blow_state);
-    ADE_CHECKNFREE(p_blow->p_out);
-#ifdef ADE_CONFIGURATION_INTERACTIVE
-    ADE_Matlab_Release(p_blow->p_mat);
-#endif
-    ADE_CHECKNFREE(p_blow);
-
-
-}
 
 static ADE_API_RET_T ADE_Blow_Set_SatThresh(ADE_BLOW_T* p_blow,ADE_FLOATING_T nbit_i,ADE_FLOATING_T Margin_i)//,ADE_FLOATING_T Fs_i,ADE_FLOATING_T eval_time_i,ADE_FLOATING_T running_pow_win_time_fast_i,ADE_FLOATING_T running_pow_win_time_slow_i,ADE_FLOATING_T time_pow_thresh_attack_i,ADE_FLOATING_T time_pow_thresh_release_i,ADE_UINT32_T n_sat_thres)
 {
@@ -610,23 +670,26 @@ static ADE_API_RET_T ADE_Blow_doSaturation_detector_sm(BLOW_SM_STATES_T state_in
 }
 
 
-
-
-static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
+static ADE_API_RET_T ADE_Blow_Fir_Configure_params(ADE_BLOW_T* p_blow)
 {
 
     ADE_FLOATING_T moving_average_coeff = 0.0;
     ADE_UINT32_T i = 0;
     ADE_UINT32_T order = 0;
     ADE_API_RET_T ret_buff=ADE_RET_ERROR;
+    ADE_FLOATING_T *p_temp_num=NULL;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Fir_Config,p_blow);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Fir_Configure_params,p_blow);
 
-    order = (p_blow->p_fir)->filter_order;
 
-    if ((p_blow->running_pow_win_fast)==0.0)
+
+    order = p_blow->fir_order;
+
+     p_temp_num=calloc(order+1,sizeof(ADE_FLOATING_T));
+
+    if ((p_blow->running_pow_win_fast)==0)
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLOW,ADE_METHOD_Fir_Config,p_blow->running_pow_win_fast,"%d",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_BLOW,ADE_METHOD_Fir_Configure_params,p_blow->running_pow_win_fast,"%d",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
 
@@ -634,22 +697,26 @@ static ADE_API_RET_T ADE_Blow_Fir_Config(ADE_BLOW_T* p_blow)
 
     /**FILL THE TAPS**/
 
-    for(i=0; i<order; i++)
+    for(i=0; i<(order+1); i++)
     {
-        ((p_blow->p_fir)->p_num)[i]=moving_average_coeff;
+        p_temp_num[i]=moving_average_coeff;
     }
 
-    /** POINT INOUT BUFFS ***/
+    ADE_Fir_Configure_params(p_blow->p_fir,p_temp_num,(order+1),ADE_FIR_TRASP_II);
 
-    ret_buff=ADE_Fir_SetInBuff(p_blow->p_fir,p_blow->p_in_squared);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Fir_Config,ret_buff);
-    ret_buff=ADE_Fir_SetOutBuff(p_blow->p_fir,p_blow->p_pow_fast);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Fir_Config,ret_buff);
+
+    ADE_CHECKNFREE(p_temp_num);
 
     return ADE_RET_SUCCESS;
 }
 
-static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow)
+
+static ADE_API_RET_T ADE_Blow_Fir_Configure_inout(ADE_BLOW_T* p_blow)
+{
+ ADE_Fir_Configure_inout(p_blow->p_fir,p_blow->p_in_squared,p_blow->p_pow_fast, p_blow->buff_len_i);
+}
+
+static ADE_API_RET_T ADE_Blow_Iir_Configure_params(ADE_BLOW_T* p_blow)
 {
 
     ADE_FLOATING_T iir_gains[IIR1_N_SECTIONS];
@@ -661,12 +728,12 @@ static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow)
     ADE_API_RET_T ret_conf=ADE_RET_ERROR;
 
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,p_blow);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Iir_Configure_params,p_blow);
 
 
 #ifdef ADE_CONFIGURATION_INTERACTIVE
     ret_conf=ADE_Matlab_Configure_Iir_sos(p_blow->p_mat,p_blow->p_iir, "iir_sosmatrix", "iir_scaleval");
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_conf);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Configure_params,ret_conf);
 
 #else
     iir_gains[0]=0.000003515544430;
@@ -692,29 +759,38 @@ static ADE_API_RET_T ADE_Blow_Iir_Config(ADE_BLOW_T* p_blow)
     aaslow3[2]=0.0;
 
 
+    ADE_Iir_Configure_params( p_blow->p_iir,&(*nums),&(*denoms));
+
+
     ret_set=ADE_Iir_setGains( p_blow->p_iir, iir_gains);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_set);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Configure_params,ret_set);
 
-    ret_set=ADE_Iir_setNums( p_blow->p_iir, &(*nums));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_set);
-
-    ret_set=ADE_Iir_setDenoms( p_blow->p_iir, &(*denoms));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_set);
+//    ret_set=ADE_Iir_setNums( p_blow->p_iir, &(*nums));
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_set);
+//
+//    ret_set=ADE_Iir_setDenoms( p_blow->p_iir, &(*denoms));
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_set);
 
 #endif
-
-    ret_set=ADE_Iir_SetInBuff(p_blow->p_iir,p_blow->p_in_squared);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_set);
-
-    ret_set=ADE_Iir_SetOutBuff(p_blow->p_iir,p_blow->p_pow_slow);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Config,ret_set);
-
-
 
     return ADE_RET_SUCCESS;
 }
 
-static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow)
+static ADE_API_RET_T ADE_Blow_Iir_Configure_inout(ADE_BLOW_T* p_blow)
+{
+
+    ADE_API_RET_T ret_set=ADE_RET_ERROR;
+
+  ret_set=ADE_Iir_SetInBuff(p_blow->p_iir,p_blow->p_in_squared);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Configure_inout,ret_set);
+
+    ret_set=ADE_Iir_SetOutBuff(p_blow->p_iir,p_blow->p_pow_slow);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Configure_inout,ret_set);
+
+    return ADE_RET_SUCCESS;
+}
+
+static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow)
 {
 
     ADE_FLOATING_T iir_gains[IIR2_N_SECTIONS];
@@ -726,11 +802,11 @@ static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow)
     ADE_API_RET_T ret_set=ADE_RET_ERROR;
 
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,p_blow);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Configure_params,p_blow);
 
 #ifdef ADE_CONFIGURATION_INTERACTIVE
     ret_conf=ADE_Matlab_Configure_Iir_sos(p_blow->p_mat,p_blow->p_iir2, "iir2_sosmatrix", "iir2_scaleval");
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_conf);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Configure_params,ret_conf);
 #else
 
     iir_gains[0]=2.73316597838323e-08;
@@ -757,27 +833,44 @@ static ADE_API_RET_T ADE_Blow_Iir2_Config(ADE_BLOW_T* p_blow)
 
 
     ret_set=ADE_Iir_setGains( p_blow->p_iir2, iir_gains);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Configure_params,ret_set);
 
-    ret_set=ADE_Iir_setNums( p_blow->p_iir2, &(*nums));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
+    ADE_Iir_Configure_params( p_blow->p_iir,&(*nums),&(*denoms));
 
-    ret_set=ADE_Iir_setDenoms( p_blow->p_iir2, &(*denoms));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
+//    ret_set=ADE_Iir_setNums( p_blow->p_iir2, &(*nums));
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
+//
+//    ret_set=ADE_Iir_setDenoms( p_blow->p_iir2, &(*denoms));
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
 
 
 #endif
-    ret_set=ADE_Iir_SetInBuff(p_blow->p_iir2,p_blow->p_pow_slow);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
-
-    ret_set=ADE_Iir_SetOutBuff(p_blow->p_iir2,p_blow->p_pow_slow_filtered);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
+//    ret_set=ADE_Iir_SetInBuff(p_blow->p_iir2,p_blow->p_pow_slow);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
+//
+//    ret_set=ADE_Iir_SetOutBuff(p_blow->p_iir2,p_blow->p_pow_slow_filtered);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
 
     return ADE_RET_SUCCESS;
 }
 
 
-static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow)
+static ADE_API_RET_T ADE_Blow_Iir2_Configure_inout(ADE_BLOW_T* p_blow)
+{
+
+    ADE_API_RET_T ret_set=ADE_RET_ERROR;
+
+    ret_set=ADE_Iir_SetInBuff(p_blow->p_iir2,p_blow->p_pow_slow);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Configure_inout,ret_set);
+
+    ret_set=ADE_Iir_SetOutBuff(p_blow->p_iir2,p_blow->p_pow_slow_filtered);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Configure_inout,ret_set);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+static ADE_API_RET_T ADE_Blow_Expander_Configure_params(ADE_BLOW_T* p_blow)
 {
 
     ADE_FLOATING_T breaks[POLY_N_BREAKS]= {0,0.05,0.1,0.3,0.5,1};
@@ -793,10 +886,10 @@ static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow)
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Expander_Config,p_blow);
 
 #ifdef ADE_CONFIGURATION_INTERACTIVE
-    ret_set=ADE_Polyfit_SetBreaks(p_blow->p_poly,ADE_Matlab_GetDataPointer(p_blow->p_mat,"breaks"));
+    ret_set=ADE_Polyfit_SetBreaks(p_blow->p_poly,ADE_Matlab_GetDataPointer(p_blow->p_mat,"breaks"),ADE_Matlab_GetNCols(p_blow->p_mat,"breaks"));
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Expander_Config,ret_set) ;
 
-    ret_set=ADE_Polyfit_SetCoeffs(p_blow->p_poly,ADE_Matlab_GetDataPointer(p_blow->p_mat,"coeffs"));
+    ret_set=ADE_Polyfit_SetCoeffs(p_blow->p_poly,ADE_Matlab_GetDataPointer(p_blow->p_mat,"coeffs"),ADE_Matlab_GetNCols(p_blow->p_mat,"coeffs"));
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Expander_Config,ret_set) ;
 #else
     if (p_blow->poly_order!=POLY_ORDER)
@@ -810,10 +903,7 @@ static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow)
         return ADE_RET_ERROR;
     }
 
-    ret_set=ADE_Polyfit_SetBreaks(p_blow->p_poly,breaks);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Expander_Config,ret_set) ;
-
-    ret_set=ADE_Polyfit_SetCoeffs(p_blow->p_poly,coeffs);
+    ret_set=ADE_Polyfit_Configure_params(p_blow->p_poly,breaks,p_blow->n_breaks,coeffs,p_blow->poly_order+1);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Expander_Config,ret_set) ;
 
 #endif
@@ -823,20 +913,15 @@ static ADE_API_RET_T ADE_Blow_Expander_Config(ADE_BLOW_T* p_blow)
 }
 
 
+static ADE_API_RET_T ADE_Blow_Expander_Configure_inout(ADE_BLOW_T* p_blow)
+{
+    ADE_API_RET_T  ret_inout=ADE_RET_ERROR;
 
-//static ADE_API_RET_T ADE_Blow_square_vector(ADE_BLOW_T* p_blow)
-//{
-//    ADE_UINT32_T i=0;
-//    ADE_API_RET_T ret = ADE_RET_SUCCESS;
-//
+    ret_inout=ADE_Polyfit_Configure_inout(p_blow->p_poly,p_blow->p_iir2->p_out,p_blow->p_out,p_blow->buff_len_i);
 
+     return ADE_RET_SUCCESS;
 
-
-
-
-//    return ADE_RET_SUCCESS;
-//}
-
+}
 //*y=coeffs[coeffs_row_idx+3]+coeffs[coeffs_row_idx+2]*(data-x_breaks[zz])+coeffs[coeffs_row_idx+1]*(data-x_breaks[zz])^2+coeffs[coeffs_row_idx+0]*(data-x_breaks[zz])^3;
 ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
 {
@@ -885,7 +970,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     iir_step_ret2=ADE_Iir_Step(p_iir2_int);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Step,iir_step_ret2);
 
-    ret_poly=ADE_Polyfit_Step(p_blow->p_poly,p_iir2_int->p_out,p_blow->p_out,p_blow->buff_len_i);
+    ret_poly=ADE_Polyfit_Step(p_blow->p_poly);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Step,ret_poly);
 
     return ADE_RET_SUCCESS;
