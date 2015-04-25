@@ -42,7 +42,8 @@ static int SOCK_sd2;
 // 
 // #pragma pack(pop)
 
-
+static ADE_T *p_ADE=NULL;
+static int init=0;
 void Get_SensorData(char *char_buff,ADE_SCDF_Input_Int_T* p_ADE_Input)
 {
 
@@ -115,8 +116,8 @@ closesocket(SOCK_sd2);
 #else
 close(SOCK_sd2);
 #endif
-ADE_Release(&p_ADE,BLOW_FLAG);
-ADE_Release(&p_ADE,BLOW_SNAP);
+ADE_Release(p_ADE,BLOW_FLAG);
+//ADE_Release(p_ADE,BLOW_SNAP);
 init=0;
 
 }
@@ -142,11 +143,13 @@ static int SOCK_sd;
     static SensorData_T SCDF_rx_pkt;
     static char char_buff[MAX_CHAR_BUFF_LEN];
     static ADE_SCDF_Input_Int_T ADE_in_struct;
-	static int init=0;
     u_long n_data_buffer=0;
     s_uint64 time_id=0;
     s_int32  num_samples;
-    static ADE_T *p_ADE=NULL;
+    unsigned int i=0;
+    unsigned int blow_buff_len=0;
+    float audio_fs=44100;
+    
     ADE_SCDF_Output_Int_T *p_out_blow=NULL;
     ADE_SCDF_Output_Int_T *p_out_snap=NULL;
 
@@ -201,8 +204,10 @@ static int SOCK_sd;
 			mexPrintf("Closing socket at init\n");
 		}
 		SCDF_Init(local_IP,remote_IP,port,&SOCK_sd,&localport_info);
+        blow_buff_len = 256;
         ADE_Init(&p_ADE,BLOW_FLAG,blow_buff_len,audio_fs);
-        ADE_Init(&p_ADE,SNAP_FLAG,blow_buff_len,audio_fs);
+        
+     //   ADE_Init(&p_ADE,SNAP_FLAG,blow_buff_len,audio_fs);
         mexPrintf("******** Remeber to check firewall rules on port %d ************\n",port);
 		memset(&SCDF_rx_pkt,0,sizeof(SCDF_rx_pkt));
 		init=1;
@@ -221,9 +226,9 @@ static int SOCK_sd;
 	{
         Get_SensorData(char_buff,&ADE_in_struct);  
         ADE_Step(p_ADE,BLOW_FLAG,&ADE_in_struct);
-        ADE_Step(p_ADE,SNAP_FLAG,&ADE_in_struct);
+     //   ADE_Step(p_ADE,SNAP_FLAG,&ADE_in_struct);
         p_out_blow=ADE_GetOutBuff(p_ADE,BLOW_FLAG);
-        p_out_snap=ADE_GetOutBuff(p_ADE,SNAP_FLAG);
+      //  p_out_snap=ADE_GetOutBuff(p_ADE,SNAP_FLAG);
         
         *blow_state=p_out_blow->state;
         memset(blow_data,0,ncols*sizeof(double));

@@ -115,6 +115,40 @@ ADE_VOID_T ADE_Release(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 }
 
 
+ADE_API_RET_T ADE_Configure_params(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
+{
+    ADE_UINT32_T blow_flag = BLOW_FLAG;
+    ADE_API_RET_T ret_blow=ADE_RET_ERROR;
+
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
+    {
+
+        ret_blow = ADE_Blow_Configure_params( p_ADE->p_blow);
+
+    }
+
+    return ADE_RET_SUCCESS;
+
+}
+
+
+ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff)
+{
+    ADE_UINT32_T blow_flag = BLOW_FLAG;
+    ADE_API_RET_T ret_blow=ADE_RET_ERROR;
+
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
+    {
+
+        ret_blow = ADE_Blow_Configure_inout( p_ADE->p_blow,p_inbuff);
+
+    }
+
+    return ADE_RET_SUCCESS;
+
+}
+
+
 //
 //ADE_VOID_T ADE_GetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 //{

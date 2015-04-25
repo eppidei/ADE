@@ -118,19 +118,21 @@ if (p_data==NULL)
 sensor_data.data=p_data;
 
 ADE_Init(&p_ade_handle,BLOW_FLAG,blow_buff_len,audio_fs);
-ADE_Init(&p_ade_handle,SNAP_FLAG,blow_buff_len,audio_fs);
+ADE_Configure_params(p_ade_handle,BLOW_FLAG);
+//ADE_Init(&p_ade_handle,SNAP_FLAG,blow_buff_len,audio_fs);
 
 for (cycle_idx=0;cycle_idx<n_simul_cycles;cycle_idx++)
 {
     fill_buffer(p_data,blow_buff_len);
+    ADE_Configure_inout(p_ade_handle,BLOW_FLAG,p_data);
     ADE_Step(p_ade_handle,BLOW_FLAG,&sensor_data);
-    ADE_Step(p_ade_handle,SNAP_FLAG,&sensor_data);
+    //ADE_Step(p_ade_handle,SNAP_FLAG,&sensor_data);
     //printf("%u\n",cycle_idx);
 }
 
 
 ADE_Release(p_ade_handle,BLOW_FLAG);
-ADE_Release(p_ade_handle,SNAP_FLAG);
+//ADE_Release(p_ade_handle,SNAP_FLAG);
 free(p_data);
 
 
