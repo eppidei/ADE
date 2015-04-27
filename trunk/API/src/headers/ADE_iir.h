@@ -38,6 +38,9 @@ ADE_API_RET_T ADE_Iir_Configure_inout(ADE_IIR_T* p_iir,ADE_FLOATING_T* p_inbuff,
 ADE_API_RET_T ADE_Iir_Configure(ADE_IIR_T* p_iir,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff);
 /******** Processing Methods **********/
 ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir);
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Iir_Print(ADE_IIR_T* p_iir, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj);
 
 #ifdef __cplusplus
     }   /* extern "C" */

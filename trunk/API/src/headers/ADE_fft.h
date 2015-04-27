@@ -50,6 +50,10 @@ ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOA
 /********** Processing Methods *****************/
 ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft);
 
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Fir_Print(ADE_FIR_T* p_fir, ADE_FILE_T *p_fid);
+
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

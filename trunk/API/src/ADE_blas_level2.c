@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "headers/ADE_Error_Handler.h"
+#include <string.h>
 
 /***************** Private methods prototypes *********************/
 
@@ -493,36 +494,63 @@ p_A=p_Blas_l2->p_A;
 
 
 
-ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_Blas_l2,FILE *p_fid)
+ADE_API_RET_T ADE_Blas_level2_Print(ADE_blas_level2_T *p_Blas_l2,FILE *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj)
 {
     //FILE *p_fid=ADE_STDOUT_STREAM;
-
+   ADE_CHAR_T fixed_str[64];
+    ADE_CHAR_T pri_str[128];
+    ADE_SIZE_T len_str;
 
    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Print,p_Blas_l2);
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Print,p_fid);
 
+    memset(fixed_str,'\0',sizeof(fixed_str));
+strcat(fixed_str,calling_obj);
+strcat(fixed_str,"->");
+strcat(fixed_str,obj_name);
+strcat(fixed_str,"->");
+len_str=strlen(fixed_str);
+
     if (p_fid!=NULL)
     {
-
-        fprintf(p_fid,"p_Blas_l2->math_type = %d\n",p_Blas_l2->math_type);
-        fprintf(p_fid,"p_Blas_l2->UPLO = %c\n",p_Blas_l2->UPLO);
-        fprintf(p_fid,"p_Blas_l2->TRANS = %c\n",p_Blas_l2->TRANS);
-        fprintf(p_fid,"p_Blas_l2->DIAG = %c\n",p_Blas_l2->DIAG);
-        fprintf(p_fid,"p_Blas_l2->M = %d\n",p_Blas_l2->M);
-        fprintf(p_fid,"p_Blas_l2->N = %d\n",p_Blas_l2->N);
-        fprintf(p_fid,"p_Blas_l2->K = %d\n",p_Blas_l2->K);
-        fprintf(p_fid,"p_Blas_l2->KL = %d\n",p_Blas_l2->KL);
-        fprintf(p_fid,"p_Blas_l2->KU = %d\n",p_Blas_l2->KU);
-        fprintf(p_fid,"p_Blas_l2->p_ALPHA = %p(%lf)\n",p_Blas_l2->p_ALPHA,*(p_Blas_l2->p_ALPHA));
-        fprintf(p_fid,"p_Blas_l2->p_A = %p(%lf)\n",p_Blas_l2->p_A,(p_Blas_l2->p_A)[0]);
-        fprintf(p_fid,"p_Blas_l2->LDA = %d\n",p_Blas_l2->LDA);
-        fprintf(p_fid,"p_Blas_l2->p_X = %p(%lf)\n",p_Blas_l2->p_X,(p_Blas_l2->p_X)[0]);
-        fprintf(p_fid,"p_Blas_l2->INCX = %d\n",p_Blas_l2->INCX);
-        fprintf(p_fid,"p_Blas_l2->p_BETA = %p(%lf)\n",p_Blas_l2->p_BETA,*(p_Blas_l2->p_BETA));
-        fprintf(p_fid,"p_Blas_l2->p_Y = %p(%lf)\n",p_Blas_l2->p_Y,(p_Blas_l2->p_Y)[0]);
-        fprintf(p_fid,"p_Blas_l2->INCY = %d\n",p_Blas_l2->INCY);
-        fprintf(p_fid,"p_Blas_l2->blas_level2_fcn_type1 = %p\n",p_Blas_l2->blas_level2_fcn_type1);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"math_type = %d\n"),p_Blas_l2->math_type);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"UPLO = %c\n"),p_Blas_l2->UPLO);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"TRANS = %c\n"),p_Blas_l2->TRANS);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"DIAG = %c\n"),p_Blas_l2->DIAG);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"M = %d\n"),p_Blas_l2->M);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"N = %d\n"),p_Blas_l2->N);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"K = %d\n"),p_Blas_l2->K);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"KL = %d\n"),p_Blas_l2->KL);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"KU = %d\n"),p_Blas_l2->KU);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_ALPHA = %p(%lf)\n"),p_Blas_l2->p_ALPHA,*(p_Blas_l2->p_ALPHA));
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_A = %p(%lf)\n"),p_Blas_l2->p_A,(p_Blas_l2->p_A)[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"LDA = %d\n"),p_Blas_l2->LDA);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_X = %p(%lf)\n"),p_Blas_l2->p_X,(p_Blas_l2->p_X)[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"INCX = %d\n"),p_Blas_l2->INCX);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_BETA = %p(%lf)\n"),p_Blas_l2->p_BETA,*(p_Blas_l2->p_BETA));
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_Y = %p(%lf)\n"),p_Blas_l2->p_Y,(p_Blas_l2->p_Y)[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"INCY = %d\n"),p_Blas_l2->INCY);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"blas_level2_fcn_type1 = %p\n"),p_Blas_l2->blas_level2_fcn_type1);
+         strcpy(pri_str,fixed_str);
         fprintf(p_fid,"\n");
       //  fclose(p_fid);
 

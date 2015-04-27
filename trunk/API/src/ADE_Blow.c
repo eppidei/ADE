@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "headers/ADE_Error_Handler.h"
+#include <string.h>
 
 
 
@@ -866,7 +867,7 @@ static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow)
     ret_set=ADE_Iir_setGains( p_blow->p_iir2, iir_gains);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Configure_params,ret_set);
 
-    ADE_Iir_Configure_params( p_blow->p_iir,&(*nums),&(*denoms));
+    ADE_Iir_Configure_params( p_blow->p_iir2,&(*nums),&(*denoms));
 
 //    ret_set=ADE_Iir_setNums( p_blow->p_iir2, &(*nums));
 //    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Config,ret_set);
@@ -1007,7 +1008,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blow_SetInBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff)
+static ADE_API_RET_T ADE_Blow_SetInBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff)
 {
 
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_SetInBuff,p_blow);
@@ -1029,5 +1030,92 @@ ADE_API_RET_T ADE_Blow_GetOutBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T **dp_buff)
 
     return ADE_RET_SUCCESS;
 
+}
+
+ADE_API_RET_T ADE_Blow_Print(ADE_BLOW_T* p_blow, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj)
+{
+
+     ADE_CHAR_T fixed_str[64];
+    ADE_CHAR_T pri_str[128];
+    ADE_SIZE_T len_str;
+       ADE_CHAR_T temp_str[64];
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Print,p_blow);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_Print,p_fid);
+
+            memset(fixed_str,'\0',sizeof(fixed_str));
+strcat(fixed_str,calling_obj);
+strcat(fixed_str,"->");
+strcat(fixed_str,obj_name);
+strcat(fixed_str,"->");
+len_str=strlen(fixed_str);
+ memset(temp_str,'\0',sizeof(temp_str));
+
+    if (p_fid!=NULL)
+    {
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"Fs_i = %f\n"),p_blow->Fs_i);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"buff_len_i = %u\n"),p_blow->buff_len_i);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"Fs_o = %f\n"),p_blow->Fs_o);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"buff_len_o = %u\n"),p_blow->buff_len_o);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"fir_order = %u\n"),p_blow->fir_order);
+        strncpy(temp_str,fixed_str,len_str-2);
+        ADE_Fir_Print(p_blow->p_fir,p_fid,"p_fir",temp_str);
+        ADE_Iir_Print(p_blow->p_iir,p_fid,"p_iir",temp_str);
+        ADE_Iir_Print(p_blow->p_iir2,p_fid,"p_iir2",temp_str);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_blow->p_in,p_blow->p_in[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_in_squared = %p(%f)\n"),p_blow->p_in_squared,p_blow->p_in_squared[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_pow_fast = %p(%f)\n"),p_blow->p_pow_fast,p_blow->p_pow_fast[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_pow_slow = %p(%f)\n"),p_blow->p_pow_slow,p_blow->p_pow_slow[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_pow_slow_filtered = %p(%f)\n"),p_blow->p_pow_slow_filtered,p_blow->p_pow_slow_filtered[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_blow->p_out,p_blow->p_out[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"state = %u\n"),p_blow->state);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"pow_thresh_high = %f\n"),p_blow->pow_thresh_high);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"pow_thresh_low = %f\n"),p_blow->pow_thresh_low);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"sat_thresh = %f\n"),p_blow->sat_thresh);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"running_pow_win_fast = %u\n"),p_blow->running_pow_win_fast);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"running_pow_win_slow = %u\n"),p_blow->running_pow_win_slow);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_sat_thres = %u\n"),p_blow->n_sat_thres);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_pow_thres_attack = %u\n"),p_blow->n_pow_thres_attack);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"eval_time_samples = %u\n"),p_blow->eval_time_samples);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_eval_counter = %p(%u)\n"),p_blow->p_eval_counter,p_blow->p_eval_counter[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_eval_pow = %p(%u)\n"),p_blow->p_eval_pow,p_blow->p_eval_pow[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_eval_timer = %p(%u)\n"),p_blow->p_eval_timer,p_blow->p_eval_timer[0]);
+        ADE_Polyfit_Print(p_blow->p_poly,p_fid,"p_poly",temp_str);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_blow_state = %u\n"),p_blow->p_blow_state);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_breaks = %u\n"),p_blow->n_breaks);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"poly_order = %u\n"),p_blow->poly_order);
+        strcpy(pri_str,fixed_str);
+        ADE_Blas_level2_Print(p_blow->p_blas_l2,p_fid,"p_blas_l2",temp_str);
+
+    }
+
+
+ return ADE_RET_SUCCESS;
 }
 

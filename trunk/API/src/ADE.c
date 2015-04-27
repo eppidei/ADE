@@ -129,7 +129,8 @@ ADE_API_RET_T ADE_Configure_params(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
     {
 
         ret_blow = ADE_Blow_Configure_params( p_ADE->p_blow);
-        ADE_API_RET_T ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_params,ret_blow);
+        //ADE_API_RET_T ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size);
 
     }
 
@@ -147,6 +148,7 @@ ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOAT
     {
 
         ret_blow = ADE_Blow_Configure_inout( p_ADE->p_blow,p_inbuff);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_blow);
 
     }
 

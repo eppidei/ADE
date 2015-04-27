@@ -32,9 +32,9 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
         #if (ADE_FFT_IMP==ADE_USE_FFTW)
 
             #if (ADE_FFTW_NTHREADS>0)
-				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
+				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
                 	ret_fftw=fftw_init_threads();
-				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
  					ret_fftw=fftwf_init_threads();
 				#else
 					#error ADE_FP_PRECISION in ADE_FFft_Init

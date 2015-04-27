@@ -32,11 +32,11 @@ devel_type='online';
 
 
 if strcmp(devel_type,'online')
-    local_ip = '192.168.1.85';
+    local_ip = '192.168.43.56';
     remote_ip1 = 192;
     remote_ip2 =168;
-    remote_ip3 =1;
-    remote_ip4 =93;
+    remote_ip3 =43;
+    remote_ip4 =2;
     port = 50000;
     Fs = 44100;
     nbit = 16;

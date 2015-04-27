@@ -30,9 +30,9 @@ frame_len = 256;
 sensor_type='audio';
 
 if strcmp(devel_type,'online')
-    local_ip = '192.168.1.213';
+    local_ip = '192.168.43.56';
     remote_ip = '192.168.1.238';
-    port = 50003;
+    port = 50000;
     Fs = 44100;
     nbit = 16;
     n_iterations = Inf;
@@ -88,13 +88,13 @@ Fs=44100;
 time_pow_thresh = 2e-3;
 running_pow_win_time_fast = 1e-3;
 running_pow_win_time_slow = 100e-3;
-[bb_fast,bb_slow,sat_thresh,n_sat_thres,eval_time_samples,n_pow_thres,running_pow_win_fast,running_pow_win_slow]=blow_config(nbit,Margin,Fs,eval_time,...
-    running_pow_win_time_fast,running_pow_win_time_slow,time_pow_thresh);
+% [bb_fast,bb_slow,sat_thresh,n_sat_thres,eval_time_samples,n_pow_thres,running_pow_win_fast,running_pow_win_slow]=blow_config(nbit,Margin,Fs,eval_time,...
+%     running_pow_win_time_fast,running_pow_win_time_slow,time_pow_thresh);
 %%%%% BLOW INITIALIZATION %%%%%%
 
 pstate=1;
-state_fast = zeros(1,running_pow_win_fast-1);
-state_slow = zeros(1,running_pow_win_slow-1);
+% state_fast = zeros(1,running_pow_win_fast-1);
+% state_slow = zeros(1,running_pow_win_slow-1);
 eval_counter=0;
 eval_pow=0;
 eval_timer=0;

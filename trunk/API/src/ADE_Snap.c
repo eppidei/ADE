@@ -108,13 +108,13 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
         for (i=0;i<p_this->n_max_indexes;i++)
         {
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
+				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
                 p_this->dp_segments[i]=(ADE_FLOATING_T*)fftw_malloc(p_this->extract_len*sizeof(ADE_FLOATING_T));
-				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 				p_this->dp_segments[i]=(ADE_FLOATING_T*)fftwf_malloc(p_this->extract_len*sizeof(ADE_FLOATING_T));
 				#else
 					#error ADE_FP_PRECISION in ADE_Bench_Utils
-				#endif                
+				#endif
 
 ADE_CHECK_MEMALLOC(ADE_CLASS_SNAP,ADE_METHOD_Init,p_this->dp_segments[i]);
                 memset(p_this->dp_segments[i],0,p_this->extract_len*sizeof(ADE_FLOATING_T));
@@ -300,9 +300,9 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
     for (i=0;i<p_snap->n_max_indexes;i++)
     {
      #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-		#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
+		#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
         fftw_free(p_snap->dp_segments[i]);
-		#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+		#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 		fftwf_free(p_snap->dp_segments[i]);
 		#else
 			#error ADE_FP_PRECISION in ADE_Snap_Release
@@ -316,9 +316,9 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
     for (i=0;i<p_snap->n_max_indexes;i++)
     {
      #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-        #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
+        #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
         fftw_free(p_snap->dp_spectrum[i]);
-		#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+		#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 		fftwf_free(p_snap->dp_spectrum[i]);
 		#else
 			#error ADE_FP_PRECISION in ADE_Snap_Release

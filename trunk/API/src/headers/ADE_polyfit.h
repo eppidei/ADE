@@ -32,6 +32,9 @@ ADE_API_RET_T ADE_Polyfit_Configure_params(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T 
 ADE_API_RET_T ADE_Polyfit_Configure_inout(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out,ADE_INT32_T buff_len);
 /********************* Processing Methods *************************/
 ADE_API_RET_T ADE_Polyfit_Step(ADE_POLYFIT_T* p_poly);
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Polyfit_Print(ADE_POLYFIT_T* p_poly, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj);
 
 
 #ifdef __cplusplus

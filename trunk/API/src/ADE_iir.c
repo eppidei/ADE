@@ -346,6 +346,71 @@ ADE_API_RET_T ADE_Iir_Configure(ADE_IIR_T* p_iir,ADE_FLOATING_T** dp_nums,ADE_FL
      return ADE_RET_SUCCESS;
 }
 
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Iir_Print(ADE_IIR_T* p_iir, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj)
+{
+    ADE_UINT32_T i=0;
+    ADE_CHAR_T fixed_str[64];
+    ADE_CHAR_T temp_str[64];
+    ADE_CHAR_T temp_str2[16];
+    ADE_CHAR_T pri_str[128];
+    ADE_SIZE_T len_str;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Print,p_iir);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Print,p_fid);
+
+            memset(fixed_str,'\0',sizeof(fixed_str));
+strcat(fixed_str,calling_obj);
+strcat(fixed_str,"->");
+strcat(fixed_str,obj_name);
+strcat(fixed_str,"->");
+len_str=strlen(fixed_str);
+ memset(temp_str,'\0',sizeof(temp_str));
+ memset(temp_str2,'\0',sizeof(temp_str2));
+    if (p_fid!=NULL)
+    {
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"buff_len = %u\n"),p_iir->buff_len);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_iir->p_in,p_iir->p_in[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_iir->p_out,p_iir->p_out[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_SOS_sections = %u\n"),p_iir->n_SOS_sections);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"active_section = %u\n"),p_iir->active_section);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"section_order = %u\n"),p_iir->section_order);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_gains = %p(%f)\n"),p_iir->p_gains,p_iir->p_gains[0]);
+
+        for (i=0;i<p_iir->n_SOS_sections;i++)
+        {
+             strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_nums = %p([%d]%p(%f))\n"),p_iir->dp_nums,i,p_iir->dp_nums[i],*(p_iir->dp_nums[i]));
+             strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_denoms = %p([%d]%p(%f))\n"),p_iir->dp_denoms,i,p_iir->dp_denoms[i],*(p_iir->dp_denoms[i]));
+             strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_states = %p([%d]%p(%f))\n"),p_iir->dp_states,i,p_iir->dp_states[i],*(p_iir->dp_states[i]));
+             strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_section_buffers = %p([%d]%p(%f))\n"),p_iir->dp_section_buffers,i,p_iir->dp_section_buffers[i],*(p_iir->dp_section_buffers[i]));
+             strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_tempbuff = %p([%d]%p(%f))\n"),p_iir->dp_tempbuff,i,p_iir->dp_tempbuff[i],*(p_iir->dp_tempbuff[i]));
+             strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_Blas_L1 = %p"),p_iir->dp_Blas_L1);
+            strncpy(temp_str,fixed_str,len_str-2);
+            sprintf(temp_str2,"dp_Blas_L1[%d]",i);
+            ADE_Blas_level1_Print(p_iir->dp_Blas_L1[i],p_fid,temp_str2,temp_str);
+        }
+        fprintf(p_fid,strcat(pri_str,"filt_imp_type = %d\n"),p_iir->filt_imp_type);
+        fprintf(p_fid,strcat(pri_str,"filter_func = %p\n"),p_iir->filter_func);
+
+    }
+
+        return ADE_RET_SUCCESS;
+}
+
 /********* static methods ********/
 
 static ADE_API_RET_T ADE_Iir_setFilt_Implementation(ADE_IIR_T* p_iir,ADE_IIR_IMP_CHOICE_T filt_imp_type)
