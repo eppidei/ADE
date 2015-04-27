@@ -1,5 +1,6 @@
 #include "headers/ADE.h"
 #include "headers/ADE_Blow.h"
+#include "headers/ADE_downsampler.h"
 #include "headers/ADE_Snap.h"
 #include <stddef.h>
 #include "headers/ADE_errors.h"
@@ -12,6 +13,7 @@ static ADE_BOOL_T ADE_IsInactiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T 
 static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i);
 static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i);
+static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff);
 
 ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T in_buff_len,ADE_FLOATING_T input_rate)
 {
@@ -26,7 +28,7 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
     ADE_FLOATING_T time_left_i=0.5e-3;
     ADE_FLOATING_T time_right_i=6e-3;
     ADE_UINT32_T fft_len_i=512;
-
+    ADE_UINT32_T downfact = 100;
 
 
     if (*dp_ADE_Handle==NULL)//if still not allocated to protected againt a new call for a different alg
@@ -63,7 +65,7 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
             ret_blow = ADE_Blow_Init( &((*dp_ADE_Handle)->p_blow),in_buff_len,input_rate,input_rate);
             ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,ret_blow);
 
-           // ADE_Downsampler_Init(&((*dp_ADE_Handle)->dp_downsampler,in_buff_len,100);
+           //ADE_Downsampler_Init(&((*dp_ADE_Handle)->p_blow_downsampler),in_buff_len,downfact);
 
 
             (*dp_ADE_Handle)->p_blow_out_struct=calloc(1,sizeof(ADE_SCDF_Output_Int_T));
@@ -101,6 +103,7 @@ ADE_VOID_T ADE_Release(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
     {
         p_ADE->active_algs_flag &= ~blow_flag; //spengo flag
         ADE_Blow_Release( p_ADE->p_blow);
+        //ADE_Downsampler_Release( p_ADE->p_blow_downsampler);
     }
 
     if(  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
@@ -223,7 +226,10 @@ ADE_SCDF_Output_Int_T* p_out=NULL;
 
 if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
 {
+   // ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size);
+/************** Processing Methods ***************/
 
+//ADE_API_RET_T ADE_Downsampler_Step(ADE_DOWNSAMPLER_T *p_downsampler);
     p_out=(p_ADE->p_blow_out_struct);
     p_out->Fs_data=p_ADE->p_blow->Fs_o;
     p_out->p_data=p_ADE->p_blow->p_out;

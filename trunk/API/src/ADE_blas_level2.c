@@ -315,13 +315,12 @@ ADE_API_RET_T ADE_Blas_level2_SetX(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *
 
 /************************** Configure Methods ***********************************/
 
-ADE_API_RET_T ADE_Blas_level2_configure_elewise_params(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i,ADE_UINT32_T buff_len)
+ADE_API_RET_T ADE_Blas_level2_configure_elewise_params(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T alpha_i,ADE_FLOATING_T beta_i)
 {
 
     ADE_INT32_T k=0;
     ADE_FLOATING_T alpha=alpha_i,beta=beta_i;
     ADE_API_RET_T ret_uplo = ADE_RET_ERROR;
-    ADE_API_RET_T ret_N = ADE_RET_ERROR;
     ADE_API_RET_T ret_K = ADE_RET_ERROR;
     ADE_API_RET_T ret_Alpha = ADE_RET_ERROR;
     ADE_API_RET_T ret_Beta = ADE_RET_ERROR;
@@ -334,8 +333,7 @@ ADE_API_RET_T ADE_Blas_level2_configure_elewise_params(ADE_blas_level2_T* p_Blas
     ret_uplo = ADE_Blas_Level2_SetUplo(p_Blas_l2,'L');
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise_params,ret_uplo);
 
-    ret_N=ADE_Blas_Level2_SetN(p_Blas_l2,buff_len);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise_params,ret_N);
+
 
     ret_K=ADE_Blas_Level2_SetK(p_Blas_l2,k);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise_params,ret_K);
@@ -361,12 +359,13 @@ ADE_API_RET_T ADE_Blas_level2_configure_elewise_params(ADE_blas_level2_T* p_Blas
 
 }
 
-ADE_API_RET_T ADE_Blas_level2_configure_elewise_inout(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out)
+ADE_API_RET_T ADE_Blas_level2_configure_elewise_inout(ADE_blas_level2_T* p_Blas_l2,ADE_FLOATING_T *p_buff1,ADE_FLOATING_T *p_buff2 ,ADE_FLOATING_T *p_out,ADE_UINT32_T buff_len)
 {
 
     ADE_API_RET_T ret_x = ADE_RET_ERROR;
     ADE_API_RET_T ret_y = ADE_RET_ERROR;
     ADE_API_RET_T ret_A = ADE_RET_ERROR;
+     ADE_API_RET_T ret_N = ADE_RET_ERROR;
 
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise_inout,p_Blas_l2);
@@ -380,6 +379,9 @@ ADE_API_RET_T ADE_Blas_level2_configure_elewise_inout(ADE_blas_level2_T* p_Blas_
 
     ret_x=ADE_Blas_level2_SetX(p_Blas_l2,p_buff2);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise_inout,ret_x);
+
+     ret_N=ADE_Blas_Level2_SetN(p_Blas_l2,buff_len);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise_params,ret_N);
 
     ret_y=ADE_Blas_level2_SetY(p_Blas_l2,p_out);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise_inout,ret_y);
@@ -400,10 +402,10 @@ ADE_API_RET_T ADE_Blas_level2_configure_elewise(ADE_blas_level2_T* p_Blas_l2,ADE
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise,p_buff2);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise,p_out);
 
-    ret_params = ADE_Blas_level2_configure_elewise_params(p_Blas_l2,alpha_i,beta_i,buff_len);
+    ret_params = ADE_Blas_level2_configure_elewise_params(p_Blas_l2,alpha_i,beta_i);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise,ret_params);
 
-    ret_inout = ADE_Blas_level2_configure_elewise_inout(p_Blas_l2,p_buff1,p_buff2 ,p_out);
+    ret_inout = ADE_Blas_level2_configure_elewise_inout(p_Blas_l2,p_buff1,p_buff2 ,p_out,buff_len);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_configure_elewise,ret_inout);
 
     return ADE_RET_SUCCESS;
