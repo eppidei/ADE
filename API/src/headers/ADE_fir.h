@@ -32,6 +32,9 @@ ADE_API_RET_T ADE_Fir_Configure_inout(ADE_FIR_T* p_fir,ADE_FLOATING_T* p_inbuff,
 ADE_API_RET_T ADE_Fir_Configure(ADE_FIR_T* p_fir,ADE_FLOATING_T *p_num,ADE_UINT32_T num_len,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff,ADE_FIR_IMP_CHOICE_T filt_imp_type, ADE_UINT32_T buff_len);
 /********** Processing Methods *****************/
 ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir);
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Fir_Print(ADE_FIR_T* p_fir, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj);
 
 #ifdef __cplusplus
     }   /* extern "C" */

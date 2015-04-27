@@ -199,6 +199,60 @@ ADE_API_RET_T ADE_Fir_Step(ADE_FIR_T* p_fir)
 
 }
 
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Fir_Print(ADE_FIR_T* p_fir, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj)
+{
+
+    ADE_CHAR_T fixed_str[64];
+    ADE_CHAR_T pri_str[128];
+    ADE_SIZE_T len_str;
+     ADE_CHAR_T temp_str[64];
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_fir);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_fid);
+
+        memset(fixed_str,'\0',sizeof(fixed_str));
+strcat(fixed_str,calling_obj);
+strcat(fixed_str,"->");
+strcat(fixed_str,obj_name);
+strcat(fixed_str,"->");
+len_str=strlen(fixed_str);
+ memset(temp_str,'\0',sizeof(temp_str));
+
+    if (p_fid!=NULL)
+    {
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"buff_len = %u\n"),p_fir->buff_len);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_fir->p_in,p_fir->p_in[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_fir->p_out,p_fir->p_out[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"filter_order = %u\n"),p_fir->filter_order);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"max_filter_order = %u\n"),p_fir->max_filter_order);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_num = %p(%f)\n"),p_fir->p_num,p_fir->p_num[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_state = %p(%f)\n"),p_fir->p_state,p_fir->p_state[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_tempbuff = %p(%f)\n"),p_fir->p_num,p_fir->p_tempbuff[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"gain = %f\n"),p_fir->gain);
+         strncpy(temp_str,fixed_str,len_str-2);
+        ADE_Blas_level1_Print(p_fir->p_Blas_L1,p_fid,"p_Blas_L1",temp_str);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"filt_imp_type = %d\n"),p_fir->filt_imp_type);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"filter_func = %p\n"),p_fir->filter_func);
+        strcpy(pri_str,fixed_str);
+    }
+
+    return ADE_RET_SUCCESS;
+
+
+}
 
 /************** static methods *********************/
 

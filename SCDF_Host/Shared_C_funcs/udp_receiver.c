@@ -9,7 +9,7 @@
 #include <winsock.h>
 #include <windows.h>
 
-void SCDF_Init(char* ip_local,char* ip_remote,int port_id,SOCKET* SOCK_sd,struct sockaddr_in *localport_info)
+int SCDF_Init(char* ip_local,char* ip_remote,int port_id,SOCKET* SOCK_sd,struct sockaddr_in *localport_info)
 {
 
 	static unsigned int iOptVal_pkt;
@@ -22,7 +22,7 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,SOCKET* SOCK_sd,struct
     if (WSAStartup(0x0202, &w) != 0)
     {
         printf("SCDF-> Could not create windows connection.\n");
-        exit(0);
+       return -1;
     }
 
     /* Open a datagram socket */
@@ -31,8 +31,7 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,SOCKET* SOCK_sd,struct
     {
         printf("SCDF-> Could not create socket on port xxxx.\n");
         WSACleanup();
-        exit(0);
-		printf("SCDF-> Could not create socket on port xxxx.\n");
+       return -1;
     }
 
     /* Clear out address struct */
@@ -56,9 +55,7 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,SOCKET* SOCK_sd,struct
         perror("SCDF-> Could not bind socket on port .\n");
         closesocket(*SOCK_sd);
         WSACleanup();
-
-
-      exit(0);
+        return -1;
     }
 
     /* Setting reception timeout ( NON_BLOCKING RECV/RECVFROM ) */
@@ -70,26 +67,26 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,SOCKET* SOCK_sd,struct
 
 
 	/* Setting reception buffer */
-	iOptVal_pkt= RECEPTION_MAX_BUFFER_LEN*sizeof(SensorData_T);//100 è per non perdere i pacchetti maybe to fix //10 * sizeof(t_usp_c1_data_msg);
+	iOptVal_pkt= RECEPTION_MAX_BUFFER_LEN*sizeof(SensorData_T);//100 ï¿½ per non perdere i pacchetti maybe to fix //10 * sizeof(t_usp_c1_data_msg);
 	if ( setsockopt( *SOCK_sd, SOL_SOCKET, SO_RCVBUF, (char*)&iOptVal_pkt, sizeof(iOptVal_pkt))== SOCKET_ERROR ){
 
 		printf("SCDF-> Error on port %d at setsockopt(): %d\n",port_id, WSAGetLastError());
         WSACleanup();
 		printf("SCDF-> Error ");
-        exit(0);
+        return -1;
 	}
 	if ( getsockopt( *SOCK_sd, SOL_SOCKET, SO_RCVBUF, (char*)&ActualOptVal_pkt, &iOptLen_pkt ) == SOCKET_ERROR){
 		printf("SCDF-> Error on port %d at getsockopt(): %d\n",port_id, WSAGetLastError());
 		WSACleanup();
 		printf("SCDF-> Error ");
-		exit(0);
+		return -1;
 	}
 	if(iOptVal_pkt != ActualOptVal_pkt)
 	{
 		printf("SCDF-> Warning on port 5005 at getsockopt(): cannot fit the requested size buffer!");
 	}
 
-}
+}ADE_in_struct
 
 int SCDF_receive(char* line, int maxsize,char* ip_local_init,char* ip_remote_init,int port_id,SOCKET* SOCK_sd,fd_set *fds,struct sockaddr_in *localport_info,unsigned long *sock_buff_count)
 {
@@ -106,7 +103,7 @@ int SCDF_receive(char* line, int maxsize,char* ip_local_init,char* ip_remote_ini
     if( select( *SOCK_sd+1, fds, NULL, NULL, &tv ) < 0 )
     {
         perror("select on sd_006 failed!");
-        return ERROR;
+        return -1;
     }
 
     if( FD_ISSET(*SOCK_sd, fds) )
@@ -153,7 +150,7 @@ int SCDF_receive(char* line, int maxsize,char* ip_local_init,char* ip_remote_ini
 #include <sys/ioctl.h>
 
 
-void SCDF_Init(char* ip_local,char* ip_remote,int port_id,int* SOCK_sd,struct sockaddr_in *localport_info)
+int SCDF_Init(char* ip_local,char* ip_remote,int port_id,int* SOCK_sd,struct sockaddr_in *localport_info)
 {
 
 	static unsigned int iOptVal_pkt;
@@ -175,7 +172,7 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,int* SOCK_sd,struct so
     {
         printf("SCDF-> Could not create socket on port xxxx.\n, errno %d",errno);
         /*WSACleanup();*/
-        exit(0);
+       return -1;
 		/*printf("SCDF-> Could not create socket on port xxxx.\n");*/
     }
 
@@ -204,7 +201,7 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,int* SOCK_sd,struct so
       /*  WSACleanup();*/
 
 
-      exit(0);
+      return -1;
     }
 
     /* Setting reception timeout ( NON_BLOCKING RECV/RECVFROM ) */
@@ -216,19 +213,19 @@ void SCDF_Init(char* ip_local,char* ip_remote,int port_id,int* SOCK_sd,struct so
 
 
 	/* Setting reception buffer */
-	iOptVal_pkt= RECEPTION_MAX_BUFFER_LEN*sizeof(SensorData_T);/*100 è per non perdere i pacchetti maybe to fix //10 * sizeof(t_usp_c1_data_msg);*/
+	iOptVal_pkt= RECEPTION_MAX_BUFFER_LEN*sizeof(SensorData_T);/*100 ï¿½ per non perdere i pacchetti maybe to fix //10 * sizeof(t_usp_c1_data_msg);*/
 	if ( setsockopt( *SOCK_sd, SOL_SOCKET, SO_RCVBUF, (char*)&iOptVal_pkt, sizeof(iOptVal_pkt))== -1 ){
 
 		printf("SCDF-> Error on port %d at setsockopt(): %d\n",port_id, errno);
         /*WSACleanup();*/
 		printf("SCDF-> Error ");
-        exit(0);
+        return -1;
 	}
 	if ( getsockopt( *SOCK_sd, SOL_SOCKET, SO_RCVBUF, (char*)&ActualOptVal_pkt, &iOptLen_pkt ) == -1){
 		printf("SCDF-> Error on port %d at getsockopt(): %d\n",port_id, errno);
 		/*WSACleanup();*/
 		printf("SCDF-> Error ");
-		exit(0);
+		return -1;
 	}
 	if(iOptVal_pkt != ActualOptVal_pkt)
 	{

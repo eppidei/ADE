@@ -65,6 +65,8 @@ ADE_API_RET_T ADE_Blow_Configure_inout(ADE_BLOW_T* p_blow,ADE_FLOATING_T *p_inbu
 ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow,ADE_FLOATING_T *p_inbuff);
 /************ Processing methods ***********************/
 ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow);
+/************ Utils methods ***********************/
+ADE_API_RET_T ADE_Blow_Print(ADE_BLOW_T* p_blow, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj);
 
 #ifdef __cplusplus
     }   /* extern "C" */

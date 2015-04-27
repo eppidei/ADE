@@ -58,7 +58,7 @@
 /* Control */
 
 #ifndef ADE_TARGET_TYPE
-#define ADE_TARGET_TYPE ADE_PC_NORMAL
+#define ADE_TARGET_TYPE ADE_PC_MATLAB
 #endif //ADE_TARGET_TYPE
 
 #ifndef ADE_TARGET_MODE
@@ -81,7 +81,7 @@
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
      #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
-        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
     #endif
 #elif (ADE_TARGET_TYPE==ADE_PC_NORMAL )
     #undef ADE_CONFIGURATION_INTERACTIVE

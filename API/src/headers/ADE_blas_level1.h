@@ -56,7 +56,7 @@ ADE_API_RET_T ADE_Blas_level1_configure_dot_params(ADE_blas_level1_T* p_blas_l1,
 ADE_API_RET_T ADE_Blas_level1_configure_dot_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y);
 ADE_API_RET_T ADE_Blas_level1_configure_dot(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y);
 /************ Utils Methods *****************/
-ADE_API_RET_T ADE_Blas_level1_Print(ADE_blas_level1_T *p_blas_l1,FILE *p_fid);
+ADE_API_RET_T ADE_Blas_level1_Print(ADE_blas_level1_T *p_blas_l1,FILE *p_fid, ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj);
 /************ Processing Methods *****************/
 ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1);
 ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1);

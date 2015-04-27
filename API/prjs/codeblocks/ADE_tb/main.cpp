@@ -146,6 +146,7 @@ for (cycle_idx=0;cycle_idx<n_simul_cycles;cycle_idx++)
 
     sensor_data.data=p_data;
     ret_blow_step=ADE_Step(p_ade_handle,BLOW_FLAG,&sensor_data);
+    ADE_Blow_Print(p_ade_handle->p_blow,stdout,"p_blow","p_ade_handle");
     if (ret_blow_step==ADE_RET_ERROR) return -2;
 
     p_out=ADE_GetOutBuff(p_ade_handle,BLOW_FLAG);

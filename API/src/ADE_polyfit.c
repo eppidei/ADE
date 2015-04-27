@@ -200,6 +200,55 @@ ADE_API_RET_T ADE_Polyfit_Step(ADE_POLYFIT_T* p_poly)
     return ADE_RET_SUCCESS;
 }
 
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Polyfit_Print(ADE_POLYFIT_T* p_poly, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj)
+{
+   ADE_UINT32_T i=0;
+    ADE_CHAR_T fixed_str[64];
+
+    ADE_CHAR_T temp_str2[16];
+    ADE_CHAR_T pri_str[128];
+    ADE_SIZE_T len_str;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_poly);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_fid);
+
+            memset(fixed_str,'\0',sizeof(fixed_str));
+strcat(fixed_str,calling_obj);
+strcat(fixed_str,"->");
+strcat(fixed_str,obj_name);
+strcat(fixed_str,"->");
+len_str=strlen(fixed_str);
+
+
+    if (p_fid!=NULL)
+    {
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"buff_len = %u\n"),p_poly->buff_len);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_poly->p_in,p_poly->p_in[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_poly->p_out,p_poly->p_out[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_breaks = %u\n"),p_poly->n_breaks);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"max_n_breaks = %u\n"),p_poly->max_n_breaks);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_breaks = %p(%f)\n"),p_poly->p_breaks,p_poly->p_breaks[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"poly_order = %u\n"),p_poly->poly_order);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"max_poly_order = %u\n"),p_poly->max_poly_order);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_poly_coeffs = %p(%f)\n"),p_poly->p_poly_coeffs,p_poly->p_poly_coeffs[0]);
+
+
+    }
+    return ADE_RET_SUCCESS;
+
+}
+
 /***************** Static methods *************************/
 
 

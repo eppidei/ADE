@@ -107,6 +107,7 @@ static int SOCK_sd;
 	unsigned int remote_ip2;
 	unsigned int remote_ip3;
 	unsigned int remote_ip4;
+    unsigned int ret_init=-1;
 	// if(nrhs!=3)
     // mexErrMsgTxt("Three inputs required.");
    // if(nlhs!=3)
@@ -205,7 +206,12 @@ static int SOCK_sd;
 		  #endif
 			mexPrintf("Closing socket at init\n");
 		}
-		SCDF_Init(local_IP,remote_IP,port,&SOCK_sd,&localport_info);
+		ret_init=SCDF_Init(local_IP,remote_IP,port,&SOCK_sd,&localport_info);
+        if (ret_init<0)
+        {
+            mexPrintf("Init failed\n"); 
+            return ;
+        }
         mexPrintf("******** Remeber to check firewall rules on port %d ************\n",port);
 		memset(&SCDF_rx_pkt,0,sizeof(SCDF_rx_pkt));
 		init=1;
