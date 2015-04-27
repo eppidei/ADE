@@ -6,8 +6,10 @@
 #include "matrix.h"
 #endif
 #include "headers/ADE_typedefs.h"
+#include "headers/ADE_Utils.h"
 #include "headers/ADE_Matlab.h"
 #include "headers/ADE.h"
+#include "headers/ADE_Blow.h"
 #include "headers/ADE_SCDF_Interface.h"
 
 static unsigned long mt[MT_N]; /* the array for the state vector  */
@@ -98,42 +100,71 @@ int main()
 {
 
 ADE_T *p_ade_handle=NULL;
-ADE_UINT32_T blow_buff_len = 512;
-ADE_FLOATING_T audio_fs=44100;
+ADE_UINT32_T audio_buff_len = 0;
+ADE_FLOATING_T audio_fs=0;
 ADE_SCDF_Input_Int_T sensor_data;
-ADE_FLOATING_T *p_data=NULL;
+ADE_FLOATING_T *p_data=NULL,*p_global_outbuff=NULL;
 ADE_UINT32_T n_simul_cycles = 1024,cycle_idx=0;
+ADE_SCDF_Output_Int_T *p_out=NULL;
+ADE_API_RET_T ret_blow_step=ADE_RET_ERROR;
+
+audio_buff_len=256;
+audio_fs=44100;
+n_simul_cycles=1024;
+ADE_Init(&p_ade_handle,BLOW_FLAG,audio_buff_len,audio_fs);
+
+#ifdef ADE_CONFIGURATION_INTERACTIVE
+audio_buff_len=ADE_Matlab_GetScalar(p_ade_handle->p_blow->p_mat,"Frame_len");
+audio_fs=ADE_Matlab_GetScalar(p_ade_handle->p_blow->p_mat,"Fs");
+n_simul_cycles=ADE_Matlab_GetScalar(p_ade_handle->p_blow->p_mat,"n_iterations");
+ADE_Release(p_ade_handle,BLOW_FLAG);
+p_ade_handle=NULL;
+ADE_Init(&p_ade_handle,BLOW_FLAG,audio_buff_len,audio_fs);
+#endif
+
+
+
+ADE_Configure_params(p_ade_handle,BLOW_FLAG);
+#ifndef ADE_CONFIGURATION_INTERACTIVE
+p_data=(ADE_FLOATING_T*)calloc(audio_buff_len,sizeof(ADE_FLOATING_T));
+#endif
+p_global_outbuff=(ADE_FLOATING_T*)calloc(audio_buff_len*n_simul_cycles,sizeof(ADE_FLOATING_T));
+
 
 sensor_data.num_channels=1;
-sensor_data.num_frames=blow_buff_len;
+sensor_data.num_frames=audio_buff_len;
 sensor_data.rate=audio_fs;
 sensor_data.type=ADE_AudioInput;
 
-p_data=(ADE_FLOATING_T*)calloc(blow_buff_len,sizeof(ADE_FLOATING_T));
-if (p_data==NULL)
-{
-    return -11;
-}
-
-sensor_data.data=p_data;
-
-ADE_Init(&p_ade_handle,BLOW_FLAG,blow_buff_len,audio_fs);
-ADE_Configure_params(p_ade_handle,BLOW_FLAG);
-//ADE_Init(&p_ade_handle,SNAP_FLAG,blow_buff_len,audio_fs);
-
 for (cycle_idx=0;cycle_idx<n_simul_cycles;cycle_idx++)
 {
-    fill_buffer(p_data,blow_buff_len);
-    //ADE_Configure_inout(p_ade_handle,BLOW_FLAG,p_data);
-    ADE_Step(p_ade_handle,BLOW_FLAG,&sensor_data);
-    //ADE_Step(p_ade_handle,SNAP_FLAG,&sensor_data);
-    //printf("%u\n",cycle_idx);
+    #ifdef ADE_CONFIGURATION_INTERACTIVE
+    p_data=ADE_Matlab_GetDataPointer(p_ade_handle->p_blow->p_mat,"audio_left")+cycle_idx*audio_buff_len;
+    #else
+    fill_buffer(p_data,audio_buff_len);
+    #endif
+
+    sensor_data.data=p_data;
+    ret_blow_step=ADE_Step(p_ade_handle,BLOW_FLAG,&sensor_data);
+    if (ret_blow_step==ADE_RET_ERROR) return -2;
+
+    p_out=ADE_GetOutBuff(p_ade_handle,BLOW_FLAG);
+
+    memcpy(p_global_outbuff+cycle_idx*audio_buff_len,p_out->p_data,p_out->n_data*sizeof(ADE_FLOATING_T));
+
 }
 
+#ifdef ADE_CONFIGURATION_INTERACTIVE
+ ADE_Matlab_PutVarintoWorkspace(p_ade_handle->p_blow->p_mat, p_global_outbuff, "outt", 1, audio_buff_len*n_simul_cycles, ADE_MATH_REAL);
+ADE_Matlab_launch_script_segment(p_ade_handle->p_blow->p_mat,"Blow");
+ADE_Matlab_Evaluate_StringnWait(p_ade_handle->p_blow->p_mat, "figure;hold on;plot(outt,'or');plot(expanded_pow_iir,'+b');hold off;");
+#endif // ADE_CONFIGURATION_INTERACTIVE
 
 ADE_Release(p_ade_handle,BLOW_FLAG);
-//ADE_Release(p_ade_handle,SNAP_FLAG);
+free(p_global_outbuff);
+#ifndef ADE_CONFIGURATION_INTERACTIVE
 free(p_data);
+#endif
 
 
 

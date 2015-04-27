@@ -374,6 +374,7 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_setFilt_Implementation,p_fir);
 
     if (filt_imp_type==ADE_FIR_TRASP_II)
    {
+       p_fir->filt_imp_type=filt_imp_type;
        p_fir->filter_func=ADE_Fir_filter_DII_T;
    }
    else
