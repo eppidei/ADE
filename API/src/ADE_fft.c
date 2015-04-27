@@ -32,9 +32,13 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
         #if (ADE_FFT_IMP==ADE_USE_FFTW)
 
             #if (ADE_FFTW_NTHREADS>0)
-
-                ret_fftw=fftw_init_threads();
-
+				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
+                	ret_fftw=fftw_init_threads();
+				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+ 					ret_fftw=fftwf_init_threads();
+				#else
+					#error ADE_FP_PRECISION in ADE_FFft_Init
+				#endif
                 if (ret_fftw<0)
                 {
                     ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_FFT,ADE_METHOD_Init,ret_fftw,"%d",(FILE*)ADE_STD_STREAM);
@@ -60,18 +64,24 @@ ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
         //fftw_free(p_fft->p_in);
         //fftw_free(p_fft->p_out);
-           #if (ADE_FFTW_NTHREADS>0)
-            fftw_cleanup_threads();
-           #endif
+
        #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+			#if (ADE_FFTW_NTHREADS>0)
+            	fftw_cleanup_threads();
+            #endif
         fftw_destroy_plan(p_fft->plan);
+		 fftw_cleanup();
         #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-        fftwf_destroy_plan(p_fft->plan);
+			#if (ADE_FFTW_NTHREADS>0)
+            	fftwf_cleanup_threads();
+            #endif
+            fftwf_destroy_plan(p_fft->plan);
+            fftwf_cleanup();
         #else
          #error (ADE_FP_PRECISION in ADE_Fft_Release)
         #endif
 
-        fftw_cleanup();
+
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
         #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
             vDSP_destroy_fftsetup (p_fft->p_setup );
@@ -106,8 +116,13 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
 
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
           #if (ADE_FFTW_NTHREADS>0)
-
+				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
                 fftw_plan_with_nthreads(ADE_FFTW_NTHREADS);
+				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+				fftwf_plan_with_nthreads(ADE_FFTW_NTHREADS);
+				#else
+         			#error (ADE_FP_PRECISION in ADE_Fft_Configure)
+        		#endif
           #endif
       #endif
     ret_set=ADE_Fft_SetType(p_fft,fft_type);

@@ -622,7 +622,13 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         {
             size_fft_in=buff_len*sizeof(ADE_FFTCPLX_T);
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-            p_in=fftw_malloc(size_fft_in);
+				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
+            		p_in=fftw_malloc(size_fft_in);
+				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+					p_in=fftwf_malloc(size_fft_in)
+				#else
+					#error ADE_FP_PRECISION in ADE_Bench_Utils
+				#endif
             #else
             p_in=malloc(size_fft_in);
             #endif
@@ -635,7 +641,13 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
             size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+				#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
              p_out=fftw_malloc(size_fft_out);
+				#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+			p_out=fftwf_malloc(size_fft_out);
+				#else
+					#error ADE_FP_PRECISION in ADE_Bench_Utils
+				#endif
             #else
              p_out=malloc(size_fft_out);
             #endif
@@ -757,8 +769,15 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
         /************ FFT RELEASE***************/
 #if  ( ADE_FFT_IMP==ADE_USE_FFTW )
+	#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PRECISION)
         fftw_free(p_in);
         fftw_free(p_out);
+	#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PRECISION)
+ 			fftwf_free(p_in);
+        fftwf_free(p_out);
+	#else
+					#error ADE_FP_PRECISION in ADE_Bench_Utils
+	#endif
     #else
         free(p_in);
         free(p_out);
