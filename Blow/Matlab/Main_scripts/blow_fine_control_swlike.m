@@ -48,15 +48,15 @@ running_pow_win_time_slow = 20e-3;
 [bb_fast,bb_slow,sat_thresh,n_sat_thres,eval_time_samples,n_pow_thres_attack,n_pow_thres_release,running_pow_win_fast,running_pow_win_slow]=blow_config2(nbit,Margin,Fs,eval_time,...
     running_pow_win_time_fast,running_pow_win_time_slow,time_pow_thresh_attack,time_pow_thresh_release);
 
-freq_pass = 20;
-freq_stop = 60;
+freq_pass = 40;
+freq_stop = 80;
 band_stop_rej_db = 40;
 freq_pass2 = 2;
-freq_stop2 = 5;
+freq_stop2 = 8;
 band_stop_rej_db2 = 40;
 
 
-IIR_pow_filt = Iir_butterwoth_generator(1e-3,3e-3,1,band_stop_rej_db);
+IIR_pow_filt = Iir_butterwoth_generator(freq_pass/(Fs/2),freq_stop/(Fs/2),1,band_stop_rej_db);
  IIR_pow_filt.PersistentMemory=true;
  iir_scaleval=IIR_pow_filt.ScaleValues;
  iir_sosmatrix=IIR_pow_filt.sosMatrix;
@@ -64,11 +64,14 @@ IIR_pow_filt = Iir_butterwoth_generator(1e-3,3e-3,1,band_stop_rej_db);
  IIR_pow_filt2 = Iir_butterwoth_generator(freq_pass2/(Fs/2),freq_stop2/(Fs/2),1,band_stop_rej_db2);
  IIR_pow_filt2.PersistentMemory=true;
   iir2_scaleval=IIR_pow_filt2.ScaleValues;
- iir2_sosmatrix=IIR_pow_filt2.sosMatrix;
+
  
+ max_pow=.83;
+ IIR_pow_filt2.SosMatrix(1,1:3)= IIR_pow_filt2.SosMatrix(1,1:3)/max_pow; %to avoid another moltiplication add norm gain 2 first section numerator
+  iir2_sosmatrix=IIR_pow_filt2.sosMatrix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%expander setup%%%%%%%%%%%
- fit_desiderata_x=[0,0.05,0.1,0.3,0.5,1];
- fit_desiderata_y=[0,0.05,0.1,0.3,0.7,1.5];
+ fit_desiderata_x=[0,0.05,0.1,0.3,0.6,1];
+ fit_desiderata_y=[0,0.05,0.1,0.7,2,6];
  [xData, yData] = prepareCurveData( fit_desiderata_x, fit_desiderata_y );
 
 % Set up fittype and options.
@@ -110,7 +113,7 @@ state_slow = zeros(1,running_pow_win_slow-1);
 
 
 % hh=figure('Name','test_filt');
-max_pow=1;
+
 
 sat_detect_struct.pow_thresh_high=pow_thresh_high;
 sat_detect_struct.pow_thresh_low=pow_thresh_low;
@@ -142,7 +145,7 @@ for k=1:n_iterations
      %IIR
      [run_pow_iir(idx)]=filter(IIR_pow_filt,audio_pow_squared);%filter(bb_slow,1,audio.^2,state_slow);
     
-      normalized_pow_iir(idx) = run_pow_iir(idx)/max_pow;
+       normalized_pow_iir(idx) = run_pow_iir(idx);%/max_pow;
      
      
     frame_idx = (k-1)*Frame_len +1 : k*Frame_len;
@@ -190,12 +193,12 @@ blow_plot(frame_idx)= sat_detect_struct.blow;
       
       [run_pow_iir_filt(idx)]=filter(IIR_pow_filt2,normalized_pow_iir(idx));
    %%%EXPANSION%%%%
-   tic
+%    tic
     expanded_pow_iir(idx)= memoryless_blow_expander(run_pow_iir_filt(idx),fitresult);
-    toc
-    tic
+%     toc
+%     tic
     testtt= memoryless_blow_expander_matrix(run_pow_iir_filt(idx),fitresult);
-    toc
+%     toc
     
 %     sum(abs(expanded_pow_iir(idx)-testtt'))
     

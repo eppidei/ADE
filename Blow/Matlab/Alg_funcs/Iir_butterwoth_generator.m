@@ -12,7 +12,7 @@ function Hd = Iir_butterwoth_generator(Fpass_norm,Fstop_norm,pass_db,stop_db)
 
 % All frequency values are normalized to 1.
 
-match = 'stopband';  % Band to match exactly
+match = 'passband';  % Band to match exactly
 
 % Construct an FDESIGN object and call its BUTTER method.
 h  = fdesign.lowpass(Fpass_norm, Fstop_norm, pass_db, stop_db);
