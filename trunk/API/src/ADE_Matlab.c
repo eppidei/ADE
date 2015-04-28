@@ -24,7 +24,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
     MATFile *p_matfile;
     int n_arrays=0;
     char **dp_dir=NULL;
-    char *array_name;
+    const char *array_name;
     unsigned int k_valid_array=0;
     unsigned int *p_valid_arr_idx=NULL;
     char **dp_temp_names=NULL;
@@ -72,7 +72,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
               for (i=0;i<n_arrays;i++)
               {
                  // array_name=&(dp_dir[i][0]);
-                  dp_mxarray[i]=matGetNextVariable(p_matfile,(const char**) &array_name);
+                  dp_mxarray[i]=matGetNextVariable(p_matfile, &array_name);
                   dp_temp_names[i]=calloc(strlen(array_name)+1,sizeof(char));
                   ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init, dp_temp_names[i]);
                   strcpy(dp_temp_names[i],array_name);

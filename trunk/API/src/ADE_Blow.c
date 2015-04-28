@@ -752,10 +752,10 @@ static ADE_API_RET_T ADE_Blow_Iir_Configure_params(ADE_BLOW_T* p_blow)
 {
 
     ADE_FLOATING_T iir_gains[IIR1_N_SECTIONS];
-    ADE_FLOATING_T bbslow[IIR1_N_SECTIONS],bbslow2[IIR1_N_SECTIONS],bbslow3[IIR1_N_SECTIONS];
-    ADE_FLOATING_T aaslow[IIR1_N_SECTIONS],aaslow2[IIR1_N_SECTIONS],aaslow3[IIR1_N_SECTIONS];
-    ADE_FLOATING_T *nums[IIR1_N_SECTIONS]= {bbslow,bbslow2,bbslow3};
-    ADE_FLOATING_T *denoms[IIR1_N_SECTIONS]= {aaslow,aaslow2,aaslow3};
+    ADE_FLOATING_T bbslow[3],bbslow2[3],bbslow3[3],bbslow4[3];
+    ADE_FLOATING_T aaslow[3],aaslow2[3],aaslow3[3],aaslow4[3];
+    ADE_FLOATING_T *nums[IIR1_N_SECTIONS]= {bbslow,bbslow2,bbslow3,bbslow4};
+    ADE_FLOATING_T *denoms[IIR1_N_SECTIONS]= {aaslow,aaslow2,aaslow3,aaslow3};
     ADE_API_RET_T ret_set=ADE_RET_ERROR;
     ADE_API_RET_T ret_conf=ADE_RET_ERROR;
 
@@ -768,9 +768,11 @@ static ADE_API_RET_T ADE_Blow_Iir_Configure_params(ADE_BLOW_T* p_blow)
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir_Configure_params,ret_conf);
 
 #else
-    iir_gains[0]=0.000003515544430;
-    iir_gains[1]=0.000003508969011;
-    iir_gains[2]=0.001872555449701;
+    iir_gains[0]= 0.000009602156988;
+    iir_gains[1]= 0.000009580765989;
+    iir_gains[2]=0.000009564458305;
+    iir_gains[3]=0.000009555655780;
+
     bbslow[0]=1.0;
     bbslow[1]=2.0;
     bbslow[2]=1.0;
@@ -778,17 +780,24 @@ static ADE_API_RET_T ADE_Blow_Iir_Configure_params(ADE_BLOW_T* p_blow)
     bbslow2[1]=2.0;
     bbslow2[2]=1.0;
     bbslow3[0]=1.0;
-    bbslow3[1]=1.0;
-    bbslow3[2]=0.0;
+    bbslow3[1]=2.0;
+    bbslow3[2]=1.0;
+     bbslow4[0]=1.0;
+    bbslow4[1]=2.0;
+    bbslow4[2]=1.0;
+
     aaslow[0]=1.0;
-    aaslow[1]=-1.997669683425078;
-    aaslow[2]= 0.997683745602800;
+    aaslow[1]= -1.997544931748277;
+    aaslow[2]= 0.997583340376228;
     aaslow2[0]=1.0;
-    aaslow2[1]=-1.993933273456987;
-    aaslow2[2]=0.993947309333033;
+    aaslow2[1]=-1.993094943956327 ;
+    aaslow2[2]= 0.993133267020283;
     aaslow3[0]=1.0;
-    aaslow3[1]= -0.996254889100598;
-    aaslow3[2]=0.0;
+    aaslow3[1]= -1.989702442428220;
+    aaslow3[2]=0.989740700261438;
+    aaslow4[0]=1.0;
+    aaslow4[1]= -1.987871245822342 ;
+    aaslow4[2]=0.987909468445464;
 
 
     ADE_Iir_Configure_params( p_blow->p_iir,&(*nums),&(*denoms));
@@ -826,10 +835,10 @@ static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow)
 {
 
     ADE_FLOATING_T iir_gains[IIR2_N_SECTIONS];
-    ADE_FLOATING_T bbslow[IIR2_N_SECTIONS],bbslow2[IIR2_N_SECTIONS],bbslow3[IIR2_N_SECTIONS];
-    ADE_FLOATING_T aaslow[IIR2_N_SECTIONS],aaslow2[IIR2_N_SECTIONS],aaslow3[IIR2_N_SECTIONS];
-    ADE_FLOATING_T *nums[IIR2_N_SECTIONS]= {bbslow,bbslow2,bbslow3};
-    ADE_FLOATING_T *denoms[IIR2_N_SECTIONS]= {aaslow,aaslow2,aaslow3};
+    ADE_FLOATING_T bbslow[3],bbslow2[3];
+    ADE_FLOATING_T aaslow[3],aaslow2[3];
+    ADE_FLOATING_T *nums[IIR2_N_SECTIONS]= {bbslow,bbslow2};
+    ADE_FLOATING_T *denoms[IIR2_N_SECTIONS]= {aaslow,aaslow2};
     ADE_API_RET_T ret_conf=ADE_RET_ERROR;
     ADE_API_RET_T ret_set=ADE_RET_ERROR;
 
@@ -841,27 +850,23 @@ static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow)
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Iir2_Configure_params,ret_conf);
 #else
 
-    iir_gains[0]=2.73316597838323e-08;
-    iir_gains[1]=2.73276093372558e-08;
-    iir_gains[2]=2.73252713574353e-08;
-    bbslow[0]=1.0;
-    bbslow[1]=2.0;
-    bbslow[2]=1.0;
+    iir_gains[0]= 2.845331118969305e-08;
+    iir_gains[1]=2.844811749336196e-08;
+
+    bbslow[0]= 1.204819277108434;
+    bbslow[1]=2.40963855421686;
+    bbslow[2]= 1.204819277108434;
     bbslow2[0]=1.0;
     bbslow2[1]=2.0;
     bbslow2[2]=1.0;
-    bbslow3[0]=1.0;
-    bbslow3[1]=1.0;
-    bbslow3[2]=0.0;
+
     aaslow[0]=1.0;
-    aaslow[1]=-1.999828743143229;
-    aaslow[2]=  0.999828852469868;
+    aaslow[1]= -1.999741697018632;
+    aaslow[2]=   9.997418108318769e-01;
     aaslow2[0]=1.0;
-    aaslow2[1]=-1.999532376235760;
-    aaslow2[2]=0.999532485546198;
-    aaslow3[0]=1.0;
-    aaslow3[1]= -1.999361308716150;
-    aaslow3[2]= 0.999361418017236;
+    aaslow2[1]=-1.999376676193966;
+    aaslow2[2]= 9.993767899864360e-01;
+
 
 
     ret_set=ADE_Iir_setGains( p_blow->p_iir2, iir_gains);
@@ -905,12 +910,16 @@ static ADE_API_RET_T ADE_Blow_Iir2_Configure_inout(ADE_BLOW_T* p_blow)
 static ADE_API_RET_T ADE_Blow_Expander_Configure_params(ADE_BLOW_T* p_blow)
 {
 
-    ADE_FLOATING_T breaks[POLY_N_BREAKS]= {0,0.05,0.1,0.3,0.5,1};
-    ADE_FLOATING_T coeffs[(POLY_N_BREAKS-1)*(POLY_ORDER+1)]= {0.000000000000089,-0.000000000000009,1.000000000000000,0,
-                                                              0,0,1.000000000000000,0.050000000000000,
-                                                              8.333333333333334,-1.666666666666667,1.000000000000000,0.100000000000000,
-                                                              -21.505376344086020,7.634408602150536,1.333333333333333,0.300000000000000
-                                                              -0.317050691244241,-0.254377880184331,1.806451612903226,0.700000000000000
+
+
+
+
+    ADE_FLOATING_T breaks[POLY_N_BREAKS]= {0,0.05,0.1,0.3,0.6,1};
+    ADE_FLOATING_T coeffs[(POLY_N_BREAKS-1)*(POLY_ORDER+1)]= {8.881784197001252e-14,-8.881784197001252e-15,1.000000000000000,0,
+                                                              1.454545454545455e+02,-7.272727272727275e+00,1.000000000000000,0.050000000000000,
+                                                             -2.833424060968969e+01,1.384866630375612e+01 ,1.363636363636364e+00,1.000000000000000e-01,
+                                                              8.567888377833695e+00 ,1.974312245075094e-01,3.502994011976049e+00, 7.000000000000000e-01,
+                                                              -5.169513457556945e+00,1.223084886128365e+01,5.934782608695651e+00, 2.000000000000000e+00
                                                              };
     ADE_API_RET_T ret_set=ADE_RET_ERROR;
 
