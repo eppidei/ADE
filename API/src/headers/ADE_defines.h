@@ -151,8 +151,8 @@
 #define ADE_POLYFIT_MAX_POLY_ORDER (5)
 
 /****************************** BLOW ***********************************/
-#define IIR1_N_SECTIONS (3)
-#define IIR2_N_SECTIONS (3)
+#define IIR1_N_SECTIONS (4)
+#define IIR2_N_SECTIONS (2)
 #define POLY_N_BREAKS (6)
 #define POLY_ORDER (3)
 //#define ADE_BLOW_MATLAB_PATH "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts/"

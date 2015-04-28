@@ -10,3 +10,4 @@
 9) fare periodicamente code review
 10) Aggiungere con #ifdef CHECK_INPUT solo valori non permessi delle funzioni doSomething
 11) testare la differenza tra 2 cicli for su operazioni ottimizzate ed un unico con non ottimizzate ma inglobate in un unico ciclo.
+12) Separa Init da variabili che dipendono da configurazione e inizializzare con valori max defined
