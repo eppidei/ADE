@@ -8,12 +8,14 @@
 #include <stdlib.h>
 #include "headers/ADE_Error_Handler.h"
 
+
 /******** static headers **********/
 static ADE_BOOL_T ADE_IsInactiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i);
 static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i);
 static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff);
+static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out);
 
 ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T in_buff_len,ADE_FLOATING_T input_rate)
 {
@@ -214,6 +216,8 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
 ADE_SCDF_Output_Int_T* ADE_GetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 {
 
+
+
 ADE_SCDF_Output_Int_T* p_out=NULL;
 
 #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
@@ -237,18 +241,22 @@ if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
     p_out->p_data=p_ADE->p_blow->p_out;
     p_out->n_data=p_ADE->p_blow->buff_len_o;
     p_out->state=p_ADE->p_blow->state;
+    ADE_toggle_logic(p_out);
+
 
 }
 else if (Sel_Flag_i==SNAP_FLAG)
 {
     p_out=(p_ADE->p_snap_out_struct);
-
-    //p_out->Fs_data=p_ADE->p_snap->Fs;
+    p_out->Fs_data=p_ADE->p_snap->Fs;
     //p_out->p_data=p_ADE->p_snap->p_out;
-   // p_out->n_data=p_ADE->p_snap->buff_len_o;
+    //p_out->n_data=p_ADE->p_snap->buff_len_o;
     p_out->state=p_ADE->p_snap->state;
+    ADE_toggle_logic(p_out);
 
 }
+
+
 
 return p_out;
 
@@ -333,6 +341,35 @@ static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i)
 
 }
 
+
+static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out)
+{
+    ADE_UINT32_T antibouncing_counter = 100;
+
+
+        if  ( (p_out->n_calls==0) && (p_out->state==ADE_TRUE) )
+        {
+            p_out->toggle=!p_out->toggle;
+            p_out->n_calls=p_out->n_calls+1;
+
+        }
+        else if (p_out->n_calls>0)
+        {
+            if (p_out->n_calls<antibouncing_counter)
+            {
+                p_out->n_calls=p_out->n_calls+1;
+            }
+            else
+            {
+
+                p_out->n_calls=0;
+            }
+        }
+
+
+    return ADE_RET_SUCCESS;
+
+}
 //static ADE_API_RET_T ADE_AllocateOutBuff(ADE_SCDF_Output_Int_T* p_out_struct)
 //{
 //

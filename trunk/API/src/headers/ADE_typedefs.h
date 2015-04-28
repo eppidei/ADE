@@ -54,8 +54,8 @@ typedef long ADE_LONG_T;
 typedef unsigned long ADE_ULONG_T;
 typedef bool ADE_BOOL_T;
 typedef FILE ADE_FILE_T;
-#define ADE_TRUE true;
-#define ADE_FALSE false;
+#define ADE_TRUE true
+#define ADE_FALSE false
 
 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef ADE_FLOATING_DP_T ADE_FLOATING_T;
