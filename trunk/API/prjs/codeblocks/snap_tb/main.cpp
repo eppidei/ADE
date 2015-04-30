@@ -158,9 +158,11 @@ ret =  ADE_Snap_Init(&p_snap, frame_len, Fs_i, n_pow_slots_i, n_max_indexes_i, t
     }
 
 #endif
-ret = ADE_Snap_SetInBuff(p_snap, p_buff);
+//ret = ADE_Snap_SetInBuff(p_snap, p_buff);
 
-ret = ADE_Snap_Configure(p_snap);
+ret = ADE_Snap_Configure(p_snap, p_buff);
+
+ADE_Snap_Print(p_snap,stdout,"p_snap","");
 
 #if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
 n_frames=ADE_Matlab_GetScalar(p_snap->p_mat,"n_frames");

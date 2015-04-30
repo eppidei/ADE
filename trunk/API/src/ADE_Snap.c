@@ -26,6 +26,7 @@ static ADE_API_RET_T ADE_Snap_doXrms2(ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out
 static ADE_API_RET_T ADE_Snap_dofind_local_max(ADE_INT32_T samples_range,ADE_INT32_T search_step,ADE_INT32_T look_ahead_step,
                                                 ADE_FLOATING_T *p_min_thresh,ADE_FLOATING_T *p_data,ADE_UINT32_T *p_indexes,ADE_FLOATING_T *p_index_vals,ADE_UINT32_T *p_n_found_idxs,
                                                 ADE_FLOATING_T min_data_sensed,ADE_UINT32_T len);
+static ADE_API_RET_T ADE_Snap_SetInBuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
 /******* ADE_METHOD_Init methods  ***********************/
 ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32_T Fs_i,ADE_UINT32_T n_pow_slots_i,ADE_UINT32_T n_max_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,ADE_UINT32_T fft_len_i)
 {
@@ -250,8 +251,8 @@ ADE_CHECK_MEMALLOC(ADE_CLASS_SNAP,ADE_METHOD_Init,p_this->dp_segments[i]);
 
 
         /***************** ALLOC CC IIR *********************/
-        iir_ret=ADE_Iir_Init(&(p_this->p_iir),iir_n_sos,buff_len,ADE_IIR_TRASP_II_B);
-        ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,iir_ret);
+        //iir_ret=ADE_Iir_Init(&(p_this->p_iir),iir_n_sos,buff_len,ADE_IIR_TRASP_II_B);
+        //ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,iir_ret);
 
         *p_snap=p_this;
 
@@ -265,7 +266,7 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
     ADE_UINT32_T i=0;
 
 
-    ADE_Iir_Release(p_snap->p_iir);
+   // ADE_Iir_Release(p_snap->p_iir);
 
     for (i=0;i<p_snap->n_pow_est_slots;i++)
     {
@@ -347,7 +348,50 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
 
 }
 /******* Configure methods  ***********************/
-ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap)
+ADE_API_RET_T ADE_Snap_Configure_inout(ADE_SNAP_T *p_snap,ADE_FLOATING_T *p_buff)
+{
+
+ADE_API_RET_T ret_set = ADE_RET_ERROR;
+ADE_API_RET_T ret_elew_cfg = ADE_RET_ERROR;
+ADE_API_RET_T ret_elew_cfg2 = ADE_RET_ERROR;
+ADE_API_RET_T ret_b1a = ADE_RET_ERROR;
+ADE_UINT32_T b1_idx=0;
+ADE_FLOATING_SP_T slot_len=0, mod_res=0;
+ADE_UINT32_T uslot_len=0;
+
+ret_set =  ADE_Snap_SetInBuff(p_snap,p_buff);
+
+ret_elew_cfg=ADE_Blas_level2_configure_elewise_inout(p_snap->p_blas_l2_tgk1,&((p_snap->p_in)[1]),&((p_snap->p_in)[1]) ,&((p_snap->p_tgk)[1]),(p_snap->buff_len)-2);
+ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_inout,ret_elew_cfg);
+
+
+
+ret_elew_cfg2=ADE_Blas_level2_configure_elewise_inout(p_snap->p_blas_l2_tgk2,&((p_snap->p_in)[0]),&((p_snap->p_in)[2]) ,&((p_snap->p_tgk)[1]),(p_snap->buff_len)-2);
+ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_inout,ret_elew_cfg2);
+
+/***2 improve first time params must be called before inout***/
+if ( mod_res== 0.0F )
+{
+   slot_len=(p_snap->buff_len)/p_snap->n_pow_est_slots;
+}
+else
+{
+    fprintf(ADE_STDERR_STREAM,"!!!!!!!!ERROR:Buff len divided by pow_slots is not an integer value\n");
+    return ADE_RET_ERROR;
+}
+
+uslot_len=(ADE_UINT32_T)slot_len;
+
+for (b1_idx=0;b1_idx<p_snap->n_pow_est_slots;b1_idx++)
+{
+    ret_b1a = ADE_Blas_level1_configure_dot_inout(p_snap->dp_blas_l1_pow_est[b1_idx],&(p_snap->p_in[b1_idx*uslot_len]),&(p_snap->p_in[b1_idx*uslot_len]));
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_inout,ret_b1a);
+}
+
+}
+
+
+ADE_API_RET_T ADE_Snap_Configure_params(ADE_SNAP_T *p_snap)
 {
 
 ADE_FLOATING_T freq_left=0;
@@ -384,7 +428,7 @@ FILE *p_stream=ADE_STDERR_STREAM;
 ADE_CPLX_T *p_init_bin=NULL;
 
 
-ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_Configure,p_snap);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,p_snap);
 
 
  #ifdef ADE_CONFIGURATION_INTERACTIVE
@@ -407,7 +451,7 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_Configure,p_snap);
     }
     else
     {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_SNAP,ADE_METHOD_Configure,p_max_array,"%p",(FILE*)ADE_STD_STREAM);
+        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_SNAP,ADE_METHOD_Configure_params,p_max_array,"%p",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
     search_step=ADE_Matlab_GetScalar(p_snap->p_mat,"search_step");
@@ -420,7 +464,7 @@ freq_left=1800;
 freq_right=3200;
 if (freq_right>p_snap->Fs)
 {
-    ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_SNAP,ADE_METHOD_Configure,freq_right,"%d",(FILE*)ADE_STD_STREAM);
+    ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_SNAP,ADE_METHOD_Configure_params,freq_right,"%d",(FILE*)ADE_STD_STREAM);
     fprintf(p_stream,"freq_right right %f greater than Fs/2 \n",freq_right);
     return ADE_RET_ERROR;
 }
@@ -466,14 +510,16 @@ p_snap->max_range[1]=max_range[1];
 p_snap->search_step=search_step;
 p_snap->look_ahead_step=look_ahead_step;
 
-/**** Configuration fro tg ************/
+
+/**** Configuration for tg ************/
 /*y = x(2:L-1).^2-x(1:L-2).*x(3:L);*/
 
-    ret_elew_cfg=ADE_Blas_level2_configure_elewise(p_snap->p_blas_l2_tgk1,&((p_snap->p_in)[1]),&((p_snap->p_in)[1]) ,&((p_snap->p_tgk)[1]),1.0,0.0,(p_snap->buff_len)-2);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_elew_cfg);
+ret_elew_cfg=ADE_Blas_level2_configure_elewise_params(p_snap->p_blas_l2_tgk1,1.0,0.0);
+ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_elew_cfg);
 
-    ret_elew_cfg=ADE_Blas_level2_configure_elewise(p_snap->p_blas_l2_tgk2,&((p_snap->p_in)[0]),&((p_snap->p_in)[2]) ,&((p_snap->p_tgk)[1]),-1.0,1.0,(p_snap->buff_len)-2);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_elew_cfg);
+ret_elew_cfg=ADE_Blas_level2_configure_elewise_params(p_snap->p_blas_l2_tgk2,-1.0,1.0);
+ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_elew_cfg);
+
 /*** Configure Blas1 for pow estimate ********/
 mod_res=fmodf ((ADE_FLOATING_SP_T)p_snap->buff_len ,(ADE_FLOATING_SP_T) p_snap->n_pow_est_slots);
 
@@ -490,20 +536,20 @@ else
 uslot_len=(ADE_UINT32_T)slot_len;
 for (b1_idx=0;b1_idx<p_snap->n_pow_est_slots;b1_idx++)
 {
-    ret_b1a = ADE_Blas_level1_configure_dot(p_snap->dp_blas_l1_pow_est[b1_idx],1,1,uslot_len,&(p_snap->p_in[b1_idx*uslot_len]),&(p_snap->p_in[b1_idx*uslot_len]));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b1a);
+    ret_b1a = ADE_Blas_level1_configure_dot_params(p_snap->dp_blas_l1_pow_est[b1_idx],1,1,uslot_len);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_b1a);
 }
 
     /*** configure threshold blas2***/
 
 ret_b1b = ADE_Blas_level1_configure_axpy(p_snap->p_blas_l1_threshold,&(p_snap->thresh_gain),1,1,p_snap->buff_len,p_snap->p_pow_est,p_snap->p_thresh);
-ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b1b);
+ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_b1b);
 
 /*** fft config ****/
 for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
     ret_fft=ADE_Fft_Configure(p_snap->dp_fft[fft_idx],ADE_FFT_R2C, ADE_FFT_FORWARD,p_snap->dp_segments[fft_idx],p_snap->dp_spectrum[fft_idx]);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_fft);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_fft);
 }
 
      /*** blas1 spectrum whole config ***/
@@ -512,7 +558,7 @@ for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
  ret_specw = ADE_Blas_level1_configure_dotc(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1,1,(p_snap->fft_len/2),(p_snap->dp_spectrum[fft_idx]),(p_snap->dp_spectrum[fft_idx]));
    //per essere come matlab forse meglio len/2+1
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specw);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_specw);
 }
 
  /*** blas1 spectrum band config ***/
@@ -521,11 +567,210 @@ for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
 {
     p_init_bin = (ADE_CPLX_T*)p_snap->dp_spectrum[fft_idx];
     ret_specb = ADE_Blas_level1_configure_dotc(p_snap->dp_blas_l1_pow_spect_band[fft_idx],1,1,band_len,(p_init_bin+sx_bin),(p_init_bin+sx_bin));
-    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specb);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_specb);
 
 }
  return ADE_RET_SUCCESS;
+
+
+
 }
+
+ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff)
+{
+
+    ADE_API_RET_T ret_conf = ADE_RET_ERROR;
+    ADE_API_RET_T ret_inout = ADE_RET_ERROR;
+
+ret_conf = ADE_Snap_Configure_params(p_snap);
+ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_conf);
+ret_inout = ADE_Snap_Configure_inout(p_snap,p_buff);
+ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_inout);
+
+return ADE_RET_SUCCESS;
+
+}
+
+
+//ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap)
+//{
+//
+//ADE_FLOATING_T freq_left=0;
+//ADE_FLOATING_T freq_right=0;
+//ADE_FLOATING_T spectral_threshold_schiocco  = 0;
+//ADE_FLOATING_T thresh_gain = 0;
+//ADE_FLOATING_T thresh_bias = 0;
+//ADE_FLOATING_T attack_time=0;
+//ADE_FLOATING_T release_time=0;
+//ADE_FLOATING_T at = 0;
+//ADE_FLOATING_T rt = 0;
+//ADE_FLOATING_T freq_step=0;
+//ADE_UINT32_T sx_bin=0;
+//ADE_UINT32_T dx_bin=0;
+//ADE_UINT32_T band_len=0;
+//ADE_FLOATING_T samp_range_search_time = 0;
+//ADE_UINT32_T samp_range_search = 0;
+//ADE_FLOATING_T max_range[2]  = {0,0};
+//ADE_UINT32_T search_step = 0;
+//ADE_UINT32_T look_ahead_step = 0;
+//ADE_FLOATING_T time_left=0;
+//ADE_FLOATING_T time_right=0;
+//
+//ADE_UINT32_T b1_idx=0,thresh_idx=0,fft_idx=0;
+//ADE_API_RET_T ret_b1a=ADE_RET_ERROR;
+//ADE_API_RET_T ret_b1b=ADE_RET_ERROR;
+//ADE_API_RET_T ret_elew_cfg=ADE_RET_ERROR;
+//ADE_API_RET_T ret_fft=ADE_RET_ERROR;
+//ADE_API_RET_T ret_specw=ADE_RET_ERROR;
+//ADE_API_RET_T ret_specb=ADE_RET_ERROR;
+//ADE_FLOATING_SP_T slot_len=0, mod_res=0;
+//ADE_UINT32_T uslot_len=0;
+//FILE *p_stream=ADE_STDERR_STREAM;
+//ADE_CPLX_T *p_init_bin=NULL;
+//
+//
+//ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_Configure,p_snap);
+//
+//
+// #ifdef ADE_CONFIGURATION_INTERACTIVE
+// double  *p_max_array=NULL;
+//
+//    freq_left=ADE_Matlab_GetScalar(p_snap->p_mat,"freq_left");
+//    freq_right=ADE_Matlab_GetScalar(p_snap->p_mat,"freq_right");
+//    spectral_threshold_schiocco=ADE_Matlab_GetScalar(p_snap->p_mat,"spectral_threshold_schiocco");
+//    thresh_gain=ADE_Matlab_GetScalar(p_snap->p_mat,"thresh_gain");
+//    thresh_bias=ADE_Matlab_GetScalar(p_snap->p_mat,"thresh_bias");
+//    attack_time=ADE_Matlab_GetScalar(p_snap->p_mat,"at");
+//    release_time=ADE_Matlab_GetScalar(p_snap->p_mat,"rt");
+//    samp_range_search_time=ADE_Matlab_GetScalar(p_snap->p_mat,"samp_range_search_time");
+//    samp_range_search=ADE_Matlab_GetScalar(p_snap->p_mat,"samp_range_search");
+//    p_max_array= ADE_Matlab_GetDataPointer(p_snap->p_mat, "max_range");
+//    if (p_max_array!=NULL)
+//    {
+//        max_range[0]  = p_max_array[0];
+//        max_range[1]  =  p_max_array[1];
+//    }
+//    else
+//    {
+//        ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_SNAP,ADE_METHOD_Configure,p_max_array,"%p",(FILE*)ADE_STD_STREAM);
+//        return ADE_RET_ERROR;
+//    }
+//    search_step=ADE_Matlab_GetScalar(p_snap->p_mat,"search_step");
+//    look_ahead_step=ADE_Matlab_GetScalar(p_snap->p_mat,"look_ahead_step");
+//    time_left=ADE_Matlab_GetScalar(p_snap->p_mat,"time_left");
+//    time_right=ADE_Matlab_GetScalar(p_snap->p_mat,"time_right");
+//#else
+//
+//freq_left=1800;
+//freq_right=3200;
+//if (freq_right>p_snap->Fs)
+//{
+//    ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_SNAP,ADE_METHOD_Configure,freq_right,"%d",(FILE*)ADE_STD_STREAM);
+//    fprintf(p_stream,"freq_right right %f greater than Fs/2 \n",freq_right);
+//    return ADE_RET_ERROR;
+//}
+//spectral_threshold_schiocco  = 0.2;
+// thresh_gain = 7;
+// thresh_bias = 2e-2;
+// attack_time=1e-4;
+// release_time=50e-3;
+//samp_range_search_time = p_snap->frame_time_len/4;//80e-3;
+// samp_range_search = ceil(samp_range_search_time*p_snap->Fs)-1;
+// max_range[0]  = 2000;
+//  max_range[1]  = 3000;
+// search_step = 3;
+// look_ahead_step = 3;
+// time_left=0.5e-3;
+// time_right=6e-3;
+//
+//#endif
+//at = 1-exp(-2.2/(p_snap->Fs*attack_time));
+//rt = 1-exp(-2.2/(p_snap->Fs*release_time));
+//freq_step=p_snap->Fs/(p_snap->fft_len-1);
+//sx_bin=floor(freq_left/freq_step+0.5);
+// dx_bin=floor(freq_right/freq_step+0.5);
+//band_len=dx_bin-sx_bin+1;
+//
+//
+///*** to put into set methods***/
+////p_snap->frame_time_len;
+////p_snap->buff_len=frame_len;
+//p_snap->freq_left=freq_left;
+//p_snap->freq_right=freq_right;
+//p_snap->spectral_threshold_schiocco=spectral_threshold_schiocco;
+//p_snap->thresh_gain=thresh_gain;
+//p_snap->thresh_bias=thresh_bias;
+//p_snap->at=at;
+//p_snap->rt=rt;
+//p_snap->time_left=time_left;
+//p_snap->time_right=time_right;
+//p_snap->samp_range_search_time=samp_range_search_time;
+//p_snap->samp_range_search=samp_range_search;
+//p_snap->max_range[0]=max_range[0];
+//p_snap->max_range[1]=max_range[1];
+//p_snap->search_step=search_step;
+//p_snap->look_ahead_step=look_ahead_step;
+//
+///**** Configuration fro tg ************/
+///*y = x(2:L-1).^2-x(1:L-2).*x(3:L);*/
+//
+//    ret_elew_cfg=ADE_Blas_level2_configure_elewise(p_snap->p_blas_l2_tgk1,&((p_snap->p_in)[1]),&((p_snap->p_in)[1]) ,&((p_snap->p_tgk)[1]),1.0,0.0,(p_snap->buff_len)-2);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_elew_cfg);
+//
+//    ret_elew_cfg=ADE_Blas_level2_configure_elewise(p_snap->p_blas_l2_tgk2,&((p_snap->p_in)[0]),&((p_snap->p_in)[2]) ,&((p_snap->p_tgk)[1]),-1.0,1.0,(p_snap->buff_len)-2);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_elew_cfg);
+///*** Configure Blas1 for pow estimate ********/
+//mod_res=fmodf ((ADE_FLOATING_SP_T)p_snap->buff_len ,(ADE_FLOATING_SP_T) p_snap->n_pow_est_slots);
+//
+//if ( mod_res== 0.0F )
+//{
+//   slot_len=(p_snap->buff_len)/p_snap->n_pow_est_slots;
+//}
+//else
+//{
+//    fprintf(ADE_STDERR_STREAM,"!!!!!!!!ERROR:Buff len divided by pow_slots is not an integer value\n");
+//    return ADE_RET_ERROR;
+//}
+//
+//uslot_len=(ADE_UINT32_T)slot_len;
+//for (b1_idx=0;b1_idx<p_snap->n_pow_est_slots;b1_idx++)
+//{
+//    ret_b1a = ADE_Blas_level1_configure_dot(p_snap->dp_blas_l1_pow_est[b1_idx],1,1,uslot_len,&(p_snap->p_in[b1_idx*uslot_len]),&(p_snap->p_in[b1_idx*uslot_len]));
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b1a);
+//}
+//
+//    /*** configure threshold blas2***/
+//
+//ret_b1b = ADE_Blas_level1_configure_axpy(p_snap->p_blas_l1_threshold,&(p_snap->thresh_gain),1,1,p_snap->buff_len,p_snap->p_pow_est,p_snap->p_thresh);
+//ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_b1b);
+//
+///*** fft config ****/
+//for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
+//{
+//    ret_fft=ADE_Fft_Configure(p_snap->dp_fft[fft_idx],ADE_FFT_R2C, ADE_FFT_FORWARD,p_snap->dp_segments[fft_idx],p_snap->dp_spectrum[fft_idx]);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_fft);
+//}
+//
+//     /*** blas1 spectrum whole config ***/
+//
+//for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
+//{
+// ret_specw = ADE_Blas_level1_configure_dotc(p_snap->dp_blas_l1_pow_spect_whole[fft_idx],1,1,(p_snap->fft_len/2),(p_snap->dp_spectrum[fft_idx]),(p_snap->dp_spectrum[fft_idx]));
+//   //per essere come matlab forse meglio len/2+1
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specw);
+//}
+//
+// /*** blas1 spectrum band config ***/
+//
+// for(fft_idx=0;fft_idx<p_snap->n_max_indexes;fft_idx++)
+//{
+//    p_init_bin = (ADE_CPLX_T*)p_snap->dp_spectrum[fft_idx];
+//    ret_specb = ADE_Blas_level1_configure_dotc(p_snap->dp_blas_l1_pow_spect_band[fft_idx],1,1,band_len,(p_init_bin+sx_bin),(p_init_bin+sx_bin));
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure,ret_specb);
+//
+//}
+// return ADE_RET_SUCCESS;
+//}
 
 /******* Operative methods  ***********************/
 ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap)
@@ -584,7 +829,9 @@ ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap)
 }
 
 
-ADE_API_RET_T ADE_Snap_SetInBuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff)
+
+/************************* private methods ***********************/
+static ADE_API_RET_T ADE_Snap_SetInBuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff)
 {
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_SetInBuff,p_snap);
@@ -595,7 +842,7 @@ ADE_API_RET_T ADE_Snap_SetInBuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff)
     return ADE_RET_SUCCESS;
 
 }
-/************************* private methods ***********************/
+
 static ADE_API_RET_T ADE_Snap_TeagerKaiser(ADE_SNAP_T *p_snap)
 {
 
@@ -1132,3 +1379,130 @@ for (i=0;i<n_events;i++)
 
  return ADE_RET_SUCCESS;
 }
+
+ADE_API_RET_T ADE_Snap_Print(ADE_SNAP_T* p_snap, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj)
+{
+
+     ADE_CHAR_T fixed_str[64];
+    ADE_CHAR_T pri_str[128];
+    ADE_SIZE_T len_str;
+       ADE_CHAR_T temp_str[64];
+       ADE_UINT32_T i=0;
+       ADE_CHAR_T temp_str2[32];
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_Print,p_snap);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_Print,p_fid);
+
+            memset(fixed_str,'\0',sizeof(fixed_str));
+strcat(fixed_str,calling_obj);
+strcat(fixed_str,"->");
+strcat(fixed_str,obj_name);
+strcat(fixed_str,"->");
+len_str=strlen(fixed_str);
+ memset(temp_str,'\0',sizeof(temp_str));
+
+    if (p_fid!=NULL)
+    {
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"Fs = %f\n"),p_snap->Fs);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"buff_len = %u\n"),p_snap->buff_len);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_pow_est_slots = %u\n"),p_snap->n_pow_est_slots);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"frame_time_len = %f\n"),p_snap->frame_time_len);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"freq_left = %f\n"),p_snap->freq_left);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"freq_right = %f\n"),p_snap->freq_right);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"spectral_threshold_schiocco = %f\n"),p_snap->spectral_threshold_schiocco);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"thresh_gain = %f\n"),p_snap->thresh_gain);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"thresh_bias = %f\n"),p_snap->thresh_bias);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"at = %f\n"),p_snap->at);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"rt = %f\n"),p_snap->rt);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"time_left = %f\n"),p_snap->time_left);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"time_right = %f\n"),p_snap->time_right);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"samp_range_search_time = %f\n"),p_snap->samp_range_search_time);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"max_range = %p(%f)\n"),p_snap->max_range,p_snap->max_range[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"samp_range_search = %u\n"),p_snap->samp_range_search);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"search_step = %u\n"),p_snap->search_step);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"look_ahead_step = %u\n"),p_snap->look_ahead_step);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_max_indexes = %u\n"),p_snap->n_max_indexes);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"n_found_indexes = %u\n"),p_snap->n_found_indexes);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"extract_len = %u\n"),p_snap->extract_len);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"fft_len = %u\n"),p_snap->fft_len);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_snap->p_in,p_snap->p_in[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_pow_est = %p(%f)\n"),p_snap->p_pow_est,p_snap->p_pow_est[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_dot_vals = %p(%f)\n"),p_snap->p_dot_vals,p_snap->p_dot_vals[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_thresh = %p(%f)\n"),p_snap->p_thresh,p_snap->p_thresh[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_tgk = %p(%f)\n"),p_snap->p_tgk,p_snap->p_tgk[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_indexes = %p(%f)\n"),p_snap->p_indexes,p_snap->p_indexes[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_sort_indexes = %p(%f)\n"),p_snap->p_sort_indexes,p_snap->p_sort_indexes[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_index_vals = %p(%f)\n"),p_snap->p_index_vals,p_snap->p_index_vals[0]);
+        for (i=0;i<p_snap->n_max_indexes;i++)
+        {
+             strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_segments = %p([%d]%p(%f))\n"),p_snap->dp_segments,i,p_snap->dp_segments[i],*(p_snap->dp_segments[i]));
+            strcpy(pri_str,fixed_str);
+            fprintf(p_fid,strcat(pri_str,"dp_spectrum = %p(to do)\n"),p_snap->dp_spectrum);
+        }
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_percent_pow = %p(%f)\n"),p_snap->p_percent_pow,p_snap->p_percent_pow[0]);
+         strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"p_snaps = %p(%f)\n"),p_snap->p_snaps,p_snap->p_snaps[0]);
+        strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"state = %d\n"),p_snap->state);
+        //strncpy(temp_str,fixed_str,len_str-2);
+        //ADE_Iir_Print(p_snap->p_iir,p_fid,"p_iir",temp_str);
+        for (i=0;i<p_snap->n_pow_est_slots;i++)
+        {
+            strncpy(temp_str,fixed_str,len_str-2);
+             sprintf(temp_str2,"dp_blas_l1_pow_est[%d]",i);
+            ADE_Blas_level1_Print(p_snap->dp_blas_l1_pow_est[i],p_fid,temp_str2,temp_str);
+        }
+        strcpy(pri_str,fixed_str);
+        ADE_Blas_level1_Print(p_snap->p_blas_l1_threshold,p_fid,"p_blas_l1_threshold",temp_str);
+         strcpy(pri_str,fixed_str);
+        ADE_Blas_level2_Print(p_snap->p_blas_l2_tgk1,p_fid,"p_blas_l2_tgk1",temp_str);
+         strcpy(pri_str,fixed_str);
+        ADE_Blas_level2_Print(p_snap->p_blas_l2_tgk2,p_fid,"p_blas_l2_tgk2",temp_str);
+        for (i=0;i<p_snap->n_max_indexes;i++)
+        {
+            strncpy(temp_str,fixed_str,len_str-2);
+             sprintf(temp_str2,"dp_blas_l1_pow_spect_whole[%d]",i);
+            ADE_Blas_level1_Print(p_snap->dp_blas_l1_pow_spect_whole[i],p_fid,temp_str2,temp_str);
+            sprintf(temp_str2,"dp_blas_l1_pow_spect_band[%d]",i);
+            ADE_Blas_level1_Print(p_snap->dp_blas_l1_pow_spect_band[i],p_fid,temp_str2,temp_str);
+        }
+
+       strcpy(pri_str,fixed_str);
+        fprintf(p_fid,strcat(pri_str,"dp_fft = %p to do\n"),p_snap->dp_fft);
+
+    }
+
+    }
+
