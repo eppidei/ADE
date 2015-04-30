@@ -528,7 +528,7 @@ ADE_API_RET_T ADE_Blas_level1_configure_axpy_params(ADE_blas_level1_T* p_blas_l1
     ret_incy  = ADE_Blas_level1_SetINCY(p_blas_l1,INCY);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_incy);
 
-    ret_n = ADE_Blas_level1_SetN(p_blas_l1,ret_n);
+    ret_n = ADE_Blas_level1_SetN(p_blas_l1,N);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_n);
 
     return ADE_RET_SUCCESS;
@@ -588,7 +588,7 @@ ADE_API_RET_T ADE_Blas_level1_configure_dotc_params(ADE_blas_level1_T* p_blas_l1
     ret_incy  = ADE_Blas_level1_SetINCY(p_blas_l1,INCY);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,ret_incy);
 
-    ret_n = ADE_Blas_level1_SetN(p_blas_l1,ret_n);
+    ret_n = ADE_Blas_level1_SetN(p_blas_l1,N);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,ret_n);
 
     return ADE_RET_SUCCESS;

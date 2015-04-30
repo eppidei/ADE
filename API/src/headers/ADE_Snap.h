@@ -80,10 +80,15 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap,ADE_UINT32_T buff_len,ADE_UINT32
 ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
 /**************************** Set Methods ********************************/
 /************************ Configuration Methods **************************************/
-ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap);
-/************************** Operative Methods *******************************/
+
+ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
+ADE_API_RET_T ADE_Snap_Configure_params(ADE_SNAP_T *p_snap);
+ADE_API_RET_T ADE_Snap_Configure_inout(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
+/************************** Processing Methods *******************************/
 ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap);
-ADE_API_RET_T ADE_Snap_SetInBuff(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
+/************************** Utils Methods *******************************/
+ADE_API_RET_T ADE_Snap_Print(ADE_SNAP_T* p_snap, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj);
+
 
 #ifdef __cplusplus
     }   /* extern "C" */

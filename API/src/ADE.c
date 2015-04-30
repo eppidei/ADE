@@ -15,7 +15,8 @@ static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Se
 static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff);
-static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out);
+static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
+static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
 
 ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T in_buff_len,ADE_FLOATING_T input_rate)
 {
@@ -126,6 +127,8 @@ ADE_API_RET_T ADE_Configure_params(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 {
     ADE_UINT32_T blow_flag = BLOW_FLAG;
     ADE_API_RET_T ret_blow=ADE_RET_ERROR;
+    ADE_UINT32_T snap_flag = SNAP_FLAG;
+    ADE_API_RET_T ret_snap=ADE_RET_ERROR;
 
     if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
     {
@@ -133,6 +136,13 @@ ADE_API_RET_T ADE_Configure_params(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
         ret_blow = ADE_Blow_Configure_params( p_ADE->p_blow);
         ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_params,ret_blow);
         //ADE_API_RET_T ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size);
+
+    }
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
+    {
+
+        ret_snap = ADE_Snap_Configure_params( p_ADE->p_snap);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_params,ret_snap);
 
     }
 
@@ -144,13 +154,22 @@ ADE_API_RET_T ADE_Configure_params(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff)
 {
     ADE_UINT32_T blow_flag = BLOW_FLAG;
+     ADE_UINT32_T snap_flag = SNAP_FLAG;
     ADE_API_RET_T ret_blow=ADE_RET_ERROR;
+     ADE_API_RET_T ret_snap=ADE_RET_ERROR;
 
     if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
     {
 
         ret_blow = ADE_Blow_Configure_inout( p_ADE->p_blow,p_inbuff);
         ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_blow);
+
+    }
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
+    {
+
+        ret_snap = ADE_Snap_Configure_inout( p_ADE->p_snap,p_inbuff);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_snap);
 
     }
 
@@ -198,10 +217,8 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
 
      } else if  ( (Sel_Flag_i & snap_flag)==snap_flag )
         {
-            snap_ret = ADE_Snap_SetInBuff(p_ADE->p_snap, p_in_struct->data);
-            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,snap_ret);
 
-            ret_snap_conf = ADE_Snap_Configure(p_ADE->p_snap);
+            ret_snap_conf = ADE_Snap_Configure_inout(p_ADE->p_snap, p_in_struct->data);
             ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,ret_snap_conf);
 
             snap_ret = ADE_Snap_Step(p_ADE->p_snap);
@@ -240,8 +257,9 @@ if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
     p_out->Fs_data=p_ADE->p_blow->Fs_o;
     p_out->p_data=p_ADE->p_blow->p_out;
     p_out->n_data=p_ADE->p_blow->buff_len_o;
-    p_out->state=p_ADE->p_blow->state;
-    ADE_toggle_logic(p_out);
+   // p_out->state=p_ADE->p_blow->state;
+    ADE_state_logic(p_out,p_ADE->p_blow->state);
+    ADE_toggle_logic(p_out,p_ADE->p_blow->state);
 
 
 }
@@ -251,8 +269,8 @@ else if (Sel_Flag_i==SNAP_FLAG)
     p_out->Fs_data=p_ADE->p_snap->Fs;
     //p_out->p_data=p_ADE->p_snap->p_out;
     //p_out->n_data=p_ADE->p_snap->buff_len_o;
-    p_out->state=p_ADE->p_snap->state;
-    ADE_toggle_logic(p_out);
+    ADE_state_logic(p_out,p_ADE->p_snap->state);
+    ADE_toggle_logic(p_out,p_ADE->p_snap->state);
 
 }
 
@@ -282,7 +300,7 @@ static ADE_BOOL_T ADE_IsInactiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T 
 
 static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T defined_Flag_i)
 {
-    if ( ( (Sel_Flag_i & defined_Flag_i)==defined_Flag_i ) &&  ( ( active_algs_flag & defined_Flag_i ) == 1 ) )
+    if ( ( (Sel_Flag_i & defined_Flag_i)==defined_Flag_i ) &&  ( ( active_algs_flag & defined_Flag_i ) == defined_Flag_i ) )
     {
 
         return ADE_TRUE;
@@ -342,27 +360,56 @@ static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i)
 }
 
 
-static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out)
+static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
 {
     ADE_UINT32_T antibouncing_counter = 100;
 
 
-        if  ( (p_out->n_calls==0) && (p_out->state==ADE_TRUE) )
+        if  ( (p_out->n_calls_toggle_logic==0) && (ADE_state==ADE_TRUE) )
         {
             p_out->toggle=!p_out->toggle;
-            p_out->n_calls=p_out->n_calls+1;
+            p_out->n_calls_toggle_logic=p_out->n_calls_toggle_logic+1;
 
         }
-        else if (p_out->n_calls>0)
+        else if (p_out->n_calls_toggle_logic>0)
         {
-            if (p_out->n_calls<antibouncing_counter)
+            if (p_out->n_calls_toggle_logic<antibouncing_counter)
             {
-                p_out->n_calls=p_out->n_calls+1;
+                p_out->n_calls_toggle_logic=p_out->n_calls_toggle_logic+1;
             }
             else
             {
 
-                p_out->n_calls=0;
+                p_out->n_calls_toggle_logic=0;
+            }
+        }
+
+
+    return ADE_RET_SUCCESS;
+
+}
+
+static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
+{
+    ADE_UINT32_T antibouncing_counter = 1;
+
+
+        if   (p_out->n_calls_state_logic==0)
+        {
+            p_out->state=ADE_state;
+            p_out->n_calls_state_logic=p_out->n_calls_state_logic+1;
+
+        }
+        else if (p_out->n_calls_state_logic>0)
+        {
+            if (p_out->n_calls_state_logic<antibouncing_counter)
+            {
+                p_out->n_calls_state_logic=p_out->n_calls_state_logic+1;
+            }
+            else
+            {
+
+                p_out->n_calls_state_logic=0;
             }
         }
 

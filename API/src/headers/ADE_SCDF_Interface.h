@@ -35,7 +35,8 @@ ADE_FLOATING_T Fs_data;
 ADE_FLOATING_T *p_data;
 ADE_UINT32_T n_data;
 ADE_BOOL_T state;
+ADE_UINT32_T n_calls_state_logic;
 ADE_BOOL_T toggle;
-ADE_UINT32_T n_calls;
+ADE_UINT32_T n_calls_toggle_logic;
 } ADE_SCDF_Output_Int_T;
 #endif //_ADE_SCDF_INTERFACE_H

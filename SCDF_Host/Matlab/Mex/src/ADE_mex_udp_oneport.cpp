@@ -144,7 +144,7 @@ closesocket(SOCK_sd2);
 close(SOCK_sd2);
 #endif
 ADE_Release(p_ADE,BLOW_FLAG);
-//ADE_Release(p_ADE,BLOW_SNAP);
+ADE_Release(p_ADE,SNAP_FLAG);
 init=0;
 fclose(p_fid);
 
@@ -175,7 +175,7 @@ static int SOCK_sd;
     s_uint64 time_id=0;
     s_int32  num_samples;
     unsigned int i=0;
-    unsigned int blow_buff_len=0;
+    unsigned int audio_buff_len=0;
     float audio_fs=44100;
       double *remote_ip1_from_mat,*remote_ip2_from_mat,*remote_ip3_from_mat,*remote_ip4_from_mat;
     unsigned int remote_ip1;
@@ -251,10 +251,10 @@ static int SOCK_sd;
             mexAtExit(my_Sock_close);
 		  return ;
 		}
-		blow_buff_len = 256;
-		ADE_Init(&p_ADE,BLOW_FLAG,blow_buff_len,audio_fs);
+		audio_buff_len = 256;
+		ADE_Init(&p_ADE,BLOW_FLAG,audio_buff_len,audio_fs);
         ADE_Configure_params(p_ADE,BLOW_FLAG);
-     //   ADE_Init(&p_ADE,SNAP_FLAG,blow_buff_len,audio_fs);
+        ADE_Init(&p_ADE,SNAP_FLAG,audio_buff_len,audio_fs);
         mexPrintf("******** Remember to check firewall rules on port %d ************\n",port);
 		memset(&SCDF_rx_pkt,0,sizeof(SCDF_rx_pkt));
 		init=1;
@@ -273,7 +273,7 @@ static int SOCK_sd;
 	if (receive_ret_val>=0)
 	{
         Get_SensorData(char_buff,&ADE_in_struct);  
-       // mexPrintf("****** 1 blow buff len = %d *******\n",blow_buff_len);
+       // mexPrintf("****** 1 blow buff len = %d *******\n",audio_buff_len);
 //          for (i=0;i<p_ADE->p_blow->buff_len_i;i++)
 //          {
 //                 //mexPrintf("****** 2 *******\n");
@@ -285,14 +285,17 @@ static int SOCK_sd;
          {
             // mexPrintf("****** 1 *******\n");
          ADE_Step(p_ADE,BLOW_FLAG,&ADE_in_struct);
+          ADE_Step(p_ADE,SNAP_FLAG,&ADE_in_struct);
         // ADE_Blow_Print(p_ADE->p_blow,p_fid,"p_blow","p_ade_handle");
          }
       //  mexPrintf("****** 2 *******\n");
      //   ADE_Step(p_ADE,SNAP_FLAG,&ADE_in_struct);
         p_out_blow=ADE_GetOutBuff(p_ADE,BLOW_FLAG);
+        p_out_snap=ADE_GetOutBuff(p_ADE,SNAP_FLAG);
       //  p_out_snap=ADE_GetOutBuff(p_ADE,SNAP_FLAG);
     //     mexPrintf("****** 3 *******\n");
         *blow_state=p_out_blow->state;
+         *snap_state=p_out_snap->state;
      //    mexPrintf("****** 3.5 *******\n");
        // memset(blow_data,0,ncols*sizeof(double));
          //mexPrintf("****** 4 *******\n");
