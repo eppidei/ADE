@@ -208,7 +208,19 @@ ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOAT
     else if (p_fft->type==ADE_FFT_R2C || p_fft->type==ADE_FFT_R2R)
 
     {
-        ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_in));
+        //ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_in));
+        
+        /////it seems that for real fft accel_framework still want a fake complex type made by real value ///*splitted
+
+        if (idx%2==0)
+        {
+         ADE_Utils_FillSplitReal(real,idx/2,&(p_fft->split_in));
+        }
+        else
+        {
+            
+            ADE_Utils_FillSplitImag(real,idx/2,&(p_fft->split_in));
+        }
     }
 
     return ADE_RET_SUCCESS;

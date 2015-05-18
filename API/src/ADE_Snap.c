@@ -1229,6 +1229,7 @@ for (i=0;i<n_indx;i++)
      ret_split=ADE_Fft_FillSplitIn(p_snap->dp_fft[i],p_in[p_main_idx[i]],0,j);
      ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_extract_events,ret_split);
      }
+    vDSP_ctoz((DSPComplex *) Signal, 2*Stride, &Buffer, 1, N/2);
      #else
         #error (ADE_FFT_IMP)
     #endif
