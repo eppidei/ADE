@@ -1224,12 +1224,12 @@ for (i=0;i<n_indx;i++)
     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_extract_events,ret_cpy);
    // memcpy(dp_segments[i],&(p_in[sample_left]),actual_calc_len*sizeof(ADE_FLOATING_T));
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-    for (j=0;j<actual_calc_len;j++)
-    {
-     ret_split=ADE_Fft_FillSplitIn(p_snap->dp_fft[i],p_in[p_main_idx[i]],0,j);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_extract_events,ret_split);
-     }
-    vDSP_ctoz((DSPComplex *) Signal, 2*Stride, &Buffer, 1, N/2);
+//    for (j=0;j<actual_calc_len;j++)
+//    {
+//     ret_split=ADE_Fft_FillSplitIn(p_snap->dp_fft[i],p_in[p_main_idx[i]],0,j);
+//     ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_extract_events,ret_split);
+//     }
+    vDSP_ctoz((AD_DSPComplex *) &(p_in[p_main_idx[i]]), 2*1, &(p_snap->dp_fft[i]->split_in), 1, actual_calc_len/2);
      #else
         #error (ADE_FFT_IMP)
     #endif
