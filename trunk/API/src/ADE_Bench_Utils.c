@@ -489,17 +489,33 @@ void fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,AD
     ADE_CPLX_T p_csum=ADE_cset(0,0);
     ADE_MATH_ATTRIBUTE_T math_att=ADE_MATH_UNDEF;
     ADE_VOID_T * p_desplit=NULL;
-    ADE_UINT32_T n_row=p_fft->buff_len;
+    ADE_UINT32_T n_row=0;
 
     ADE_FLOATING_DP_T time_sum1=0;
     ADE_FLOATING_DP_T time_sum2=0;
 
     #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-
+        if (p_fft->type==ADE_FFT_C2C)
+        {
         p_desplit=malloc(p_fft->buff_len*sizeof(ADE_FFTCPLX_T));
         ADE_Utils_Split2Complex( &(p_fft->split_out),1,(ADE_CPLX_T*)p_desplit,2,p_fft->buff_len);
+        }
+    else if (p_fft->type==ADE_FFT_R2C)
+    {
+        p_desplit=malloc(p_fft->buff_len/2+1*sizeof(ADE_FFTCPLX_T));
+        ADE_Utils_Split2Complex( &(p_fft->split_out),1,(ADE_CPLX_T*)p_desplit,2,p_fft->buff_len/2+1);
+    }
 
     #endif
+    if (p_fft->type==ADE_FFT_C2C)
+    {
+       n_row=p_fft->buff_len;
+    }
+    else if (p_fft->type==ADE_FFT_R2C)
+    {
+        n_row=p_fft->buff_len/2+1;
+    }
+
 
     if (m_type==ADE_FFT_C2C || m_type==ADE_FFT_R2C)
     {
@@ -584,7 +600,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
      ADE_FLOATING_T tolerance=1e-4;
     ADE_VOID_T *p_fft_custom=NULL;
      struct timespec start_fft, stop_fft,start_cust, stop_cust,res;
-    int ret_time=0;
+    int randa=0;
     int err_code=0;
 #if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
     clockid_t clock_id=CLOCK_MONOTONIC;//CLOCK_REALTIME,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
@@ -666,41 +682,29 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
 
         }
-//        else if (fft_type==ADE_FFT_R2C)
-//        {
-//            size_fft_in=buff_len*sizeof(ADE_FLOATING_T);
-//            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-//            p_in=fftw_malloc(size_fft_in);
-//            #else
-//            p_in=malloc(size_fft_in);
-//            #endif
-//            if (p_in==NULL)
-//            {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_in,"%p",fft_test_procedure);
-//                return ADE_E31;
-//            }
-//            size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
-//            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-//            p_out=fftw_malloc(size_fft_out);
-//            #else
-//            p_out=malloc(size_fft_out);
-//            #endif
-//            if (p_out==NULL)
-//            {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_out,"%p",fft_test_procedure);
-//                return ADE_E31;
-//            }
-//            /*2check*/
-//            p_fft_custom=malloc(size_fft_in);
-//            if (p_fft_custom==NULL)
-//            {
-//                ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,"%p",fft_test_procedure);
-//                return ADE_E31;
-//            }
-//            /**/
+        else if (fft_type==ADE_FFT_R2C)
+        {
+            size_fft_in=buff_len*sizeof(ADE_FLOATING_T);
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+            p_in=fftw_malloc(size_fft_in);
+            #else
+            p_in=malloc(size_fft_in);
+            #endif
+            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS, ADE_METHOD_fft_test_procedure,p_in);
+            size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
+            #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+            p_out=fftw_malloc(size_fft_out);
+            #else
+            p_out=malloc(size_fft_out);
+            #endif
+            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS, ADE_METHOD_fft_test_procedure,p_out);
+            /*2check*/
+            p_fft_custom=calloc(buff_len*2,sizeof(ADE_FLOATING_T));
+            ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS, ADE_METHOD_fft_test_procedure,p_fft_custom);
+            /**/
 
 
-   //     }
+        }
 
         /******************* FFT SETUP ****************************/
 
@@ -723,26 +727,31 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
                 #endif
 
             }
-
-             #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-                memcpy(p_fft_custom,p_in,size_fft_in);
-            #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-                ADE_Utils_Split2Complex( &(p_fft->split_in),1,(ADE_CPLX_T *)p_fft_custom,2,buff_len);
-            #endif
+#if ( ADE_FFT_IMP==ADE_USE_FFTW )
+            memcpy(p_fft_custom,p_in,size_fft_in);
+#elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+            ADE_Utils_Split2Complex( &(p_fft->split_in),1,(ADE_CPLX_T *)p_fft_custom,2,buff_len);
+#endif
+            
 
         }
-//        else if (fft_type==ADE_FFT_R2C)
-//        {
-//         for(i=0; i<buff_len; i++)
-//            {
-//                #if ( ADE_FFT_IMP==ADE_USE_FFTW )
-//                   ((ADE_FLOATING_T*)p_in)[i]=(ADE_FLOATING_T)(rand()%10);
-//                #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-//                     ADE_Fft_FillSplitIn(p_fft,(rand()%10),0,i);
-//                #endif
-//                }
-//
-//        }
+        else if (fft_type==ADE_FFT_R2C)
+        {
+         for(i=0; i<buff_len; i++)
+            {
+                #if ( ADE_FFT_IMP==ADE_USE_FFTW )
+                   ((ADE_FLOATING_T*)p_in)[i]=(ADE_FLOATING_T)(rand()%10);
+                #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+                randa=(rand()%10);
+                     ADE_Fft_FillSplitIn(p_fft,randa,0,i);
+                ((ADE_FLOATING_T*)p_fft_custom)[2*i]=randa;
+                #endif
+                }
+
+
+        }
+        
+
 
 
 
@@ -759,7 +768,11 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
                           clock_gettime(clock_id,&start_cust);
 #endif
-         custom_FFT((ADE_FLOATING_T*)p_fft_custom-1,buff_len, ADE_CUSTOM_FFT_FORWARD);
+     
+            custom_FFT((ADE_FLOATING_T*)p_fft_custom-1,buff_len, ADE_CUSTOM_FFT_FORWARD);
+   
+        
+        
 #if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                         clock_gettime(clock_id,&stop_cust);
 

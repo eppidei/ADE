@@ -31,7 +31,7 @@
     ADE_INT32_T ret=0;
     ADE_UINT32_T buff_lenghts[10]= {16,32,64,128,256,512,1024,2048,4096,8192};
     
-    fft_test_procedure(ADE_FFT_C2C,buff_lenghts,10,p_debug_out);
+    fft_test_procedure(ADE_FFT_R2C,buff_lenghts,1,p_debug_out);
     return YES;
 }
 

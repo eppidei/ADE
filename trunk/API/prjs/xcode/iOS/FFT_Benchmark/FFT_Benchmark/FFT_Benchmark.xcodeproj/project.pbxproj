@@ -55,6 +55,7 @@
 		A724C4871AA1E90D00479AAA /* ADE_blas_level3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ADE_blas_level3.c; path = ../../../../../src/ADE_blas_level3.c; sourceTree = "<group>"; };
 		A724C4891AA1E93700479AAA /* ADE_Utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ADE_Utils.c; path = ../../../../../src/ADE_Utils.c; sourceTree = "<group>"; };
 		A724C48B1AA1E99E00479AAA /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		A77DCD721B0923530070B468 /* ADE_errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADE_errors.h; path = ../../../../../src/headers/ADE_errors.h; sourceTree = "<group>"; };
 		A7A751CF1B090716006D9523 /* ADE_blas_level1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ADE_blas_level1.c; path = ../../../../../src/ADE_blas_level1.c; sourceTree = "<group>"; };
 		A7A751D11B09073F006D9523 /* ADE_Error_Handler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ADE_Error_Handler.c; path = ../../../../../src/ADE_Error_Handler.c; sourceTree = "<group>"; };
 		A7A751D31B090761006D9523 /* ADE_nrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ADE_nrutil.c; path = ../../../../../src/ADE_nrutil.c; sourceTree = "<group>"; };
@@ -82,6 +83,7 @@
 		A724C44F1AA1DE2400479AAA = {
 			isa = PBXGroup;
 			children = (
+				A77DCD721B0923530070B468 /* ADE_errors.h */,
 				A7A751D31B090761006D9523 /* ADE_nrutil.c */,
 				A7A751D11B09073F006D9523 /* ADE_Error_Handler.c */,
 				A7A751CF1B090716006D9523 /* ADE_blas_level1.c */,

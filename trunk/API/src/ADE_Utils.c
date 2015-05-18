@@ -200,7 +200,7 @@ ADE_API_RET_T ADE_Utils_Split2Complex( ADE_SplitComplex_T *p_in,ADE_UINT32_T Str
 
 #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
     #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
-        vDSP_ztoc (p_in,Stride_in,p_out,ADE_METHOD_Stride_out,split_len);
+        vDSP_ztoc (p_in,Stride_in,p_out,Stride_out,split_len);
     #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
         vDSP_ztocD (p_in,Stride_in,p_out,Stride_out,split_len);
     #else
