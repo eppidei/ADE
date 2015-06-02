@@ -12,6 +12,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "headers/ADE_Error_Handler.h"
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 
 /*******************Private methods interface*******************************/
 
@@ -209,8 +212,8 @@ ADE_API_RET_T ADE_Blas_Level3_SetUplo(ADE_blas_level3_T* p_Blas_l3, ADE_CHAR_T v
         }
 
 
-       // fprintf(p_stream,"REMEMBER 2 ADD VERBOSITY LEVEL CTRL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-        //fprintf(p_stream,"*****WARNING UPLO value is being inverted for typical C row major for coherence with column major Fortran Interface **********\n");
+       // ADE_LOG(p_stream,"REMEMBER 2 ADD VERBOSITY LEVEL CTRL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+        //ADE_LOG(p_stream,"*****WARNING UPLO value is being inverted for typical C row major for coherence with column major Fortran Interface **********\n");
 
         #else
         p_Blas_l3->UPLO=val;
@@ -436,31 +439,31 @@ ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid)
   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_Print,p_fid);
 
 
-        fprintf(p_fid,"p_Blas_l3->math_type = %d\n",p_Blas_l3->math_type);
-        fprintf(p_fid,"p_Blas_l3->SIDE = %c\n",p_Blas_l3->SIDE);
-        fprintf(p_fid,"p_Blas_l3->UPLO = %c\n",p_Blas_l3->UPLO);
-        fprintf(p_fid,"p_Blas_l3->TRANS = %c\n",p_Blas_l3->TRANS);
-        fprintf(p_fid,"p_Blas_l3->TRANSA = %c\n",p_Blas_l3->TRANSA);
-        fprintf(p_fid,"p_Blas_l3->TRANSB = %c\n",p_Blas_l3->TRANSB);
-        fprintf(p_fid,"p_Blas_l3->DIAG = %c\n",p_Blas_l3->DIAG);
-        fprintf(p_fid,"p_Blas_l3->M = %d\n",p_Blas_l3->M);
-        fprintf(p_fid,"p_Blas_l3->N = %d\n",p_Blas_l3->N);
-        fprintf(p_fid,"p_Blas_l3->K = %d\n",p_Blas_l3->K);
+        ADE_LOG(p_fid,"p_Blas_l3->math_type = %d\n",p_Blas_l3->math_type);
+        ADE_LOG(p_fid,"p_Blas_l3->SIDE = %c\n",p_Blas_l3->SIDE);
+        ADE_LOG(p_fid,"p_Blas_l3->UPLO = %c\n",p_Blas_l3->UPLO);
+        ADE_LOG(p_fid,"p_Blas_l3->TRANS = %c\n",p_Blas_l3->TRANS);
+        ADE_LOG(p_fid,"p_Blas_l3->TRANSA = %c\n",p_Blas_l3->TRANSA);
+        ADE_LOG(p_fid,"p_Blas_l3->TRANSB = %c\n",p_Blas_l3->TRANSB);
+        ADE_LOG(p_fid,"p_Blas_l3->DIAG = %c\n",p_Blas_l3->DIAG);
+        ADE_LOG(p_fid,"p_Blas_l3->M = %d\n",p_Blas_l3->M);
+        ADE_LOG(p_fid,"p_Blas_l3->N = %d\n",p_Blas_l3->N);
+        ADE_LOG(p_fid,"p_Blas_l3->K = %d\n",p_Blas_l3->K);
         if (p_Blas_l3->math_type==ADE_MATH_REAL)
         {
-            fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf)\n",p_Blas_l3->p_ALPHA,*(p_Blas_l3->p_ALPHA));
-            fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf)\n",p_Blas_l3->p_BETA,*(p_Blas_l3->p_BETA));
-            fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf)\n",p_Blas_l3->p_A,(p_Blas_l3->p_A)[0]);
-            fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf)\n",p_Blas_l3->p_B,(p_Blas_l3->p_B)[0]);
-            fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf)\n",p_Blas_l3->p_C,(p_Blas_l3->p_C)[0]);
+            ADE_LOG(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf)\n",p_Blas_l3->p_ALPHA,*(p_Blas_l3->p_ALPHA));
+            ADE_LOG(p_fid,"p_Blas_l3->p_BETA = %p(%lf)\n",p_Blas_l3->p_BETA,*(p_Blas_l3->p_BETA));
+            ADE_LOG(p_fid,"p_Blas_l3->p_A = %p(%lf)\n",p_Blas_l3->p_A,(p_Blas_l3->p_A)[0]);
+            ADE_LOG(p_fid,"p_Blas_l3->p_B = %p(%lf)\n",p_Blas_l3->p_B,(p_Blas_l3->p_B)[0]);
+            ADE_LOG(p_fid,"p_Blas_l3->p_C = %p(%lf)\n",p_Blas_l3->p_C,(p_Blas_l3->p_C)[0]);
         }
         else if (p_Blas_l3->math_type==ADE_MATH_CPLX)
         {
-            fprintf(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf+%lfi)\n",p_Blas_l3->p_ALPHA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)));
-            fprintf(p_fid,"p_Blas_l3->p_BETA = %p(%lf+%lfi)\n",p_Blas_l3->p_BETA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)));
-            fprintf(p_fid,"p_Blas_l3->p_A = %p(%lf+%lfi)\n",p_Blas_l3->p_A,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_A)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_A)[0]));
-            fprintf(p_fid,"p_Blas_l3->p_B = %p(%lf+%lfi)\n",p_Blas_l3->p_B,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_B)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_B)[0]));
-            fprintf(p_fid,"p_Blas_l3->p_C = %p(%lf+%lfi)\n",p_Blas_l3->p_C,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_C)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_C)[0]));
+            ADE_LOG(p_fid,"p_Blas_l3->p_ALPHA = %p(%lf+%lfi)\n",p_Blas_l3->p_ALPHA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_ALPHA)));
+            ADE_LOG(p_fid,"p_Blas_l3->p_BETA = %p(%lf+%lfi)\n",p_Blas_l3->p_BETA,ADE_creal(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)),ADE_cimag(*((ADE_CPLX_T*)p_Blas_l3->p_BETA)));
+            ADE_LOG(p_fid,"p_Blas_l3->p_A = %p(%lf+%lfi)\n",p_Blas_l3->p_A,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_A)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_A)[0]));
+            ADE_LOG(p_fid,"p_Blas_l3->p_B = %p(%lf+%lfi)\n",p_Blas_l3->p_B,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_B)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_B)[0]));
+            ADE_LOG(p_fid,"p_Blas_l3->p_C = %p(%lf+%lfi)\n",p_Blas_l3->p_C,ADE_creal(((ADE_CPLX_T*)p_Blas_l3->p_C)[0]),ADE_cimag(((ADE_CPLX_T*)p_Blas_l3->p_C)[0]));
         }
         else
         {
@@ -468,12 +471,12 @@ ADE_API_RET_T ADE_Blas_level3_Print(ADE_blas_level3_T *p_Blas_l3,FILE *p_fid)
             return ADE_RET_ERROR;
         }
 
-        fprintf(p_fid,"p_Blas_l3->LDA = %d\n",p_Blas_l3->LDA);
-        fprintf(p_fid,"p_Blas_l3->LDB = %d\n",p_Blas_l3->LDB);
-        fprintf(p_fid,"p_Blas_l3->LDC = %d\n",p_Blas_l3->LDC);
+        ADE_LOG(p_fid,"p_Blas_l3->LDA = %d\n",p_Blas_l3->LDA);
+        ADE_LOG(p_fid,"p_Blas_l3->LDB = %d\n",p_Blas_l3->LDB);
+        ADE_LOG(p_fid,"p_Blas_l3->LDC = %d\n",p_Blas_l3->LDC);
 
-        fprintf(p_fid,"p_Blas_l3->blas_level3_fcn_type1 = %p\n",p_Blas_l3->blas_level3_fcn_type1);
-        fprintf(p_fid,"\n");
+        ADE_LOG(p_fid,"p_Blas_l3->blas_level3_fcn_type1 = %p\n",p_Blas_l3->blas_level3_fcn_type1);
+        ADE_LOG(p_fid,"\n");
       //  fclose(p_fid);
 
         return ADE_RET_SUCCESS;

@@ -56,7 +56,7 @@ ADE_INTERPOLATOR_FILTER_T filt_type, ADE_INTERPOLATOR_ARCH_T arch_type,ADE_UINT3
         else
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_INTERPOLATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
             return ADE_RET_ERROR;
         }
 
@@ -66,26 +66,26 @@ ADE_INTERPOLATOR_FILTER_T filt_type, ADE_INTERPOLATOR_ARCH_T arch_type,ADE_UINT3
         if (filt_type==ADE_INTERPOLATOR_FILTER_FIR)
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_INTERPOLATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
             return ADE_RET_ERROR;
         }
         else if (filt_type==ADE_INTERPOLATOR_FILTER_IIR)
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_INTERPOLATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
             return ADE_RET_ERROR;
         }
         else
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_INTERPOLATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
              return ADE_RET_ERROR;
         }
     }
     else
     {
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_INTERPOLATOR,ADE_METHOD_Init,arch_type,"%d",(FILE*)ADE_STD_STREAM);
-         fprintf((FILE*)ADE_STD_STREAM,"Unrecognized arch type = %d \n",arch_type);
+         ADE_LOG((FILE*)ADE_STD_STREAM,"Unrecognized arch type = %d \n",arch_type);
           return ADE_RET_ERROR;
     }
 
@@ -136,7 +136,7 @@ ADE_API_RET_T ADE_Interpolator_SetOutBuff(ADE_INTERPOLATOR_T *p_interpolator,ADE
     if (buff_size!=(p_interpolator->out_buff_len*sizeof(ADE_FLOATING_T)))
     {
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_INTERPOLATOR,ADE_METHOD_SetOutBuff,buff_size,"%u",(FILE*)ADE_STD_STREAM);
-        fprintf((FILE*)ADE_STD_STREAM,"Interpolator Out Buffer size wrong expexted %u , actual %u\n",p_interpolator->out_buff_len*sizeof(ADE_FLOATING_T),buff_size);
+        ADE_LOG((FILE*)ADE_STD_STREAM,"Interpolator Out Buffer size wrong expexted %u , actual %u\n",p_interpolator->out_buff_len*sizeof(ADE_FLOATING_T),buff_size);
         return ADE_RET_ERROR;
     }
 

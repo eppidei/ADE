@@ -21,7 +21,7 @@ addpath(funcs_path)
 addpath(mex_exec_path)
 
 %%%%%%%%%MAIN VARIABLES%%%%%%%%%
-save_ws_path=[res_path,separator,'roll_p90_m90_various_headeings_const_pitch'];
+save_ws_path=[res_path,separator,'blow_refine2'];
 frame_len = 256;
 plot_approx_duration = 10;
 
@@ -33,11 +33,11 @@ devel_type='online';
 
 
 if strcmp(devel_type,'online')
-    local_ip = '192.168.1.52';
+    local_ip = '192.168.1.213';
     remote_ip1 = 192;
     remote_ip2 =168;
     remote_ip3 =1;
-    remote_ip4 =6;
+    remote_ip4 =236;
     port = 50000;
     Fs = 44100;
     nbit = 16;

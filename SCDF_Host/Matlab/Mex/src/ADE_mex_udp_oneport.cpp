@@ -22,6 +22,7 @@ static int SOCK_sd2;
 #include "headers/ADE_SCDF_Interface.h"
 #include "headers/ADE.h"
 #include "headers/ADE_Blow.h"
+#include "headers/ADE_Snap.h"
 #include "my_typedefs.h"
 #include "osc/OscReceivedElements.h"
 #include "osc/OscPacketListener.h"
@@ -144,7 +145,7 @@ closesocket(SOCK_sd2);
 close(SOCK_sd2);
 #endif
 ADE_Release(p_ADE,BLOW_FLAG);
-ADE_Release(p_ADE,SNAP_FLAG);
+//ADE_Release(p_ADE,SNAP_FLAG);
 init=0;
 fclose(p_fid);
 
@@ -254,7 +255,9 @@ static int SOCK_sd;
 		audio_buff_len = 256;
 		ADE_Init(&p_ADE,BLOW_FLAG,audio_buff_len,audio_fs);
         ADE_Configure_params(p_ADE,BLOW_FLAG);
-        ADE_Init(&p_ADE,SNAP_FLAG,audio_buff_len,audio_fs);
+        //ADE_Init(&p_ADE,SNAP_FLAG,audio_buff_len,audio_fs);
+        //ADE_Configure_params(p_ADE,SNAP_FLAG);
+       
         mexPrintf("******** Remember to check firewall rules on port %d ************\n",port);
 		memset(&SCDF_rx_pkt,0,sizeof(SCDF_rx_pkt));
 		init=1;
@@ -285,28 +288,30 @@ static int SOCK_sd;
          {
             // mexPrintf("****** 1 *******\n");
          ADE_Step(p_ADE,BLOW_FLAG,&ADE_in_struct);
-          ADE_Step(p_ADE,SNAP_FLAG,&ADE_in_struct);
+         // ADE_Step(p_ADE,SNAP_FLAG,&ADE_in_struct);
+         
         // ADE_Blow_Print(p_ADE->p_blow,p_fid,"p_blow","p_ade_handle");
          }
-      //  mexPrintf("****** 2 *******\n");
+        //mexPrintf("****** 2 *******\n");
      //   ADE_Step(p_ADE,SNAP_FLAG,&ADE_in_struct);
         p_out_blow=ADE_GetOutBuff(p_ADE,BLOW_FLAG);
-        p_out_snap=ADE_GetOutBuff(p_ADE,SNAP_FLAG);
+       // p_out_snap=ADE_GetOutBuff(p_ADE,SNAP_FLAG);
       //  p_out_snap=ADE_GetOutBuff(p_ADE,SNAP_FLAG);
-    //     mexPrintf("****** 3 *******\n");
+        //mexPrintf("****** 3 *******\n");
         *blow_state=p_out_blow->state;
-         *snap_state=p_out_snap->state;
-     //    mexPrintf("****** 3.5 *******\n");
+        // *snap_state=p_out_snap->state;
+         //mexPrintf("snap_state %d\n",p_out_snap->state);
        // memset(blow_data,0,ncols*sizeof(double));
          //mexPrintf("****** 4 *******\n");
         for (i=0;i<p_out_blow->n_data;i++)
         {
             blow_data[i]=p_out_blow->p_data[i];
-          //   mexPrintf(" blow  data %d= %f\n",i,  blow_data[i]);
+       
+           mexPrintf(" blow  data %d= %f\n",i,  blow_data[i]);
         }
-        //  mexPrintf("****** 5 *******\n");
+        // mexPrintf("****** 5 *******\n");
 //         *snap_state=p_out_snap->state;
-      //   mexPrintf("****** 6 *******\n");
+      //  mexPrintf("****** 6 *******\n");
 	}
 //     *num_samples_val=num_samples;
 //mexPrintf("1");

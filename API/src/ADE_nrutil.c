@@ -4,13 +4,16 @@
 #include "headers/ADE_nrutil.h"
 #define NR_END 1 //safety extra storage at the beginning of the array
 #define FREE_ARG char*
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 ADE_VOID_T nrerror(char error_text[])
 /* Numerical Recipes standard error handler */
 {
 
-    fprintf(stderr,"Numerical Recipes run-time error...\n");
-    fprintf(stderr,"%s\n",error_text);
-    fprintf(stderr,"...now return to calling function...\n");
+    ADE_LOG(stderr,"Numerical Recipes run-time error...\n");
+    ADE_LOG(stderr,"%s\n",error_text);
+    ADE_LOG(stderr,"...now return to calling function...\n");
     //exit(1);
     return;
 

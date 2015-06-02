@@ -31,7 +31,7 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
     ADE_FLOATING_T time_left_i=0.5e-3;
     ADE_FLOATING_T time_right_i=6e-3;
     ADE_UINT32_T fft_len_i=512;
-    ADE_UINT32_T downfact = 100;
+    ADE_UINT32_T downfact = 32;
 
 
     if (*dp_ADE_Handle==NULL)//if still not allocated to protected againt a new call for a different alg
@@ -65,7 +65,7 @@ ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32
         if (  ADE_IsInactiveAlg( (*dp_ADE_Handle)->active_algs_flag,Sel_Flag_i,blow_flag ))
         {
             (*dp_ADE_Handle)->active_algs_flag |= blow_flag; //accendo flag
-            ret_blow = ADE_Blow_Init( &((*dp_ADE_Handle)->p_blow),in_buff_len,input_rate,input_rate);
+            ret_blow = ADE_Blow_Init( &((*dp_ADE_Handle)->p_blow),in_buff_len,input_rate,input_rate/downfact);
             ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Init,ret_blow);
 
            //ADE_Downsampler_Init(&((*dp_ADE_Handle)->p_blow_downsampler),in_buff_len,downfact);
@@ -191,7 +191,7 @@ ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOAT
 //
 //      if  ( (Sel_Flag_i & snap_flag)==snap_flag )
 //     {
-//        fprintf(stderr,"****Warning empty method*****\n");
+//        ADE_LOG(stderr,"****Warning empty method*****\n");
 //     }
 //
 //}
@@ -220,6 +220,7 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
 
             ret_snap_conf = ADE_Snap_Configure_inout(p_ADE->p_snap, p_in_struct->data);
             ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,ret_snap_conf);
+
 
             snap_ret = ADE_Snap_Step(p_ADE->p_snap);
             ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Step,snap_ret);
@@ -269,7 +270,8 @@ else if (Sel_Flag_i==SNAP_FLAG)
     p_out->Fs_data=p_ADE->p_snap->Fs;
     //p_out->p_data=p_ADE->p_snap->p_out;
     //p_out->n_data=p_ADE->p_snap->buff_len_o;
-    ADE_state_logic(p_out,p_ADE->p_snap->state);
+    p_out->state=p_ADE->p_snap->state;
+   // ADE_state_logic(p_out,p_ADE->p_snap->state);
     ADE_toggle_logic(p_out,p_ADE->p_snap->state);
 
 }

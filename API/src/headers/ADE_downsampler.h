@@ -34,8 +34,9 @@ ADE_API_RET_T ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLO
 /************** Processing Methods ***************/
 
 ADE_API_RET_T ADE_Downsampler_Step(ADE_DOWNSAMPLER_T *p_downsampler);
+/************** Utils ******************************/
 
-
+ADE_API_RET_T ADE_Downsampler_Print(ADE_DOWNSAMPLER_T* p_downsampler, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj);
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

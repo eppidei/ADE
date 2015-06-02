@@ -29,41 +29,35 @@ static int SOCK_sd2;
 
 
 
-void Get_Sensor_data(SensorData_T *pkt, char *char_buff)
+void double_convert_matlab (double *mat_buffer, float *inbuffer, int num_samples)
 {
 
-	unsigned int i=0;
-	float temp_f = 0.0;
-	s_int32 temp = 0;
-	s_uint64 time_id_temp=0;
-
-	s_int32 num_frames=0,num_chann=0;
-    s_uint32 n_samples_int ;
+	unsigned int i = 0;
 	
+	for(i=0;i<num_samples;i++)
 	
-    memcpy(&time_id_temp,&char_buff[8],sizeof(time_id_temp));
-    memcpy(&num_frames,&char_buff[16],sizeof(num_frames));
-    memcpy(&num_chann,&char_buff[20],sizeof(num_chann));
-    
-    n_samples_int=num_frames*num_chann;
-    *n_samples=n_samples_int;
-    
-    memcpy((char*)pkt->data,&char_buff[32],(n_samples_int)*4);
-    
-    *time_id=time_id_temp;
-
-
-	for (i=0;i<n_samples_int;i++)
 	{
-		/*temp=( *(int*)&(pkt->data[i]) );
-		conversione dei bytes in float
-		temp_f=*((float*)(&temp));
-		memcpy(&temp_f,&temp,sizeof(temp_f));*/
-		matarray[i]=(s_float)pkt->data[i];
+	
+		mat_buffer[i]=(double)inbuffer[i];
 	}
+
 
 }
 
+void double_convert_matlab2 (double *mat_buffer, s_uint64 *inbuffer, int num_samples)
+{
+
+	unsigned int i = 0;
+	
+	for(i=0;i<num_samples;i++)
+	
+	{
+	
+		mat_buffer[i]=(double)inbuffer[i];
+	}
+
+
+}
 
 void my_Sock_close()
 {

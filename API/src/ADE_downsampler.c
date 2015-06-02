@@ -2,6 +2,7 @@
 #include "headers/ADE_blas_level1.h"
 #include "headers/ADE_Error_Handler.h"
 #include <stdlib.h>
+#include <string.h>
 
 static ADE_API_RET_T ADE_Downsampler_doStep_blas(ADE_blas_level1_T *p_b1);
 static ADE_API_RET_T ADE_Downsampler_doStep_custom (ADE_UINT32_T in_buff_len,ADE_FLOATING_T *p_out,ADE_FLOATING_T *p_in,ADE_UINT32_T upfact);
@@ -26,7 +27,7 @@ ADE_API_RET_T ADE_Downsampler_Init(ADE_DOWNSAMPLER_T **dp_downsampler,ADE_UINT32
         if ( (in_buff_len%downfact)!=0)
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DOWNSAMPLER,ADE_METHOD_Init,downfact,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"ERROR : downfact %u is not an integer multiple of in buff len %u \n",downfact, in_buff_len);
+            ADE_LOG((FILE*)ADE_STD_STREAM,"ERROR : downfact %u is not an integer multiple of in buff len %u \n",downfact, in_buff_len);
             return ADE_RET_ERROR;
         }
         p_this->out_buff_len=in_buff_len/downfact;
@@ -111,6 +112,7 @@ ADE_API_RET_T ADE_Downsampler_SetOutBuff(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FL
 
     if (buff_size!=(p_downsampler->out_buff_len*sizeof(ADE_FLOATING_T)))
     {
+        //fprintf(ADE_STDERR_STREAM,"size configure %u differs from downsampler out len %u\n",buff_size,
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetOutBuff,buff_size,"%u",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
@@ -216,4 +218,48 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_doPure_custom,p_in);
 
     return ADE_RET_SUCCESS;
 }
+
+/************** Utils methods *********************/
+
+ADE_API_RET_T ADE_Downsampler_Print(ADE_DOWNSAMPLER_T* p_downsampler, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_name, ADE_CHAR_T *calling_obj)
+{
+
+    ADE_CHAR_T fixed_str[64];
+    ADE_CHAR_T pri_str[128];
+    ADE_SIZE_T len_str;
+     ADE_CHAR_T temp_str[64];
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_downsampler);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_fid);
+
+        memset(fixed_str,'\0',sizeof(fixed_str));
+strcat(fixed_str,calling_obj);
+strcat(fixed_str,"->");
+strcat(fixed_str,obj_name);
+strcat(fixed_str,"->");
+len_str=strlen(fixed_str);
+ memset(temp_str,'\0',sizeof(temp_str));
+
+    if (p_fid!=NULL)
+    {
+        strcpy(pri_str,fixed_str);
+        ADE_LOG(p_fid,strcat(pri_str,"in_buff_len = %u\n"),p_downsampler->in_buff_len);
+        strcpy(pri_str,fixed_str);
+        ADE_LOG(p_fid,strcat(pri_str,"down_fact = %u\n"),p_downsampler->down_fact);
+        strcpy(pri_str,fixed_str);
+        ADE_LOG(p_fid,strcat(pri_str,"out_buff_len = %u\n"),p_downsampler->out_buff_len);
+        strcpy(pri_str,fixed_str);
+        ADE_LOG(p_fid,strcat(pri_str,"p_in = %p(%*.*f)\n"),p_downsampler->p_in,ADE_DOWNSAMPLER_PRINT_FLOAT_WIDTH,ADE_DOWNSAMPLER_PRINT_FLOAT_PRECISION,p_downsampler->p_in[0]);
+        strcpy(pri_str,fixed_str);
+        ADE_LOG(p_fid,strcat(pri_str,"p_out = %p(%*.*f)\n"),p_downsampler->p_out,ADE_DOWNSAMPLER_PRINT_FLOAT_WIDTH,ADE_DOWNSAMPLER_PRINT_FLOAT_PRECISION,p_downsampler->p_out[0]);
+        strncpy(temp_str,fixed_str,len_str-2);
+        ADE_Blas_level1_Print(p_downsampler->p_blas_l1_memcpy,p_fid,"p_blas_l1_memcpy",temp_str);
+        strcpy(pri_str,fixed_str);
+    }
+
+    return ADE_RET_SUCCESS;
+
+
+}
+
 

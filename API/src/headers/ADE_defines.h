@@ -6,8 +6,8 @@
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
 //#define ADE_GOTO_LABEL gently_closure :
 #define CHECK_RET_MAIN(s)  if(s<0) {goto gently_closure;}
-#define PRINT_ARRAY(x,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
-#define PRINT_DIFFARRAY(x,y,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
+#define PRINT_ARRAY(x,idx,len,format) ADE_LOG(stdout,"\n"); for(idx=0;idx<len;idx++) { ADE_LOG(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
+#define PRINT_DIFFARRAY(x,y,idx,len,format) ADE_LOG(stdout,"\n"); for(idx=0;idx<len;idx++) { ADE_LOG(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
 /* Parameters */
 
@@ -75,6 +75,8 @@
 #define ADE_DOWNSAMPLER_IMP ADE_DOWNSAMPLER_USE_BLAS
 
 
+
+
 #if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
     #define ADE_CONFIGURATION_INTERACTIVE
     #define ADE_FP_PRECISION ADE_USE_DOUBLE_PREC //O single 1 double
@@ -126,6 +128,11 @@
 #define ADE_CHECK_MEM ADE_CHECK_MEM_FALSE
 #endif
 
+#ifndef ADE_MEX_PRINT
+#define ADE_LOG(...) fprintf(__VA_ARGS__)
+#else
+#define ADE_LOG(...) mexPrintf(__VA_ARGS__)
+#endif
 
 
 /*************************** VERBOSITY LEVELS ***********************/
@@ -149,12 +156,17 @@
 /************************** POLYFIT ********************************/
 #define ADE_POLYFIT_MAX_N_BREAKS (64)
 #define ADE_POLYFIT_MAX_POLY_ORDER (5)
+/************************ DOWNSAMPLER ****************************/
+#define ADE_DOWNSAMPLER_PRINT_FLOAT_WIDTH (20)
+#define ADE_DOWNSAMPLER_PRINT_FLOAT_PRECISION (18)
 
 /****************************** BLOW ***********************************/
 #define IIR1_N_SECTIONS (4)
-#define IIR2_N_SECTIONS (2)
+#define IIR2_N_SECTIONS (1)
 #define POLY_N_BREAKS (6)
 #define POLY_ORDER (3)
+#define ADE_BLOW_PRINT_FLOAT_WIDTH (20)
+#define ADE_BLOW_PRINT_FLOAT_PRECISION (18)
 //#define ADE_BLOW_MATLAB_PATH "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts/"
 //#define ADE_BLOW_MAT_SCRIPT "blow_fine_control_swlike.m"
 /***************************** ENVIRONMENT *******************************/

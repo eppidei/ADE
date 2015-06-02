@@ -23,7 +23,7 @@ AudioInfo = audioinfo(file_name);
 %  stem(samples);
 
 % Fs = 22050;
-samples_mono = samples((1:end/2),1);
+samples_mono = samples;%((1:end/2),1);
 
 if AudioInfo.SampleRate > Fs
     [L,M]=rat(Fs/AudioInfo.SampleRate);
@@ -56,7 +56,7 @@ max_time_right = 300e-3;
 
 max_event_len_time = time_right+time_left;
     
-    len_fft=256;
+    len_fft=512;
     
         
 %     freq_left=2000;
@@ -230,6 +230,7 @@ end
                     plot(1:event_lengts(j),events_got(j,1:event_lengts(j)));
                     subplot(2,1,2);
                     plot(freq_axe,speck);
+                    str_pow
                     
                     
                    
@@ -293,6 +294,9 @@ fprintf('max events detected per frame %d \n',max_event_got);
 
 save_audio2(actual_samples,positive_events_idx,num_estimated_true_snaps,negative_events_idx,num_estimated_false_snaps,'extracted_samples',Fs);
 h7=figure('Name','Resuming plot');
+if (num_estimated_true_snaps==0)
+    num_estimated_true_snaps=1;%for plot
+end
 plot(1:samples_len,actual_samples,positive_events_idx(1:num_estimated_true_snaps),0,'or',negative_events_idx(1:num_estimated_false_snaps),0,'*k',last_tru_event_index,0,'+g');
 
 % thresholds=repmat(tot_thresh,frame_len,1);

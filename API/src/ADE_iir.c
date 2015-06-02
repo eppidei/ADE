@@ -7,6 +7,9 @@
 #include <string.h>
 #include "headers/ADE_Error_Handler.h"
 #include "headers/ADE_Utils.h"
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 
 
 
@@ -371,40 +374,40 @@ len_str=strlen(fixed_str);
     if (p_fid!=NULL)
     {
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"buff_len = %u\n"),p_iir->buff_len);
+        ADE_LOG(p_fid,strcat(pri_str,"buff_len = %u\n"),p_iir->buff_len);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_iir->p_in,p_iir->p_in[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_iir->p_in,p_iir->p_in[0]);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_iir->p_out,p_iir->p_out[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_iir->p_out,p_iir->p_out[0]);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"n_SOS_sections = %u\n"),p_iir->n_SOS_sections);
+        ADE_LOG(p_fid,strcat(pri_str,"n_SOS_sections = %u\n"),p_iir->n_SOS_sections);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"active_section = %u\n"),p_iir->active_section);
+        ADE_LOG(p_fid,strcat(pri_str,"active_section = %u\n"),p_iir->active_section);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"section_order = %u\n"),p_iir->section_order);
+        ADE_LOG(p_fid,strcat(pri_str,"section_order = %u\n"),p_iir->section_order);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_gains = %p(%f)\n"),p_iir->p_gains,p_iir->p_gains[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_gains = %p(%f)\n"),p_iir->p_gains,p_iir->p_gains[0]);
 
         for (i=0;i<p_iir->n_SOS_sections;i++)
         {
              strcpy(pri_str,fixed_str);
-            fprintf(p_fid,strcat(pri_str,"dp_nums = %p([%d]%p(%f))\n"),p_iir->dp_nums,i,p_iir->dp_nums[i],*(p_iir->dp_nums[i]));
+            ADE_LOG(p_fid,strcat(pri_str,"dp_nums = %p([%d]%p(%f))\n"),p_iir->dp_nums,i,p_iir->dp_nums[i],*(p_iir->dp_nums[i]));
              strcpy(pri_str,fixed_str);
-            fprintf(p_fid,strcat(pri_str,"dp_denoms = %p([%d]%p(%f))\n"),p_iir->dp_denoms,i,p_iir->dp_denoms[i],*(p_iir->dp_denoms[i]));
+            ADE_LOG(p_fid,strcat(pri_str,"dp_denoms = %p([%d]%p(%f))\n"),p_iir->dp_denoms,i,p_iir->dp_denoms[i],*(p_iir->dp_denoms[i]));
              strcpy(pri_str,fixed_str);
-            fprintf(p_fid,strcat(pri_str,"dp_states = %p([%d]%p(%f))\n"),p_iir->dp_states,i,p_iir->dp_states[i],*(p_iir->dp_states[i]));
+            ADE_LOG(p_fid,strcat(pri_str,"dp_states = %p([%d]%p(%f))\n"),p_iir->dp_states,i,p_iir->dp_states[i],*(p_iir->dp_states[i]));
              strcpy(pri_str,fixed_str);
-            fprintf(p_fid,strcat(pri_str,"dp_section_buffers = %p([%d]%p(%f))\n"),p_iir->dp_section_buffers,i,p_iir->dp_section_buffers[i],*(p_iir->dp_section_buffers[i]));
+            ADE_LOG(p_fid,strcat(pri_str,"dp_section_buffers = %p([%d]%p(%f))\n"),p_iir->dp_section_buffers,i,p_iir->dp_section_buffers[i],*(p_iir->dp_section_buffers[i]));
              strcpy(pri_str,fixed_str);
-            fprintf(p_fid,strcat(pri_str,"dp_tempbuff = %p([%d]%p(%f))\n"),p_iir->dp_tempbuff,i,p_iir->dp_tempbuff[i],*(p_iir->dp_tempbuff[i]));
+            ADE_LOG(p_fid,strcat(pri_str,"dp_tempbuff = %p([%d]%p(%f))\n"),p_iir->dp_tempbuff,i,p_iir->dp_tempbuff[i],*(p_iir->dp_tempbuff[i]));
              strcpy(pri_str,fixed_str);
-            fprintf(p_fid,strcat(pri_str,"dp_Blas_L1 = %p"),p_iir->dp_Blas_L1);
+            ADE_LOG(p_fid,strcat(pri_str,"dp_Blas_L1 = %p"),p_iir->dp_Blas_L1);
             strncpy(temp_str,fixed_str,len_str-2);
             sprintf(temp_str2,"dp_Blas_L1[%d]",i);
             ADE_Blas_level1_Print(p_iir->dp_Blas_L1[i],p_fid,temp_str2,temp_str);
         }
-        fprintf(p_fid,strcat(pri_str,"filt_imp_type = %d\n"),p_iir->filt_imp_type);
-        fprintf(p_fid,strcat(pri_str,"filter_func = %p\n"),p_iir->filter_func);
+        ADE_LOG(p_fid,strcat(pri_str,"filt_imp_type = %d\n"),p_iir->filt_imp_type);
+        ADE_LOG(p_fid,strcat(pri_str,"filter_func = %p\n"),p_iir->filter_func);
 
     }
 
