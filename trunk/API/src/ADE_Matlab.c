@@ -32,7 +32,7 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
     char *p_temp_name=NULL;
 
      if (!(p_mateng = engOpen(p_matpath))) {
-		fprintf(stderr, "\nCan't start MATLAB engine\n");
+		ADE_LOG(stderr, "\nCan't start MATLAB engine\n");
 		ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_MATLAB,ADE_METHOD_Init,p_mateng,"%p",(FILE*)ADE_STD_STREAM);
 	    return ADE_RET_ERROR;
 	}
@@ -100,16 +100,16 @@ ADE_API_RET_T ADE_Matlab_Init(ADE_MATLAB_T** dp_this, Engine *p_mateng,char* fil
                 if (mxIsDouble(dp_mxarray[i]) )
                 {
                      n_chars=strlen(dp_temp_names[i])+1;//strlen(array_name)+1;
-                //      fprintf(stdout,"%d\n",n_chars);
+                //      ADE_LOG(stdout,"%d\n",n_chars);
                      p_this->dp_var_list[k_valid_array]=calloc(n_chars,sizeof(char));
                      ADE_CHECK_MEMALLOC(ADE_CLASS_MATLAB,ADE_METHOD_Init,  p_this->dp_var_list[k_valid_array]);
                      strcpy(p_this->dp_var_list[k_valid_array],dp_temp_names[i]);
-                   //  fprintf(stdout,"%s\n",p_this->dp_var_list[k_valid_array]);
+                   //  ADE_LOG(stdout,"%s\n",p_this->dp_var_list[k_valid_array]);
                      p_valid_arr_idx[k_valid_array]=i;
                       k_valid_array++;
                 }
          }
-//fprintf(stdout,"%d\n",k_valid_array);
+//ADE_LOG(stdout,"%d\n",k_valid_array);
         // matClose(p_matfile);
 
 
@@ -252,7 +252,7 @@ ADE_UINT32_T ADE_Matlab_GetVarIndex(ADE_MATLAB_T* p_mat, char *varname)
 
     }
 
-    fprintf(stderr,"WARNING - ADE_Matlab_GetVarIndex -> Variable \"%s\" not found \n",varname);
+    ADE_LOG(stderr,"WARNING - ADE_Matlab_GetVarIndex -> Variable \"%s\" not found \n",varname);
     return ADE_RET_ERROR;//29;
 }
 
@@ -294,7 +294,7 @@ ADE_UINT32_T ADE_Matlab_GetLength(ADE_MATLAB_T* p_mat, char *varname)
     }
     else
     {
-        fprintf(stderr,"ADE - > ADE_Matlab_GetLength array is a matrix and not a vector length=n_rows\n");
+        ADE_LOG(stderr,"ADE - > ADE_Matlab_GetLength array is a matrix and not a vector length=n_rows\n");
         return  ADE_Matlab_GetNRows(p_mat,varname);
     }
 
@@ -478,7 +478,7 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
         strcat(segment_str,temp_str);
         if (i==0)
         {
-            fprintf(stdout,"Loading  Segment starting with -> %s\n",temp_str);
+            ADE_LOG(stdout,"Loading  Segment starting with -> %s\n",temp_str);
 
 
         }
@@ -486,16 +486,16 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
 
     }
 
-     fprintf(stdout,"Loading  Segment ending with -> %s\n",temp_str);
+     ADE_LOG(stdout,"Loading  Segment ending with -> %s\n",temp_str);
      if (i>ADE_MAX_SEGMENT_LINES)
      {
-         fprintf(stderr,"WARNING SEGMENT MIGHT BE TOO LONG CONSIDER INCREASING ""ADE_MAX_SEGMENT_LINES"" or CHECK THE end of configuration marker found %d max %d \n",i,ADE_MAX_SEGMENT_LINES);
+         ADE_LOG(stderr,"WARNING SEGMENT MIGHT BE TOO LONG CONSIDER INCREASING ""ADE_MAX_SEGMENT_LINES"" or CHECK THE end of configuration marker found %d max %d \n",i,ADE_MAX_SEGMENT_LINES);
      }
      ret_eng=engEvalString(p_mat->p_eng,segment_str);
 
      if (ret_eng==1)
      {
-         fprintf(stderr,"Invalid Matlab session Pointer or session no longer running!\n");
+         ADE_LOG(stderr,"Invalid Matlab session Pointer or session no longer running!\n");
          return ADE_RET_ERROR;//27;
      }
 
@@ -503,7 +503,7 @@ ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stop
 
     if (feof(p_mat->p_matscript))
     {
-        fprintf(stdout,"REACHED EOF of SCRIPT\n");
+        ADE_LOG(stdout,"REACHED EOF of SCRIPT\n");
     }
 
     ADE_CHECKNFREE(temp_str);

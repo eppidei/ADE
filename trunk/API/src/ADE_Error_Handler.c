@@ -2,6 +2,9 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 
 //extern  ADE_Error_Handler_T ade_error_handler;
 
@@ -24,7 +27,7 @@ ADE_VOID_T ADE_Error_Handler_SetError(ADE_ERRSEVERITY_T severity,ADE_ERRTYPE_T t
     else
     {
 
-        fprintf(stderr,"WARNING : HANDLER STACK OVERFLOW in ADE_Error_Handler_SetError!!!!!!!!!\n");
+        ADE_LOG(stderr,"WARNING : HANDLER STACK OVERFLOW in ADE_Error_Handler_SetError!!!!!!!!!\n");
     }
 
     #if (ADE_TARGET_MODE==ADE_DEBUG)
@@ -37,31 +40,31 @@ ADE_VOID_T ADE_Error_Handler_SetError(ADE_ERRSEVERITY_T severity,ADE_ERRTYPE_T t
      strcat(p_decod_string,"\n");
     if (!strcmp(format,"%p"))
     {
-        fprintf(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
+        ADE_LOG(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
     }
     else if (!strcmp(format,"%d"))
     {
-        fprintf(p_stream,p_decod_string,var_name_str,*((ADE_INT32_T*)p_var));
+        ADE_LOG(p_stream,p_decod_string,var_name_str,*((ADE_INT32_T*)p_var));
     }
     else if (!strcmp(format,"%u"))
     {
-        fprintf(p_stream,p_decod_string,var_name_str,*((ADE_UINT32_T*)p_var));
+        ADE_LOG(p_stream,p_decod_string,var_name_str,*((ADE_UINT32_T*)p_var));
     }
     else if (!strcmp(format,"%f"))
     {
-        fprintf(p_stream,p_decod_string,var_name_str,*((ADE_FLOATING_T*)p_var));
+        ADE_LOG(p_stream,p_decod_string,var_name_str,*((ADE_FLOATING_T*)p_var));
     }
     else if (!strcmp(format,"%s"))
     {
-        fprintf(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
+        ADE_LOG(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
     }
     else if (!strcmp(format,"%c"))
     {
-        fprintf(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
+        ADE_LOG(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
     }
     else
     {
-        fprintf(stderr,"ERROR IN ADE_Error_Handler_SetError format not recognized\n");
+        ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_SetError format not recognized\n");
     }
 
     free(p_decod_string);
@@ -189,7 +192,7 @@ ADE_API_RET_T ADE_Error_Handler_CheckValue(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_
                  ADE_CHECK_ADERETVAL(ADE_CLASS_ERROR_HANDLER,ADE_METHOD_CheckValue,ret);
            }
         else{
-            fprintf(stderr,"type not handled in ADE_Error_Handler_CheckValue\n");
+            ADE_LOG(stderr,"type not handled in ADE_Error_Handler_CheckValue\n");
         }
 
         if (condition)
@@ -216,7 +219,7 @@ static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOI
 
  if (!strcmp(format,"%p"))
         {
-           fprintf(stderr,"ERROR IN ADE_Error_Handler_CheckCondition value cannot be a pointer\n");
+           ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition value cannot be a pointer\n");
             return ADE_RET_ERROR;
         }
         else if (!strcmp(format,"%d"))
@@ -248,7 +251,7 @@ static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOI
             else
             {
 
-                fprintf(stderr,"ERROR IN ADE_Error_Handler_CheckCondition type not recognized\n");
+                ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition type not recognized\n");
                  return ADE_RET_ERROR;
             }
         }
@@ -281,7 +284,7 @@ static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOI
             else
             {
 
-                fprintf(stderr,"ERROR IN ADE_Error_Handler_CheckCondition type not recognized\n");
+                ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition type not recognized\n");
                  return ADE_RET_ERROR;
             }
         }
@@ -314,13 +317,13 @@ static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOI
             else
             {
 
-                fprintf(stderr,"ERROR IN ADE_Error_Handler_CheckCondition type not recognized\n");
+                ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition type not recognized\n");
                  return ADE_RET_ERROR;
             }
         }
         else
         {
-            fprintf(stderr,"ERROR IN ADE_Error_Handler_CheckCondition format not recognized\n");
+            ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition format not recognized\n");
              return ADE_RET_ERROR;
         }
 

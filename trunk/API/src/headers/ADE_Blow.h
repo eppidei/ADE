@@ -21,6 +21,7 @@ struct ADE_BLOW_S
     ADE_FLOATING_T *p_in_squared;//allocato dentro
     ADE_FLOATING_T *p_pow_fast;//allocato dentro
     ADE_FLOATING_T *p_pow_slow;//allocato dentro
+    ADE_FLOATING_T *p_pow_slow_downsampled;//allocato dentro
     ADE_FLOATING_T *p_pow_slow_filtered;//allocato dentro
     ADE_FLOATING_T *p_out;//allocato dentro
     ADE_BOOL_T state;
@@ -44,6 +45,7 @@ struct ADE_BLOW_S
     ADE_UINT32_T poly_order;
     //ADE_FLOATING_T *poly_coeffs;
     ADE_blas_level2_T *p_blas_l2;
+    ADE_DOWNSAMPLER_T *p_downsampler;
     #ifdef ADE_CONFIGURATION_INTERACTIVE
     ADE_MATLAB_T *p_mat;
     #endif

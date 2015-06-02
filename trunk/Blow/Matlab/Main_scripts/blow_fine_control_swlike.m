@@ -14,11 +14,14 @@ end
  
  pat='/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts';
  
-res_path = [pat,separator,up_dir,'resources'];
+res_path =[pat,separator,up_dir,'resources'];%'/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/SCDF_Host/Matlab/resources';%
 funcs_path = [pat,separator,up_dir,'Alg_funcs'];
 mex_exec_path = [pat,separator,up_dir,'Mex',separator,'exec'];
+%  load([res_path,'/blow_refine2']);
 test_file ='increasing_blow.wav';
  file_path=[res_path,separator,test_file];
+ 
+
 
 addpath(funcs_path)
 addpath(mex_exec_path)
@@ -26,16 +29,19 @@ addpath(mex_exec_path)
 Frame_len = 256;
 %%%
   
-[audio_left,audio_right,audioinfos,n_iterations] = get_input_samples (file_path,Frame_len);
+ [audio_left,audio_right,audioinfos,n_iterations] = get_input_samples (file_path,Frame_len);
+% 
+%  audio_left=audio_data_plot;
+%  n_iterations=fix(length(audio_left)/Frame_len);
 
  %%%
  
-nbit = audioinfos.BitsPerSample;
+nbit = 16;%audioinfos.BitsPerSample;
 Margin = 0.3;%0.35;
 pow_thresh_high =0.25;% 0.2;
 pow_thresh_low = 4e-3;
 eval_time=100e-3;%40e-3;
-Fs =  audioinfos.SampleRate;
+Fs =  44100;%audioinfos.SampleRate;
 % if (Fs_wave~=Fs)
 %     
 %     error('check the sampling rate!');
@@ -51,9 +57,10 @@ running_pow_win_time_slow = 20e-3;
 freq_pass = 40;
 freq_stop = 80;
 band_stop_rej_db = 40;
-freq_pass2 = 2;
-freq_stop2 = 8;
-band_stop_rej_db2 = 40;
+freq_pass2 = 0.8;
+freq_stop2 = 10;
+band_stop_rej_db2 =3;
+dec_fact=32;
 
 
 IIR_pow_filt = Iir_butterwoth_generator(freq_pass/(Fs/2),freq_stop/(Fs/2),1,band_stop_rej_db);
@@ -61,17 +68,22 @@ IIR_pow_filt = Iir_butterwoth_generator(freq_pass/(Fs/2),freq_stop/(Fs/2),1,band
  iir_scaleval=IIR_pow_filt.ScaleValues;
  iir_sosmatrix=IIR_pow_filt.sosMatrix;
 
- IIR_pow_filt2 = Iir_butterwoth_generator(freq_pass2/(Fs/2),freq_stop2/(Fs/2),1,band_stop_rej_db2);
+ 
+%   IIR_pow_filt2 = Iir_Chebyshev_typ1_generator(freq_pass2/(Fs/2/dec_fact),freq_stop2/(Fs/2/dec_fact),1,band_stop_rej_db2);
+  IIR_pow_filt2 = Iir_butterwoth_generator(freq_pass2/(Fs/2/dec_fact),freq_stop2/(Fs/2/dec_fact),1,band_stop_rej_db2);
+%  FIR_pow_filt2 =  Fir_equiripple_generator_atten2db(freq_pass2/(Fs/2/dec_fact),freq_stop2/(Fs/2/dec_fact));
  IIR_pow_filt2.PersistentMemory=true;
   iir2_scaleval=IIR_pow_filt2.ScaleValues;
 
  
- max_pow=.83;
+  
+ 
+ max_pow=1;
  IIR_pow_filt2.SosMatrix(1,1:3)= IIR_pow_filt2.SosMatrix(1,1:3)/max_pow; %to avoid another moltiplication add norm gain 2 first section numerator
   iir2_sosmatrix=IIR_pow_filt2.sosMatrix;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%expander setup%%%%%%%%%%%
  fit_desiderata_x=[0,0.05,0.1,0.3,0.6,1];
- fit_desiderata_y=[0,0.05,0.1,0.7,2,6];
+ fit_desiderata_y=[0,0.05,0.1,0.3,0.6,1];
  [xData, yData] = prepareCurveData( fit_desiderata_x, fit_desiderata_y );
 
 % Set up fittype and options.
@@ -95,10 +107,11 @@ n_samples = n_iterations*Frame_len;
 run_pow_fast            =zeros(1,n_samples);
 run_pow_slow_standard   =zeros(1,n_samples);
 run_pow_iir =           zeros(1,n_samples);    
-run_pow_iir_filt =           zeros(1,n_samples); 
+run_pow_iir_filt =           zeros(1,n_samples/dec_fact); 
+dec_out =           zeros(1,n_samples/dec_fact); 
 test =           zeros(1,n_samples); 
 normalized_pow_iir=zeros(1,n_samples);
-expanded_pow_iir=zeros(1,n_samples);
+expanded_pow_iir=zeros(1,n_samples/dec_fact);
 state_plot=zeros(1,n_samples);
 blow_plot=zeros(1,n_samples);
 control_change=zeros(1,n_samples);
@@ -190,14 +203,23 @@ blow_plot(frame_idx)= sat_detect_struct.blow;
 %%%% POST PROCESSING %%%%%%%%%%
 
        %%%MORE POW FILTERING
+       
+       %%%decimate step %%%%%
+       dec_idx=(k-1)*Frame_len/dec_fact+1:k*Frame_len/dec_fact;
+       
+%        dec_out(dec_idx) = decimate(normalized_pow_iir(idx),dec_fact);
+ dec_out(dec_idx) = downsample(normalized_pow_iir(idx),dec_fact);
       
-      [run_pow_iir_filt(idx)]=filter(IIR_pow_filt2,normalized_pow_iir(idx));
+%       [run_pow_iir_filt(idx)]=filter(IIR_pow_filt2,normalized_pow_iir(idx));
+         [run_pow_iir_filt(dec_idx)]=filter(IIR_pow_filt2,dec_out(dec_idx));
+ 
+%          [run_pow_iir_filt(dec_idx)]=filtfilt(IIR_pow_filt2.sosMatrix,IIR_pow_filt2.ScaleValues,dec_out(dec_idx));
    %%%EXPANSION%%%%
 %    tic
-    expanded_pow_iir(idx)= memoryless_blow_expander(run_pow_iir_filt(idx),fitresult);
+    expanded_pow_iir(dec_idx)= memoryless_blow_expander(run_pow_iir_filt(dec_idx),fitresult);
 %     toc
 %     tic
-    testtt= memoryless_blow_expander_matrix(run_pow_iir_filt(idx),fitresult);
+    testtt= memoryless_blow_expander_matrix(run_pow_iir_filt(dec_idx),fitresult);
 %     toc
     
 %     sum(abs(expanded_pow_iir(idx)-testtt'))
@@ -224,16 +246,31 @@ t_axe = 0: 1/Fs : (n_samples-1)/Fs;
     plot(t_axe,state_plot);
     title('STATES');
     subplot(n_sub_plots,1,2)
-    plot(t_axe,expanded_pow_iir);
+%     plot(t_axe,expanded_pow_iir);
     title('EXPANDED IIR POW FILT');
     subplot(n_sub_plots,1,6)
     plot(t_axe,run_pow_slow_standard);
     title('POW SLOW STANDARD');
     subplot(n_sub_plots,1,7)
-    plot(t_axe,run_pow_iir_filt);
+%     plot(t_axe,run_pow_iir_filt);
     title('POW IIR FILT');
 %    h2=figure('Name','Control Change');
 %     plot(t_axe,control_change);
 %     title('CONTROL CHANGE');
-    
 
+F_dec=Fs/dec_fact;
+    n_sub_plots = 3;
+t_axe_dec = 0: 1/F_dec : (n_samples/dec_fact-1)/F_dec;
+h2=figure('Name','Resuming plot');
+
+subplot(n_sub_plots,1,1)
+plot(t_axe_dec,dec_out);
+title('DECIMATED NORM POW');
+
+ subplot(n_sub_plots,1,2)
+plot(t_axe_dec,run_pow_iir_filt);
+title('RUN POW IIR FILT');
+
+ subplot(n_sub_plots,1,3)
+plot(t_axe_dec,expanded_pow_iir);
+title('EXPANDED IIR POW FILT');

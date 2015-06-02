@@ -11,6 +11,9 @@
 #include "headers/ADE_complex.h"
 #include "headers/ADE_accelerate_framework_wrapper.h"
 #include "headers/ADE_Error_Handler.h"
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 
 void gemm_checker(ADE_blas_level3_T *p_blas_l3,ADE_VOID_T *p_C_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_BENCH_MAT_T m_type,bench_times_T *bench_struct,FILE* p_fid)
 {
@@ -67,15 +70,15 @@ time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_ns
 
     if (result<tol)
     {
-            fprintf(p_fid,"\n");
-            fprintf(p_fid,"TEST %d passed with residue %f and tolerance %f\n",test_id,result,tol);
-            fprintf(p_fid,"Blas Implementation took  %lf ns \n",time_sum1);
-            fprintf(p_fid,"Custom Implementation took  %lf ns \n",time_sum2);
+            ADE_LOG(p_fid,"\n");
+            ADE_LOG(p_fid,"TEST %d passed with residue %f and tolerance %f\n",test_id,result,tol);
+            ADE_LOG(p_fid,"Blas Implementation took  %lf ns \n",time_sum1);
+            ADE_LOG(p_fid,"Custom Implementation took  %lf ns \n",time_sum2);
 
     }
     else
     {
-        fprintf(p_fid,"Test %d NOT PASSED with residue %f and tolerance %f\n",test_id,result,tol);
+        ADE_LOG(p_fid,"Test %d NOT PASSED with residue %f and tolerance %f\n",test_id,result,tol);
 
         if (m_type==ADE_BENCH_REAL)
         {
@@ -269,7 +272,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
     if (ret_time==-1)
     {
         err_code=errno;
-        fprintf(p_fid,"Failed setting clock %d : error %d\n",clock_id,err_code);
+        ADE_LOG(p_fid,"Failed setting clock %d : error %d\n",clock_id,err_code);
         return -1;
     }
 
@@ -401,7 +404,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
                 }
                 else
                 {
-                    fprintf(p_stream,"ADE_PRINT_ERRORS(ADE_INCHECKS,mat_type[type_idx],main);\n");
+                    ADE_LOG(p_stream,"ADE_PRINT_ERRORS(ADE_INCHECKS,mat_type[type_idx],main);\n");
                     return -1;
                 }
 
@@ -410,7 +413,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
         }
         else
         {
-            fprintf(p_stream,"ADE_PRINT_ERRORS(ADE_INCHECKS,test_cases[test_idx],main);\n");
+            ADE_LOG(p_stream,"ADE_PRINT_ERRORS(ADE_INCHECKS,test_cases[test_idx],main);\n");
             return -1;
         }
     }
@@ -547,15 +550,15 @@ time_sum2=(*(bench_struct->p_stop_2)).tv_nsec-(*(bench_struct->p_start_2)).tv_ns
 
     if (result<tol)
     {
-            fprintf(p_fid,"\n");
-            fprintf(p_fid,"TEST %d passed with residue %f and tolerance %f\n",test_id,result,tol);
-            fprintf(p_fid,"FFT LIBRARY took  %lf ns \n",time_sum1);
-            fprintf(p_fid,"Custom FFT took  %lf ns \n",time_sum2);
+            ADE_LOG(p_fid,"\n");
+            ADE_LOG(p_fid,"TEST %d passed with residue %f and tolerance %f\n",test_id,result,tol);
+            ADE_LOG(p_fid,"FFT LIBRARY took  %lf ns \n",time_sum1);
+            ADE_LOG(p_fid,"Custom FFT took  %lf ns \n",time_sum2);
 
     }
     else
     {
-        fprintf(p_fid,"Test %d NOT PASSED with residue %f and tolerance %f\n",test_id,result,tol);
+        ADE_LOG(p_fid,"Test %d NOT PASSED with residue %f and tolerance %f\n",test_id,result,tol);
 
         if (m_type==ADE_FFT_C2C || m_type==ADE_FFT_R2C)
         {
@@ -602,6 +605,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
      struct timespec start_fft, stop_fft,start_cust, stop_cust,res;
     int randa=0;
     int err_code=0;
+    int ret_time=0;
 #if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_PC_RELEASE) || (ADE_TARGET_TYPE==ADE_ANDROID) )
     clockid_t clock_id=CLOCK_MONOTONIC;//CLOCK_REALTIME,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
 #endif
@@ -619,7 +623,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
     if (ret_time==-1)
     {
         err_code=errno;
-        fprintf(p_fid,"Failed setting clock %d : error %d\n",clock_id,err_code);
+        ADE_LOG(p_fid,"Failed setting clock %d : error %d\n",clock_id,err_code);
         return -1;
     }
 #endif
@@ -650,7 +654,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_in==NULL)
             {
-                fprintf(p_fid,"ADE_PRINT_ERRORS(ADE_MEM,p_in,fft_test_procedure);\n");
+                ADE_LOG(p_fid,"ADE_PRINT_ERRORS(ADE_MEM,p_in,fft_test_procedure);\n");
                 return -1;
             }
 
@@ -669,13 +673,13 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
             #endif
             if (p_out==NULL)
             {
-                fprintf(p_fid,"ADE_PRINT_ERRORS(ADE_MEM,p_out,fft_test_procedure);\n");
+                ADE_LOG(p_fid,"ADE_PRINT_ERRORS(ADE_MEM,p_out,fft_test_procedure);\n");
                 return -1;
             }
             p_fft_custom=malloc(size_fft_in);
             if (p_fft_custom==NULL)
             {
-                fprintf(p_fid,"ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,fft_test_procedure);\n");
+                ADE_LOG(p_fid,"ADE_PRINT_ERRORS(ADE_MEM,p_fft_custom,fft_test_procedure);\n");
                 return -1;
             }
 
@@ -732,7 +736,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
             ADE_Utils_Split2Complex( &(p_fft->split_in),1,(ADE_CPLX_T *)p_fft_custom,2,buff_len);
 #endif
-            
+
 
         }
         else if (fft_type==ADE_FFT_R2C)
@@ -750,7 +754,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
 
         }
-        
+
 
 
 
@@ -768,11 +772,11 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 
                           clock_gettime(clock_id,&start_cust);
 #endif
-     
+
             custom_FFT((ADE_FLOATING_T*)p_fft_custom-1,buff_len, ADE_CUSTOM_FFT_FORWARD);
-   
-        
-        
+
+
+
 #if ( (ADE_TARGET_TYPE==ADE_PC_MATLAB) || (ADE_TARGET_TYPE==ADE_PC_NORMAL) || (ADE_TARGET_TYPE==ADE_ANDROID) )
                         clock_gettime(clock_id,&stop_cust);
 

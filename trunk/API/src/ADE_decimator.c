@@ -5,6 +5,9 @@
 #include "headers/ADE_blas_level1.h"
 #include "headers/ADE_Error_Handler.h"
 #include <stdlib.h>
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 
 
 /*************** Init Methods ****************/
@@ -28,7 +31,7 @@ ADE_DECIMATOR_FILTER_T filt_type, ADE_DECIMATOR_ARCH_T arch_type,ADE_UINT32_T n_
     if ( (in_buff_len%downfact)!=0)
     {
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DECIMATOR,ADE_METHOD_Init,downfact,"%d",(FILE*)ADE_STD_STREAM);
-        fprintf((FILE*)ADE_STD_STREAM,"ERROR : downfact %u is not an integer multiple of in buff len %u \n",downfact, in_buff_len);
+        ADE_LOG((FILE*)ADE_STD_STREAM,"ERROR : downfact %u is not an integer multiple of in buff len %u \n",downfact, in_buff_len);
         return ADE_RET_ERROR;
     }
     p_this->out_buff_len=in_buff_len/downfact;
@@ -62,7 +65,7 @@ ADE_DECIMATOR_FILTER_T filt_type, ADE_DECIMATOR_ARCH_T arch_type,ADE_UINT32_T n_
         else
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DECIMATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
             return ADE_RET_ERROR;
         }
 
@@ -72,26 +75,26 @@ ADE_DECIMATOR_FILTER_T filt_type, ADE_DECIMATOR_ARCH_T arch_type,ADE_UINT32_T n_
         if (filt_type==ADE_DECIMATOR_FILTER_FIR)
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DECIMATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
             return ADE_RET_ERROR;
         }
         else if (filt_type==ADE_DECIMATOR_FILTER_IIR)
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DECIMATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Missing Implementation filt_type = %d \n",filt_type);
             return ADE_RET_ERROR;
         }
         else
         {
             ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DECIMATOR,ADE_METHOD_Init,filt_type,"%d",(FILE*)ADE_STD_STREAM);
-            fprintf((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
+            ADE_LOG((FILE*)ADE_STD_STREAM,"Unrecognized filt type \n");
              return ADE_RET_ERROR;
         }
     }
     else
     {
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DECIMATOR,ADE_METHOD_Init,arch_type,"%d",(FILE*)ADE_STD_STREAM);
-         fprintf((FILE*)ADE_STD_STREAM,"Unrecognized arch type = %d \n",arch_type);
+         ADE_LOG((FILE*)ADE_STD_STREAM,"Unrecognized arch type = %d \n",arch_type);
           return ADE_RET_ERROR;
     }
 
@@ -142,7 +145,7 @@ ADE_API_RET_T ADE_Decimator_SetOutBuff(ADE_DECIMATOR_T *p_decimator,ADE_FLOATING
     if (buff_size!=(p_decimator->out_buff_len*sizeof(ADE_FLOATING_T)))
     {
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_DECIMATOR,ADE_METHOD_SetOutBuff,buff_size,"%u",(FILE*)ADE_STD_STREAM);
-        fprintf((FILE*)ADE_STD_STREAM,"Decimator Out Buffer size wrong expexted %u , actual %lu \n",p_decimator->out_buff_len*sizeof(ADE_FLOATING_T),buff_size);
+        ADE_LOG((FILE*)ADE_STD_STREAM,"Decimator Out Buffer size wrong expexted %u , actual %lu \n",p_decimator->out_buff_len*sizeof(ADE_FLOATING_T),buff_size);
         return ADE_RET_ERROR;
     }
 

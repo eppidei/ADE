@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include "headers/ADE_Error_Handler.h"
 #include <string.h>
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 
 /***************** Private methods prototypes *********************/
 
@@ -115,8 +118,8 @@ ADE_API_RET_T ADE_Blas_Level2_SetUplo(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T U
         }
 
 
-     //    fprintf(p_stream,"REMEMBER 2 ADD VERBOSITY LEVEL CTRL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-      //  fprintf(p_stream,"*****WARNING UPLO value is being inverted for typical C row major for coherence with column major Fortran Interface **********\n");
+     //    ADE_LOG(p_stream,"REMEMBER 2 ADD VERBOSITY LEVEL CTRL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+      //  ADE_LOG(p_stream,"*****WARNING UPLO value is being inverted for typical C row major for coherence with column major Fortran Interface **********\n");
 
         #else
         p_Blas_l2->UPLO=UPLO;
@@ -478,7 +481,8 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_Elewise,p_Blas_l2);
 p_Y=p_Blas_l2->p_Y;
 p_X=p_Blas_l2->p_X;
 p_A=p_Blas_l2->p_A;
- ADE_Blas_level2_doElewiseCustom(p_Y,p_X,p_A,N);
+N=p_Blas_l2->N;
+ ret=ADE_Blas_level2_doElewiseCustom(p_Y,p_X,p_A,N);
 
  #elif (ADE_LIN_ALG_IMP==ADE_USE_LIN_ALG_BLAS)
 
@@ -515,43 +519,43 @@ len_str=strlen(fixed_str);
     if (p_fid!=NULL)
     {
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"math_type = %d\n"),p_Blas_l2->math_type);
+        ADE_LOG(p_fid,strcat(pri_str,"math_type = %d\n"),p_Blas_l2->math_type);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"UPLO = %c\n"),p_Blas_l2->UPLO);
+        ADE_LOG(p_fid,strcat(pri_str,"UPLO = %c\n"),p_Blas_l2->UPLO);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"TRANS = %c\n"),p_Blas_l2->TRANS);
+        ADE_LOG(p_fid,strcat(pri_str,"TRANS = %c\n"),p_Blas_l2->TRANS);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"DIAG = %c\n"),p_Blas_l2->DIAG);
+        ADE_LOG(p_fid,strcat(pri_str,"DIAG = %c\n"),p_Blas_l2->DIAG);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"M = %d\n"),p_Blas_l2->M);
+        ADE_LOG(p_fid,strcat(pri_str,"M = %d\n"),p_Blas_l2->M);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"N = %d\n"),p_Blas_l2->N);
+        ADE_LOG(p_fid,strcat(pri_str,"N = %d\n"),p_Blas_l2->N);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"K = %d\n"),p_Blas_l2->K);
+        ADE_LOG(p_fid,strcat(pri_str,"K = %d\n"),p_Blas_l2->K);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"KL = %d\n"),p_Blas_l2->KL);
+        ADE_LOG(p_fid,strcat(pri_str,"KL = %d\n"),p_Blas_l2->KL);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"KU = %d\n"),p_Blas_l2->KU);
+        ADE_LOG(p_fid,strcat(pri_str,"KU = %d\n"),p_Blas_l2->KU);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_ALPHA = %p(%lf)\n"),p_Blas_l2->p_ALPHA,*(p_Blas_l2->p_ALPHA));
+        ADE_LOG(p_fid,strcat(pri_str,"p_ALPHA = %p(%lf)\n"),p_Blas_l2->p_ALPHA,*(p_Blas_l2->p_ALPHA));
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_A = %p(%lf)\n"),p_Blas_l2->p_A,(p_Blas_l2->p_A)[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_A = %p(%lf)\n"),p_Blas_l2->p_A,(p_Blas_l2->p_A)[0]);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"LDA = %d\n"),p_Blas_l2->LDA);
+        ADE_LOG(p_fid,strcat(pri_str,"LDA = %d\n"),p_Blas_l2->LDA);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_X = %p(%lf)\n"),p_Blas_l2->p_X,(p_Blas_l2->p_X)[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_X = %p(%lf)\n"),p_Blas_l2->p_X,(p_Blas_l2->p_X)[0]);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"INCX = %d\n"),p_Blas_l2->INCX);
+        ADE_LOG(p_fid,strcat(pri_str,"INCX = %d\n"),p_Blas_l2->INCX);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_BETA = %p(%lf)\n"),p_Blas_l2->p_BETA,*(p_Blas_l2->p_BETA));
+        ADE_LOG(p_fid,strcat(pri_str,"p_BETA = %p(%lf)\n"),p_Blas_l2->p_BETA,*(p_Blas_l2->p_BETA));
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_Y = %p(%lf)\n"),p_Blas_l2->p_Y,(p_Blas_l2->p_Y)[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_Y = %p(%lf)\n"),p_Blas_l2->p_Y,(p_Blas_l2->p_Y)[0]);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"INCY = %d\n"),p_Blas_l2->INCY);
+        ADE_LOG(p_fid,strcat(pri_str,"INCY = %d\n"),p_Blas_l2->INCY);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"blas_level2_fcn_type1 = %p\n"),p_Blas_l2->blas_level2_fcn_type1);
+        ADE_LOG(p_fid,strcat(pri_str,"blas_level2_fcn_type1 = %p\n"),p_Blas_l2->blas_level2_fcn_type1);
          strcpy(pri_str,fixed_str);
-        fprintf(p_fid,"\n");
+        ADE_LOG(p_fid,"\n");
       //  fclose(p_fid);
 
         return ADE_RET_SUCCESS;

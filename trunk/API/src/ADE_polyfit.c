@@ -7,6 +7,9 @@
 #include <string.h>
 #include "headers/ADE_Utils.h"
 #include "headers/ADE_Error_Handler.h"
+#ifdef ADE_MEX_PRINT
+#include "mex.h"
+#endif
 
 
 
@@ -225,23 +228,23 @@ len_str=strlen(fixed_str);
     if (p_fid!=NULL)
     {
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"buff_len = %u\n"),p_poly->buff_len);
+        ADE_LOG(p_fid,strcat(pri_str,"buff_len = %u\n"),p_poly->buff_len);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_poly->p_in,p_poly->p_in[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_in = %p(%f)\n"),p_poly->p_in,p_poly->p_in[0]);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_poly->p_out,p_poly->p_out[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_out = %p(%f)\n"),p_poly->p_out,p_poly->p_out[0]);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"n_breaks = %u\n"),p_poly->n_breaks);
+        ADE_LOG(p_fid,strcat(pri_str,"n_breaks = %u\n"),p_poly->n_breaks);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"max_n_breaks = %u\n"),p_poly->max_n_breaks);
+        ADE_LOG(p_fid,strcat(pri_str,"max_n_breaks = %u\n"),p_poly->max_n_breaks);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_breaks = %p(%f)\n"),p_poly->p_breaks,p_poly->p_breaks[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_breaks = %p(%f)\n"),p_poly->p_breaks,p_poly->p_breaks[0]);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"poly_order = %u\n"),p_poly->poly_order);
+        ADE_LOG(p_fid,strcat(pri_str,"poly_order = %u\n"),p_poly->poly_order);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"max_poly_order = %u\n"),p_poly->max_poly_order);
+        ADE_LOG(p_fid,strcat(pri_str,"max_poly_order = %u\n"),p_poly->max_poly_order);
         strcpy(pri_str,fixed_str);
-        fprintf(p_fid,strcat(pri_str,"p_poly_coeffs = %p(%f)\n"),p_poly->p_poly_coeffs,p_poly->p_poly_coeffs[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_poly_coeffs = %p(%f)\n"),p_poly->p_poly_coeffs,p_poly->p_poly_coeffs[0]);
 
 
     }

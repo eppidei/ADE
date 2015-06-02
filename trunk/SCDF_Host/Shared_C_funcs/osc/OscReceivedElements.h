@@ -43,6 +43,7 @@
 
 #include "OscTypes.h"
 #include "OscException.h"
+#include "mex.h"
 
 
 namespace osc{
@@ -132,7 +133,10 @@ private:
             throw MalformedPacketException( "zero length elements not permitted" );
 
         if( !IsMultipleOf4(size) )
+        {
+             mexPrintf("osc size %d\n",size);
             throw MalformedPacketException( "element size must be multiple of four" );
+        }
 
         return size;
     }

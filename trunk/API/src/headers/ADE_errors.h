@@ -4,7 +4,7 @@
 
 
 /*************************** ERROR DEFINES ***************************/
-#define ADE_MISSING_IMPLEMENTATION(fcn_name) fprintf(stderr," MISSING IMPLEMENTATION IN fcn ->  " #fcn_name " \n");
+#define ADE_MISSING_IMPLEMENTATION(fcn_name) ADE_LOG(stderr," MISSING IMPLEMENTATION IN fcn ->  " #fcn_name " \n");
 
 #define ADE_NBITS_SEVERITY (8)
 #define ADE_NBITS_TYPE (8)
@@ -278,7 +278,9 @@ X_ERRMETHODS(ADE_METHOD_configure_dot_inout) \
 X_ERRMETHODS(ADE_METHOD_configure_dot) \
 X_ERRMETHODS(ADE_METHOD_Configure_params) \
 X_ERRMETHODS(ADE_METHOD_Configure_inout) \
-X_ERRMETHODS(ADE_METHOD_CheckValue)
+X_ERRMETHODS(ADE_METHOD_CheckValue) \
+X_ERRMETHODS(ADE_METHOD_Downsampler_Configure) \
+X_ERRMETHODS(ADE_METHOD_Expander_Configure_inout)
 
 #define X_ERRMETHODS(a) a,
 typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;
