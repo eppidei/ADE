@@ -224,8 +224,8 @@ for i=1:n_iterations
             proxy=[ones(1,audio_len/2)*proxy_buff(1),ones(1,audio_len/2)*proxy_buff(2)];
         elseif (proxy_len>2)
             error('Num proxy data not handled %d',proxy_len);
-        elseif proxy_len==0
-             proxy=ones(1,audio_len)*2.5;
+%         elseif proxy_len==0
+%              proxy=ones(1,audio_len)*2.5;
         end
 %          str_proxy_len = [' Frame_len = ',num2str(proxy_len)];
         proxy_data_plot(idx)=proxy;

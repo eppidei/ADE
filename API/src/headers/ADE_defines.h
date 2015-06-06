@@ -207,6 +207,8 @@
 /********************** NR Utils ***************/
 #define NR_M 7
 #define NR_STACK 50
+/********************* PROXIMITY *********************/
+#define ADE_PROXIMITY_MAX_BUFF_LEN (1024)
 
 
 

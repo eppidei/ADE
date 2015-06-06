@@ -103,6 +103,9 @@
 		<Unit filename="../../../src/ADE_polyfit.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../src/ADE_proximity.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../../src/ADE_upsampler.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -131,6 +134,7 @@
 		<Unit filename="../../../src/headers/ADE_interpolator.h" />
 		<Unit filename="../../../src/headers/ADE_nrutil.h" />
 		<Unit filename="../../../src/headers/ADE_polyfit.h" />
+		<Unit filename="../../../src/headers/ADE_proximity.h" />
 		<Unit filename="../../../src/headers/ADE_typedefs.h" />
 		<Unit filename="../../../src/headers/ADE_upsampler.h" />
 		<Unit filename="main.cpp">
