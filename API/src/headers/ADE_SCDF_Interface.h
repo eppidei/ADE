@@ -4,9 +4,11 @@
 
 #define BLOW_BIT (0)
 #define SNAP_BIT (1)
+#define PROXY_BIT (2)
 
 #define BLOW_FLAG (1<<BLOW_BIT)
 #define SNAP_FLAG (1<<SNAP_BIT)
+#define PROXY_FLAG (1<<PROXY_BIT)
 
 typedef enum ADE_SensorType_S{
     ADE_Invalid=-1,

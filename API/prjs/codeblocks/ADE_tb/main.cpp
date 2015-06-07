@@ -150,7 +150,7 @@ ADE_Init(&p_ade_handle,SNAP_FLAG,audio_buff_len,audio_fs);
 
 
 //ADE_Configure_params(p_ade_handle,BLOW_FLAG);
-ADE_Configure_params(p_ade_handle,SNAP_FLAG);
+ADE_Configure_params(p_ade_handle,SNAP_FLAG,audio_fs);
 #ifndef ADE_CONFIGURATION_INTERACTIVE
 p_data=(ADE_FLOATING_T*)calloc(audio_buff_len,sizeof(ADE_FLOATING_T));
 #endif
