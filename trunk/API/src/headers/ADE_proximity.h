@@ -9,7 +9,7 @@ struct ADE_PROXIMITY_S
     ADE_FLOATING_T Fs_o;
     ADE_UINT32_T buff_len_o;
     ADE_FLOATING_T * p_in;
-    ADE_BOOL_T *p_state;
+    ADE_BOOL_T state;
 };
 
 #ifdef __cplusplus
@@ -18,10 +18,10 @@ struct ADE_PROXIMITY_S
 
 ADE_API_RET_T ADE_Proximity_Init(ADE_PROXIMITY_T **dp_proxy);
 ADE_VOID_T ADE_Proximity_Release(ADE_PROXIMITY_T *p_proxy);
-ADE_API_RET_T ADE_Proximity_Configure_params(ADE_PROXIMITY_T *p_proxy,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o);
+ADE_API_RET_T ADE_Proximity_Configure_params(ADE_PROXIMITY_T *p_proxy,ADE_FLOATING_T Fs_i);
 ADE_API_RET_T ADE_Proximity_Configure_inout(ADE_PROXIMITY_T *p_proxy,ADE_FLOATING_T * p_in);
-ADE_API_RET_T ADE_Proximity_Configure_bufflength(ADE_PROXIMITY_T *p_proxy,ADE_UINT32_T buff_len_i,ADE_UINT32_T buff_len_o);
-ADE_API_RET_T ADE_Proximity_Configure(ADE_PROXIMITY_T *p_proxy,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o,ADE_UINT32_T buff_len_i,ADE_UINT32_T buff_len_o,ADE_FLOATING_T * p_in);
+ADE_API_RET_T ADE_Proximity_Configure_bufflength(ADE_PROXIMITY_T *p_proxy,ADE_UINT32_T buff_len_i);
+ADE_API_RET_T ADE_Proximity_Configure(ADE_PROXIMITY_T *p_proxy,ADE_FLOATING_T Fs_i,ADE_UINT32_T buff_len_i,ADE_FLOATING_T * p_in);
 ADE_API_RET_T ADE_Proximity_Step(ADE_PROXIMITY_T *p_proxy);
 
 #ifdef __cplusplus
