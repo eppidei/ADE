@@ -46,6 +46,12 @@ ADE_API_RET_T ADE_Fft_Init(ADE_FFT_T** dp_this,ADE_UINT32_T buff_len)
                 }
 
             #endif
+        #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    
+    p_this->p_split_buff_in=calloc(buff_len,sizeof(ADE_FFTCPLX_T));//alloco sempre max dim FC2C se real We use half
+    ADE_CHECK_MEMALLOC(ADE_CLASS_FFT,ADE_METHOD_Init,p_this->p_split_buff_in);
+    p_this->p_split_buff_out=calloc(buff_len,sizeof(ADE_FFTCPLX_T));//alloco sempre max dim FC2C se real We use half
+    ADE_CHECK_MEMALLOC(ADE_CLASS_FFT,ADE_METHOD_Init,p_this->p_split_buff_out);
         #endif
 
          p_this->direction=ADE_FFT_INVALID_DIR;
@@ -90,6 +96,8 @@ ADE_VOID_T ADE_Fft_Release(ADE_FFT_T* p_fft)
         #else
              #error(ADE_FP_PRECISION);
         #endif
+    ADE_CHECKNFREE(p_fft->p_split_buff_in);
+    ADE_CHECKNFREE(p_fft->p_split_buff_out);
 
     #else
          #error(ADE_FFT_IMP);
@@ -108,6 +116,9 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Configure,p_fft);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Configure,p_inbuff);
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Configure,p_outbuff);
+    
+    ret_set=ADE_Fft_SetType(p_fft,fft_type);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
 
      ret_set=ADE_Fft_SetInBuff(p_fft,p_inbuff);
      ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
@@ -125,8 +136,7 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
         		#endif
           #endif
       #endif
-    ret_set=ADE_Fft_SetType(p_fft,fft_type);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
+    
     ret_set=ADE_Fft_SetDirection(p_fft,fft_dir);
     ADE_CHECK_ADERETVAL(ADE_CLASS_FFT,ADE_METHOD_Configure,ret_set);
 
@@ -144,6 +154,8 @@ ADE_API_RET_T ADE_Fft_Configure(ADE_FFT_T* p_fft,ADE_FFT_TYPE_T fft_type, ADE_FF
 /********** Processing Methods *****************/
 ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 {
+    
+    ADE_FLOATING_T scale=0.0;
 
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_Step,p_fft);
 
@@ -166,18 +178,27 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
         {
             #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
                  vDSP_fft_zopD ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
+                 vDSP_ztocD (&p_fft->split_out,1,(ADE_DSPDoubleComplex*) p_fft->p_out,2,p_fft->buff_len);
             #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
                 vDSP_fft_zop ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
+            vDSP_ztoc (&p_fft->split_out,1,(ADE_DSPComplex*) p_fft->p_out,2,p_fft->buff_len);
                 #else
                     #error(ADE_FP_PRECISION in ADE_Fft_Step)
                 #endif
         }
         else if (p_fft->type==ADE_FFT_R2C)
         {
+             scale = (ADE_FLOATING_T) 1.0 / (2);
         #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
             vDSP_fft_zropD ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
+            vDSP_vsmulD(p_fft->split_out.realp, 1, &scale, p_fft->split_out.realp, 1, p_fft->buff_len/2);
+            vDSP_vsmulD(p_fft->split_out.imagp, 1, &scale, p_fft->split_out.imagp, 1, p_fft->buff_len/2);
+            vDSP_ztocD (&p_fft->split_out,1,(ADE_DSPDoubleComplex*) p_fft->p_out,2,p_fft->buff_len/2);
         #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
             vDSP_fft_zrop ( p_fft->p_setup, &(p_fft->split_in), 1, &(p_fft->split_out), 1, log2(p_fft->buff_len), p_fft->direction );
+            vDSP_vsmul(p_fft->split_out.realp, 1, &scale, p_fft->split_out.realp, 1, p_fft->buff_len/2);
+            vDSP_vsmul(p_fft->split_out.imagp, 1, &scale, p_fft->split_out.imagp, 1, p_fft->buff_len/2);
+            vDSP_ztoc (&p_fft->split_out,1,(ADE_DSPComplex*)p_fft->p_out,2,p_fft->buff_len/2);
         #else
             #error(ADE_FP_PRECISION in ADE_Fft_Step)
         #endif
@@ -195,56 +216,56 @@ ADE_API_RET_T ADE_Fft_Step(ADE_FFT_T* p_fft)
 
 }
 
-#if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
-{
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_FillSplitIn,p_fft);
-
-    if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_C2R)
-    {
-        ADE_Utils_FillSplitCplx(real,imag,idx,&(p_fft->split_in));
-    }
-    else if (p_fft->type==ADE_FFT_R2C || p_fft->type==ADE_FFT_R2R)
-
-    {
-        //ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_in));
-        
-        /////it seems that for real fft accel_framework still want a fake complex type made by real value ///*splitted
-
-        if (idx%2==0)
-        {
-         ADE_Utils_FillSplitReal(real,idx/2,&(p_fft->split_in));
-        }
-        else
-        {
-            
-            ADE_Utils_FillSplitImag(real,idx/2,&(p_fft->split_in));
-        }
-    }
-
-    return ADE_RET_SUCCESS;
-}
-
-ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
-{
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_FillSplitOut,p_fft);
-
-    if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_R2C)
-    {
-        ADE_Utils_FillSplitCplx(real,imag,idx,&(p_fft->split_out));
-    }
-    else if (p_fft->type==ADE_FFT_C2R || p_fft->type==ADE_FFT_R2R)
-
-    {
-        ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_out));
-    }
-
-    return ADE_RET_SUCCESS;
-}
-
-#endif
+//#if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+//ADE_API_RET_T ADE_Fft_FillSplitIn(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
+//{
+//
+//    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_FillSplitIn,p_fft);
+//
+//    if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_C2R)
+//    {
+//        ADE_Utils_FillSplitCplx(real,imag,idx,&(p_fft->split_in));
+//    }
+//    else if (p_fft->type==ADE_FFT_R2C || p_fft->type==ADE_FFT_R2R)
+//
+//    {
+//        //ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_in));
+//        
+//        /////it seems that for real fft accel_framework still want a fake complex type made by real value ///*splitted
+//
+//        if (idx%2==0)
+//        {
+//         ADE_Utils_FillSplitReal(real,idx/2,&(p_fft->split_in));
+//        }
+//        else
+//        {
+//            
+//            ADE_Utils_FillSplitImag(real,idx/2,&(p_fft->split_in));
+//        }
+//    }
+//
+//    return ADE_RET_SUCCESS;
+//}
+//
+//ADE_API_RET_T ADE_Fft_FillSplitOut(ADE_FFT_T* p_fft,ADE_FLOATING_T real,ADE_FLOATING_T imag,ADE_UINT32_T idx)
+//{
+//
+//    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_FillSplitOut,p_fft);
+//
+//    if (p_fft->type==ADE_FFT_C2C || p_fft->type==ADE_FFT_R2C)
+//    {
+//        ADE_Utils_FillSplitCplx(real,imag,idx,&(p_fft->split_out));
+//    }
+//    else if (p_fft->type==ADE_FFT_C2R || p_fft->type==ADE_FFT_R2R)
+//
+//    {
+//        ADE_Utils_FillSplitReal(real,idx,&(p_fft->split_out));
+//    }
+//
+//    return ADE_RET_SUCCESS;
+//}
+//
+//#endif
 
 
 
@@ -258,8 +279,41 @@ static ADE_API_RET_T ADE_Fft_SetInBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_inbuff)
     #if (ADE_FFT_IMP==ADE_USE_FFTW)
     p_fft->p_in=p_inbuff;
     #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-    ADE_Utils_SetSplit(p_inbuff,p_fft->buff_len,&(p_fft->split_in));
+    p_fft->p_in=p_inbuff;
+    
+     #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+    if (p_fft->type==ADE_FFT_C2C)
+    {
+        ADE_Utils_SetSplit(p_fft->p_split_buff_in,p_fft->buff_len,&(p_fft->split_in));
+        vDSP_ctozD((ADE_DSPDoubleComplex *) p_inbuff, 2, &p_fft->split_in, 1, p_fft->buff_len);
+    }
+    else if (p_fft->type==ADE_FFT_R2C)
+    {
+        ADE_Utils_SetSplit(p_fft->p_split_buff_in,p_fft->buff_len/2,&(p_fft->split_in));
+        vDSP_ctozD((ADE_DSPDoubleComplex *) p_inbuff, 2, &p_fft->split_in, 1, p_fft->buff_len/2);
+    }
+    else
+    {
+        fprintf(ADE_STDERR_STREAM,"Value p_fft->type = %d not handled in ADE_Fft_SetInBuff\n",p_fft->type) ;
+    }
 
+    
+    #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+    if (p_fft->type==ADE_FFT_C2C)
+    {
+         ADE_Utils_SetSplit(p_fft->p_split_buff_in,p_fft->buff_len,&(p_fft->split_in));
+        vDSP_ctoz((ADE_DSPComplex *) p_inbuff, 2, &p_fft->split_in, 1, p_fft->buff_len);
+    }
+    else if (p_fft->type==ADE_FFT_R2C)
+    {
+        ADE_Utils_SetSplit(p_fft->p_split_buff_in,p_fft->buff_len/2,&(p_fft->split_in));
+       vDSP_ctoz((ADE_DSPComplex *) p_inbuff, 2, &p_fft->split_in, 1, p_fft->buff_len/2);
+    }
+    else
+    {
+        fprintf(ADE_STDERR_STREAM,"Value p_fft->type = %d not handled in ADE_Fft_SetInBuff\n",p_fft->type) ;
+    }
+#endif
 
     #endif
 
@@ -272,12 +326,47 @@ static ADE_API_RET_T ADE_Fft_SetOutBuff(ADE_FFT_T* p_fft,ADE_VOID_T *p_outbuff)
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetOutBuff,p_fft);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FFT,ADE_METHOD_SetOutBuff,p_outbuff);
 
-     #if (ADE_FFT_IMP==ADE_USE_FFTW)
+#if (ADE_FFT_IMP==ADE_USE_FFTW)
     p_fft->p_out=p_outbuff;
-    #elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-    ADE_Utils_SetSplit(p_outbuff,p_fft->buff_len,&(p_fft->split_out));
+#elif (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+    p_fft->p_out=p_outbuff;
+    
+#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+    if (p_fft->type==ADE_FFT_C2C)
+    {
+        ADE_Utils_SetSplit(p_fft->p_split_buff_out,p_fft->buff_len,&(p_fft->split_out));
+        vDSP_ctozD((ADE_DSPDoubleComplex *) p_outbuff, 2, &p_fft->split_out, 1, p_fft->buff_len);
+    }
+    else if (p_fft->type==ADE_FFT_R2C)
+    {
+        ADE_Utils_SetSplit(p_fft->p_split_buff_out,p_fft->buff_len/2,&(p_fft->split_out));
+        vDSP_ctozD((ADE_DSPDoubleComplex *) p_outbuff, 2, &p_fft->split_out, 1, p_fft->buff_len/2);
+    }
+    else
+    {
+        fprintf(ADE_STDERR_STREAM,"Value p_fft->type = %d not handled in ADE_Fft_SetInBuff\n",p_fft->type) ;
+    }
+    
+    
+#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+    if (p_fft->type==ADE_FFT_C2C)
+    {
+        ADE_Utils_SetSplit(p_fft->p_split_buff_out,p_fft->buff_len,&(p_fft->split_out));
+       vDSP_ctoz((ADE_DSPComplex *) p_outbuff, 2, &p_fft->split_out, 1, p_fft->buff_len);
+    }
+    else if (p_fft->type==ADE_FFT_R2C)
+    {
+        ADE_Utils_SetSplit(p_fft->p_split_buff_out,p_fft->buff_len/2,&(p_fft->split_out));
+        vDSP_ctoz((ADE_DSPComplex *) p_outbuff, 2, &p_fft->split_out, 1, p_fft->buff_len/2);
+    }
+    else
+    {
+        fprintf(ADE_STDERR_STREAM,"Value p_fft->type = %d not handled in ADE_Fft_SetOutBuff\n",p_fft->type) ;
+    }
+#endif
+    
+#endif
 
-    #endif
  return ADE_RET_SUCCESS;
 }
 

@@ -20,6 +20,7 @@ ADE_INT32_T blas3_test_procedure(ADE_BENCH_T *test_cases,ADE_UINT32_T n_tests,AD
 ADE_VOID_T custom_FFT(ADE_FLOATING_T data[], unsigned long nn, ADE_CUSTOM_FFT_DIRECTION_T isign);
 ADE_VOID_T fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,ADE_UINT32_T test_id,ADE_FFT_TYPE_T m_type,bench_times_T *bench_struct,FILE* p_fid);
 ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_INT32_T n_dim_cases,FILE* p_fid);
+        ADE_INT32_T fft_iosreal_test_procedure(ADE_UINT32_T *p_dim,ADE_INT32_T n_dim_cases,FILE* p_fid);
 
 #ifdef __cplusplus
     }   /* extern "C" */

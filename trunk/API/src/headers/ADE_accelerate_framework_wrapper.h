@@ -6,6 +6,8 @@
 #ifdef __cplusplus
     extern "C" {
 #endif
+ extern void vDSP_vsmul ( const ADE_FLOATING_SP_T * __nonnull __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_SP_T * __nonnull __B, ADE_FLOATING_SP_T * __nonnull __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
+  extern void vDSP_vsmulD ( const ADE_FLOATING_DP_T * __nonnull __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_DP_T * __nonnull __B, ADE_FLOATING_DP_T * __nonnull __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
 /****************************** SETUP ******************************/
 extern ADE_FFTSetup vDSP_create_fftsetup ( ADE_vDSP_Length __vDSP_Log2n, ADE_FFTRadix __vDSP_Radix );
 extern ADE_FFTSetupD vDSP_create_fftsetupD ( ADE_vDSP_Length __vDSP_Log2n, ADE_FFTRadix __vDSP_Radix );
