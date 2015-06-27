@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A608C2D9-C39F-49BD-BE34-1B2DC1FD627F}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>osc</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;__WINDOWS_DS__;__WINDOWS_MM__;__LITTLE_ENDIAN__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\SCDF_Host\Shared_C_funcs\stk\include;C:\SCDF_Host\Shared_C_funcs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;WinMM.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;__WINDOWS_DS__;__WINDOWS_MM__;__LITTLE_ENDIAN__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\SCDF_Host\Shared_C_funcs\stk\include;C:\SCDF_Host\Shared_C_funcs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ws2_32.lib;WinMM.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Shared_C_funcs\dsp_blow.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_C_funcs\dsp_utils.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_C_funcs\ip\IpEndpointName.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\ip\win32\NetworkingUtils.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\ip\win32\UdpSocket.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\midi_packager.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Shared_C_funcs\osc\OscOutboundPacketStream.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\osc\OscPrintReceivedElements.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\osc\OscReceivedElements.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\osc\OscTypes.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\stk\src\FileLoop.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\stk\src\FileRead.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\stk\src\FileWrite.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\stk\src\FileWvIn.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\stk\src\FileWvOut.cpp" />
+    <ClCompile Include="..\..\..\Shared_C_funcs\udp_receiver.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\..\..\stk-4.5.0\src\ADSR.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Asymp.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\BandedWG.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\BiQuad.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Blit.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\BlitSaw.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\BlitSquare.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\BlowBotl.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\BlowHole.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Bowed.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Brass.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Chorus.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Clarinet.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Delay.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\DelayA.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\DelayL.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Drummer.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Echo.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Envelope.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Fir.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Flute.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\FM.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\FMVoices.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\FormSwep.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\FreeVerb.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Granulate.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Guitar.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\HevyMetl.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Iir.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\JCRev.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\LentPitShift.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Mandolin.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Mesh2D.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Modal.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\ModalBar.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Modulate.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Moog.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Mutex.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Noise.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\NRev.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\OnePole.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\OneZero.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\PercFlut.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Phonemes.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\PitShift.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Plucked.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\PoleZero.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\PRCRev.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Resonate.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Rhodey.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Sampler.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Saxofony.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Shakers.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Simple.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\SineWave.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\SingWave.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Sitar.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Skini.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Sphere.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\StifKarp.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Stk.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\TapDelay.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Thread.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\TubeBell.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Twang.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\TwoPole.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\TwoZero.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Voicer.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\VoicForm.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Whistle.cpp" />
+    <ClCompile Include="..\..\..\stk-4.5.0\src\Wurley.cpp" />
+    <ClCompile Include="osc_main.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsCpp</CompileAs>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

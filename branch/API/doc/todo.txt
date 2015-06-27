@@ -1,0 +1,13 @@
+2) check that all processing class have define to check inp and check out
+3) check all set methods have input check
+4) function round
+5) Funzioni (spesso static) che prendono puntatore a oggetto non sono atomiche perchè usano memoria allocata esternamente
+   magari dividere tra funzione propria e associazione puntatori generici con allocati dall'oggetto
+6) wrappare allocazioni di memoria
+7) rivedere blas filtering (no riutilizzo blas per easy threading)
+8) separati i metodi privati in PrivateMethod and doPrivateMethods dove nel primo si associano membri oggetto a parametri
+   e l'altra funzione vera e propria (legata a quello che volevo dire al punto 5)
+9) fare periodicamente code review
+10) Aggiungere con #ifdef CHECK_INPUT solo valori non permessi delle funzioni doSomething
+11) testare la differenza tra 2 cicli for su operazioni ottimizzate ed un unico con non ottimizzate ma inglobate in un unico ciclo.
+12) Separa Init da variabili che dipendono da configurazione e inizializzare con valori max defined

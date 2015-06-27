@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<title>Sensors for Orientation Estimation | CH Robotics</title>
+<link rel="profile" href="http://gmpg.org/xfn/11">
+<link rel="stylesheet" type="text/css" media="all" href="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/style.css">
+<link rel="pingback" href="http://www.chrobotics.com/xmlrpc.php">
+<script src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/analytics.js" async=""></script><script src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/ga.js" async="" type="text/javascript"></script><script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-11301124-3']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<link rel="alternate" type="application/rss+xml" title="CH Robotics » Feed" href="http://www.chrobotics.com/feed">
+<link rel="alternate" type="application/rss+xml" title="CH Robotics » Comments Feed" href="http://www.chrobotics.com/comments/feed">
+<link rel="alternate" type="application/rss+xml" title="CH Robotics » Sensors for Orientation Estimation Comments Feed" href="http://www.chrobotics.com/library/sensors-for-estimation/feed">
+
+	<!-- Shopp catalog styles for dynamic grid view -->
+	<style type="text/css">
+	#shopp ul.products li.product { width: 33%; }
+	</style>
+
+<link rel="stylesheet" id="shopp.catalog-css" href="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/catalog.css" type="text/css" media="screen">
+<link rel="stylesheet" id="shopp-css" href="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/shopp.css" type="text/css" media="screen">
+<link rel="stylesheet" id="shopp.colorbox-css" href="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/colorbox.css" type="text/css" media="screen">
+<script type="text/javascript" src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/jquery.js"></script>
+<script type="text/javascript" src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/jquery-migrate.js"></script>
+<script type="text/javascript" src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/external-tracking.js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.chrobotics.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.chrobotics.com/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress 4.0.1">
+<link rel="shortlink" href="http://www.chrobotics.com/?p=176">
+<style type="text/css" id="custom-background-css">
+body.custom-background { background-color: #5F5F5F; }
+</style>
+<!-- Google Analytics Tracking by Google Analyticator 6.4.8: http://www.videousermanuals.com/google-analyticator/ -->
+<script type="text/javascript">
+    var analyticsFileTypes = [''];
+    var analyticsSnippet = 'disabled';
+    var analyticsEventTracking = 'enabled';
+</script>
+<script type="text/javascript">
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-11301124-3', 'auto');
+ 
+	ga('send', 'pageview');
+</script>
+</head>
+
+<body class="page page-id-176 page-child parent-pageid-111 page-template-default custom-background"><div style="display: none;" id="cboxOverlay"></div><div style="padding-bottom: 32px; padding-right: 0px; display: none;" class="" id="colorbox"><div id="cboxWrapper"><div><div style="float: left;" id="cboxTopLeft"></div><div style="float: left;" id="cboxTopCenter"></div><div style="float: left;" id="cboxTopRight"></div></div><div style="clear:left"><div style="float: left;" id="cboxMiddleLeft"></div><div style="float: left;" id="cboxContent"><div class="" id="cboxLoadedContent" style="width:0; height:0; overflow:hidden"></div><div class="" id="cboxLoadingOverlay"></div><div class="" id="cboxLoadingGraphic"></div><div class="" id="cboxTitle"></div><div class="" id="cboxCurrent"></div><div class="" id="cboxNext"></div><div class="" id="cboxPrevious"></div><div class="" id="cboxSlideshow"></div><div class="" id="cboxClose"></div></div><div style="float: left;" id="cboxMiddleRight"></div></div><div style="clear:left"><div style="float: left;" id="cboxBottomLeft"></div><div style="float: left;" id="cboxBottomCenter"></div><div style="float: left;" id="cboxBottomRight"></div></div></div><div style="position:absolute; width:9999px; visibility:hidden; display:none"></div></div>
+	<div id="header">
+		<div id="logo">
+			<h1><a href="http://www.chrobotics.com/home" id="A1">CH Robotics</a></h1>
+		</div>
+		<div id="topmenu">
+					<p>Welcome Guest&nbsp;&nbsp;<a href="http://www.chrobotics.com/shop/cart">View Cart (0 items)</a><a href="http://www.chrobotics.com/shop/account">Login</a></p>
+				</div>
+	</div> <!-- end #header -->
+
+	<div id="header2">
+		<div id="menu">
+			<!-- <div class="menu"><ul><li ><a href="http://www.chrobotics.com/">Home</a></li><li class="page_item page-item-411"><a href="http://www.chrobotics.com/quaternion-biases">Quaternion Biases</a></li><li class="page_item page-item-111 page_item_has_children current_page_ancestor current_page_parent"><a href="http://www.chrobotics.com/library">Library</a><ul class='children'><li class="page_item page-item-330"><a href="http://www.chrobotics.com/library/attitude-estimation">Fundamentals of Attitude Estimation</a></li><li class="page_item page-item-440"><a href="http://www.chrobotics.com/library/heading-course-and-crab-angle">Heading, Course, and Crab Angle</a></li><li class="page_item page-item-113"><a href="http://www.chrobotics.com/library/understanding-euler-angles">Understanding Euler Angles</a></li><li class="page_item page-item-160"><a href="http://www.chrobotics.com/library/understanding-quaternions">Understanding Quaternions</a></li><li class="page_item page-item-176 current_page_item"><a href="http://www.chrobotics.com/library/sensors-for-estimation">Sensors for Orientation Estimation</a></li><li class="page_item page-item-168"><a href="http://www.chrobotics.com/library/accel-position-velocity">Using Accelerometers to Estimate Position and Velocity</a></li></ul></li><li class="page_item page-item-12 page_item_has_children"><a href="http://www.chrobotics.com/products">Products</a><ul class='children'><li class="page_item page-item-16"><a href="http://www.chrobotics.com/products/inertial-and-orientation-sensors">Inertial and Orientation Sensors</a></li><li class="page_item page-item-380"><a href="http://www.chrobotics.com/products/legacy-products">Legacy Products</a></li><li class="page_item page-item-20"><a href="http://www.chrobotics.com/products/expansion-boards-and-accessories">Expansion Boards and Accessories</a></li><li class="page_item page-item-249"><a href="http://www.chrobotics.com/products/power-supplies">Power Supplies</a></li></ul></li><li class="page_item page-item-40"><a href="http://www.chrobotics.com/sales">Sales</a></li><li class="page_item page-item-82"><a href="http://www.chrobotics.com/news">News</a></li><li class="page_item page-item-27"><a href="http://www.chrobotics.com/contact">About Us</a></li></ul></div>
+ -->
+            <div class="menu-main-menu-container"><ul id="menu-main-menu" class="menu"><li id="menu-item-63" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-63"><a href="http://www.chrobotics.com/">Home</a></li>
+<li id="menu-item-62" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-62"><a href="http://www.chrobotics.com/products">Products</a>
+<ul class="sub-menu">
+	<li id="menu-item-108" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-108"><a href="http://www.chrobotics.com/products/inertial-and-orientation-sensors">Inertial and Orientation Sensors</a></li>
+	<li id="menu-item-251" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-251"><a href="http://www.chrobotics.com/products/power-supplies">Power Supplies</a></li>
+	<li id="menu-item-107" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-107"><a href="http://www.chrobotics.com/products/expansion-boards-and-accessories">Expansion Boards and Accessories</a></li>
+</ul>
+</li>
+<li id="menu-item-217" class="menu-item menu-item-type-post_type menu-item-object-page current-page-ancestor menu-item-217"><a href="http://www.chrobotics.com/library">Library</a></li>
+<li id="menu-item-109" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-109"><a href="http://www.chrobotics.com/news">News</a></li>
+<li id="menu-item-61" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-61"><a href="http://www.chrobotics.com/contact">About Us</a></li>
+</ul></div>		</div> <!-- end #menu -->
+	</div>
+
+	<div id="page">
+			<div id="content-no-sidebar" role="main">
+
+			
+
+				<div id="post-176" class="post-176 page type-page status-publish hentry">
+											<h1 class="entry-title">Sensors for Orientation Estimation</h1>
+					
+					<div class="entry-content">
+						<h3><strong>1. Introduction</strong></h3>
+<p>CH Robotics <a href="http://www.chrobotics.com/products/inertial-and-orientation-sensors" target="_blank">AHRS and Orientation Sensors</a>
+ combine information from accelerometers, rate gyros, and (in some 
+cases) GPS to produce reliable attitude and heading measurements that 
+are resistant to vibration and immune to long-term angular drift.</p>
+<p>Part of what makes reliable orientation estimates possible is the 
+complementary nature of the different kinds of sensors used for 
+estimation.&nbsp; Rate gyros provide good short-term stability and 
+resistance to vibration, accelerometers can provide attitude information
+ that does not become less reliable over time, and magnetic sensors 
+provide heading information in addition to limited attitude information 
+(pitch and roll).&nbsp; By combining data from each type of sensor using
+ a filter such as an Extended Kalman Filter, accurate orientation 
+estimates can be computed.</p>
+<p>To fully understand the capabilities and limitations of CH Robotics 
+devices, it helps to have a clear understanding of the operation of the 
+different types of sensors that used to compute attitude and 
+heading.&nbsp; In this application note we describe in detail the 
+operation of accelerometers, rate gyros, and magnetic sensors.&nbsp; We 
+present high level descriptions of how the different types of sensors 
+work, in addition to mathematical models used to quantify the 
+performance characteristics of each type of sensor.</p>
+<h3><strong>2. Accelerometers</strong></h3>
+<p>The output of a three-axis accelerometer mounted to a rigid body can be modeled as</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_011.gif" alt="\mathbf{a}_m = \frac{1}{m}(\mathbf{F} - \mathbf{F}_g)," align="absmiddle"></p>
+<p>where <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_006.gif" alt="\mathbf{a}_m" align="absmiddle">&nbsp;is the measured acceleration, <em>m</em>&nbsp;is the mass of the body, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_008.gif" alt="\mathbf{F}" align="absmiddle">&nbsp;is the sum of all forces&nbsp;on the body (including gravity) expressed in the sensor body frame, and <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_029.gif" alt="\mathbf{F}_g" align="absmiddle">&nbsp;is the force due to gravity, also expressed in the body frame (See the chapter on<em>&nbsp;</em><a title="Understanding Euler Angles" href="http://www.chrobotics.com/library/understanding-euler-angles" target="_blank">Understanding Euler Angles</a> for details about different coordinate frames).</p>
+<p>The accelerometer model can be intuitively explained using the highly
+ simplified one-axis accelerometer diagram shown in Figure 1. As shown, 
+an accelerometer can be constructed by attaching a proof-mass to a 
+lever-arm. &nbsp;Any upward or downward acceleration of the sensor in 
+Figure 1 causes deflection of the proof mass, which can be measured to 
+determine acceleration (below the natural frequency of the lever/mass 
+system, deflection is proportional to acceleration). This accounts for 
+the first force term, &nbsp;<img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_008.gif" alt="\mathbf{F}" align="absmiddle">,
+ in the accelerometer model: the sum of all forces on the body, 
+including gravity, produces physical acceleration of the sensor, which 
+in turn causes deflection of the proof mass.</p>
+<div id="attachment_182" style="width: 319px" class="wp-caption alignnone"><a href="http://www.chrobotics.com/wp-content/uploads/2012/11/accel_diagram.png"><img class=" wp-image-182  " title="accel_diagram" src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/accel_diagram.png" alt="" height="226" width="309"></a><p class="wp-caption-text">Figure 1 – Simplified One-Axis Accelerometer Diagram</p></div>
+<p>The second force term, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_029.gif" alt="\mathbf{F}_g" align="absmiddle">,
+ is present in the accelerometer model because the force of gravity not 
+only accelerates the sensor body, it also causes deflection of the 
+proof-mass itself. If the accelerometer is not accelerating (<img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_010.gif" alt="\mathbf{F}=0" align="absmiddle">),
+ then gravity produces a downward deflection of the proof mass that 
+appears equivalent to upward acceleration of the sensor at the 
+acceleration of gravity. Similarly, if the accelerometer is in free-fall
+ (<img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_019.gif" alt="\mathbf{F}=\mathbf{F}_g" align="absmiddle">)
+ there is no&nbsp;deflection and hence no measured acceleration despite 
+the fact that the accelerometer is accelerating at 9.8 m/s/s toward the 
+center of the earth.</p>
+<p>Our accelerometer model suggests that the expected 
+accelerometer&nbsp;measurement can be obtained by drawing a free-body 
+diagram that includes all forces except the force of gravity: the first 
+term, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_008.gif" alt="\mathbf{F}" align="absmiddle">, includes gravity, while the second term, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_029.gif" alt="\mathbf{F}_g" align="absmiddle">,
+ removes it. &nbsp;From this perspective, accelerometers never measure 
+gravity directly – they measure the normal forces that prevent the 
+sensor from accelerating toward the center of the Earth (in 
+addition&nbsp;to other external forces).</p>
+<p>Let us assume that the external forces acting on the sensor are 
+trivial in comparison with the normal forces.&nbsp; Then the 
+accelerometer output can be approximately modeled as</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_015.gif" alt="\mathbf{a}_m = -\frac{\mathbf{F}_g}{m}," align="absmiddle"></p>
+<p>from which it is easy to back out the pitch and roll angles of the 
+sensor by simply noting which direction gravity the gravity vector 
+points.&nbsp; For example, if it points straight down, then the sensor 
+is level with pitch = roll = 0.&nbsp; This is illustrated in Figure 
+1.&nbsp; Notice that the x and y accelerometer outputs are nearly zero, 
+while the z-axis output is negative one gravity.</p>
+<div id="attachment_186" style="width: 606px" class="wp-caption alignnone"><a href="http://www.chrobotics.com/wp-content/uploads/2012/11/UM6_accel_data.jpg"><img class="size-full wp-image-186" title="UM6_accel_data" src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/UM6_accel_data.jpg" alt="" height="380" width="596"></a><p class="wp-caption-text">Accelerometer output with sensor flat and level on a table-top</p></div>
+<p>On the <a title="UM6 Orientation Sensor" href="http://www.chrobotics.com/shop/um6-orientation-sensor">UM6</a> and the <a title="UM6-LT Orientation Sensor" href="http://www.chrobotics.com/shop/um6-lt-orientation-sensor">UM6-LT</a>,
+ it is assumed that in general the external forces acting on the 
+accelerometer are close to zero, so that the pitch and roll angles can 
+be measured directly.&nbsp; When this assumption is not valid (i.e. on 
+an airplane, a helicopter, motorcycle, or anything that spends a lot of 
+time accelerating aggressively), the angle estimates of the sensor can 
+degrade.&nbsp; This will be true of <em>any</em> orientation sensor or AHRS that doesn’t utilize an external aid like GPS.</p>
+<p>The simplified accelerometer model given above does not include terms
+ to account for cross-axis alignment, scale factors, and output 
+bias.&nbsp; All of these items can increase the amount of error in the 
+output of the sensor, affecting the accuracy of orientation estimates 
+and (depending on how the accelerometer is being used) on the accuracy 
+of dead-reckoning velocity and position estimates.&nbsp; A more complete
+ model of the accelerometer output is given by</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_024.gif" alt="\mathbf{a}_m = M_a\left( \frac{1}{m}S_a(T)(\mathbf{F} - \mathbf{F}_g)-\beta(T) \right )," align="absmiddle"></p>
+<p>where <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_005.gif" alt="M_a" align="absmiddle">&nbsp;is the accelerometer misalignment matrix, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_016.gif" alt="\beta(T)" align="absmiddle">&nbsp;is a vector of temperature-varying output biases, and <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_032.gif" alt="S_a(T)" align="absmiddle">&nbsp;is the diagonal temperature-varying accelerometer sensitivity matrix given by</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_022.gif" alt="S_a(T) = \begin{pmatrix} S_{a,x} &amp; 0 &amp; 0\\ 0 &amp; S_{a,y} &amp; 0\\ 0 &amp; 0 &amp; S_{a,z} \end{pmatrix}." align="absmiddle"></p>
+<p>The sensitivity matrix is what encodes the expected accelerometer raw
+ output for a given measured acceleration.&nbsp; The misalignment matrix
+ describes the effect of cross-axis misalignment and, unlike the bias 
+and sensitivity terms, it is not affected be temperature.</p>
+<p>When using accelerometer data, we measure <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_006.gif" alt="\mathbf{a}_m" align="absmiddle">&nbsp;but
+ what we really want to know is the actual acceleration before scale 
+factors, biases, and misalignment distort the measurement.&nbsp; That 
+is, we want to take the measurement and extract the term <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_013.gif" alt="\inline (\mathbf{F}-\mathbf{F}_g)/m" align="absmiddle">.&nbsp; &nbsp;Solving, we get</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_018.gif" alt="\mathbf{a}_{m,c} = S_a^{-1}(T)(M_a^{-1}\mathbf{a}_m + \beta_a(T))," align="absmiddle"></p>
+<p>where <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_020.gif" alt="\mathbf{a}_{m,c}" align="absmiddle">&nbsp;is defined as the corrected accelerometer measurement vector.&nbsp; In order to obtain the best accuracy, the terms <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_025.gif" alt="S_a^{-1}(T)" align="absmiddle">, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_023.gif" alt="M_a^{-1}" align="absmiddle">, and <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_017.gif" alt="\beta_a(T)" align="absmiddle">&nbsp;should be determined experimentally over the full operating temperature of the sensor.&nbsp; At the time of writing, the <a title="UM6 Orientation Sensor" href="http://www.chrobotics.com/shop/um6-orientation-sensor">UM6</a> and the <a title="UM6-LT Orientation Sensor" href="http://www.chrobotics.com/shop/um6-lt-orientation-sensor">UM6-LT</a>
+ are not calibrated in-factory so that costs can be kept low.&nbsp; 
+However, new products are scheduled for release in Q2 2013 that will 
+come factory-calibrated for the best possible output accuracy.</p>
+<h3><strong>3. Rate Gyros</strong></h3>
+<p>Let the vector&nbsp;<img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_031.gif" alt="\inline \mathbf{p}" align="absmiddle">&nbsp;be defined as</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_007.gif" alt="\inline \mathbf{p} = \begin{pmatrix} p\\ q\\ r \end{pmatrix}," align="absmiddle"></p>
+<p>where&nbsp;<em>p</em> is the actual angular rate about the body-frame x-axis,&nbsp;<em>q</em> is the actual angular rate about the&nbsp;body-frame y-axis, and&nbsp;<em>r</em>
+ is the actual angular rate about the body-frame z-axis. Then the actual
+ angular rate can be described in terms of the measured angular rate 
+given the expression</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif.gif" alt="\mathbf{p} = S_g^{-1}(T)(M_g^{-1}\mathbf{p}_m + \beta_g(T) - C_{g,a}\mathbf{a}_{m,c})," align="absmiddle"></p>
+<p>where&nbsp;<img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_021.gif" alt="\inline \mathbf{p}_m" align="absmiddle">&nbsp;is the measured angular rate vector,&nbsp;<img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_014.gif" alt="\inline C_{g,a}" align="absmiddle">&nbsp;is a matrix encoding the sensitivity of the rate gyro axes to acceleration, and&nbsp;<img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_012.gif" alt="\inline \mathbf{a}_{m,c}" align="absmiddle">&nbsp;is
+ the corrected accelerometer measurement vector. &nbsp;Usually coupling 
+between the acceleration and rate gyro output is small enough that <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_014.gif" alt="\inline C_{g,a}" align="absmiddle">&nbsp;can
+ be neglected, but in cases where high acceleration is expected (e.g. on
+ a rocket), this term must be measured and included in the model for the
+ best accuracy.</p>
+<p>For best accuracy, all calibration terms should be determined 
+experimentally so that compensation can be performed.&nbsp; However, of 
+all the terms affecting the output error of the gyro measurement, the 
+gyro bias and sensitivity are the largest contributors of error, 
+especially over a wide temperature range.&nbsp; If there is insufficient
+ equipment available to perform a complete calibration, the most 
+important calibration procedure is to remove temperature-induced output 
+bias changes, followed by the removal of temperature-induced scale 
+factor changes.</p>
+<p>At the time of writing, CH Robotics keeps costs low by not calibrating the gyros on the <a title="UM6 Orientation Sensor" href="http://www.chrobotics.com/shop/um6-orientation-sensor">UM6</a> and the <a title="UM6-LT Orientation Sensor" href="http://www.chrobotics.com/shop/um6-lt-orientation-sensor">UM6-LT</a>
+ in-house.&nbsp; However, beginning Q1 2013, calibration will be 
+provided as an optional feature for applications where higher accuracy 
+is required.</p>
+<h3><strong>4. Magnetometers</strong></h3>
+<p>Of all the sensors used by CH Robotics for attitude and heading 
+estimation, magnetometers are perhaps the most tricky to work with for a
+ variety of reasons.&nbsp; First, like accelerometers and rate gyros, 
+magnetic sensors are subject to cross-axis misalignment and 
+temperature-varying scale factors and biases.&nbsp; In addition, the 
+local magnetic field around the magnetometer can be distorted by 
+magnetic and ferrous metal objects.&nbsp; This distortion must be 
+measured and corrected in order for the magnetometer to be useful.&nbsp;
+ The field can also be distorted by time-varying electromagnetic waves 
+from high-power electrical lines and communication lines placed near the
+ sensor.&nbsp; Finally, as the sensor is moved around in practice, the 
+field can be distorted so that, in certain locations (say, next to a 
+concrete wall filled with rebar), the accuracy of the measurement is 
+reduced.&nbsp; All of these factors places some limitations on the use 
+of sensors that rely on magnetometers for heading estimation.</p>
+<p>We begin with a sensor model essentially equivalent to the gyro and 
+accelerometer models already presented, resulting in the following 
+equation for correcting cross-axis misalignment, biases, and scale 
+factors:</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_027.gif" alt="\mathbf{b} = S_b^{-1}(T)(M_b^{-1}\mathbf{b}_m + \beta_b(T))." align="absmiddle"></p>
+<p>Similar to the rate gyro and accelerometer cases already discussed, the vector <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_003.gif" alt="\inline \mathbf{b}" align="absmiddle">&nbsp;represents the actual magnetic field, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_030.gif" alt="\inline \mathbf{b}_m" align="absmiddle">&nbsp;is the measured magnetic field, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_026.gif" alt="\inline S_a^{-1}" align="absmiddle">&nbsp;is the inverse of the magnetometer sensitivity matrix, <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_009.gif" alt="\inline M_b^{-1}" align="absmiddle">&nbsp;is the inverse of the magnetometer misalignment matrix, and <img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_004.gif" alt="\inline \beta_b(T)" align="absmiddle">&nbsp;is the magnetometer bias vector.</p>
+<p>After the magnetometer measurement is corrected for axis 
+misalignment, scale factor, and bias errors, it must be corrected for 
+additional local magnetic field distortions.&nbsp; There are two types 
+of distortions that affect the measurement: soft-iron distortion and 
+hard-iron distortions.</p>
+<p>A soft-iron field distortion is caused by ferrous metal objects that 
+bend the Earth’s magnetic field.&nbsp; For example, the screws in the <a title="UM6 Orientation Sensor" href="http://www.chrobotics.com/shop/um6-orientation-sensor">UM6</a>
+ enclosure bend the local magnetic field.&nbsp; To obtain reasonable 
+accuracy, this distortion must be calibrated out of the 
+measurement.&nbsp; This is actually done in-factory for the <a title="UM6 Orientation Sensor" href="http://www.chrobotics.com/shop/um6-orientation-sensor">UM6</a>.&nbsp;
+ A hard-iron distortion is caused by an object (like the permanent 
+magnets in a motor that has its own permanent magnetic field.</p>
+<p>In the absence of any hard or soft-iron distortions, the outputs of 
+the magnetometer as it is rotated should trace out a perfect sphere 
+centered around zero.&nbsp; Soft-iron distortions distort the sphere so 
+that it appears to be an ellipsoid.&nbsp; Hard-iron distortions shift 
+the mean of the sphere away from zero.</p>
+<p>One way to calibrate the magnetometer for hard and soft iron 
+distortions is to fit an ellipsoid to a set of magnetometer data 
+collected over a wide variety of different orientations.&nbsp; The 
+center of the ellipsoid is equivalent to the bias caused by hard iron 
+distortions, while the ellipsoid shape on the x, y, and z axes are 
+caused by the soft-iron distortions.&nbsp; A correction matrix can then 
+be calculated that, when multiplied by the magnetometer measurements, 
+alters the ellipsoid so that it looks like a sphere again.&nbsp; This is
+ essentially the approach taken by the magnetometer calibration 
+algorithm that is included in the CHR Serial Interface software.</p>
+<p>There are many other methods for calibrating magnetometers, but in 
+most cases the calibration algorithm produces a matrix and a vector 
+&nbsp;such that the corrected magnetometer measurement is given by</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_028.gif" alt="\inline \mathbf{b}_c = D_s \mathbf{b} - \beta_h." align="absmiddle"></p>
+<p>Combining the soft and hard-iron corrections with the calibrated magnetometer measurement, we get</p>
+<p style="padding-left: 30px;"><img src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/gif_002.gif" alt="\inline \mathbf{b}_c = D_s S_a^{-1}(T)(M_a^{-1}\mathbf{a}_m + \beta_a(T)) - \beta_h." align="absmiddle"></p>
+<p>Terms in the above equation can be combined so that there are fewer 
+calibration terms to estimate during calibration, although the process 
+is complicated by the fact that the bias, scale factor, and cross-axis 
+alignment terms will remain constant, while the hard and soft iron 
+calibration terms will change depending on where the end-user mounts the
+ sensor in the end application.</p>
+						
+											</div><!-- .entry-content -->
+				</div><!-- #post-## -->
+
+
+
+			</div><!-- #content -->
+
+<div style="CLEAR: both"> <!-- # --></div>
+	</div><!-- #main -->
+
+	<div id="footer">
+			<p>Copyright (c) CHRobotics LLC. All rights reserved.</p>
+	</div> <!-- end #footer -->
+
+<script type="text/javascript" src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/a.js"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var $s = {"cp":"1","c":"$","p":"2","t":",","d":".","g":"3","nocache":""};var $cv = {"field":"Your %s is required.","email":"The e-mail address you provided does not appear to be a valid address.","minlen":"The %s you entered is too short. It must be at least %d characters long.","pwdmm":"The passwords you entered do not match. They must match in order to confirm you are correctly entering the password you want to use.","chkbox":"%s must be checked before you can proceed."};var $ct = {"items":"Items","total":"Total"};/* ]]> */
+</script>
+<script type="text/javascript" src="Sensors%20for%20Orientation%20Estimation%20%7C%20CH%20Robotics_files/load-scripts.js"></script>
+
+
+</body></html>
