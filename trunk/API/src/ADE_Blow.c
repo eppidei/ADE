@@ -862,7 +862,13 @@ static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow)
     ADE_FLOATING_T aaslow[3];
     ADE_FLOATING_T *nums[IIR2_N_SECTIONS]= {bbslow};
     ADE_FLOATING_T *denoms[IIR2_N_SECTIONS]= {aaslow};
+    #if (ADE_TARGET_TYPE==ADE_ANDROID)
     ADE_FLOATING_T max_pow=0.7;
+    #elif  (ADE_TARGET_TYPE==ADE_IOS)
+    ADE_FLOATING_T max_pow=0.25;
+    #else
+        #error ADE_TARGET_TYPE in ADE_Blow_Iir2_Configure_params
+    #endif
     ADE_API_RET_T ret_conf=ADE_RET_ERROR;
     ADE_API_RET_T ret_set=ADE_RET_ERROR;
 
