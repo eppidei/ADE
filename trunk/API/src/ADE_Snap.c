@@ -1278,6 +1278,8 @@ ADE_UINT32_T dx_bin=floor(p_snap->freq_right/freq_step+0.5);
 ADE_UINT32_T band_len=dx_bin-sx_bin+1;
 ADE_FLOATING_T *p_real_part;
 ADE_FLOATING_T *p_imag_part;
+temp_cplx_split.realp=&(temp_cplx.realpart);
+temp_cplx_split.imagp=&(temp_cplx.imagpart);
 #endif
 /*****/
 
@@ -1291,6 +1293,12 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_snap_recognition,p_snap);
         ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_snap_recognition,ret_fft);
 
         #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
+        p_snap->dp_fft[i]->split_out.realp[0]=0;
+         p_snap->dp_fft[i]->split_out.imagp[0]=0;
+          p_snap->dp_fft[i]->split_out.realp[1]=0;
+         p_snap->dp_fft[i]->split_out.imagp[1]=0;
+          p_snap->dp_fft[i]->split_out.realp[2]=0;
+         p_snap->dp_fft[i]->split_out.imagp[2]=0;
         p_split_in=&(p_snap->dp_fft[i]->split_out);
             #if (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
             vDSP_zidotpr (p_split_in,1,p_split_in,1,&temp_cplx_split,(p_snap->fft_len/2));
@@ -1519,6 +1527,8 @@ len_str=strlen(fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"dp_fft = %p to do\n"),p_snap->dp_fft);
 
     }
+
+    return ADE_RET_SUCCESS;
 
     }
 

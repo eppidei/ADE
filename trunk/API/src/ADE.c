@@ -355,7 +355,7 @@ if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
 }
 else if (Sel_Flag_i==SNAP_FLAG)
 {
-    p_out=(p_ADE->p_proxy_out_struct);
+    p_out=(p_ADE->p_snap_out_struct);
     p_out->Fs_data=p_ADE->p_snap->Fs;
     //p_out->p_data=p_ADE->p_snap->p_out;
     //p_out->n_data=p_ADE->p_snap->buff_len_o;
@@ -465,7 +465,7 @@ static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i)
 
 static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
 {
-    ADE_UINT32_T antibouncing_counter = 100;
+    ADE_UINT32_T antibouncing_counter = 10;
 
 
         if  ( (p_out->n_calls_toggle_logic==0) && (ADE_state==ADE_TRUE) )
@@ -494,7 +494,7 @@ static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T AD
 
 static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
 {
-    ADE_UINT32_T antibouncing_counter = 1;
+    ADE_UINT32_T antibouncing_counter = 10;
 
 
         if   (p_out->n_calls_state_logic==0)
