@@ -400,7 +400,7 @@ ADE_API_RET_T ADE_Matlab_Evaluate_StringnWait(ADE_MATLAB_T* p_mat, char *matcode
 
 }
 
-ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir, char *sosmatrix_varname, char *scalevalues_varname)
+ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir, char *sosmatrix_varname, char *scalevalues_varname,ADE_INT32_T buff_len,ADE_IIR_IMP_CHOICE_T filt_imp_type)
 {
 
     double **dp_num=NULL ,**dp_denom=NULL;
@@ -431,14 +431,16 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
 
     p_gains = ADE_Matlab_GetDataPointer(p_mat,scalevalues_varname);
 
-    ret_set=ADE_Iir_setGains( p_iir, (ADE_FLOATING_T*)p_gains);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
+//    ret_set=ADE_Iir_setGains( p_iir, (ADE_FLOATING_T*)p_gains);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
+//
+//    ret_set=ADE_Iir_setNums( p_iir,  (ADE_FLOATING_T**)dp_num);
+//     ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
+//
+//    ret_set=ADE_Iir_setDenoms( p_iir, (ADE_FLOATING_T**)dp_denom);
+//     ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
 
-    ret_set=ADE_Iir_setNums( p_iir,  (ADE_FLOATING_T**)dp_num);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
-
-    ret_set=ADE_Iir_setDenoms( p_iir, (ADE_FLOATING_T**)dp_denom);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
+ret_set=ADE_Iir_Configure_params(p_iir,(ADE_FLOATING_T*)p_gains,(ADE_FLOATING_T**)dp_num,(ADE_FLOATING_T**)dp_denom,n_sos_sections,buff_len, filt_imp_type);
 
     ADE_CHECKNFREE(dp_num);
     ADE_CHECKNFREE(dp_denom);

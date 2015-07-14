@@ -37,7 +37,7 @@ double* ADE_Matlab_GetDataPointer(ADE_MATLAB_T* p_mat, char *varname);
 ADE_API_RET_T ADE_Matlab_PutVarintoWorkspace(ADE_MATLAB_T* p_mat, double *p_var, char *var_matname, ADE_UINT32_T var_rows, ADE_UINT32_T var_cols, ADE_MATH_ATTRIBUTE_T comp_type);
 ADE_API_RET_T ADE_Matlab_Evaluate_String(ADE_MATLAB_T* p_mat, char *matcode);
 ADE_API_RET_T ADE_Matlab_Evaluate_StringnWait(ADE_MATLAB_T* p_mat, char *matcode);
-ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir, char *sosmatrix_varname, char *scalevalues_varname);
+ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir, char *sosmatrix_varname, char *scalevalues_varname,ADE_INT32_T buff_len,ADE_IIR_IMP_CHOICE_T filt_imp_type);
 ADE_API_RET_T ADE_Matlab_launch_script_segment(ADE_MATLAB_T *p_mat, char *p_stopword);
 ADE_API_RET_T ADE_Matlab_Print(ADE_MATLAB_T *p_mat, FILE *p_fid);
 

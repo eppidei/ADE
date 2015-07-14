@@ -25,6 +25,7 @@
 
 static ADE_API_RET_T ADE_Blow_Fir_Configure_params(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Fir_Configure_inout(ADE_BLOW_T* p_blow);
+static ADE_API_RET_T ADE_Blow_Fir_Configure_bufflength(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Iir_Configure_params(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Iir_Configure_inout(ADE_BLOW_T* p_blow);
 static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow);
@@ -259,7 +260,10 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
 /******************* Configure Methods ************************/
 ADE_API_RET_T ADE_Blow_Configure_params(ADE_BLOW_T* p_blow)
 {
+
+    /********** sets all internal parameters to the blow ******/
      ADE_API_RET_T ret_fir=ADE_RET_ERROR;
+     ADE_API_RET_T ret_fir_len=ADE_RET_ERROR;
     ADE_API_RET_T ret_iir=ADE_RET_ERROR;
     ADE_API_RET_T ret_iir2=ADE_RET_ERROR;
     ADE_API_RET_T ret_exp=ADE_RET_ERROR;
@@ -270,6 +274,8 @@ ADE_API_RET_T ADE_Blow_Configure_params(ADE_BLOW_T* p_blow)
     ADE_API_RET_T ret_exp_params=ADE_RET_ERROR;
     ADE_API_RET_T ret_ele=ADE_RET_ERROR;
     ADE_API_RET_T ret_down=ADE_RET_ERROR;
+
+    /********* set all  static params of internal objects ****/
 
     ret_static_params=ADE_Blow_Static_Params(p_blow);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_params,ret_static_params);
@@ -289,6 +295,9 @@ ADE_API_RET_T ADE_Blow_Configure_params(ADE_BLOW_T* p_blow)
     ret_ele=ADE_Blas_level2_configure_elewise_params(p_blow->p_blas_l2,1.0,0.0);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_params,ret_ele);
 
+
+     /********* set all  in out connection of internal objects ****/
+
      ret_fir=ADE_Blow_Fir_Configure_inout(p_blow);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_params,ret_fir);
 
@@ -303,6 +312,11 @@ ADE_API_RET_T ADE_Blow_Configure_params(ADE_BLOW_T* p_blow)
 
     ret_exp=ADE_Blow_Expander_Configure_inout(p_blow);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_params,ret_exp);
+
+     /********* set all  buffer lengths of internal objects ****/
+
+    ret_fir_len=ADE_Blow_Fir_Configure_bufflength(p_blow);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_params,ret_fir_len);
 
 //    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Step,ret_conf);
     return ADE_RET_SUCCESS;
@@ -765,8 +779,18 @@ static ADE_API_RET_T ADE_Blow_Fir_Configure_inout(ADE_BLOW_T* p_blow)
 {
  ADE_API_RET_T ret_fir=ADE_RET_ERROR;
 
- ret_fir=ADE_Fir_Configure_inout(p_blow->p_fir,p_blow->p_in_squared,p_blow->p_pow_fast, p_blow->buff_len_i);
+ ret_fir=ADE_Fir_Configure_inout(p_blow->p_fir,p_blow->p_in_squared,p_blow->p_pow_fast);
  ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Fir_Configure_inout,ret_fir);
+
+ return ADE_RET_SUCCESS;
+}
+
+static ADE_API_RET_T ADE_Blow_Fir_Configure_bufflength(ADE_BLOW_T* p_blow)
+{
+ ADE_API_RET_T ret_fir=ADE_RET_ERROR;
+
+ ret_fir=ADE_Fir_Configure_bufflength(p_blow->p_fir,p_blow->buff_len_i);
+ ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Fir_Configure_bufflength,ret_fir);
 
  return ADE_RET_SUCCESS;
 }
@@ -867,7 +891,7 @@ static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow)
     #elif  (ADE_TARGET_TYPE==ADE_IOS)
     ADE_FLOATING_T max_pow=0.25;
     #else
-        #error ADE_TARGET_TYPE in ADE_Blow_Iir2_Configure_params
+        ADE_FLOATING_T max_pow=0.7;
     #endif
     ADE_API_RET_T ret_conf=ADE_RET_ERROR;
     ADE_API_RET_T ret_set=ADE_RET_ERROR;

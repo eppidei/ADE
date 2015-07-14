@@ -18,24 +18,31 @@ typedef struct ADE_Uut_params_S
     char *input1;
     char *input2;
     double *output1;
+  //  int buff_len;
+   // int n_sos_section;
+   // ADE_IIR_IMP_CHOICE_T filt_type;
 }ADE_Uut_params_T;
 
 ADE_VOID_T UnitTest1_procedure(ADE_MATLAB_T *p_mat, ADE_IIR_T *p_iir, ADE_Uut_params_T *params)
 {
-    ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1));
-    ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1));
+   // ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1));
+    //ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1));
+    ADE_Iir_Configure_inout(p_iir, (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1), (ADE_FLOATING_T*)(params->output1));
     ADE_Iir_Step(p_iir);
+    //ADE_Iir_Print(p_iir,stdout,"", "");
+
 }
 
 ADE_VOID_T UnitTest2_procedure(ADE_MATLAB_T *p_mat, ADE_IIR_T *p_iir, ADE_Uut_params_T *params)
 {
     unsigned int i=0;
-    unsigned int frame_len = (unsigned int)ADE_Matlab_GetScalar(p_mat,params->input2);
+    unsigned int frame_len = (unsigned int)ADE_Matlab_GetScalar(p_mat,params->input1);
 
     for (i=0;i<frame_len;i++)
     {
-        ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len);
-        ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1)+i*frame_len);
+       // ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len);
+        //ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1)+i*frame_len);
+        ADE_Iir_Configure_inout(p_iir, (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len, (ADE_FLOATING_T*)(params->output1)+i*frame_len);
         ADE_Iir_Step(p_iir);
     }
 
@@ -92,9 +99,9 @@ outbuff=(double*)calloc(input_len,sizeof(double));
 outbuff2=(double*)calloc(input_len2,sizeof(double));
 ///********** CONFIGURE IIR **************/
 
-ADE_Iir_Init(&p_iir, n_sos_sections,input_len,ADE_IIR_TRASP_II_B);
+ADE_Iir_Init(&p_iir);//, n_sos_sections,input_len,ADE_IIR_TRASP_II_B);
 
-ADE_Matlab_Configure_Iir_sos(p_mat,p_iir, "sosmat", "scaleval");
+ADE_Matlab_Configure_Iir_sos(p_mat,p_iir, "sosmat", "scaleval",input_len,ADE_IIR_TRASP_II_B);
 //ADE_Iir_setFilt_Implementation(p_iir,trasp_II_blas);
 
 /************ LAUNCH MATLAB AND C UNIT TEST 1*************/
@@ -103,6 +110,9 @@ ADE_Matlab_launch_script_segment(p_mat,"Unit Test 1");
 p_add_params.uut_idx=1;
 p_add_params.input1="input_vector";
 p_add_params.output1=outbuff;
+//p_add_params.buff_len=input_len;
+//p_add_params.n_sos_section=n_sos_sections;
+//p_add_params.filt_type=ADE_IIR_TRASP_II_B;
 UnitTest1_procedure(p_mat,p_iir,&p_add_params);
 
 /******* CHECK RESULT UNIT TEST 1*************************/
@@ -117,8 +127,8 @@ ADE_Matlab_launch_script_segment(p_mat,"Unit Test 2");
 p_add_params.uut_idx=2;
 p_add_params.input1="input_vector2";
 p_add_params.output1=outbuff2;
-UnitTest1_procedure(p_mat,p_iir,&p_add_params);
-
+UnitTest2_procedure(p_mat,p_iir,&p_add_params);
+ADE_Iir_Print(p_iir,stdout,"", "");
 /******* CHECK RESULT UNIT TEST 2*************************/
 
 ADE_Matlab_PutVarintoWorkspace(p_mat, outbuff2, "outt", 1, input_len, ADE_MATH_REAL);

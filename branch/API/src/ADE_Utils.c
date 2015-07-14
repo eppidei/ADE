@@ -640,7 +640,7 @@ static ADE_API_RET_T ADE_Utils_domemoryless_expander(ADE_FLOATING_T data,ADE_INT
 {
 
  ADE_UINT32_T zz=0;
- ADE_UINT32_T i=0, k=0;
+ ADE_INT32_T i=0, k=0;
  ADE_UINT32_T coeffs_row_idx=0, coeffs_col_idx=0;
  ADE_INT32_T piece_min_val=0;
 

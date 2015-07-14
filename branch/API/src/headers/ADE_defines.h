@@ -1,6 +1,10 @@
 #ifndef _ADE_DEFINES_H
 #define _ADE_DEFINES_H
 
+#ifndef ADE_GENERAL_MALLOC_BUFF_LEN
+#define ADE_GENERAL_MALLOC_BUFF_LEN (4096)
+#endif
+
 
 /****************** Macros **************************/
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
@@ -58,7 +62,7 @@
 /* Control */
 
 #ifndef ADE_TARGET_TYPE
-#define ADE_TARGET_TYPE ADE_IOS
+#define ADE_TARGET_TYPE ADE_PC_NORMAL
 #endif //ADE_TARGET_TYPE
 
 #ifndef ADE_TARGET_MODE
@@ -134,6 +138,9 @@
 #define ADE_LOG(...) mexPrintf(__VA_ARGS__)
 #endif
 
+#define ADE_PRINT_FLOAT_WIDTH (20)
+#define ADE_PRINT_FLOAT_PRECISION (18)
+
 
 /*************************** VERBOSITY LEVELS ***********************/
 
@@ -153,6 +160,9 @@
 
 /************************** FIR ********************************/
 #define ADE_FIR_MAX_ORDER (1024)
+/************************** IIR ********************************/
+#define ADE_IIR_MAX_N_SECTIONS (5)
+#define ADE_IIR_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
 /************************** POLYFIT ********************************/
 #define ADE_POLYFIT_MAX_N_BREAKS (64)
 #define ADE_POLYFIT_MAX_POLY_ORDER (5)
@@ -191,8 +201,8 @@
 /******************************* UTILS ******************************/
 #define PLUS_ONE(x) (x+1)
 #define PRINT_IDX(x) PLUS_ONE(x)
-#define ADE_UTILS_PRINTF_FLOAT_WIDTH (14)
-#define ADE_UTILS_PRINTF_FLOAT_PRECISION (5)
+#define ADE_UTILS_PRINTF_FLOAT_WIDTH (24)
+#define ADE_UTILS_PRINTF_FLOAT_PRECISION (16)
 /* Period parameters Marsenne twister*/
 #define MT_N 624
 #define MT_M 397

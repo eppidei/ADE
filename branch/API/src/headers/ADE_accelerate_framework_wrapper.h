@@ -103,8 +103,11 @@ extern void vDSP_zidotpr (const ADE_DSPSplitComplex *__vDSP_A,ADE_vDSP_Stride __
 extern void vDSP_zdotprD (const ADE_DSPDoubleSplitComplex *__vDSP_A,ADE_vDSP_Stride __vDSP_IA,const ADE_DSPDoubleSplitComplex *__vDSP_B,ADE_vDSP_Stride __vDSP_IB,const ADE_DSPDoubleSplitComplex *__vDSP_C,ADE_vDSP_Length __vDSP_N);
 extern void vDSP_zidotprD (const ADE_DSPDoubleSplitComplex *__vDSP_A,ADE_vDSP_Stride __vDSP_IA,const ADE_DSPDoubleSplitComplex *__vDSP_B,ADE_vDSP_Stride __vDSP_IB,const ADE_DSPDoubleSplitComplex *__vDSP_C,ADE_vDSP_Length __vDSP_N);
 /***************************** Vec Scal Mult **********************************/
-extern void vDSP_vsmul ( const ADE_FLOATING_SP_T * __nonnull __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_SP_T * __nonnull __B, ADE_FLOATING_SP_T * __nonnull __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
- extern void vDSP_vsmulD ( const ADE_FLOATING_DP_T * __nonnull __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_DP_T * __nonnull __B, ADE_FLOATING_DP_T * __nonnull __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
+//extern void vDSP_vsmul ( const ADE_FLOATING_SP_T * __nonnull __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_SP_T * __nonnull __B, ADE_FLOATING_SP_T * __nonnull __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
+ //extern void vDSP_vsmulD ( const ADE_FLOATING_DP_T * __nonnull __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_DP_T * __nonnull __B, ADE_FLOATING_DP_T * __nonnull __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
+
+ extern void vDSP_vsmul ( const ADE_FLOATING_SP_T *  __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_SP_T *  __B, ADE_FLOATING_SP_T *  __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
+ extern void vDSP_vsmulD ( const ADE_FLOATING_DP_T *  __A, ADE_vDSP_Stride __IA, const ADE_FLOATING_DP_T *  __B, ADE_FLOATING_DP_T *  __C, ADE_vDSP_Stride __IC, ADE_vDSP_Length __N );
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

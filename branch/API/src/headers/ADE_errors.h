@@ -182,6 +182,7 @@ X_ERRMETHODS(ADE_METHOD_Iir2_Configure_params) \
 X_ERRMETHODS(ADE_METHOD_Fir_Configure_inout) \
 X_ERRMETHODS(ADE_METHOD_Iir_Configure_inout) \
 X_ERRMETHODS(ADE_METHOD_Iir2_Configure_inout) \
+X_ERRMETHODS(ADE_METHOD_Fir_Configure_bufflength) \
 X_ERRMETHODS(ADE_METHOD_Fir_Configure) \
 X_ERRMETHODS(ADE_METHOD_Iir_Configure) \
 X_ERRMETHODS(ADE_METHOD_Iir2_Configure) \
@@ -282,7 +283,10 @@ X_ERRMETHODS(ADE_METHOD_Configure_inout) \
 X_ERRMETHODS(ADE_METHOD_Configure_bufflength) \
 X_ERRMETHODS(ADE_METHOD_CheckValue) \
 X_ERRMETHODS(ADE_METHOD_Downsampler_Configure) \
-X_ERRMETHODS(ADE_METHOD_Expander_Configure_inout)
+X_ERRMETHODS(ADE_METHOD_Expander_Configure_inout) \
+X_ERRMETHODS(ADE_METHOD_SetSections) \
+X_ERRMETHODS(ADE_METHOD_SetBufflength) \
+X_ERRMETHODS(ADE_METHOD_doSetDenoms)
 
 #define X_ERRMETHODS(a) a,
 typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;

@@ -179,7 +179,7 @@ ADE_API_RET_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS
 
 ADE_API_RET_T ADE_Error_Handler_CheckValue(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_value, ADE_VOID_T *p_limit,ADE_ERROR_HANDLER_CHECKVALUE_T type,ADE_CHAR_T *var_name_str)
 {
-    #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
+    #if  (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
         FILE *p_stream=ADE_STDOUT_STREAM;
         ADE_BOOL_T condition = ADE_TRUE;
         ADE_INT32_T limit2_dummy=0;
@@ -201,7 +201,7 @@ ADE_API_RET_T ADE_Error_Handler_CheckValue(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_
 
              return ADE_RET_ERROR;
         }
-    #elif (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_FALSE)
+    #elif  (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_FALSE)
 
         ;
 
@@ -213,9 +213,85 @@ ADE_API_RET_T ADE_Error_Handler_CheckValue(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_
 
 }
 
+ADE_API_RET_T ADE_Error_Handler_CheckInterval(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_value, ADE_VOID_T *p_limit,ADE_VOID_T *p_limit2,ADE_ERROR_HANDLER_CHECKVALUE_T type,ADE_CHAR_T *var_name_str)
+{
+    #if  (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+        FILE *p_stream=ADE_STDOUT_STREAM;
+        ADE_BOOL_T condition = ADE_TRUE;
+        //ADE_INT32_T limit2_dummy=0;
+        ADE_API_RET_T ret=0;
+
+         if (type==ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX || type==ADE_ERROR_HANDLER_CHECKVALUE_LE_MIN_GE_MAX ||
+           type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_L_MAX || type==ADE_ERROR_HANDLER_CHECKVALUE_GE_MIN_LE_MAX ||
+           type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_LE_MAX
+           )
+           {
+                ret=ADE_Error_Handler_CheckCondition(format,p_value, p_limit,p_limit2,type,&condition);
+                 ADE_CHECK_ADERETVAL(ADE_CLASS_ERROR_HANDLER,ADE_METHOD_CheckValue,ret);
+           }
+        else{
+            ADE_LOG(stderr,"type not handled in ADE_Error_Handler_CheckValue\n");
+        }
+
+        if (condition)
+        {
+            ADE_Error_Handler_SetError(ADE_ERROR,ADE_RETCHECKS,_class,method,format,p_value, var_name_str,p_stream);
+
+             return ADE_RET_ERROR;
+        }
+    #elif  (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_FALSE)
+
+        ;
+
+    #else
+            #error (ADE_CHECK_RETURNS) in ADE_Error_Handler_CheckReturn
+    #endif
+
+ return ADE_RET_SUCCESS;
+
+}
+
+static ADE_BOOL_T ADE_Error_isminmaxordered(ADE_VOID_T* p_lim1,ADE_VOID_T* p_lim2,ADE_CHAR_T *format)
+{
+
+    ADE_FLOATING_T lim1_int=0.0,lim2_int=0.0;
+    if (!strcmp(format,"%d"))
+    {
+        lim1_int=(ADE_FLOATING_T)(*(ADE_INT32_T*)p_lim1);
+        lim2_int=(ADE_FLOATING_T)(*(ADE_INT32_T*)p_lim2);
+    }
+    else if (!strcmp(format,"%u"))
+    {
+        lim1_int=(ADE_FLOATING_T)(*(ADE_UINT32_T*)p_lim1);
+        lim2_int=(ADE_FLOATING_T)(*(ADE_UINT32_T*)p_lim2);
+    }
+    else if (!strcmp(format,"%f"))
+    {
+        lim1_int=(*(ADE_FLOATING_T*)p_lim1);
+        lim2_int=(*(ADE_FLOATING_T*)p_lim2);
+    }
+    else
+    {
+        fprintf(ADE_STDERR_STREAM,"ERROR IN ADE_Error_isminmaxordered format %s not handled\n",format);
+        return ADE_FALSE;
+    }
+
+    return (lim1_int<=lim2_int);
+}
+
 static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOID_T *p_value, ADE_VOID_T *p_limit,ADE_VOID_T *p_limit2,
                                         ADE_ERROR_HANDLER_CHECKVALUE_T type,ADE_BOOL_T * condition)
 {
+
+ADE_INT32_T value_int32=0;
+ADE_INT32_T limit1_int32=0;
+ADE_INT32_T limit2_int32=0;
+ADE_UINT32_T value_uint32=0;
+ADE_UINT32_T limit1_uint32=0;
+ADE_UINT32_T limit2_uint32=0;
+ADE_FLOATING_T value_float=0;
+ADE_FLOATING_T limit1_float=0;
+ADE_FLOATING_T limit2_float=0;
 
  if (!strcmp(format,"%p"))
         {
@@ -224,29 +300,104 @@ static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOI
         }
         else if (!strcmp(format,"%d"))
         {
+            value_int32=*(ADE_INT32_T*)p_value;
+            limit1_int32=*(ADE_INT32_T*)p_limit;
+            limit2_int32=*(ADE_INT32_T*)p_limit2;
+
             if (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOR)
             {
-                *condition = ( *(ADE_INT32_T*)p_value<=*(ADE_INT32_T*)p_limit );
+                *condition = ( value_int32<=limit1_int32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %d <= %d\n",value_int32,limit1_int32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL)
             {
-                *condition = ( *(ADE_INT32_T*)p_value<*(ADE_INT32_T*)p_limit );
+                *condition = ( value_int32<limit1_int32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %d < %d\n",value_int32,limit1_int32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MINOR)
             {
-                *condition = ( *(ADE_INT32_T*)p_value>=*(ADE_INT32_T*)p_limit );
+                *condition = ( value_int32>=limit1_int32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %d >= %d\n",value_int32,limit1_int32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL)
             {
-                *condition = ( *(ADE_INT32_T*)p_value>=*(ADE_INT32_T*)p_limit );
+                *condition = ( value_int32>limit1_int32 );
+                 if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %d > %d\n",value_int32,limit1_int32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_EQUAL)
             {
-                *condition = ( *(ADE_INT32_T*)p_value!=*(ADE_INT32_T*)p_limit );
+                *condition = ( value_int32!=limit1_int32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Value %d != %d\n",value_int32,limit1_int32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL)
             {
-                *condition = ( *(ADE_INT32_T*)p_value==*(ADE_INT32_T*)p_limit );
+                *condition = ( value_int32==limit1_int32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Value %d == %d\n",value_int32,limit1_int32);
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_int32>=limit1_int32 && value_int32<=limit2_int32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %d <= value %d <= %d\n",limit1_int32,value_int32,limit2_int32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_L_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_int32<=limit1_int32 || value_int32>=limit2_int32);
+                     if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %d >= value %d >= %d\n",limit1_int32,value_int32,limit2_int32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_LE_MIN_GE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_int32>limit1_int32 && value_int32<limit2_int32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %d < value %d < %d\n",limit1_int32,value_int32,limit2_int32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_GE_MIN_LE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_int32<limit1_int32 || value_int32>limit2_int32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %d > value %d > %d\n",limit1_int32,value_int32,limit2_int32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_LE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_int32<=limit1_int32 || value_int32>limit2_int32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %d >= value %d > %d\n",limit1_int32,value_int32,limit2_int32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
             }
             else
             {
@@ -257,29 +408,103 @@ static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOI
         }
         else if (!strcmp(format,"%u"))
         {
+             value_uint32=*(ADE_UINT32_T*)p_value;
+            limit1_uint32=*(ADE_UINT32_T*)p_limit;
+            limit2_uint32=*(ADE_UINT32_T*)p_limit2;
              if (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOR)
             {
-                *condition = ( *(ADE_UINT32_T*)p_value<=*(ADE_UINT32_T*)p_limit );
+                *condition = ( value_uint32<=limit1_uint32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %u <= %u\n",value_uint32,limit1_uint32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL)
             {
-                *condition = ( *(ADE_UINT32_T*)p_value<*(ADE_UINT32_T*)p_limit );
+                *condition = ( value_uint32<limit1_uint32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %u < %u\n",value_uint32,limit1_uint32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MINOR)
             {
-                *condition = ( *(ADE_UINT32_T*)p_value>=*(ADE_UINT32_T*)p_limit );
+                *condition = ( value_uint32>=limit1_uint32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %u >= %u\n",value_uint32,limit1_uint32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL)
             {
-                *condition = ( *(ADE_UINT32_T*)p_value>=*(ADE_UINT32_T*)p_limit );
+                *condition = ( value_uint32>limit1_uint32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %u > %u\n",value_uint32,limit1_uint32);
             }
              else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_EQUAL)
             {
-                *condition = ( *(ADE_UINT32_T*)p_value!=*(ADE_UINT32_T*)p_limit );
+                *condition = ( value_uint32!=limit1_uint32 );
+                 if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Value %u != %u\n",value_uint32,limit1_uint32);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL)
             {
-                *condition = ( *(ADE_UINT32_T*)p_value==*(ADE_UINT32_T*)p_limit );
+                *condition = ( value_uint32==limit1_uint32 );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Value %u == %u\n",value_uint32,limit1_uint32);
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_uint32>=limit1_uint32 && value_uint32<=limit2_uint32);
+                     if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %u <= value %u <= %u\n",limit1_uint32,value_uint32,limit2_uint32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_L_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_uint32<=limit1_uint32 || value_uint32>=limit2_uint32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %u >= value %u >= %u\n",limit1_uint32,value_uint32,limit2_uint32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_LE_MIN_GE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_uint32>limit1_uint32 && value_uint32<limit2_uint32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %u < value %u < %u\n",limit1_uint32,value_uint32,limit2_uint32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_GE_MIN_LE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_uint32<limit1_uint32 || value_uint32>limit2_uint32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %u > value %u > %u\n",limit1_uint32,value_uint32,limit2_uint32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_LE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_uint32<=limit1_uint32 || value_uint32>limit2_uint32);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %u >= value %u > %u\n",limit1_uint32,value_uint32,limit2_uint32);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
             }
             else
             {
@@ -290,29 +515,103 @@ static ADE_API_RET_T ADE_Error_Handler_CheckCondition(ADE_CHAR_T *format,ADE_VOI
         }
         else if (!strcmp(format,"%f"))
         {
+            value_float=*(ADE_FLOATING_T*)p_value;
+            limit1_float=*(ADE_FLOATING_T*)p_limit;
+            limit2_float=*(ADE_FLOATING_T*)p_limit2;
              if (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOR)
             {
-                *condition = ( *(ADE_FLOATING_T*)p_value<=*(ADE_FLOATING_T*)p_limit );
+                *condition = ( value_float<=limit1_float );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %f <= %f\n",value_float,limit1_float);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL)
             {
-                *condition = ( *(ADE_FLOATING_T*)p_value<*(ADE_FLOATING_T*)p_limit );
+                *condition = ( value_float<limit1_float );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %f < %f\n",value_float,limit1_float);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MINOR)
             {
-                *condition = ( *(ADE_FLOATING_T*)p_value>=*(ADE_FLOATING_T*)p_limit );
+                *condition = ( value_float>=limit1_float );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %f >= %f\n",value_float,limit1_float);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL)
             {
-                *condition = ( *(ADE_FLOATING_T*)p_value>=*(ADE_FLOATING_T*)p_limit );
+                *condition = ( value_float>limit1_float );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : value %f > %f\n",value_float,limit1_float);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_EQUAL)
             {
-                *condition = ( *(ADE_FLOATING_T*)p_value!=*(ADE_FLOATING_T*)p_limit );
+                *condition = ( value_float!=limit1_float );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Value %f != %f\n",value_float,limit1_float);
             }
             else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL)
             {
-                *condition = ( *(ADE_FLOATING_T*)p_value==*(ADE_FLOATING_T*)p_limit );
+                *condition = ( value_float==limit1_float );
+                if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Value %f == %f\n",value_float,limit1_float);
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_float>=limit1_float && value_float<=limit2_float);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %f <= value %f <= %f\n",limit1_float,value_float,limit2_float);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_L_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_float<=limit1_float || value_float>=limit2_float);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %f >= value %f >= %f\n",limit1_float,value_float,limit2_float);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_LE_MIN_GE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_float>limit1_float && value_float<limit2_float);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %f < value %f < %f\n",limit1_float,value_float,limit2_float);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_GE_MIN_LE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_float<limit1_float || value_float>limit2_float);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %f > value %f > %f\n",limit1_float,value_float,limit2_float);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
+            }
+            else if  (type==ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_LE_MAX)
+            {
+                if ( ADE_Error_isminmaxordered(p_limit,p_limit2,format))
+                {
+                    *condition = ( value_float<=limit1_float || value_float>limit2_float);
+                    if (*condition) ADE_LOG(ADE_STDERR_STREAM,"**** Exceeded bounds : %f >= value %f > %f\n",limit1_float,value_float,limit2_float);
+                }
+                else
+                {
+                    ADE_LOG(stderr,"ERROR IN ADE_Error_Handler_CheckCondition minmax not ordered\n");
+                    return ADE_RET_ERROR;
+                }
             }
             else
             {

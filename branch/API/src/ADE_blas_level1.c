@@ -890,27 +890,27 @@ len_str=strlen(fixed_str);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"N = %d\n"),p_blas_l1->N);
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_ALPHA = %p(%lf)\n"),p_blas_l1->p_ALPHA,*(p_blas_l1->p_ALPHA));
+        ADE_LOG(p_fid,strcat(pri_str,"p_ALPHA = %p(%*.*lf)\n"),p_blas_l1->p_ALPHA,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,*(p_blas_l1->p_ALPHA));
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_X = %p(%lf)\n"),p_blas_l1->p_X,(p_blas_l1->p_X)[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_X = %p(%*.*lf)\n"),p_blas_l1->p_X,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,(p_blas_l1->p_X)[0]);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"INCX = %d\n"),p_blas_l1->INCX);
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_Y = %p(%lf)\n"),p_blas_l1->p_Y,(p_blas_l1->p_Y)[0]);
+        ADE_LOG(p_fid,strcat(pri_str,"p_Y = %p(%*.*lf)\n"),p_blas_l1->p_Y,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,(p_blas_l1->p_Y)[0]);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"INCY = %d\n"),p_blas_l1->INCY);
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_D1 = %p(%lf)\n"),p_blas_l1->p_D1,*(p_blas_l1->p_D1));
+        ADE_LOG(p_fid,strcat(pri_str,"p_D1 = %p(%*.*lf)\n"),p_blas_l1->p_D1,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,*(p_blas_l1->p_D1));
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_D2 = %p(%lf)\n"),p_blas_l1->p_D2,*(p_blas_l1->p_D2));
+        ADE_LOG(p_fid,strcat(pri_str,"p_D2 = %p(%*.*lf)\n"),p_blas_l1->p_D2,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,*(p_blas_l1->p_D2));
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_A = %p(%lf)\n"),p_blas_l1->p_A,*(p_blas_l1->p_A));
+        ADE_LOG(p_fid,strcat(pri_str,"p_A = %p(%*.*lf)\n"),p_blas_l1->p_A,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,*(p_blas_l1->p_A));
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_B = %p(%lf)\n"),p_blas_l1->p_B,*(p_blas_l1->p_B));
+        ADE_LOG(p_fid,strcat(pri_str,"p_B = %p(%*.*lf)\n"),p_blas_l1->p_B,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,*(p_blas_l1->p_B));
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_C = %p(%lf)\n"),p_blas_l1->p_C,*(p_blas_l1->p_C));
+        ADE_LOG(p_fid,strcat(pri_str,"p_C = %p(%*.*lf)\n"),p_blas_l1->p_C,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,*(p_blas_l1->p_C));
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"p_S = %p(%lf)\n"),p_blas_l1->p_S,*(p_blas_l1->p_S));
+        ADE_LOG(p_fid,strcat(pri_str,"p_S = %p(%*.*lf)\n"),p_blas_l1->p_S,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,*(p_blas_l1->p_S));
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"p_PARAM = %p\n"),p_blas_l1->p_PARAM);
         strcpy(pri_str,fixed_str);
@@ -1182,7 +1182,22 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_sdot,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
-        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_Sdot);
+        ADE_FLOATING_SP_T stemp=0.0;
+        ADE_INT32_T i=0,ix=0,iy=0,m=0,mp1=0;
+        ADE_INT32_T int0=0;
+
+        ADE_CHECK_VALUE_MAJOR(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_sdot,p_blas_l1->N,"%d",int0);
+
+        if (p_blas_l1->INCX==1 && p_blas_l1->INCY==1)
+        {
+
+        }
+        else
+        {
+
+        }
+
+
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
