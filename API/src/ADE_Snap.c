@@ -1376,6 +1376,8 @@ ADE_UINT32_T i=0;
 
 ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_snap_detector,p_snap);
 
+p_snap->last_state=p_snap->state;
+
 p_snap->state=ADE_FALSE;
 
 for (i=0;i<n_events;i++)

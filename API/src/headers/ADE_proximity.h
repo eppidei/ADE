@@ -10,6 +10,7 @@ struct ADE_PROXIMITY_S
     ADE_UINT32_T buff_len_o;
     ADE_FLOATING_T * p_in;
     ADE_BOOL_T state;
+    ADE_BOOL_T last_state;
 };
 
 #ifdef __cplusplus

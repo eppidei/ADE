@@ -99,6 +99,8 @@ ADE_API_RET_T ADE_Proximity_Step(ADE_PROXIMITY_T *p_proxy)
 {
     ADE_INT32_T i=0;
 
+    p_proxy->last_state=p_proxy->state;
+
      p_proxy->state=ADE_FALSE;
 
     for (i=0;i<p_proxy->buff_len_i;i++)
