@@ -37,6 +37,7 @@ ADE_FLOATING_T Fs_data;
 ADE_FLOATING_T *p_data;
 ADE_UINT32_T n_data;
 ADE_BOOL_T state;
+//ADE_BOOL_T last_state;
 ADE_UINT32_T n_calls_state_logic;
 ADE_BOOL_T toggle;
 ADE_UINT32_T n_calls_toggle_logic;

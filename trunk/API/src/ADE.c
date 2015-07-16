@@ -16,8 +16,8 @@ static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Se
 static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff);
-static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
-static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
+static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state,ADE_BOOL_T ADE_prev_state,ADE_UINT32_T antibouncing_counter);
+static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state,ADE_UINT32_T antibouncing_counter);
 
 ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T in_buff_len,ADE_FLOATING_T input_rate)
 {
@@ -323,7 +323,12 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
 ADE_SCDF_Output_Int_T* ADE_GetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 {
 
-
+//ADE_UINT32_T proxy_state_debounce_cnt=10;
+ADE_UINT32_T blow_state_debounce_cnt=10;
+//ADE_UINT32_T snap_state_debounce_cnt=10;
+ADE_UINT32_T proxy_toggle_debounce_cnt=10;
+ADE_UINT32_T blow_toggle_debounce_cnt=10;
+ADE_UINT32_T snap_toggle_debounce_cnt=10;
 
 ADE_SCDF_Output_Int_T* p_out=NULL;
 
@@ -348,8 +353,8 @@ if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
     p_out->p_data=p_ADE->p_blow->p_out;
     p_out->n_data=p_ADE->p_blow->buff_len_o;
    // p_out->state=p_ADE->p_blow->state;
-    ADE_state_logic(p_out,p_ADE->p_blow->state);
-    ADE_toggle_logic(p_out,p_ADE->p_blow->state);
+    ADE_state_logic(p_out,p_ADE->p_blow->state,blow_state_debounce_cnt);
+    ADE_toggle_logic(p_out,p_ADE->p_blow->state,p_ADE->p_blow->last_state,blow_toggle_debounce_cnt);
 
 
 }
@@ -360,8 +365,9 @@ else if (Sel_Flag_i==SNAP_FLAG)
     //p_out->p_data=p_ADE->p_snap->p_out;
     //p_out->n_data=p_ADE->p_snap->buff_len_o;
     p_out->state=p_ADE->p_snap->state;
+
    // ADE_state_logic(p_out,p_ADE->p_snap->state);
-    ADE_toggle_logic(p_out,p_ADE->p_snap->state);
+    ADE_toggle_logic(p_out,p_ADE->p_snap->state,p_ADE->p_snap->last_state,snap_toggle_debounce_cnt);
 
 }
 else if (Sel_Flag_i==PROXY_FLAG)
@@ -372,7 +378,7 @@ else if (Sel_Flag_i==PROXY_FLAG)
     //p_out->n_data=p_ADE->p_snap->buff_len_o;
     p_out->state=p_ADE->p_proxy->state;
    // ADE_state_logic(p_out,p_ADE->p_snap->state);
-    ADE_toggle_logic(p_out,p_ADE->p_proxy->state);
+    ADE_toggle_logic(p_out,p_ADE->p_proxy->state,p_ADE->p_proxy->last_state,proxy_toggle_debounce_cnt);
 
 }
 
@@ -463,12 +469,11 @@ static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i)
 }
 
 
-static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
+static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state,ADE_BOOL_T ADE_prev_state,ADE_UINT32_T antibouncing_counter)
 {
-    ADE_UINT32_T antibouncing_counter = 10;
 
 
-        if  ( (p_out->n_calls_toggle_logic==0) && (ADE_state==ADE_TRUE) )
+        if  ( (p_out->n_calls_toggle_logic==0) && (ADE_state==ADE_TRUE) && (ADE_prev_state==ADE_FALSE))
         {
             p_out->toggle=!p_out->toggle;
             p_out->n_calls_toggle_logic=p_out->n_calls_toggle_logic+1;
@@ -492,9 +497,8 @@ static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T AD
 
 }
 
-static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
+static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state,ADE_UINT32_T antibouncing_counter)
 {
-    ADE_UINT32_T antibouncing_counter = 10;
 
 
         if   (p_out->n_calls_state_logic==0)

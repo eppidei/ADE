@@ -55,6 +55,7 @@ struct ADE_SNAP_S
     ADE_FLOATING_T *p_percent_pow;
     ADE_BOOL_T *p_snaps;
     ADE_BOOL_T state;
+    ADE_BOOL_T last_state;
   //  ADE_FLOATING_T *p_tgk_temp;
     /*Friend Classes*/
     ADE_IIR_T *p_iir;

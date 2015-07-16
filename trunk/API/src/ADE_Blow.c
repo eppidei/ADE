@@ -867,7 +867,8 @@ static ADE_API_RET_T ADE_Blow_Iir2_Configure_params(ADE_BLOW_T* p_blow)
     #elif  (ADE_TARGET_TYPE==ADE_IOS)
     ADE_FLOATING_T max_pow=0.25;
     #else
-        #error ADE_TARGET_TYPE in ADE_Blow_Iir2_Configure_params
+    ADE_FLOATING_T max_pow=0.25;
+       // #error ADE_TARGET_TYPE in ADE_Blow_Iir2_Configure_params
     #endif
     ADE_API_RET_T ret_conf=ADE_RET_ERROR;
     ADE_API_RET_T ret_set=ADE_RET_ERROR;
@@ -1035,6 +1036,7 @@ ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow)
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Step,iir_step_ret);
 
     state_flag=0;
+    p_blow->last_state=p_blow->state;
     p_blow->state=ADE_FALSE;
 
     for (i=0; i<p_blow->buff_len_i; i++)

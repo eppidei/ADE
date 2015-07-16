@@ -25,6 +25,7 @@ struct ADE_BLOW_S
     ADE_FLOATING_T *p_pow_slow_filtered;//allocato dentro
     ADE_FLOATING_T *p_out;//allocato dentro
     ADE_BOOL_T state;
+    ADE_BOOL_T last_state;
     ADE_FLOATING_T pow_thresh_high;
     ADE_FLOATING_T pow_thresh_low;
     ADE_FLOATING_T sat_thresh;
