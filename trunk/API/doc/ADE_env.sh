@@ -17,6 +17,6 @@ export ADE_INCLUDE_PATH=${ADE_SRC_PATH}
 export ADE_FFTW_INCLUDE_PATH=${ADE_LIB_PATH}${_P_}fftw-3.3.4${_P_}api
 export ADE_MATLAB_INCLUDE_PATH=${ADE_MATLAB_INSTALL_HOME}${_P_}extern${_P_}include
 #linker search directoties
-export ADE_CBLAS_PATH=${ADE_LIB_PATH}${_P_}cblas${_P_}CBLAS${_P_}lib${_P_}cblas_LINUX.a
-export ADE_CBLAS_PATH=${ADE_LIB_PATH}${_P_}blas${_P_}BLAS${_P_}blas_LINUX.a
+export ADE_CBLAS_PATH=${ADE_LIB_PATH}${_P_}cblas${_P_}CBLAS${_P_}lib
+export ADE_BLAS_PATH=${ADE_LIB_PATH}${_P_}blas${_P_}BLAS
 export ADE_MEX_PATH=${ADE_MATLAB_INSTALL_HOME}${_P_}bin${_P_}glnxa64

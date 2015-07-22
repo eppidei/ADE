@@ -4,6 +4,10 @@
 #include "headers/ADE_blas_wrapper.h"
 #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 #include "headers/ADE_cblas.h"
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
+
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+#include <arm_neon.h>
 #else
 #error(ADE_BLAS_IMPLEMENTATION)
 #endif
@@ -392,6 +396,81 @@ ADE_API_RET_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING
      return ADE_RET_SUCCESS;
 }
 /*****************Configure Methods **************************/
+ADE_API_RET_T ADE_Blas_level3_configure_gemm_params(ADE_blas_level3_T* p_blas_l3,ADE_CHAR_T TRANSA,ADE_CHAR_T TRANSB,
+                                                    ADE_INT32_T M,ADE_INT32_T N, ADE_INT32_T K,ADE_FLOATING_T *p_ALPHA,
+                                                    ADE_INT32_T LDA,ADE_INT32_T LDB,ADE_FLOATING_T *p_BETA,ADE_INT32_T LDC)
+{
+
+    ADE_API_RET_T ret_transa=ADE_RET_ERROR;
+    ADE_API_RET_T ret_transb=ADE_RET_ERROR;
+    ADE_API_RET_T ret_m=ADE_RET_ERROR;
+    ADE_API_RET_T ret_n=ADE_RET_ERROR;
+    ADE_API_RET_T ret_k=ADE_RET_ERROR;
+    ADE_API_RET_T ret_alpha=ADE_RET_ERROR;
+    ADE_API_RET_T ret_beta=ADE_RET_ERROR;
+    ADE_API_RET_T ret_lda=ADE_RET_ERROR;
+    ADE_API_RET_T ret_ldb=ADE_RET_ERROR;
+    ADE_API_RET_T ret_ldc=ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,p_blas_l3);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,p_ALPHA);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,p_BETA);
+
+    ret_transa=ADE_Blas_Level3_SetTransA(p_blas_l3,TRANSA);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_transa);
+
+    ret_transb=ADE_Blas_Level3_SetTransB(p_blas_l3,TRANSB);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_transb);
+
+    ret_m=ADE_Blas_Level3_SetM(p_blas_l3,M);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_m);
+
+     ret_n=ADE_Blas_Level3_SetN(p_blas_l3,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_n);
+
+     ret_k=ADE_Blas_Level3_SetK(p_blas_l3,K);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_k);
+
+    ret_lda=ADE_Blas_Level3_SetLda(p_blas_l3,LDA);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_lda);
+
+    ret_ldb=ADE_Blas_Level3_SetLdb(p_blas_l3,LDB);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_ldb);
+
+    ret_ldc=ADE_Blas_Level3_SetLdc(p_blas_l3,LDC);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_ldc);
+
+    ret_alpha=ADE_Blas_Level3_SetALPHA(p_blas_l3,p_ALPHA);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_alpha);
+
+    ret_beta=ADE_Blas_Level3_SetALPHA(p_blas_l3,p_ALPHA);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_params,ret_beta);
+
+   return ADE_RET_SUCCESS;
+}
+ADE_API_RET_T ADE_Blas_level3_configure_gemm_inout(ADE_blas_level3_T* p_blas_l3,ADE_FLOATING_T *p_A,ADE_FLOATING_T *p_B, ADE_FLOATING_T *p_C)
+{
+    ADE_API_RET_T ret_a=ADE_RET_ERROR;
+    ADE_API_RET_T ret_b=ADE_RET_ERROR;
+    ADE_API_RET_T ret_c=ADE_RET_ERROR;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_inout,p_blas_l3);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_inout,p_A);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_inout,p_B);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_inout,p_C);
+
+    ret_a=ADE_Blas_Level3_SetA(p_blas_l3,p_A);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_inout,ret_a);
+
+    ret_b=ADE_Blas_Level3_SetB(p_blas_l3,p_B);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_inout,ret_b);
+
+    ret_c=ADE_Blas_Level3_SetC(p_blas_l3,p_C);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_configure_gemm_inout,ret_c);
+
+
+    return ADE_RET_SUCCESS;
+}
 
 /**************** Processing methods *************************/
 
@@ -511,8 +590,8 @@ static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 /*** Att. blas have to invert inputs for Row major operations cinterface.pdf pgg.191****/
-    sgemm_custom_gp(p_Blas_l3->TRANSA,p_Blas_l3->TRANSB,p_Blas_l3->N,p_Blas_l3->M,p_Blas_l3->K,p_Blas_l3->p_ALPHA,p_Blas_l3->p_B,
-p_Blas_l3->LDB,p_Blas_l3->p_A,p_Blas_l3->LDA,p_Blas_l3->BETA,p_Blas_l3->C,p_Blas_l3->LDC);
+    sgemm_custom_gp(p_Blas_l3->TRANSA,p_Blas_l3->TRANSB,p_Blas_l3->N,p_Blas_l3->M,p_Blas_l3->K,*p_Blas_l3->p_ALPHA,p_Blas_l3->p_B,
+p_Blas_l3->LDB,p_Blas_l3->p_A,p_Blas_l3->LDA,*p_Blas_l3->p_BETA,p_Blas_l3->p_C,p_Blas_l3->LDC);
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
    /*** Att. blas have to invert inputs for Row major operations cinterface.pdf pgg.191****/
@@ -850,13 +929,13 @@ ADE_FLOATING_SP_T temp;
     transposed and set NROWA, NCOLA and NROWB as the number of rows
     and columns of A and the number of rows of B respectively.*/
     nota = ADE_FALSE;
-    if (strcmp(TRANSA,'N')==0 || strcmp(TRANSA,'n')==0)
+    if (TRANSA=='N' || TRANSA=='n')
     {
         nota=ADE_TRUE;
     }
 
     notb = ADE_FALSE;
-    if (strcmp(TRANSB,'N')==0 || strcmp(TRANSB,'n')==0)
+    if (TRANSB=='N' || TRANSB=='n')
     {
         notb=ADE_TRUE;
     }

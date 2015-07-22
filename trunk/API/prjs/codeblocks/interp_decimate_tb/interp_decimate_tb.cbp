@@ -19,7 +19,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-lmx -lmat -leng -lgfortran -lfftw3 -lfftw3_threads -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
-					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
+					<Add library=$(ADE_CBLAS_PATH) />
 					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS/blas_LINUX.a" />
 					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
 				</Linker>
