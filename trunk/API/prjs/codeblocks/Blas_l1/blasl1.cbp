@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="tb_model" />
+		<Option title="blasl1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="bin/Debug/tb_model" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/blasl1" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -18,14 +18,12 @@
 					<Add directory="$(ADE_FFTW_INCLUDE_PATH)" />
 				</Compiler>
 				<Linker>
-					<Add option="-lmx -lmat -leng -lrt -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -Xlinker -rpath-link $(ADE_MEX_PATH)" />
 					<Add library="$(ADE_CBLAS_PATH)" />
 					<Add library="$(ADE_BLAS_PATH)" />
-					<Add directory="$(ADE_MEX_PATH)" />
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="bin/Release/tb_model" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/blasl1" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -36,7 +34,7 @@
 					<Add directory="$(ADE_FFTW_INCLUDE_PATH)" />
 				</Compiler>
 				<Linker>
-					<Add option="-s -lmx -lmat -leng -lrt -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -Xlinker -rpath-link $(ADE_MEX_PATH)" />
+					<Add option="-s -lmx -lmat -lrt -leng -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -Xlinker -rpath-link $(ADE_MEX_PATH)" />
 					<Add library="$(ADE_CBLAS_PATH)" />
 					<Add library="$(ADE_BLAS_PATH)" />
 					<Add directory="$(ADE_MEX_PATH)" />
@@ -46,12 +44,19 @@
 		<Compiler>
 			<Add option="-Wall -Wextra" />
 		</Compiler>
-		<Unit filename="main.cpp">
+		<Unit filename="../../../src/ADE_Error_Handler.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/ADE_blas_level1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars set="ade" />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

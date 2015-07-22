@@ -1,8 +1,9 @@
 #ifndef _ADE_ERROR_HANDLER_H
 #define _ADE_ERROR_HANDLER_H
 
-#include "headers/ADE_typedefs.h"
 #include "headers/ADE_errors.h"
+#include "headers/ADE_typedefs.h"
+
 #include <stdio.h>
 
 

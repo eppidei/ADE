@@ -45,6 +45,7 @@
 #define ADE_USE_BLAS_LIB (1)
 #define ADE_USE_CBLAS_LIB (2)
 #define ADE_USE_OPENBLAS_LIB (3)
+#define ADE_USE_BLAS_NEON (4)
 
 #define ADE_CHECK_INPUTS_TRUE (1)
 #define ADE_CHECK_INPUTS_FALSE (0)
@@ -114,7 +115,15 @@
     #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
         #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
     #endif
-
+#elif (ADE_TARGET_TYPE==ADE_ZYNQ)
+    #undef ADE_CONFIGURATION_INTERACTIVE
+    #ifndef ADE_FP_PRECISION
+        #define ADE_FP_PRECISION ADE_USE_SINGLE_PREC
+    #endif
+    #undef ADE_FFT_IMP
+    #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_NEON
+    #endif
 #endif
 
 
