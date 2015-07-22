@@ -7,6 +7,7 @@
 //#define ADE_GOTO_LABEL gently_closure :
 #define CHECK_RET_MAIN(s)  if(s<0) {goto gently_closure;}
 #define PRINT_ARRAY(x,idx,len,format) ADE_LOG(stdout,"\n"); for(idx=0;idx<len;idx++) { ADE_LOG(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
+#define PRINT_2D_ARRAY(x,idx1,idx2,len1,len2,format) ADE_LOG(stdout,"\n"); for(idx1=0;idx1<len1;idx1++) { for(idx2=0;idx2<len2;idx2++) {ADE_LOG(stdout, #x "[%u][%u] =" format "\n",idx1,idx2,x[idx1*len2+idx2]); }};
 #define PRINT_DIFFARRAY(x,y,idx,len,format) ADE_LOG(stdout,"\n"); for(idx=0;idx<len;idx++) { ADE_LOG(stdout, "diff("#x"-"#y ")[%u] =" format "\n",idx,x[idx]-y[idx]); };
 /********************** CTRL DEFINES **********************************/
 /* Parameters */
@@ -84,7 +85,7 @@
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
      #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
-        #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
     #endif
 #elif (ADE_TARGET_TYPE==ADE_PC_NORMAL )
     #undef ADE_CONFIGURATION_INTERACTIVE
@@ -94,7 +95,7 @@
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
     #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
-        #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
     #endif
 #elif (ADE_TARGET_TYPE==ADE_ANDROID)
     #undef ADE_CONFIGURATION_INTERACTIVE

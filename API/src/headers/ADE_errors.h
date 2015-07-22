@@ -282,7 +282,9 @@ X_ERRMETHODS(ADE_METHOD_Configure_inout) \
 X_ERRMETHODS(ADE_METHOD_Configure_bufflength) \
 X_ERRMETHODS(ADE_METHOD_CheckValue) \
 X_ERRMETHODS(ADE_METHOD_Downsampler_Configure) \
-X_ERRMETHODS(ADE_METHOD_Expander_Configure_inout)
+X_ERRMETHODS(ADE_METHOD_Expander_Configure_inout) \
+X_ERRMETHODS(ADE_METHOD_configure_gemm_params) \
+X_ERRMETHODS(ADE_METHOD_configure_gemm_inout)
 
 #define X_ERRMETHODS(a) a,
 typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;

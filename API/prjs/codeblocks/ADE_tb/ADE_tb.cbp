@@ -18,10 +18,10 @@
 					<Add directory="$(ADE_FFTW_INCLUDE_PATH)" />
 				</Compiler>
 				<Linker>
-					<Add option="-lmx -lmat -leng -lrt -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -Xlinker -rpath-link $(ADE_MEX_PATH)" />
-					<Add library="$(ADE_CBLAS_PATH)" />
-					<Add library="$(ADE_BLAS_PATH)" />
+					<Add option="-l:blas_LINUX.a -l:cblas_LINUX.a -lmx -lmat -leng -lrt -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -Xlinker -rpath-link $(ADE_MEX_PATH)" />
 					<Add directory="$(ADE_MEX_PATH)" />
+					<Add directory="$(ADE_CBLAS_PATH)" />
+					<Add directory="$(ADE_BLAS_PATH)" />
 				</Linker>
 			</Target>
 			<Target title="Release">
