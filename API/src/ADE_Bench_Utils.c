@@ -9,7 +9,9 @@
 #include <time.h>
 #include <errno.h>
 #include "headers/ADE_complex.h"
+#if (ADE_TARGET_TYPE==ADE_IOS)
 #include "headers/ADE_accelerate_framework_wrapper.h"
+#endif
 #include "headers/ADE_Error_Handler.h"
 #ifdef ADE_MEX_PRINT
 #include "mex.h"
@@ -496,7 +498,7 @@ void fft_checker(ADE_FFT_T *p_fft,ADE_VOID_T *p_fft_custom,ADE_FLOATING_T tol,AD
 
     ADE_FLOATING_DP_T time_sum1=0;
     ADE_FLOATING_DP_T time_sum2=0;
-    
+
     p_desplit=p_fft->p_out;
 
 //    #if (ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
@@ -597,12 +599,12 @@ ADE_INT32_T fft_iosreal_test_procedure(ADE_UINT32_T *p_dim,ADE_INT32_T n_dim_cas
     ADE_UINT32_T i=0,buff_len_idx=0;
     ADE_API_RET_T ret=ADE_RET_ERROR;
     int randa;
-    
+
     for (buff_len_idx=0; buff_len_idx<n_dim_cases; buff_len_idx++)
     {
-        
+
         buff_len=p_dim[buff_len_idx];
-        
+
         size_fft_in=buff_len*sizeof(ADE_FLOATING_T);
         p_in=malloc(size_fft_in);
         ADE_CHECK_MEMALLOC(ADE_CLASS_BENCH_UTILS, ADE_METHOD_fft_test_procedure,p_in);
@@ -614,19 +616,19 @@ ADE_INT32_T fft_iosreal_test_procedure(ADE_UINT32_T *p_dim,ADE_INT32_T n_dim_cas
         ADE_CHECK_ADERETVAL(ADE_CLASS_BENCH_UTILS,ADE_METHOD_fft_test_procedure,ret);
         for(i=0; i<buff_len; i++)
         {
-           
+
             randa=i;//(rand()%10);
             ((ADE_FLOATING_T*)p_in)[i]=(ADE_FLOATING_T)(randa);
         }
         ret=ADE_Fft_Configure(p_fft,ADE_FFT_R2C, ADE_FFT_FORWARD,p_in,p_out);
-        
+
         ADE_CHECK_ADERETVAL(ADE_CLASS_BENCH_UTILS,ADE_METHOD_fft_test_procedure,ret);
     ret=ADE_Fft_Step(p_fft);
     free(p_in);
     free(p_out);
     ADE_Fft_Release(p_fft);
     }
-    
+
     return 0;
 }
 
@@ -761,7 +763,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
         ret=ADE_Fft_Init(&p_fft, buff_len);
         ADE_CHECK_ADERETVAL(ADE_CLASS_BENCH_UTILS,ADE_METHOD_fft_test_procedure,ret);
 
-       
+
         /******************* INPUT FILLING ********************************/
 
         if (fft_type==ADE_FFT_C2C)
@@ -791,7 +793,7 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
                 randa=(rand()%10);
                    ((ADE_FLOATING_T*)p_in)[i]=(ADE_FLOATING_T)(randa);
                // #elif  ( ADE_FFT_IMP==ADE_USE_ACCEL_FMW_FFT)
-                
+
                      //ADE_Fft_FillSplitIn(p_fft,randa,0,i);
                 ((ADE_FLOATING_T*)p_fft_custom)[2*i]=randa;
                 ((ADE_FLOATING_T*)p_fft_custom)[2*i+1]=0.0;
@@ -806,10 +808,10 @@ ADE_INT32_T fft_test_procedure(ADE_FFT_TYPE_T fft_type,ADE_UINT32_T *p_dim,ADE_I
 //        p_fft->split_out.imagp=&(p_fft->p_split_buff_out[buff_len]);
 //        p_fft->p_out=p_out;
         ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
-        
+
         ADE_CHECK_ADERETVAL(ADE_CLASS_BENCH_UTILS,ADE_METHOD_fft_test_procedure,ret);
 
-//        
+//
 //        for(i=0;i<32;i++)
 //        {
 //            fprintf(stdout, "p_fft_custom[%d]=%f\n",i,((ADE_FLOATING_T*)p_fft_custom)[i]);

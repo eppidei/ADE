@@ -25,6 +25,8 @@ static ADE_API_RET_T ADE_Blas_level2_doElewiseCustom(ADE_FLOATING_T* p_Y, ADE_FL
 
 static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2);
 static ADE_API_RET_T ADE_Blas_level2_ssbmv (ADE_blas_level2_T *p_Blas_l2);
+/* custom impls */
+static ADE_API_RET_T sger_custom_gp(ADE_INT32_T M,ADE_INT32_T N,ADE_FLOATING_SP_T ALPHA,ADE_FLOATING_SP_T* X,ADE_INT32_T INCX,ADE_FLOATING_SP_T *Y,ADE_INT32_T INCY,ADE_FLOATING_SP_T *A,ADE_INT32_T LDA);
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 static ADE_API_RET_T ADE_Blas_level2_dger (ADE_blas_level2_T *p_Blas_l2);
 static ADE_API_RET_T ADE_Blas_level2_dsbmv (ADE_blas_level2_T *p_Blas_l2);
@@ -166,7 +168,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetDiag(ADE_blas_level2_T* p_Blas_l2, ADE_CHAR_T D
 
 }
 
-ADE_API_RET_T ADE_Blas_Level2_SetM(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T M)
+ADE_API_RET_T ADE_Blas_Level2_SetM(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T M)
 {
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetM,p_Blas_l2);
 
@@ -175,14 +177,14 @@ ADE_API_RET_T ADE_Blas_Level2_SetM(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T M)
      return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blas_Level2_SetN(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T N)
+ADE_API_RET_T ADE_Blas_Level2_SetN(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T N)
 {
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetN,p_Blas_l2);
         p_Blas_l2->N=N;
      return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blas_Level2_SetK(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K)
+ADE_API_RET_T ADE_Blas_Level2_SetK(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T K)
 {
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetK,p_Blas_l2);
 
@@ -191,7 +193,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetK(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K)
      return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blas_Level2_SetKl(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KL)
+ADE_API_RET_T ADE_Blas_Level2_SetKl(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T KL)
 {
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetKl,p_Blas_l2);
 
@@ -200,7 +202,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetKl(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K
      return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blas_Level2_SetKu(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T KU)
+ADE_API_RET_T ADE_Blas_Level2_SetKu(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T KU)
 {
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetKu,p_Blas_l2);
         p_Blas_l2->KU=KU;
@@ -208,7 +210,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetKu(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T K
 }
 
 
-ADE_API_RET_T ADE_Blas_Level2_SetLda(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level2_SetLda(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T val)
 {
    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetLda,p_Blas_l2);
         p_Blas_l2->LDA=val;
@@ -216,7 +218,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetLda(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T 
 }
 
 
-ADE_API_RET_T ADE_Blas_Level2_SetINCX(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level2_SetINCX(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T val)
 {
    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetINCX,p_Blas_l2);
         p_Blas_l2->INCX=val;
@@ -224,7 +226,7 @@ ADE_API_RET_T ADE_Blas_Level2_SetINCX(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T
 }
 
 
-ADE_API_RET_T ADE_Blas_Level2_SetINCY(ADE_blas_level2_T* p_Blas_l2, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level2_SetINCY(ADE_blas_level2_T* p_Blas_l2, ADE_INT32_T val)
 {
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL2,ADE_METHOD_SetINCY,p_Blas_l2);
         p_Blas_l2->INCY=val;
@@ -613,7 +615,7 @@ static ADE_API_RET_T ADE_Blas_level2_sger (ADE_blas_level2_T *p_Blas_l2)
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
-    ADE_MISSING_IMPLEMENTATION(ADE_Blas_level2_sger);
+    sger_custom_gp(p_Blas_l2->M,p_Blas_l2->N,p_Blas_l2->p_ALPHA,p_Blas_l2->p_X,p_Blas_l2->INCX,_Blas_l2->p_Y,p_Blas_l2->INCY,p_Blas_l2->p_A,p_Blas_l2->LDA);
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
@@ -761,3 +763,75 @@ return ADE_RET_SUCCESS;
 #else
 #error(ADE_FP_PRECISION);
 #endif
+
+/************************* CUSTOM GENERAL PURPOSE IMPLEMENTATIONS *************************/
+/* a bare fortran translation from original sger.f fortran source v 3.4.0 */
+
+static ADE_API_RET_T sger_custom_gp(ADE_INT32_T M,ADE_INT32_T N,ADE_FLOATING_SP_T ALPHA,ADE_FLOATING_SP_T* X,ADE_INT32_T INCX,ADE_FLOATING_SP_T *Y,ADE_INT32_T INCY,ADE_FLOATING_SP_T *A,ADE_INT32_T LDA)
+{
+
+    ADE_INT32_T j,i,lin_idx,kx,jy,ix;
+    ADE_FLOATING_SP_T temp;
+
+    if ((M==0) || (N==0) || (ALPHA==0.0)) return ADE_RET_ERROR;
+
+    if (INCY>0)
+    {
+        jy = 0;
+    }
+    else
+    {
+        jy = 0 - (N-1)*INCY;
+    }
+
+    if (INCX==1)
+    {
+        for (j=0;j<N;j++)
+        {
+            if (Y[jy]!=0.0)
+            {
+                temp=ALPHA*Y[jy];
+                for (i=0;i<M;i++)
+                {
+                    lin_idx = i*N+j;
+                    A[lin_idx]=A[lin_idx]+X[i]*temp;
+                }
+            }
+            jy=jy+INCY;
+        }
+    }
+    else
+    {
+        if (INCX>0)
+        {
+            kx=0;
+        }
+        else
+        {
+            kx = 0 - (M-1)*INCX;
+        }
+        for(j=0;j<N;j++)
+        {
+            if(Y[jy]!=0)
+            {
+                temp=ALPHA*Y[jy];
+                ix=kx;
+                for (i=0;i<M;i++)
+                {
+                     lin_idx = i*N+j;
+                     A[lin_idx]=A[lin_idx] + X[ix]*temp;
+                     ix = ix + INCX;
+                }
+
+            }
+            jy=jy+INCY;
+
+        }
+
+    }
+
+
+    return ADE_RET_SUCCESS;
+
+
+}

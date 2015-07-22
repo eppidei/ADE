@@ -4,6 +4,10 @@
 #include "headers/ADE_blas_wrapper.h"
 #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_CBLAS_LIB || ADE_BLAS_IMPLEMENTATION==ADE_USE_OPENBLAS_LIB)
 #include "headers/ADE_cblas.h"
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
+
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+#include <arm_neon.h>
 #else
 #error(ADE_BLAS_IMPLEMENTATION)
 #endif
@@ -31,6 +35,12 @@ static ADE_FLOATING_T ADE_Blas_level1_sdot (ADE_blas_level1_T *p_blas_l1);
 static ADE_CPLX_T ADE_Blas_level1_cdotu (ADE_blas_level1_T *p_blas_l1);
 static ADE_CPLX_T ADE_Blas_level1_cdotc (ADE_blas_level1_T *p_blas_l1);
 static ADE_FLOATING_T ADE_Blas_level1_snrm2 (ADE_blas_level1_T *p_blas_l1);
+/* custom impls*/
+static ADE_FLOATING_SP_T sdot_custom_gp_par5(ADE_INT32_T N,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T* SY,ADE_INT32_T INCY);
+static ADE_FLOATING_SP_T sdot_custom_gp_par4(ADE_INT32_T N,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T* SY,ADE_INT32_T INCY);
+static ADE_FLOATING_SP_T sdot_custom_gp_par1(ADE_INT32_T N,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T* SY,ADE_INT32_T INCY);
+static ADE_FLOATING_SP_T sdot_NEON(ADE_INT32_T N,ADE_FLOATING_SP_T * __restrict SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T * __restrict SY,ADE_INT32_T INCY);
+static ADE_API_RET_T saxpy_custom_gp_par4(ADE_INT32_T N,ADE_FLOATING_SP_T SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T INCY);
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 static ADE_API_RET_T ADE_Blas_level1_daxpy (ADE_blas_level1_T *p_blas_l1);
 static ADE_API_RET_T ADE_Blas_level1_dcopy (ADE_blas_level1_T *p_blas_l1);
@@ -979,82 +989,10 @@ static ADE_API_RET_T ADE_Blas_level1_saxpy (ADE_blas_level1_T *p_blas_l1)// (ADE
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
-//ADE_INT32_T M = 0, MP1 = 0, IX = 0, IY=0, N_int = p_blas_l1->N;
-//ADE_UINT32_T i = 0;
-//ADE_FLOATING_SP_T SA_int = p_blas_l1->ALPHA;
-//ADE_INT32_T INCX_int = p_blas_l1->INCX , INCY_int = p_blas_l1->INCY;
-//
-//
-//    #ifdef ADE_CHECK_INPUTS
-//
-//	if (N_int<=0)
-//	{
-//	  #if (ADE_VERBOSITY_LEVEL>=ADE_WARNING_LEVEL)
-//       ADE_PRINT_WARNINGS(ADE_INCHECKS,N_int,"%d",ADE_Blas_level1_Saxpy);
-//	  #endif
-//	  return ADE_W0;
-//
-//	}
-//
-//	if (SA_int==0.0F)
-//
-//    {
-//        #if (ADE_VERBOSITY_LEVEL>=ADE_WARNING_LEVEL)
-//        ADE_PRINT_WARNINGS(ADE_INCHECKS,SA_int,"%f",ADE_Blas_level1_Saxpy);
-//	    #endif
-//	  return ADE_W1;
-//    }
-//
-//    #endif
-//
-//
-//
-//    if ( (INCX_int==1) && (INCY_int==1) )
-//    {
-//        M = (N_int)%4;
-//         if (M!=0)
-//         {
-//             for(i=0;i<M;i++)
-//             {
-//                  p_blas_l1->p_Y[i] = p_blas_l1->p_Y[i] + SA_int*p_blas_l1->p_X[i];
-//             }
-//
-//         }
-//
-//         if  (N_int<4)
-//         {
-//             return ADE_RET_SUCCESS;
-//         }
-//         for (i = M; i<N_int;i=i+4)
-//         {
-//              p_blas_l1->p_Y[i] = p_blas_l1->p_Y[i] + SA_int*p_blas_l1->p_X[i];
-//              p_blas_l1->p_Y[i+1] = p_blas_l1->p_Y[i+1]+ SA_int*p_blas_l1->p_X[i+1];
-//              p_blas_l1->p_Y[i+2] = p_blas_l1->p_Y[i+2] + SA_int*p_blas_l1->p_X[i+2];
-//              p_blas_l1->p_Y[i+3] = p_blas_l1->p_Y[i+3] + SA_int*p_blas_l1->p_X[i+3];
-//         }
-//
-//    }
-//    else
-//    {
-//          //  IX = 1
-//         //IY = 1
-//         if  (INCX_int<0)
-//         {
-//             IX = (-N_int+1)*INCX_int;//IX = (-N+1)*INCX + 1; TO CHECK
-//         }
-//         if  (INCY_int<0)
-//         {
-//             IY = (-N_int+1)*INCY_int;//IY = (-N+1)*INCY + 1; TO CHECK
-//         }
-//         for  (i=0;i<N_int;i++)
-//         {
-//             p_blas_l1->p_Y[IY] = p_blas_l1->p_Y[IY] + SA_int*p_blas_l1->p_X[IX];
-//             IX = IX + INCX_int;
-//             IY = IY + INCY_int;
-//         }
-//    }
+        saxpy_custom_gp_par4(p_blas_l1->N,*p_blas_l1->p_ALPHA,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_Y,p_blas_l1->INCY);
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
 
-
+        #warning (MISSING IMPLEMENTATION ADE_Blas_level1_saxpy)
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB  )
 
@@ -1085,6 +1023,10 @@ static ADE_API_RET_T ADE_Blas_level1_scopy (ADE_blas_level1_T *p_blas_l1)// (ADE
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
         ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_Scopy);
+
+         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+
+        #warning (MISSING IMPLEMENTATION ADE_Blas_level1_scopy)
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
@@ -1117,6 +1059,10 @@ ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_caxpy,p_blas_l1);
 
         ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_caxpy);
 
+        #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+
+        #warning (MISSING IMPLEMENTATION ADE_Blas_level1_caxpy)
+
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
         caxpy(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_ALPHA,(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
@@ -1148,6 +1094,10 @@ static ADE_API_RET_T ADE_Blas_level1_ccopy (ADE_blas_level1_T *p_blas_l1)// (ADE
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
         ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_ccopy);
+
+         #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+
+        #warning (MISSING IMPLEMENTATION ADE_Blas_level1_ccopy)
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
@@ -1182,7 +1132,11 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_sdot,p_blas_l1);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
-        ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_Sdot);
+        ret = sdot_custom_gp_par4(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_X,p_blas_l1->INCY);
+
+    #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+
+        ret = sdot_NEON(p_blas_l1->N,p_blas_l1->p_X,p_blas_l1->INCX,p_blas_l1->p_X,p_blas_l1->INCY);
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
@@ -1219,6 +1173,10 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_cdotu,p_blas_l1);
 
         ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_cdotu);
 
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+
+#warning ADE_MISSING_IMPLEMENTATION
+
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
         ret=cdotu(&(p_blas_l1->N),(ADE_VOID_T*)p_blas_l1->p_X,&(p_blas_l1->INCX),(ADE_VOID_T*)p_blas_l1->p_Y,&(p_blas_l1->INCY) );
@@ -1250,6 +1208,7 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_cdotc,p_blas_l1);
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
         ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_cdotu);
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
@@ -1287,6 +1246,7 @@ ADE_CHECK_INPUTPOINTER_NORET(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_snrm2,p_blas_l1);
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
 
         ADE_MISSING_IMPLEMENTATION(ADE_Blas_level1_Snrm2);
+#elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
 
   #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
 
@@ -1560,3 +1520,303 @@ ADE_FLOATING_T ret=0;
 #error(ADE_FP_PRECISION);
 #endif
 
+/************************* CUSTOM GENERAL PURPOSE IMPLEMENTATIONS *************************/
+/* a bare fortran translation from original sdot.f fortran source v 3.4.0 */
+static ADE_FLOATING_SP_T sdot_custom_gp_par5(ADE_INT32_T N,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T* SY,ADE_INT32_T INCY)
+{
+    ADE_FLOATING_SP_T stemp=0.0,sdot=0.0;
+    ADE_INT32_T i,ix,iy,m,mp1;
+
+    if (N<=0)
+    {
+        return;
+    }
+    if (INCX==1 && INCY==1)
+    {
+        m=N%5;
+        if (m!=0)
+        {
+            for (i=0;i<m;i++)
+            {
+                stemp=stemp+SX[i]*SY[i];
+            }
+            if (N<5)
+            {
+                sdot=stemp;
+                return sdot;
+            }
+        }
+            mp1 = m;
+
+            for (i=mp1;i<N;i+=5)
+            {
+                stemp = stemp + SX[i]*SY[i] + SX[i+1]*SY[i+1] + SX[i+2]*SY[i+2] + SX[i+3]*SY[i+3] + SX[i+4]*SY[i+4] ;
+            }
+    }
+    else
+    {
+        ix=0;
+        iy=0;
+        if (INCX<0)
+        {
+            ix = (-N+1) * INCX;
+        }
+        if (INCY<0)
+        {
+            iy = (-N+1) * INCY;
+        }
+
+        for (i=0;i<N;i++)
+        {
+            stemp=stemp+SX[ix]*SY[iy];
+            ix = ix + INCX;
+            iy = iy + INCY;
+        }
+    }
+    sdot=stemp;
+    return sdot;
+}
+/* a custom general purpose implementation with loop unrolling for paralellism degree 4
+hopefully  more suited for NEON UNIT*/
+static ADE_FLOATING_SP_T sdot_custom_gp_par4(ADE_INT32_T N,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T* SY,ADE_INT32_T INCY)
+{
+    ADE_FLOATING_SP_T stemp=0.0,sdot=0.0;
+    ADE_INT32_T i,ix,iy,m,mp1;
+    ADE_FLOATING_SP_T sum[4];
+
+    if (N<=0)
+    {
+        return;
+    }
+    if (INCX==1 && INCY==1)
+    {
+        m=N%4;
+        if (m!=0)
+        {
+            for (i=0;i<m;i++)
+            {
+                stemp=stemp+SX[i]*SY[i];
+            }
+            if (N<4)
+            {
+                sdot=stemp;
+                return sdot;
+            }
+        }
+            mp1 = m;
+
+            for (i=mp1;i<N;i+=4)
+            {
+                sum[0]=SX[i]*SY[i];
+                sum[1]=SX[i+1]*SY[i+1];
+                sum[2]=SX[i+2]*SY[i+2];
+                sum[3]=SX[i+3]*SY[i+3];
+                stemp = stemp +  sum[0] +  sum[1] + sum[2]+ sum[3];
+            }
+    }
+    else
+    {
+        ix=0;
+        iy=0;
+        if (INCX<0)
+        {
+            ix = (-N+1) * INCX;
+        }
+        if (INCY<0)
+        {
+            iy = (-N+1) * INCY;
+        }
+
+        for (i=0;i<N;i++)
+        {
+            stemp=stemp+SX[ix]*SY[iy];
+            ix = ix + INCX;
+            iy = iy + INCY;
+        }
+    }
+    sdot=stemp;
+    return sdot;
+}
+
+static ADE_FLOATING_SP_T sdot_custom_gp_par1(ADE_INT32_T N,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T* SY,ADE_INT32_T INCY)
+{
+    ADE_FLOATING_SP_T stemp=0.0,sdot=0.0;
+    ADE_INT32_T i,ix,iy,m,mp1;
+
+    if (N<=0)
+    {
+        return;
+    }
+    if (INCX==1 && INCY==1)
+    {
+        m=0;
+
+            mp1 = m;
+
+            for (i=mp1;i<N;i+=1)
+            {
+                stemp = stemp + SX[i]*SY[i] ;
+            }
+    }
+    else
+    {
+        ix=0;
+        iy=0;
+        if (INCX<0)
+        {
+            ix = (-N+1) * INCX;
+        }
+        if (INCY<0)
+        {
+            iy = (-N+1) * INCY;
+        }
+
+        for (i=0;i<N;i++)
+        {
+            stemp=stemp+SX[ix]*SY[iy];
+            ix = ix + INCX;
+            iy = iy + INCY;
+        }
+    }
+    sdot=stemp;
+    return sdot;
+}
+
+static ADE_API_RET_T saxpy_custom_gp_par4(ADE_INT32_T N,ADE_FLOATING_SP_T SA,ADE_FLOATING_SP_T *SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T *SY,ADE_INT32_T INCY)
+{
+
+    ADE_INT32_T m,i,ix,iy,mp1;
+
+    if (N<=0) return ADE_RET_ERROR;
+    if (SA==0.0) return ADE_RET_WARNING; /* SY doesn't need to be updated*/
+
+    if (INCX==1 || INCY==1)
+    {
+        m=N%4;
+
+        if (m!=0)
+        {
+            for (i=0;i<m;i++)
+            {
+                SY[i] = SY[i] + SA*SX[i];
+            }
+
+        }
+        if (N<4)
+        {
+            return ADE_RET_SUCCESS;
+        }
+
+        mp1 = m;
+
+        for (i=mp1;i<N;i+=4)
+        {
+             SY[i] = SY[i] + SA*SX[i];
+             SY[i+1] = SY[i+1] + SA*SX[i+1];
+             SY[i+2] = SY[i+2] + SA*SX[i+2];
+             SY[i+3] = SY[i+3] + SA*SX[i+3];
+
+        }
+
+
+    }
+    else
+    {
+        ix = 1;
+        iy = 1;
+
+        if (INCX<0)
+        {
+            ix = (-N+1)*INCX;
+        }
+        if (INCY<0)
+        {
+            iy = (-N+1)*INCY;
+        }
+
+        for (i=0;i<N;i++)
+        {
+            SY[i] = SY[i] + SA*SX[i];
+            ix = ix + INCX;
+            iy = iy + INCY;
+        }
+
+    }
+
+    return ADE_RET_SUCCESS;
+
+}
+
+#if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_NEON)
+/************************* CUSTOM NEON UNIT IMPLEMENTATION ****************************************/
+static ADE_FLOATING_SP_T sdot_NEON(ADE_INT32_T N,ADE_FLOATING_SP_T * __restrict SX,ADE_INT32_T INCX,ADE_FLOATING_SP_T * __restrict SY,ADE_INT32_T INCY)
+{
+	float32x4_t vec1_q, vec2_q;
+	float32x4_t stemp_q={0.0, 0.0, 0.0, 0.0};
+	float32x2_t tmp[2];
+    ADE_FLOATING_SP_T sdot=0.0;
+    ADE_INT32_T i,ix,iy,m,mp1;
+
+    if (N<=0)
+    {
+        return;
+    }
+    if (INCX==1 && INCY==1)
+    {
+        m=N%4;
+        if (m!=0)
+        {
+            for (i=0;i<m;i++)
+            {
+                sdot=sdot+SX[i]*SY[i];
+            }
+            if (N<4)
+            {
+                return sdot;
+            }
+        }
+		mp1 = m;
+		//Ntemp = N - m;
+
+		for (i=mp1;i<N;i+=4)
+		{
+			vec1_q=vld1q_f32(&SX[i]);
+			vec2_q=vld1q_f32(&SY[i]);
+
+			stemp_q = vmlaq_f32(stemp_q, vec1_q, vec2_q );
+
+		}
+
+		tmp[0] = vget_high_f32(stemp_q);
+		tmp[1] = vget_low_f32 (stemp_q);
+		tmp[0] = vpadd_f32(tmp[0], tmp[1]);
+		tmp[0] = vpadd_f32(tmp[0], tmp[0]);
+		sdot = sdot + vget_lane_f32(tmp[0], 0);
+
+
+		return sdot;
+    }
+    else
+    {
+        ix=0;
+        iy=0;
+        if (INCX<0)
+        {
+            ix = (-N+1) * INCX;
+        }
+        if (INCY<0)
+        {
+            iy = (-N+1) * INCY;
+        }
+
+        for (i=0;i<N;i++)
+        {
+            sdot=sdot+SX[ix]*SY[iy];
+            ix = ix + INCX;
+            iy = iy + INCY;
+        }
+    }
+    //sdot=stemp;
+    return sdot;
+}
+#endif

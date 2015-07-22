@@ -1,6 +1,6 @@
 #ifndef _ADE_ERRORS_H
 #define _ADE_ERRORS_H
-#include "headers/ADE_typedefs.h"
+//#include "headers/ADE_typedefs.h"
 
 
 /*************************** ERROR DEFINES ***************************/

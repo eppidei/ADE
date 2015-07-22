@@ -24,6 +24,9 @@ static ADE_API_RET_T ADE_Blas_level3_launch_type1 (ADE_blas_level3_T *p_Blas_l3)
 static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3);
 static ADE_API_RET_T ADE_Blas_level3_cgemm (ADE_blas_level3_T *p_Blas_l3);
 
+static ADE_API_RET_T sgemm_custom_gp(ADE_CHAR_T TRANSA,ADE_CHAR_T TRANSB,ADE_INT32_T M,ADE_INT32_T N, ADE_INT32_T K,ADE_FLOATING_SP_T ALPHA,ADE_FLOATING_SP_T *A,
+ADE_INT32_T LDA,ADE_FLOATING_SP_T *B,ADE_INT32_T LDB,ADE_FLOATING_SP_T BETA,ADE_FLOATING_SP_T* C,ADE_INT32_T LDC);
+
 #elif (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 
 static ADE_API_RET_T ADE_Blas_level3_dgemm (ADE_blas_level3_T *p_Blas_l3);
@@ -243,7 +246,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetSide(ADE_blas_level3_T* p_Blas_l3, ADE_CHAR_T v
 
 }
 
-ADE_API_RET_T ADE_Blas_Level3_SetM(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level3_SetM(ADE_blas_level3_T* p_Blas_l3, ADE_INT32_T val)
 {
    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetM,p_Blas_l3);
 
@@ -253,7 +256,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetM(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T va
 
 }
 
-ADE_API_RET_T ADE_Blas_Level3_SetN(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level3_SetN(ADE_blas_level3_T* p_Blas_l3, ADE_INT32_T val)
 {
   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetN,p_Blas_l3);
 
@@ -263,7 +266,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetN(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T va
 
 }
 
-ADE_API_RET_T ADE_Blas_Level3_SetK(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level3_SetK(ADE_blas_level3_T* p_Blas_l3, ADE_INT32_T val)
 {
   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetK,p_Blas_l3);
 
@@ -273,7 +276,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetK(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T va
 
 }
 
-ADE_API_RET_T ADE_Blas_Level3_SetLda(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level3_SetLda(ADE_blas_level3_T* p_Blas_l3, ADE_INT32_T val)
 {
   ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetLda,p_Blas_l3);
 
@@ -283,7 +286,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetLda(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T 
 
 }
 
-ADE_API_RET_T ADE_Blas_Level3_SetLdb(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level3_SetLdb(ADE_blas_level3_T* p_Blas_l3, ADE_INT32_T val)
 {
  ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetLdb,p_Blas_l3);
 
@@ -294,7 +297,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetLdb(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T 
 }
 
 
-ADE_API_RET_T ADE_Blas_Level3_SetLdc(ADE_blas_level3_T* p_Blas_l3, ADE_UINT32_T val)
+ADE_API_RET_T ADE_Blas_Level3_SetLdc(ADE_blas_level3_T* p_Blas_l3, ADE_INT32_T val)
 {
 ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_SetLdc,p_Blas_l3);
 
@@ -507,8 +510,9 @@ static ADE_API_RET_T ADE_Blas_level3_sgemm (ADE_blas_level3_T *p_Blas_l3)
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL3,ADE_METHOD_sgemm,p_Blas_l3);
 
     #if (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_CUSTOM)
-
-    ADE_MISSING_IMPLEMENTATION(ADE_Blas_level3_sgemm);
+/*** Att. blas have to invert inputs for Row major operations cinterface.pdf pgg.191****/
+    sgemm_custom_gp(p_Blas_l3->TRANSA,p_Blas_l3->TRANSB,p_Blas_l3->N,p_Blas_l3->M,p_Blas_l3->K,p_Blas_l3->p_ALPHA,p_Blas_l3->p_B,
+p_Blas_l3->LDB,p_Blas_l3->p_A,p_Blas_l3->LDA,p_Blas_l3->BETA,p_Blas_l3->C,p_Blas_l3->LDC);
 
     #elif (ADE_BLAS_IMPLEMENTATION==ADE_USE_BLAS_LIB)
    /*** Att. blas have to invert inputs for Row major operations cinterface.pdf pgg.191****/
@@ -829,3 +833,233 @@ return ADE_RET_SUCCESS;
 #else
 #error(ADE_FP_PRECISION);
 #endif
+
+/************************* CUSTOM GENERAL PURPOSE IMPLEMENTATIONS *************************/
+/* a bare fortran translation from original sdot.f fortran source v 3.4.0
+only 1 based indexing is adapted, column major order is left as it is and handled by changing matrix order and/or transpose parameter
+the same way as cblas interface */
+static ADE_API_RET_T sgemm_custom_gp(ADE_CHAR_T TRANSA,ADE_CHAR_T TRANSB,ADE_INT32_T M,ADE_INT32_T N, ADE_INT32_T K,ADE_FLOATING_SP_T ALPHA,ADE_FLOATING_SP_T *A,
+ADE_INT32_T LDA,ADE_FLOATING_SP_T *B,ADE_INT32_T LDB,ADE_FLOATING_SP_T BETA,ADE_FLOATING_SP_T* C,ADE_INT32_T LDC)
+{
+
+ADE_INT32_T i,info,j,l,ncola,nrowa,nrowb,lin_idx,lin_idx2;
+ADE_BOOL_T  nota,notb;
+ADE_FLOATING_SP_T temp;
+
+/* Set NOTA and NOTB as true if A and B respectively are not
+    transposed and set NROWA, NCOLA and NROWB as the number of rows
+    and columns of A and the number of rows of B respectively.*/
+    nota = ADE_FALSE;
+    if (strcmp(TRANSA,'N')==0 || strcmp(TRANSA,'n')==0)
+    {
+        nota=ADE_TRUE;
+    }
+
+    notb = ADE_FALSE;
+    if (strcmp(TRANSB,'N')==0 || strcmp(TRANSB,'n')==0)
+    {
+        notb=ADE_TRUE;
+    }
+
+
+    if (nota)
+    {
+        nrowa = M;
+        ncola = K;
+    }
+    else
+    {
+        nrowa = K;
+        ncola = M;
+    }
+
+
+    if (notb)
+    {
+         nrowb = K;
+    }
+    else
+    {
+        nrowb = N;
+    }
+
+
+
+
+  if ( (M==0) || (N==0) || ( ( (ALPHA==0.0) || (K==0)) && (BETA==1.0))) return ADE_RET_WARNING;
+
+    if (ALPHA==0.0)
+    {
+        if (BETA==0.0)
+        {
+              for (j=0 ; j<N;j++)
+              {
+                    for (i=0;i<M;i++)
+                    {
+                        lin_idx = i*N+j;
+                        C[lin_idx] = 0.0;
+                    }
+              }
+        }
+        else
+        {
+            for (j=0 ; j<N;j++)
+              {
+                    for (i=0;i<M;i++)
+                    {
+                        lin_idx = i*N+j;
+                        C[lin_idx] = BETA * C[lin_idx];
+                    }
+              }
+        }
+        return ADE_RET_SUCCESS;
+    }
+
+  if (notb)
+  {
+                   if(nota)
+                   {
+
+                    /* Form C := alpha*A*B + beta*C. */
+
+                       for (j=0;j<N;j++)
+                       {
+                            if (BETA==0.0)
+                            {
+                                for (i=0;i<M;i++)
+                                {
+                                    lin_idx = i*N+j;
+                                    C[lin_idx] = 0.0;
+                                }
+                            }
+                            else if(BETA!=1.0)
+                            {
+                               for (i=0;i<M;i++)
+                                {
+                                    lin_idx = i*N+j;
+                                    C[lin_idx] = BETA * C[lin_idx];
+                                }
+                            }
+                            for (l=0;l<K;l++)
+                            {
+                                lin_idx = l*N+j;
+                                if (B[lin_idx]!=0.0)
+                                {
+                                    temp = ALPHA*B[lin_idx];
+                                    for (i=0;i<M;i++)
+                                    {
+                                        lin_idx=i*N+j;
+                                        lin_idx2=i*K+l;
+                                        C[lin_idx] =  C[lin_idx] + temp* A[lin_idx2];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                    /*Form C := alpha*A**T*B + beta*C */
+
+                        for (j=0;j<N;j++)
+                        {
+                            for (i=0;i<M;i++)
+                            {
+                                temp = 0.0;
+                                for (l=0;l<K;l++)
+                                {
+                                    lin_idx=l*M+i;
+                                    lin_idx2=l*N+j;
+                                    temp = temp + A[lin_idx]*B[lin_idx2];
+                                }
+                                 lin_idx=i*N+j;
+                                if (BETA==0.0)
+                                {
+                                  C[lin_idx] = ALPHA*temp;
+                                }
+                                else
+                                {
+                                    C[lin_idx] = ALPHA*temp + BETA*C[lin_idx];
+                                }
+                            }
+                        }
+                    }
+    }
+  else
+    {
+    if(nota)
+    {
+
+/*Form C := alpha*A*B**T + beta*C*/
+
+            for (j=0;j<N;j++)
+            {
+                if(BETA==0.0)
+                {
+                    for (i=0;i<M;i++)
+                    {
+                        lin_idx = i*N+j;
+                        C[lin_idx] = 0.0;
+                    }
+                }
+                else if (BETA!=1.0)
+                {
+                    for (i=0;i<M;i++)
+                    {
+                        lin_idx = i*N+j;
+                        C[lin_idx] = BETA * C[lin_idx];
+                    }
+                }
+                for (l=0;l<K;l++)
+                {
+                    lin_idx = j*K+l;
+                    if (B[lin_idx]!=0.0)
+                    {
+                       temp = ALPHA*B[lin_idx];
+                        for (i=0;i<M;i++)
+                        {
+                            lin_idx=i*N+j;
+                            lin_idx2=i*K+l;
+                            C[lin_idx] = C[lin_idx] + temp*A[lin_idx2];
+                        }
+                   }
+                }
+            }
+    }
+    else
+    {
+
+    /* Form C := alpha*A**T*B**T + beta*C */
+
+            for (j=0;j<N;j++)
+            {
+                for (i=0;i<M;i++)
+                {
+                    temp = 0.0;
+                    for (l=0;l<K;l++)
+                    {
+                        lin_idx=l*M+i;
+                        lin_idx2=j*K+l;
+                        temp = temp + A[lin_idx]*B[lin_idx2];
+                    }
+                    lin_idx=i*N+j;
+                      if (BETA==0.0)
+                      {
+                        C[lin_idx] = ALPHA*temp;
+                      }
+                      else
+                      {
+                        C[lin_idx] = ALPHA*temp+ BETA*C[lin_idx];
+                      }
+                }
+            }
+    }
+}
+
+
+return ADE_RET_SUCCESS;
+
+
+
+
+}
