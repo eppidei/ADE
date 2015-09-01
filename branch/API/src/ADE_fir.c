@@ -13,8 +13,9 @@
 
 static ADE_API_RET_T ADE_Fir_SetInBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
 static ADE_API_RET_T ADE_Fir_SetOutBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
-static ADE_API_RET_T ADE_Fir_setOrder(ADE_FIR_T* p_fir, ADE_UINT32_T order);
+static ADE_API_RET_T ADE_Fir_setOrder(ADE_FIR_T* p_fir, ADE_INT32_T order);
 static ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num);
+static ADE_API_RET_T ADE_Fir_SetBufflength(ADE_FIR_T* p_fir, ADE_INT32_T bufflen);
 static ADE_API_RET_T ADE_Fir_filter_DII_T (ADE_FIR_T* p_fir);
 static ADE_API_RET_T ADE_Fir_setFilt_Implementation(ADE_FIR_T* p_fir,ADE_FIR_IMP_CHOICE_T filt_imp_type);
 static ADE_API_RET_T ADE_Fir_dofilter_DII_T_blas (ADE_blas_level1_T *p_Blas_L1, ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_b,ADE_UINT32_T len_frame,ADE_FLOATING_T *p_out, ADE_FLOATING_T *p_state,ADE_FLOATING_T gain,ADE_FLOATING_T *p_temp_buffer,ADE_UINT32_T temp_buff_size);
@@ -154,12 +155,6 @@ ADE_API_RET_T ADE_Fir_Configure_inout(ADE_FIR_T* p_fir,ADE_FLOATING_T* p_inbuff,
     ADE_API_RET_T ret_setin=ADE_RET_ERROR;
     ADE_API_RET_T ret_setout=ADE_RET_ERROR;
 
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure_inout,p_fir);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure_inout,p_inbuff);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure_inout,p_outbuff);
-
-
-
     ret_setin=ADE_Fir_SetInBuff(p_fir,p_inbuff);
     ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Configure_inout,ret_setin);
 
@@ -171,15 +166,10 @@ ADE_API_RET_T ADE_Fir_Configure_inout(ADE_FIR_T* p_fir,ADE_FLOATING_T* p_inbuff,
 
 ADE_API_RET_T ADE_Fir_Configure_bufflength(ADE_FIR_T* p_fir,ADE_INT32_T buff_len)
 {
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure_bufflength,p_fir);
+    ADE_API_RET_T ret_bufflen = ADE_RET_ERROR;
 
-    if (buff_len<=0)
-    {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_INCHECKS,ADE_CLASS_FIR,ADE_METHOD_Configure_bufflength,buff_len,"%d",ADE_STDERR_STREAM);
-        return ADE_RET_ERROR;
-    }
-
-    p_fir->buff_len=buff_len;
+    ret_bufflen = ADE_Fir_SetBufflength(p_fir,  buff_len);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Configure_bufflength,ret_bufflen);
 
     return ADE_RET_SUCCESS;
 
@@ -191,11 +181,6 @@ ADE_API_RET_T ADE_Fir_Configure(ADE_FIR_T* p_fir,ADE_FLOATING_T *p_num,ADE_UINT3
     ADE_API_RET_T ret_params=ADE_RET_ERROR;
     ADE_API_RET_T ret_inout=ADE_RET_ERROR;
     ADE_API_RET_T ret_len=ADE_RET_ERROR;
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure,p_fir);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure,p_inbuff);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure,p_outbuff);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Configure,p_num);
 
     ret_params = ADE_Fir_Configure_params(p_fir,p_num,num_len,filt_imp_type);
     ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Configure,ret_params);
@@ -313,12 +298,27 @@ static ADE_API_RET_T ADE_Fir_setNum(ADE_FIR_T* p_fir, ADE_FLOATING_T *p_num)
 
 }
 
-static ADE_API_RET_T ADE_Fir_setOrder(ADE_FIR_T* p_fir, ADE_UINT32_T order)
+static ADE_API_RET_T ADE_Fir_setOrder(ADE_FIR_T* p_fir, ADE_INT32_T order)
 {
+    ADE_INT32_T val0=0;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_setNum,p_fir);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_setOrder,p_fir);
+    ADE_CHECK_INTERVAL_G_MIN_LE_MAX(ADE_CLASS_FIR,ADE_METHOD_setOrder,order,"%d",val0,p_fir->max_filter_order);
 
    p_fir->filter_order=order;
+
+    return ADE_RET_SUCCESS;
+
+}
+
+static ADE_API_RET_T ADE_Fir_SetBufflength(ADE_FIR_T* p_fir, ADE_INT32_T bufflen)
+{
+    ADE_INT32_T val0=0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_SetBufflength,p_fir);
+    ADE_CHECK_VALUE_MAJOR(ADE_CLASS_FIR,ADE_METHOD_SetBufflength,bufflen,"%d",val0);
+
+   p_fir->buff_len=bufflen;
 
     return ADE_RET_SUCCESS;
 

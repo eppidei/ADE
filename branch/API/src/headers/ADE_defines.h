@@ -87,7 +87,7 @@
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
      #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
-        #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
     #endif
 #elif (ADE_TARGET_TYPE==ADE_PC_NORMAL )
     #undef ADE_CONFIGURATION_INTERACTIVE
@@ -97,7 +97,7 @@
     #define ADE_FFT_IMP ADE_USE_FFTW
     #define ADE_USE_FFTW_THREADS
     #ifndef ADE_BLAS_IMPLEMENTATION //to make it overrideable from makefile
-        #define ADE_BLAS_IMPLEMENTATION ADE_USE_CBLAS_LIB
+        #define ADE_BLAS_IMPLEMENTATION ADE_USE_BLAS_LIB
     #endif
 #elif (ADE_TARGET_TYPE==ADE_ANDROID)
     #undef ADE_CONFIGURATION_INTERACTIVE
@@ -169,6 +169,11 @@
 /************************ DOWNSAMPLER ****************************/
 #define ADE_DOWNSAMPLER_PRINT_FLOAT_WIDTH (20)
 #define ADE_DOWNSAMPLER_PRINT_FLOAT_PRECISION (18)
+//#define ADE_DOWNSAMPLER_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
+/************************ UPSAMPLER ****************************/
+#define ADE_UPSAMPLER_PRINT_FLOAT_WIDTH (20)
+#define ADE_UPSAMPLER_PRINT_FLOAT_PRECISION (18)
+//#define ADE_UPSAMPLER_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
 
 /****************************** BLOW ***********************************/
 #define IIR1_N_SECTIONS (4)
@@ -189,6 +194,8 @@
 #define ADE_MATLAB_EXE "/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab"
 #define ADE_SNAP_SCRIPT "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Main_scripts/impulse_frame.m"
 #define ADE_SNAP_WS "./snap_config_ws.mat"
+/****** FFT ******/
+#define ADE_FFT_MAX_BUFF_LEN (1024)
 /**************************** FFTW **********************************/
 #define ADE_FFTW_PLAN_FLAGS FFTW_MEASURE //FFTW_PATIENT //FFTW_ESTIMATE //read manual pg.18
 #define ADE_FLOAT_SIZE (4)
@@ -219,6 +226,9 @@
 #define NR_STACK 50
 /********************* PROXIMITY *********************/
 #define ADE_PROXIMITY_MAX_BUFF_LEN (1024)
+
+/***** DECIMATOR ********/
+
 
 
 

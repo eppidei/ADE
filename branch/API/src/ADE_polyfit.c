@@ -11,8 +11,19 @@
 #include "mex.h"
 #endif
 
+/************************* Set Methods ****************************/
+static ADE_API_RET_T ADE_Polyfit_SetBreaks(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_breaks_i,ADE_INT32_T n_breaks);
+static ADE_API_RET_T ADE_Polyfit_SetCoeffs(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_coeffs_i,ADE_INT32_T n_coeffs);
+static ADE_API_RET_T ADE_Polyfit_SetInBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in);
+static ADE_API_RET_T ADE_Polyfit_SetOutBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_out);
+static ADE_API_RET_T ADE_Polyfit_SetBuffLen(ADE_POLYFIT_T *p_poly,ADE_INT32_T buff_len);
+
+/********************************************************************************/
+/**                     PUBLIC METHODS                                        */
+/********************************************************************************/
 
 
+/************************** Init Methods ***********************************/
 
 ADE_API_RET_T ADE_Polyfit_Init (ADE_POLYFIT_T **dp_poly)
 {
@@ -56,6 +67,18 @@ ADE_VOID_T ADE_Polyfit_Release(ADE_POLYFIT_T *p_poly)
 
 }
 
+
+/*************************** Configure Methods ***************************************/
+
+ADE_API_RET_T ADE_Polyfit_Configure_bufflength(ADE_POLYFIT_T *p_poly,ADE_INT32_T buff_len)
+{
+     ADE_API_RET_T ret_len=ADE_RET_ERROR;
+
+     ret_len=ADE_Polyfit_SetBuffLen(p_poly,buff_len);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_POLYFIT,ADE_METHOD_Configure_bufflength,ret_len);
+
+ return ADE_RET_SUCCESS;
+}
 ADE_API_RET_T ADE_Polyfit_Configure_params(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_breaks_i,ADE_UINT32_T n_breaks,ADE_FLOATING_T *p_coeffs_i,ADE_UINT32_T n_coeffs)
 {
     ADE_API_RET_T ret_breaks = ADE_RET_ERROR;
@@ -79,15 +102,11 @@ ADE_API_RET_T ADE_Polyfit_Configure_params(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T 
 
 }
 
-ADE_API_RET_T ADE_Polyfit_Configure_inout(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out,ADE_INT32_T buff_len)
+ADE_API_RET_T ADE_Polyfit_Configure_inout(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out)
 {
     ADE_API_RET_T ret_in=ADE_RET_ERROR;
     ADE_API_RET_T ret_out=ADE_RET_ERROR;
-     ADE_API_RET_T ret_len=ADE_RET_ERROR;
 
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure_inout,p_in);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure_inout,p_poly);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure_inout,p_out);
 
      ret_in=ADE_Polyfit_SetInBuff(p_poly,p_in);
      ADE_CHECK_ADERETVAL(ADE_CLASS_POLYFIT,ADE_METHOD_Configure_inout,ret_in);
@@ -95,8 +114,7 @@ ADE_API_RET_T ADE_Polyfit_Configure_inout(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *
      ret_out=ADE_Polyfit_SetOutBuff(p_poly,p_out);
      ADE_CHECK_ADERETVAL(ADE_CLASS_POLYFIT,ADE_METHOD_Configure_inout,ret_in);
 
-     ret_len=ADE_Polyfit_SetBuffLen(p_poly,buff_len);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_POLYFIT,ADE_METHOD_Configure_inout,ret_len);
+
 
       return ADE_RET_SUCCESS;
 
@@ -107,83 +125,23 @@ ADE_API_RET_T ADE_Polyfit_Configure(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_brea
 
     ADE_API_RET_T ret_par=ADE_RET_ERROR;
      ADE_API_RET_T ret_inout=ADE_RET_ERROR;
+     ADE_API_RET_T ret_bufflen=ADE_RET_ERROR;
 
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,p_in);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,p_poly);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,p_out);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,p_breaks_i);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,p_coeffs_i);
-
+ret_bufflen=ADE_Polyfit_Configure_bufflength(p_poly, buff_len);
+ADE_CHECK_ADERETVAL(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,ret_bufflen);
 
     ret_par=ADE_Polyfit_Configure_params(p_poly,p_breaks_i,n_breaks,p_coeffs_i,n_coeffs);
     ADE_CHECK_ADERETVAL(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,ret_par);
 
-    ret_inout=ADE_Polyfit_Configure_inout(p_poly,p_in,p_out,buff_len);
+    ret_inout=ADE_Polyfit_Configure_inout(p_poly,p_in,p_out);
     ADE_CHECK_ADERETVAL(ADE_CLASS_POLYFIT,ADE_METHOD_Configure,ret_inout);
 
     return ADE_RET_SUCCESS;
 
 }
 
-ADE_API_RET_T ADE_Polyfit_SetInBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in)
-{
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetInBuff,p_in);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetInBuff,p_poly);
 
-     p_poly->p_in=p_in;
-
-     return ADE_RET_SUCCESS;
-
-}
-
-ADE_API_RET_T ADE_Polyfit_SetOutBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_out)
-{
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetOutBuff,p_out);
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetOutBuff,p_poly);
-
-     p_poly->p_out=p_out;
-
-     return ADE_RET_SUCCESS;
-
-}
-
-
-ADE_API_RET_T ADE_Polyfit_SetBreaks(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_breaks_i,ADE_INT32_T n_breaks)
-{
-    ADE_INT32_T n_breaks_limit=0;
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetBreaks,p_breaks_i);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetBreaks,p_poly);
-    ADE_CHECK_VALUE_MAJOR(ADE_CLASS_POLYFIT,ADE_METHOD_SetBreaks,n_breaks,"%d",n_breaks_limit);
-
-    p_poly->n_breaks = n_breaks;
-    memcpy(p_poly->p_breaks,p_breaks_i,p_poly->n_breaks*sizeof(ADE_FLOATING_T));
-
-    return ADE_RET_SUCCESS;
-}
-
-ADE_API_RET_T ADE_Polyfit_SetCoeffs(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_coeffs_i,ADE_INT32_T n_coeffs)
-{
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetCoeffs,p_coeffs_i);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetCoeffs,p_poly);
-
-    p_poly->poly_order = n_coeffs-1;
-    n_coeffs=(p_poly->poly_order+1)*(p_poly->n_breaks-1);
-    memcpy(p_poly->p_poly_coeffs,p_coeffs_i,n_coeffs*sizeof(ADE_FLOATING_T));
-
-      return ADE_RET_SUCCESS;
-}
-
-ADE_API_RET_T ADE_Polyfit_SetBuffLen(ADE_POLYFIT_T *p_poly,ADE_INT32_T buff_len)
-{
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetCoeffs,p_poly);
-
-    p_poly->buff_len=buff_len;
-
-    return ADE_RET_SUCCESS;
-
-}
+/************************* Processing Methods ****************************************/
 
 ADE_API_RET_T ADE_Polyfit_Step(ADE_POLYFIT_T* p_poly)
 {
@@ -252,7 +210,75 @@ len_str=strlen(fixed_str);
 
 }
 
-/***************** Static methods *************************/
+
+/********************************************************************************/
+/**                     PRIVATE METHODS                                        */
+/********************************************************************************/
+
+/************************** Set Methods *******************************************/
+
+static ADE_API_RET_T ADE_Polyfit_SetInBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in)
+{
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetInBuff,p_in);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetInBuff,p_poly);
+
+     p_poly->p_in=p_in;
+
+     return ADE_RET_SUCCESS;
+
+}
+
+static ADE_API_RET_T ADE_Polyfit_SetOutBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_out)
+{
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetOutBuff,p_out);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetOutBuff,p_poly);
+
+     p_poly->p_out=p_out;
+
+     return ADE_RET_SUCCESS;
+
+}
+
+
+static ADE_API_RET_T ADE_Polyfit_SetBreaks(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_breaks_i,ADE_INT32_T n_breaks)
+{
+    ADE_INT32_T n_breaks_limit=0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetBreaks,p_breaks_i);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetBreaks,p_poly);
+    ADE_CHECK_VALUE_MAJOR(ADE_CLASS_POLYFIT,ADE_METHOD_SetBreaks,n_breaks,"%d",n_breaks_limit);
+
+    p_poly->n_breaks = n_breaks;
+    memcpy(p_poly->p_breaks,p_breaks_i,p_poly->n_breaks*sizeof(ADE_FLOATING_T));
+
+    return ADE_RET_SUCCESS;
+}
+
+static ADE_API_RET_T ADE_Polyfit_SetCoeffs(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_coeffs_i,ADE_INT32_T n_coeffs)
+{
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetCoeffs,p_coeffs_i);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetCoeffs,p_poly);
+
+    p_poly->poly_order = n_coeffs-1;
+    n_coeffs=(p_poly->poly_order+1)*(p_poly->n_breaks-1);
+    memcpy(p_poly->p_poly_coeffs,p_coeffs_i,n_coeffs*sizeof(ADE_FLOATING_T));
+
+      return ADE_RET_SUCCESS;
+}
+
+static ADE_API_RET_T ADE_Polyfit_SetBuffLen(ADE_POLYFIT_T *p_poly,ADE_INT32_T buff_len)
+{
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_POLYFIT,ADE_METHOD_SetCoeffs,p_poly);
+
+    p_poly->buff_len=buff_len;
+
+    return ADE_RET_SUCCESS;
+
+}
+
+
+
 
 
 

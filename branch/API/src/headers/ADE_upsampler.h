@@ -9,7 +9,7 @@ struct ADE_UPSAMPLER_S
  //   ADE_FLOATING_T* p_temp_buff; //allocato dentro;
     ADE_UINT32_T in_buff_len;
     ADE_UINT32_T up_fact;
-    ADE_UINT32_T out_buff_len;
+    ADE_UINT32_T max_buff_len;
   //  ADE_UINT32_T filter_order;
 //    ADE_FIR_T *p_fir;
 //    ADE_FIR_IMP_CHOICE_T fir_type;
@@ -24,13 +24,17 @@ struct ADE_UPSAMPLER_S
     extern "C" {
 #endif
 /************** Init Methods ******************/
-ADE_API_RET_T ADE_Upsampler_Init(ADE_UPSAMPLER_T **dp_upsampler,ADE_UINT32_T in_buff_len,ADE_UINT32_T upfact);
+ADE_API_RET_T ADE_Upsampler_Init(ADE_UPSAMPLER_T **dp_upsampler);//,ADE_UINT32_T in_buff_len,ADE_UINT32_T upfact);
 ADE_VOID_T ADE_Upsampler_Release(ADE_UPSAMPLER_T *p_upsampler);
 
 /************** Set Methods **********************/
 
 /***************** Config Methods ***************************/
-ADE_API_RET_T ADE_Upsampler_Configure(ADE_UPSAMPLER_T *p_upsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size);
+ADE_API_RET_T ADE_Upsampler_Configure_bufflength(ADE_UPSAMPLER_T *p_upsampler, ADE_INT32_T in_buff_len);
+ADE_API_RET_T ADE_Upsampler_Configure_params(ADE_UPSAMPLER_T *p_upsampler,ADE_INT32_T upfact);
+ADE_API_RET_T ADE_Upsampler_Configure_inout(ADE_UPSAMPLER_T *p_upsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff);
+ADE_API_RET_T ADE_Upsampler_Configure(ADE_UPSAMPLER_T *p_upsampler,ADE_INT32_T in_buff_len,
+                                        ADE_INT32_T upfact,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff);
 /************** Processing Methods ***************/
 
 ADE_API_RET_T ADE_Upsampler_Step(ADE_UPSAMPLER_T *p_upsampler);

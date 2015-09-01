@@ -459,8 +459,10 @@ ADE_API_RET_T ADE_Blas_level1_SetPARAM(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING
 
 ADE_API_RET_T ADE_Blas_level1_SetN(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T val)
 {
+    ADE_INT32_T val0=0;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetN,p_blas_l1);
+    ADE_CHECK_VALUE_MAJOR(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetN,val,"%d",val0);
 
     p_blas_l1->N=val;
 
@@ -470,8 +472,11 @@ ADE_API_RET_T ADE_Blas_level1_SetN(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T val)
 
 ADE_API_RET_T ADE_Blas_level1_SetINCX(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T val)
 {
+    ADE_INT32_T val0=0;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetINCX,p_blas_l1);
+    ADE_CHECK_VALUE_NOTEQUAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetINCX,val,"%d",val0);
+
 
     p_blas_l1->INCX=val;
 
@@ -481,7 +486,10 @@ ADE_API_RET_T ADE_Blas_level1_SetINCX(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T v
 
 ADE_API_RET_T ADE_Blas_level1_SetINCY(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T val)
 {
+ ADE_INT32_T val0=0;
+
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetINCY,p_blas_l1);
+    ADE_CHECK_VALUE_NOTEQUAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_SetINCY,val,"%d",val0);
 
     p_blas_l1->INCY=val;
      return ADE_RET_SUCCESS;
@@ -511,15 +519,22 @@ ADE_API_RET_T ADE_Blas_level1_SetY(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *
 
 /***************** Configure Methods **************************/
 
-ADE_API_RET_T ADE_Blas_level1_configure_axpy_params(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_ALPHA,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N)
+ADE_API_RET_T ADE_Blas_level1_configure_axpy_bufflength(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T N)
+{
+    ADE_API_RET_T ret_n = ADE_RET_ERROR;
+
+    ret_n = ADE_Blas_level1_SetN(p_blas_l1,N);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_n);
+
+     return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_axpy_params(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_ALPHA,ADE_INT32_T INCX,ADE_INT32_T INCY)
 {
     ADE_API_RET_T ret_alpha = ADE_RET_ERROR;
     ADE_API_RET_T ret_incx = ADE_RET_ERROR;
     ADE_API_RET_T ret_incy = ADE_RET_ERROR;
-    ADE_API_RET_T ret_n = ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,p_blas_l1);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,p_ALPHA);
 
 
     ret_alpha = ADE_Blas_level1_SetALPHA(p_blas_l1,p_ALPHA);
@@ -531,8 +546,7 @@ ADE_API_RET_T ADE_Blas_level1_configure_axpy_params(ADE_blas_level1_T* p_blas_l1
     ret_incy  = ADE_Blas_level1_SetINCY(p_blas_l1,INCY);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_incy);
 
-    ret_n = ADE_Blas_level1_SetN(p_blas_l1,N);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_params,ret_n);
+
 
     return ADE_RET_SUCCESS;
 
@@ -542,10 +556,6 @@ ADE_API_RET_T ADE_Blas_level1_configure_axpy_inout(ADE_blas_level1_T* p_blas_l1,
 {
     ADE_API_RET_T ret_setx = ADE_RET_ERROR;
     ADE_API_RET_T ret_sety = ADE_RET_ERROR;
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,p_blas_l1);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,p_X);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,p_Y);
 
     ret_setx = ADE_Blas_level1_SetX(p_blas_l1,p_X);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy_inout,ret_setx);
@@ -560,13 +570,12 @@ ADE_API_RET_T ADE_Blas_level1_configure_axpy(ADE_blas_level1_T* p_blas_l1,ADE_FL
 {
     ADE_API_RET_T ret_params = ADE_RET_ERROR;
     ADE_API_RET_T ret_inout = ADE_RET_ERROR;
+    ADE_API_RET_T ret_bufflen = ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_blas_l1);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_ALPHA);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_X);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,p_Y);
+    ret_bufflen = ADE_Blas_level1_configure_axpy_bufflength(p_blas_l1, N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,ret_bufflen);
 
-    ret_params = ADE_Blas_level1_configure_axpy_params(p_blas_l1,p_ALPHA,INCX,INCY,N);
+    ret_params = ADE_Blas_level1_configure_axpy_params(p_blas_l1,p_ALPHA,INCX,INCY);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_axpy,ret_params);
 
     ret_inout = ADE_Blas_level1_configure_axpy_inout(p_blas_l1,p_X,p_Y);
@@ -575,14 +584,22 @@ ADE_API_RET_T ADE_Blas_level1_configure_axpy(ADE_blas_level1_T* p_blas_l1,ADE_FL
     return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blas_level1_configure_dotc_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N)
+ADE_API_RET_T ADE_Blas_level1_configure_dotc_bufflength(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T N)
+{
+    ADE_API_RET_T ret_n = ADE_RET_ERROR;
+     ret_n = ADE_Blas_level1_SetN(p_blas_l1,N);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_bufflength,ret_n);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotc_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY)
 {
 
     ADE_API_RET_T ret_incx = ADE_RET_ERROR;
     ADE_API_RET_T ret_incy = ADE_RET_ERROR;
-    ADE_API_RET_T ret_n = ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,p_blas_l1);
 
 
     ret_incx  = ADE_Blas_level1_SetINCX(p_blas_l1,INCX);
@@ -591,13 +608,8 @@ ADE_API_RET_T ADE_Blas_level1_configure_dotc_params(ADE_blas_level1_T* p_blas_l1
     ret_incy  = ADE_Blas_level1_SetINCY(p_blas_l1,INCY);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,ret_incy);
 
-    ret_n = ADE_Blas_level1_SetN(p_blas_l1,N);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_params,ret_n);
 
     return ADE_RET_SUCCESS;
-
-
-
 }
 
 ADE_API_RET_T ADE_Blas_level1_configure_dotc_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
@@ -605,9 +617,6 @@ ADE_API_RET_T ADE_Blas_level1_configure_dotc_inout(ADE_blas_level1_T* p_blas_l1,
     ADE_API_RET_T ret_setx = ADE_RET_ERROR;
     ADE_API_RET_T ret_sety = ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,p_blas_l1);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,p_X);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,p_Y);
 
     ret_setx = ADE_Blas_level1_SetX(p_blas_l1,p_X);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc_inout,ret_setx);
@@ -624,11 +633,10 @@ ADE_API_RET_T ADE_Blas_level1_configure_dotc(ADE_blas_level1_T* p_blas_l1,ADE_IN
     ADE_API_RET_T ret_params = ADE_RET_ERROR;
     ADE_API_RET_T ret_inout = ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,p_blas_l1);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,p_X);
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,p_Y);
+    ADE_Blas_level1_configure_dotc_bufflength(p_blas_l1, N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,ret_params);
 
-    ret_params = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY,N);
+    ret_params = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotc,ret_params);
 
     ret_inout = ADE_Blas_level1_configure_dotc_inout(p_blas_l1,p_X,p_Y);
@@ -638,13 +646,23 @@ ADE_API_RET_T ADE_Blas_level1_configure_dotc(ADE_blas_level1_T* p_blas_l1,ADE_IN
 
 }
 
-ADE_API_RET_T ADE_Blas_level1_configure_dot_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N)
+ADE_API_RET_T ADE_Blas_level1_configure_dot_bufflength(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T N)
 {
     ADE_API_RET_T ret_dot_conf=ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_params,p_blas_l1);
+    ret_dot_conf = ADE_Blas_level1_configure_dotc_bufflength(p_blas_l1,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_bufflength,ret_dot_conf);
 
-    ret_dot_conf = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY,N);
+    return ADE_RET_SUCCESS;
+
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dot_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY)
+{
+    ADE_API_RET_T ret_dot_conf=ADE_RET_ERROR;
+
+    ret_dot_conf = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_params,ret_dot_conf);
 
     return ADE_RET_SUCCESS;
@@ -653,8 +671,6 @@ ADE_API_RET_T ADE_Blas_level1_configure_dot_params(ADE_blas_level1_T* p_blas_l1,
 ADE_API_RET_T ADE_Blas_level1_configure_dot_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
 {
     ADE_API_RET_T ret_dot_inout=ADE_RET_ERROR;
-
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_inout,p_blas_l1);
 
     ret_dot_inout = ADE_Blas_level1_configure_dotc_inout(p_blas_l1,p_X,p_Y);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot_inout,ret_dot_inout);
@@ -667,13 +683,159 @@ ADE_API_RET_T ADE_Blas_level1_configure_dot(ADE_blas_level1_T* p_blas_l1,ADE_INT
 {
     ADE_API_RET_T ret_dot=ADE_RET_ERROR;
 
-    ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot,p_blas_l1);
 
     ret_dot = ADE_Blas_level1_configure_dotc(p_blas_l1,INCX,INCY,N,p_X,p_Y);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dot,ret_dot);
 
     return ADE_RET_SUCCESS;
 
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotu_bufflength(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T N)
+{
+    ADE_API_RET_T ret_dot_conf=ADE_RET_ERROR;
+
+    ret_dot_conf = ADE_Blas_level1_configure_dotc_bufflength(p_blas_l1,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotu_bufflength,ret_dot_conf);
+
+    return ADE_RET_SUCCESS;
+
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotu_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY)
+{
+    ADE_API_RET_T ret_dot_conf=ADE_RET_ERROR;
+
+    ret_dot_conf = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotu_params,ret_dot_conf);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotu_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_dot_inout=ADE_RET_ERROR;
+
+    ret_dot_inout = ADE_Blas_level1_configure_dotc_inout(p_blas_l1,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotu_inout,ret_dot_inout);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_dotu(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_dot=ADE_RET_ERROR;
+
+
+    ret_dot = ADE_Blas_level1_configure_dotc(p_blas_l1,INCX,INCY,N,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_dotu,ret_dot);
+
+    return ADE_RET_SUCCESS;
+
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_copy_bufflength(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T N)
+{
+    ADE_API_RET_T ret_dot_conf=ADE_RET_ERROR;
+
+    ret_dot_conf = ADE_Blas_level1_configure_dotc_bufflength(p_blas_l1,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_copy_bufflength,ret_dot_conf);
+
+    return ADE_RET_SUCCESS;
+
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_copy_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY)
+{
+    ADE_API_RET_T ret_dot_conf=ADE_RET_ERROR;
+
+    ret_dot_conf = ADE_Blas_level1_configure_dotc_params(p_blas_l1,INCX,INCY);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_copy_params,ret_dot_conf);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_copy_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_dot_inout=ADE_RET_ERROR;
+
+    ret_dot_inout = ADE_Blas_level1_configure_dotc_inout(p_blas_l1,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_copy_inout,ret_dot_inout);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_copy(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T INCY,ADE_INT32_T N,ADE_FLOATING_T *p_X,ADE_FLOATING_T *p_Y)
+{
+    ADE_API_RET_T ret_dot=ADE_RET_ERROR;
+
+
+    ret_dot = ADE_Blas_level1_configure_dotc(p_blas_l1,INCX,INCY,N,p_X,p_Y);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_copy,ret_dot);
+
+    return ADE_RET_SUCCESS;
+
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_nrm2_bufflength(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T N)
+{
+    ADE_API_RET_T ret_n = ADE_RET_ERROR;
+
+    ret_n = ADE_Blas_level1_SetN(p_blas_l1,N);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_nrm2_bufflength,ret_n);
+
+     return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_nrm2_params(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX)
+{
+
+    ADE_API_RET_T ret_incx = ADE_RET_ERROR;
+
+    ret_incx  = ADE_Blas_level1_SetINCX(p_blas_l1,INCX);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_nrm2_params,ret_incx);
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_nrm2_inout(ADE_blas_level1_T* p_blas_l1,ADE_FLOATING_T *p_X)
+{
+    ADE_API_RET_T ret_setx = ADE_RET_ERROR;
+
+
+
+    ret_setx = ADE_Blas_level1_SetX(p_blas_l1,p_X);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_nrm2_inout,ret_setx);
+
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Blas_level1_configure_nrm2(ADE_blas_level1_T* p_blas_l1,ADE_INT32_T INCX,ADE_INT32_T N,ADE_FLOATING_T *p_X)
+{
+
+    ADE_API_RET_T ret_params = ADE_RET_ERROR;
+    ADE_API_RET_T ret_inout = ADE_RET_ERROR;
+    ADE_API_RET_T ret_bufflen = ADE_RET_ERROR;
+
+    ret_bufflen = ADE_Blas_level1_configure_nrm2_bufflength(p_blas_l1,N);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_nrm2,ret_bufflen);
+
+    ret_params = ADE_Blas_level1_configure_nrm2_params(p_blas_l1,INCX);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_nrm2,ret_params);
+
+    ret_inout = ADE_Blas_level1_configure_nrm2_inout(p_blas_l1,p_X);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_configure_nrm2,ret_inout);
+
+    return ADE_RET_SUCCESS;
 
 }
 
@@ -721,7 +883,7 @@ ADE_API_RET_T ADE_Blas_level1_axpy(ADE_blas_level1_T* p_blas_l1)
 
 ADE_API_RET_T ADE_Blas_level1_copy(ADE_blas_level1_T* p_blas_l1)
 {
-    ADE_API_RET_T ret = ADE_RET_SUCCESS;
+    ADE_API_RET_T ret = ADE_RET_ERROR;
     ADE_MATH_ATTRIBUTE_T math_type = ADE_MATH_REAL;
 
      ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLAS_LEVEL1,ADE_METHOD_copy,p_blas_l1);

@@ -36,8 +36,9 @@ ADE_VOID_T ADE_Iir_Release(ADE_IIR_T* p_iir);
 //ADE_API_RET_T ADE_Iir_SetOutBuff(ADE_IIR_T* p_iir, ADE_FLOATING_T* p_buff);
 ADE_API_RET_T ADE_Iir_ResetState(ADE_IIR_T* p_iir);
 /************ Configure Methods **************/
-ADE_API_RET_T ADE_Iir_Configure_params(ADE_IIR_T* p_iir,ADE_FLOATING_T* p_gains,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_INT32_T n_SOS_sections,ADE_INT32_T buff_len,ADE_IIR_IMP_CHOICE_T filt_imp_type);
+ADE_API_RET_T ADE_Iir_Configure_params(ADE_IIR_T* p_iir,ADE_FLOATING_T* p_gains,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_INT32_T n_SOS_sections,ADE_IIR_IMP_CHOICE_T filt_imp_type);
 ADE_API_RET_T ADE_Iir_Configure_inout(ADE_IIR_T* p_iir,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff);
+ADE_API_RET_T ADE_Iir_Configure_bufflength(ADE_IIR_T* p_iir,ADE_INT32_T buff_len);
 ADE_API_RET_T ADE_Iir_Configure(ADE_IIR_T* p_iir,ADE_FLOATING_T* p_gains,ADE_FLOATING_T** dp_nums,ADE_FLOATING_T** dp_denoms,ADE_FLOATING_T* p_inbuff,ADE_FLOATING_T* p_outbuff,ADE_INT32_T n_SOS_sections,ADE_INT32_T buff_len,ADE_IIR_IMP_CHOICE_T filt_imp_type);
 /******** Processing Methods **********/
 ADE_API_RET_T ADE_Iir_Step(ADE_IIR_T* p_iir);

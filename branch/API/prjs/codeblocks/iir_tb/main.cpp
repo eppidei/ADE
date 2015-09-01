@@ -17,7 +17,7 @@ typedef struct ADE_Uut_params_S
     unsigned int uut_idx;
     char *input1;
     char *input2;
-    double *output1;
+    double *output;
   //  int buff_len;
    // int n_sos_section;
    // ADE_IIR_IMP_CHOICE_T filt_type;
@@ -26,8 +26,8 @@ typedef struct ADE_Uut_params_S
 ADE_VOID_T UnitTest1_procedure(ADE_MATLAB_T *p_mat, ADE_IIR_T *p_iir, ADE_Uut_params_T *params)
 {
    // ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1));
-    //ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1));
-    ADE_Iir_Configure_inout(p_iir, (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1), (ADE_FLOATING_T*)(params->output1));
+    //ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output));
+    ADE_Iir_Configure_inout(p_iir, (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1), (ADE_FLOATING_T*)(params->output));
     ADE_Iir_Step(p_iir);
     //ADE_Iir_Print(p_iir,stdout,"", "");
 
@@ -36,13 +36,20 @@ ADE_VOID_T UnitTest1_procedure(ADE_MATLAB_T *p_mat, ADE_IIR_T *p_iir, ADE_Uut_pa
 ADE_VOID_T UnitTest2_procedure(ADE_MATLAB_T *p_mat, ADE_IIR_T *p_iir, ADE_Uut_params_T *params)
 {
     unsigned int i=0;
-    unsigned int frame_len = (unsigned int)ADE_Matlab_GetScalar(p_mat,params->input1);
+    unsigned int frame_len = (unsigned int)ADE_Matlab_GetScalar(p_mat,"frame_len");
+    unsigned int in_len = (unsigned int)ADE_Matlab_GetScalar(p_mat,"input_len");
+    unsigned int n_cycles=in_len/frame_len;
 
-    for (i=0;i<frame_len;i++)
+    ADE_FLOATING_T* p_in,*p_out;
+
+    for (i=0;i<n_cycles;i++)
     {
        // ADE_Iir_SetInBuff( p_iir,  (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len);
-        //ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output1)+i*frame_len);
-        ADE_Iir_Configure_inout(p_iir, (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len, (ADE_FLOATING_T*)(params->output1)+i*frame_len);
+        //ADE_Iir_SetOutBuff( p_iir,  (ADE_FLOATING_T*)(params->output)+i*frame_len);
+        p_in= (ADE_FLOATING_T*)ADE_Matlab_GetDataPointer(p_mat,params->input1)+i*frame_len;
+        p_out=(ADE_FLOATING_T*)(params->output)+i*frame_len;
+        ADE_Iir_Configure_inout(p_iir, p_in, p_out);
+        ADE_Iir_Configure_bufflength(p_iir,frame_len);
         ADE_Iir_Step(p_iir);
     }
 
@@ -109,7 +116,7 @@ ADE_Matlab_launch_script_segment(p_mat,"Unit Test 1");
 
 p_add_params.uut_idx=1;
 p_add_params.input1="input_vector";
-p_add_params.output1=outbuff;
+p_add_params.output=outbuff;
 //p_add_params.buff_len=input_len;
 //p_add_params.n_sos_section=n_sos_sections;
 //p_add_params.filt_type=ADE_IIR_TRASP_II_B;
@@ -126,9 +133,9 @@ ADE_Matlab_launch_script_segment(p_mat,"Unit Test 2");
 
 p_add_params.uut_idx=2;
 p_add_params.input1="input_vector2";
-p_add_params.output1=outbuff2;
+p_add_params.output=outbuff2;
 UnitTest2_procedure(p_mat,p_iir,&p_add_params);
-ADE_Iir_Print(p_iir,stdout,"", "");
+//ADE_Iir_Print(p_iir,stdout,"", "");
 /******* CHECK RESULT UNIT TEST 2*************************/
 
 ADE_Matlab_PutVarintoWorkspace(p_mat, outbuff2, "outt", 1, input_len, ADE_MATH_REAL);
@@ -138,12 +145,13 @@ ADE_Matlab_Evaluate_StringnWait(p_mat, "plot(outt,'b+');hold off;");
 
 /********** RELEASE MEM****************/
 
-ADE_Matlab_Release(p_mat);
+
 
 
 free(outbuff);
 free(outbuff2);
 ADE_Iir_Release(p_iir);
+ADE_Matlab_Release(p_mat);
 
 
 return EXIT_SUCCESS;

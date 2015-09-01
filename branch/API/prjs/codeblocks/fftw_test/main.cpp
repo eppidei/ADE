@@ -42,7 +42,7 @@ test_cplx[1]=ADE_cset(2,5);
 
 ADE_Matlab_Init(&p_mat, p_eng,"/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/testbenches/fft/fft_test.m", "./fft_test_ws.mat","/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab");
 //ADE_Matlab_launch_script_segment(p_mat,"Output");
-ADE_Matlab_Print(p_mat);/*** Printa le variabili del workspace matlab****/
+ADE_Matlab_Print(p_mat,stdout);/*** Printa le variabili del workspace matlab****/
 
 buff_len=ADE_Matlab_GetScalar(p_mat,"in_len");
 
@@ -53,14 +53,14 @@ buff_len=ADE_Matlab_GetScalar(p_mat,"in_len");
      p_in=fftw_malloc(size_fft_in);
      if (p_in==NULL)
      {
-         ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_in,"%p",(FILE*)ADE_STD_STREAM);
+       //  ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_in,"%p",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
      }
      size_fft_out=buff_len*sizeof(ADE_FFTCPLX_T);
       p_out=fftw_malloc(size_fft_out);
       if (p_out==NULL)
      {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_out,"%p",(FILE*)ADE_STD_STREAM);
+    //    ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_out,"%p",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
      }
 }
@@ -70,14 +70,14 @@ else if (fft_type==ADE_FFT_R2C)
      p_in=fftw_malloc(size_fft_in);
      if (p_in==NULL)
      {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_in,"%p",(FILE*)ADE_STD_STREAM);
+     //   ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_in,"%p",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
      }
      size_fft_out=(buff_len/2+1)*sizeof(ADE_FFTCPLX_T);
       p_out=fftw_malloc(size_fft_out);
       if (p_out==NULL)
      {
-        ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_out,"%p",(FILE*)ADE_STD_STREAM);
+       // ADE_PRINT_ERRORS(ADE_ERROR,ADE_MEM,ADE_CLASS_MAIN,tb,p_out,"%p",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
      }
 
@@ -121,8 +121,8 @@ else if (fft_type==ADE_FFT_R2C)
 //
 
 
-ret=ADE_Fft_Init(&p_fft, buff_len);
-ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out);
+ret=ADE_Fft_Init(&p_fft);
+ret=ADE_Fft_Configure(p_fft,fft_type, ADE_FFT_FORWARD,p_in,p_out,buff_len);
 if (fft_type==ADE_FFT_C2C)
 {
     p_matdata=ADE_Matlab_GetDataPointer(p_mat,"real_input");
@@ -140,7 +140,7 @@ else if (fft_type==ADE_FFT_R2C)
 }
 
 ret=ADE_Fft_Step(p_fft);
-//ADE_Fft_Release(p_fft);
+ADE_Fft_Release(p_fft);
 if (fft_type==ADE_FFT_C2C)
 {
 ret=ADE_Utils_PrintArray(p_out,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_FFTW", stdout,ADE_MATH_CPLX);
@@ -164,6 +164,6 @@ ret=ADE_Utils_PrintArray(p_in,0,buff_len-1, 0,0,(ADE_CHAR_T*) "outC2C_Custom", s
 
 //ADE_Get_Terminal_size(&lin ,&col  );
 //fprintf(stdout,"%lin=d col=%d\n",lin,col);
-ADE_Fft_Release(p_fft);
+//ADE_Fft_Release(p_fft);
 return ret;
 }

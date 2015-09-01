@@ -6,8 +6,10 @@
 #include "headers/ADE_upsampler.h"
 #include "headers/ADE_downsampler.h"
 #include "headers/ADE_Utils.h"
+#include "headers/ADE_Error_Handler.h"
+//#include "headers/ADE_typedefs.h"
 
-#define PRINT_ARRAY(x,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
+//#define PRINT_ARRAY(x,idx,len,format) fprintf(stdout,"\n"); for(idx=0;idx<len;idx++) { fprintf(stdout, #x "[%u] =" format "\n",idx,x[idx]); };
 
 
 
@@ -21,31 +23,45 @@ int main()
     ADE_DOWNSAMPLER_T *p_downsamp;
     ADE_FLOATING_T b[11*up];
     ADE_UINT32_T down=up;
+    ADE_API_RET_T ret = ADE_RET_ERROR;
 
     memset(b,0,sizeof(b));
 
-    ADE_Upsampler_Init(&p_upsamp,11,up);
-    ADE_Upsampler_Configure(p_upsamp,a,b,sizeof(b));
+    ret = ADE_Upsampler_Init(&p_upsamp);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
-    ADE_Upsampler_Step(p_upsamp);
+    ret = ADE_Upsampler_Configure(p_upsamp,11,up,a,b);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
-    ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_MATH_REAL);
+    ret = ADE_Upsampler_Step(p_upsamp);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
-    ADE_Upsampler_Configure(p_upsamp,c,b,sizeof(b));
+    ret = ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_MATH_REAL);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
-    ADE_Upsampler_Step(p_upsamp);
+    ret = ADE_Upsampler_Configure(p_upsamp,11,up,c,b);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
-    ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_MATH_REAL);
+    ret = ADE_Upsampler_Step(p_upsamp);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
+
+    ret = ADE_Utils_PrintArray(b,0,32,0,0,"b",stdout,ADE_MATH_REAL);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
     ADE_Upsampler_Release(p_upsamp);
 
-    ADE_Downsampler_Init(&p_downsamp,33,down);
 
-    ADE_Downsampler_Configure(p_downsamp,b,a,sizeof(a));
+    ret = ADE_Downsampler_Init(&p_downsamp);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
-    ADE_Downsampler_Step(p_downsamp);
+    ret = ADE_Downsampler_Configure(p_downsamp,11,down,b,a);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
-     ADE_Utils_PrintArray(a,0,10,0,0,"a",stdout,ADE_MATH_REAL);
+    ret = ADE_Downsampler_Step(p_downsamp);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
+
+     ret = ADE_Utils_PrintArray(a,0,10,0,0,"a",stdout,ADE_MATH_REAL);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_MAIN,ADE_METHOD_Main,ret);
 
     ADE_Downsampler_Release(p_downsamp);
 

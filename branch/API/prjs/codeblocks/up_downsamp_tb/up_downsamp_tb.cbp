@@ -13,15 +13,15 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="../../../src" />
-					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
-					<Add directory="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/fftw-3.3.4/api" />
+					<Add directory="$(ADE_SRC_PATH)" />
+					<Add directory="$(ADE_MATLAB_INCLUDE_PATH)" />
+					<Add directory="$(ADE_FFTW_INCLUDE_PATH)" />
 				</Compiler>
 				<Linker>
-					<Add option="-lmx -lmat -leng -lgfortran -lfftw3 -lfftw3_threads -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
-					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
-					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS/blas_LINUX.a" />
-					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add option="-l:blas_LINUX.a -l:cblas_LINUX.a -lmx -lmat -leng -lrt -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -Xlinker -rpath-link $(ADE_MEX_PATH)" />
+					<Add directory="$(ADE_MEX_PATH)" />
+					<Add directory="$(ADE_CBLAS_PATH)" />
+					<Add directory="$(ADE_BLAS_PATH)" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -31,15 +31,15 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g -O2" />
-					<Add directory="../../../src" />
-					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/extern/include" />
-					<Add directory="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/fftw-3.3.4/api" />
+					<Add directory="$(ADE_SRC_PATH)" />
+					<Add directory="$(ADE_MATLAB_INCLUDE_PATH)" />
+					<Add directory="$(ADE_FFTW_INCLUDE_PATH)" />
 				</Compiler>
 				<Linker>
-					<Add option="-s -lmx -lmat -leng -lgfortran -lfftw3 -lfftw3_threads -Xlinker -rpath-link /home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
-					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/cblas/CBLAS/lib/cblas_LINUX.a" />
-					<Add library="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/API/lib/blas/BLAS/blas_LINUX.a" />
-					<Add directory="/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/glnxa64" />
+					<Add option="-s -lmx -lmat -leng -lrt -lgfortran -lfftw3 -lfftw3f -lfftw3_threads -lfftw3f_threads -Xlinker -rpath-link $(ADE_MEX_PATH)" />
+					<Add library="$(ADE_CBLAS_PATH)" />
+					<Add library="$(ADE_BLAS_PATH)" />
+					<Add directory="$(ADE_MEX_PATH)" />
 				</Linker>
 			</Target>
 		</Build>

@@ -40,7 +40,7 @@ ADE_VOID_T ADE_Error_Handler_SetError(ADE_ERRSEVERITY_T severity,ADE_ERRTYPE_T t
      strcat(p_decod_string,"\n");
     if (!strcmp(format,"%p"))
     {
-        ADE_LOG(p_stream,p_decod_string,var_name_str,*((ADE_CHAR_T*)p_var));
+        ADE_LOG(p_stream,p_decod_string,var_name_str,p_var);
     }
     else if (!strcmp(format,"%d"))
     {
@@ -154,7 +154,7 @@ ADE_API_RET_T ADE_Error_Handler_CheckInputPointer(ADE_ERRCLASS_T _class,ADE_ERRM
     return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_INT32_T *p_ret_val, ADE_CHAR_T *var_name_str)
+ADE_API_RET_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_API_RET_T *p_ret_val, ADE_CHAR_T *var_name_str)
 {
     #if (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_TRUE)
         FILE *p_stream=ADE_STDOUT_STREAM;
@@ -186,7 +186,7 @@ ADE_API_RET_T ADE_Error_Handler_CheckValue(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_
         ADE_API_RET_T ret=0;
 
          if (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOR || type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL ||
-           type==ADE_ERROR_HANDLER_CHECKVALUE_MINOR || type==ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL)
+           type==ADE_ERROR_HANDLER_CHECKVALUE_MINOR || type==ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL || type==ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL )
            {
                 ret=ADE_Error_Handler_CheckCondition(format,p_value, p_limit,&limit2_dummy,type,&condition);
                  ADE_CHECK_ADERETVAL(ADE_CLASS_ERROR_HANDLER,ADE_METHOD_CheckValue,ret);
@@ -206,11 +206,59 @@ ADE_API_RET_T ADE_Error_Handler_CheckValue(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_
         ;
 
     #else
-            #error (ADE_CHECK_RETURNS) in ADE_Error_Handler_CheckReturn
+            #error (ADE_CHECK_RETURNS) in ADE_Error_Handler_CheckValue
     #endif
 
  return ADE_RET_SUCCESS;
 
+}
+
+
+ADE_API_RET_T ADE_Error_Handler_CheckList(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_value,ADE_VOID_T *p_list, ADE_UINT32_T n_list_elements,ADE_CHAR_T *var_name_str)
+{
+
+    ADE_INT32_T i=0;
+    ADE_INT32_T int_value=0;
+    ADE_INT32_T *p_int_list=NULL;
+    FILE *p_stream=ADE_STDOUT_STREAM;
+
+
+    #if  (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
+
+    if (!strcmp(format,"%d"))
+    {
+        int_value=*(ADE_INT32_T*)p_value;
+        p_int_list=(ADE_INT32_T*)p_list;
+        for(i=0;i<n_list_elements;i++)
+        {
+            if ( int_value==p_int_list[i])
+            {
+
+                break;
+            }
+            else if (int_value!=p_int_list[i] && (i==n_list_elements-1) )
+            {
+
+                 ADE_Error_Handler_SetError(ADE_ERROR,ADE_RETCHECKS,_class,method,format,p_value, var_name_str,p_stream);
+
+                return ADE_RET_ERROR;
+            }
+        }
+    }
+    else
+    {
+        ADE_LOG(stderr,"format  not handled in ADE_Error_Handler_CheckList\n");
+    }
+
+     #elif  (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_FALSE)
+
+        ;
+
+    #else
+            #error (ADE_CHECK_RETURNS) in ADE_Error_Handler_CheckList
+    #endif
+
+     return ADE_RET_SUCCESS;
 }
 
 ADE_API_RET_T ADE_Error_Handler_CheckInterval(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_T method,ADE_CHAR_T *format,ADE_VOID_T *p_value, ADE_VOID_T *p_limit,ADE_VOID_T *p_limit2,ADE_ERROR_HANDLER_CHECKVALUE_T type,ADE_CHAR_T *var_name_str)

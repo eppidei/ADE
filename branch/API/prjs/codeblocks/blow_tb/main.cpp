@@ -25,7 +25,7 @@ ADE_FLOATING_T *p_global_outbuff=NULL;
 ADE_FLOATING_T *p_cycle_outbuff=NULL;
 ADE_INT32_T dec_fact=32;
 ADE_UINT32_T Frame_len_o=Frame_len/dec_fact;
-	init_ret = ADE_Blow_Init(&p_blow, Frame_len, Fs_i,Fs_i/dec_fact);
+	init_ret = ADE_Blow_Init(&p_blow);//, Frame_len, Fs_i,Fs_i/dec_fact);
 
 	ADE_Blow_GetOutBuff(p_blow,&p_cycle_outbuff);
 
@@ -34,7 +34,7 @@ ADE_UINT32_T Frame_len_o=Frame_len/dec_fact;
 n_iterations=ADE_Matlab_GetScalar(p_blow->p_mat,"n_iterations");
 p_global_outbuff=(ADE_FLOATING_T*)calloc(Frame_len_o*n_iterations,sizeof(ADE_FLOATING_T));
 
-ADE_Blow_Configure_params(p_blow);
+ADE_Blow_Configure_params(p_blow,Fs_i,Fs_i/dec_fact);
 
     for (i=0;i<n_iterations;i++)
     {

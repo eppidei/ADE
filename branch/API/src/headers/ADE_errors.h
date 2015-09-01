@@ -80,6 +80,7 @@ static char *ADE_ERRCLASSStrings[] = { ERRCLASS };
 /******************ERROR METHODS********************/
 
 #define ERRMETHODS \
+X_ERRMETHODS(ADE_METHOD_Main) \
 X_ERRMETHODS(ADE_METHOD_Init) \
 X_ERRMETHODS(ADE_METHOD_Release) \
 X_ERRMETHODS(ADE_METHOD_Step) \
@@ -269,15 +270,30 @@ X_ERRMETHODS(ADE_METHOD_blas3_test_procedure) \
 X_ERRMETHODS(ADE_METHOD_fft_test_procedure) \
 X_ERRMETHODS(ADE_METHOD_doXrms2) \
 X_ERRMETHODS(ADE_METHOD_dofind_local_max) \
+X_ERRMETHODS(ADE_METHOD_configure_axpy_bufflength) \
 X_ERRMETHODS(ADE_METHOD_configure_axpy_params) \
 X_ERRMETHODS(ADE_METHOD_configure_axpy_inout) \
 X_ERRMETHODS(ADE_METHOD_configure_axpy) \
+X_ERRMETHODS(ADE_METHOD_configure_dotc_bufflength) \
 X_ERRMETHODS(ADE_METHOD_configure_dotc_params) \
 X_ERRMETHODS(ADE_METHOD_configure_dotc_inout) \
 X_ERRMETHODS(ADE_METHOD_configure_dotc) \
+X_ERRMETHODS(ADE_METHOD_configure_dot_bufflength) \
 X_ERRMETHODS(ADE_METHOD_configure_dot_params) \
 X_ERRMETHODS(ADE_METHOD_configure_dot_inout) \
 X_ERRMETHODS(ADE_METHOD_configure_dot) \
+X_ERRMETHODS(ADE_METHOD_configure_dotu_bufflength) \
+X_ERRMETHODS(ADE_METHOD_configure_dotu_params) \
+X_ERRMETHODS(ADE_METHOD_configure_dotu_inout) \
+X_ERRMETHODS(ADE_METHOD_configure_dotu) \
+X_ERRMETHODS(ADE_METHOD_configure_copy_bufflength) \
+X_ERRMETHODS(ADE_METHOD_configure_copy_params) \
+X_ERRMETHODS(ADE_METHOD_configure_copy_inout) \
+X_ERRMETHODS(ADE_METHOD_configure_copy) \
+X_ERRMETHODS(ADE_METHOD_configure_nrm2_bufflength) \
+X_ERRMETHODS(ADE_METHOD_configure_nrm2_params) \
+X_ERRMETHODS(ADE_METHOD_configure_nrm2_inout) \
+X_ERRMETHODS(ADE_METHOD_configure_nrm2) \
 X_ERRMETHODS(ADE_METHOD_Configure_params) \
 X_ERRMETHODS(ADE_METHOD_Configure_inout) \
 X_ERRMETHODS(ADE_METHOD_Configure_bufflength) \
@@ -286,7 +302,16 @@ X_ERRMETHODS(ADE_METHOD_Downsampler_Configure) \
 X_ERRMETHODS(ADE_METHOD_Expander_Configure_inout) \
 X_ERRMETHODS(ADE_METHOD_SetSections) \
 X_ERRMETHODS(ADE_METHOD_SetBufflength) \
-X_ERRMETHODS(ADE_METHOD_doSetDenoms)
+X_ERRMETHODS(ADE_METHOD_doSetDenoms) \
+X_ERRMETHODS(ADE_METHOD_setOrder) \
+X_ERRMETHODS(ADE_METHOD_doSetPlan) \
+X_ERRMETHODS(ADE_METHOD_SetDownfact) \
+X_ERRMETHODS(ADE_METHOD_SetUpfact) \
+X_ERRMETHODS(ADE_METHOD_SetInBuffLength) \
+X_ERRMETHODS(ADE_METHOD_SetOutBuffLength) \
+X_ERRMETHODS(ADE_METHOD_SetFsIn) \
+X_ERRMETHODS(ADE_METHOD_SetFsOut) \
+X_ERRMETHODS(ADE_METHOD_SetFirOrder)
 
 #define X_ERRMETHODS(a) a,
 typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;

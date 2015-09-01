@@ -20,16 +20,13 @@ struct ADE_POLYFIT_S
 /********************** Init Methods ******************************/
 ADE_API_RET_T ADE_Polyfit_Init (ADE_POLYFIT_T **dp_poly);
 ADE_VOID_T ADE_Polyfit_Release(ADE_POLYFIT_T *p_poly);
-/************************* Set Methods ****************************/
-ADE_API_RET_T ADE_Polyfit_SetBreaks(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_breaks_i,ADE_INT32_T n_breaks);
-ADE_API_RET_T ADE_Polyfit_SetCoeffs(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_coeffs_i,ADE_INT32_T n_coeffs);
-ADE_API_RET_T ADE_Polyfit_SetInBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in);
-ADE_API_RET_T ADE_Polyfit_SetOutBuff(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_out);
-ADE_API_RET_T ADE_Polyfit_SetBuffLen(ADE_POLYFIT_T *p_poly,ADE_INT32_T buff_len);
+
 /******************* Configure Methods *****************************/
+
+ADE_API_RET_T ADE_Polyfit_Configure_bufflength(ADE_POLYFIT_T *p_poly,ADE_INT32_T buff_len);
 ADE_API_RET_T ADE_Polyfit_Configure(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_breaks_i,ADE_UINT32_T n_breaks,ADE_FLOATING_T *p_coeffs_i,ADE_UINT32_T n_coeffs,ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out,ADE_INT32_T buff_len);
 ADE_API_RET_T ADE_Polyfit_Configure_params(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_breaks_i,ADE_UINT32_T n_breaks,ADE_FLOATING_T *p_coeffs_i,ADE_UINT32_T n_coeffs);
-ADE_API_RET_T ADE_Polyfit_Configure_inout(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out,ADE_INT32_T buff_len);
+ADE_API_RET_T ADE_Polyfit_Configure_inout(ADE_POLYFIT_T *p_poly,ADE_FLOATING_T *p_in,ADE_FLOATING_T *p_out);
 /********************* Processing Methods *************************/
 ADE_API_RET_T ADE_Polyfit_Step(ADE_POLYFIT_T* p_poly);
 /************** Utils methods *********************/

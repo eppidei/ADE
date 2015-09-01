@@ -407,6 +407,7 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
     ADE_UINT32_T n_sos_sections=0,section_n_apb_coeffs=0,i=0;
     double *p_gains=NULL;
     ADE_API_RET_T ret_set=ADE_RET_ERROR;
+    ADE_API_RET_T ret_bufflen=ADE_RET_ERROR;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,p_mat);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,p_iir);
@@ -439,9 +440,11 @@ ADE_API_RET_T ADE_Matlab_Configure_Iir_sos(ADE_MATLAB_T* p_mat,ADE_IIR_T *p_iir,
 //
 //    ret_set=ADE_Iir_setDenoms( p_iir, (ADE_FLOATING_T**)dp_denom);
 //     ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
+ret_bufflen=ADE_Iir_Configure_bufflength( p_iir,buff_len);
+ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_bufflen);
 
-ret_set=ADE_Iir_Configure_params(p_iir,(ADE_FLOATING_T*)p_gains,(ADE_FLOATING_T**)dp_num,(ADE_FLOATING_T**)dp_denom,n_sos_sections,buff_len, filt_imp_type);
-
+ret_set=ADE_Iir_Configure_params(p_iir,(ADE_FLOATING_T*)p_gains,(ADE_FLOATING_T**)dp_num,(ADE_FLOATING_T**)dp_denom,n_sos_sections, filt_imp_type);
+ADE_CHECK_ADERETVAL(ADE_CLASS_MATLAB,ADE_METHOD_Configure_Iir_sos,ret_set);
     ADE_CHECKNFREE(dp_num);
     ADE_CHECKNFREE(dp_denom);
 
