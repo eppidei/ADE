@@ -116,7 +116,7 @@ init_genrand(seed);
 p_buff=(ADE_FLOATING_T *)calloc(frame_len,sizeof(ADE_FLOATING_T));
 
 
-ret =  ADE_Snap_Init(&p_snap, frame_len, Fs_i, n_pow_slots_i, n_max_indexes_i, time_left_i, time_right_i, fft_len_i);
+ret =  ADE_Snap_Init(&p_snap);
 #if (ADE_TARGET_TYPE==ADE_PC_MATLAB)
 
     frame_len_mat=ADE_Matlab_GetScalar(p_snap->p_mat,"frame_len");
@@ -160,7 +160,7 @@ ret =  ADE_Snap_Init(&p_snap, frame_len, Fs_i, n_pow_slots_i, n_max_indexes_i, t
 #endif
 //ret = ADE_Snap_SetInBuff(p_snap, p_buff);
 
-ret = ADE_Snap_Configure_params(p_snap);
+ret = ADE_Snap_Configure_params(p_snap, frame_len, Fs_i, n_pow_slots_i, n_max_indexes_i, time_left_i, time_right_i, fft_len_i);
 
 //ADE_Snap_Print(p_snap,stdout,"p_snap","");
 

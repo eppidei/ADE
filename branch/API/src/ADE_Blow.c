@@ -390,6 +390,8 @@ ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_inbuff,AD
     ADE_API_RET_T ret_inout=ADE_RET_ERROR;
     ADE_API_RET_T ret_bufflen=ADE_RET_ERROR;
 
+    ret_bufflen=ADE_Blow_Configure_bufflength(p_blow,in_buff_len,out_buff_len);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure,ret_bufflen);
 
     ret_params=ADE_Blow_Configure_params(p_blow,Fs_i,Fs_o);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure,ret_params);
@@ -398,8 +400,7 @@ ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_inbuff,AD
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure,ret_inout);
 
 
-     ret_bufflen=ADE_Blow_Configure_bufflength(p_blow,in_buff_len,out_buff_len);
-     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure,ret_bufflen);
+
 
      return ADE_RET_SUCCESS;
 
