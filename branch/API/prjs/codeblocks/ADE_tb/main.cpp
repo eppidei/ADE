@@ -128,7 +128,7 @@ audio_buff_len=256;
 audio_fs=44100;
 n_simul_cycles=8192;
 //ADE_Init(&p_ade_handle,BLOW_FLAG,audio_buff_len,audio_fs);
-ADE_Init(&p_ade_handle,SNAP_FLAG,audio_buff_len,audio_fs);
+ADE_Init(&p_ade_handle,SNAP_FLAG);//,audio_buff_len,audio_fs);
 
 #ifdef ADE_CONFIGURATION_INTERACTIVE
 /*************** BLOW CASE *****************/
@@ -144,13 +144,13 @@ audio_fs=ADE_Matlab_GetScalar(p_ade_handle->p_snap->p_mat,"Fs");
 n_simul_cycles=ADE_Matlab_GetScalar(p_ade_handle->p_snap->p_mat,"n_frames");
 ADE_Release(p_ade_handle,SNAP_FLAG);
 p_ade_handle=NULL;
-ADE_Init(&p_ade_handle,SNAP_FLAG,audio_buff_len,audio_fs);
+ADE_Init(&p_ade_handle,SNAP_FLAG);//,audio_buff_len,audio_fs);
 #endif
 
 
 
 //ADE_Configure_params(p_ade_handle,BLOW_FLAG);
-ADE_Configure_params(p_ade_handle,SNAP_FLAG,audio_fs);
+
 #ifndef ADE_CONFIGURATION_INTERACTIVE
 p_data=(ADE_FLOATING_T*)calloc(audio_buff_len,sizeof(ADE_FLOATING_T));
 #endif
@@ -164,7 +164,7 @@ sensor_data.num_channels=1;
 sensor_data.num_frames=audio_buff_len;
 sensor_data.rate=audio_fs;
 sensor_data.type=ADE_AudioInput;
-
+ADE_Configure(p_ade_handle,SNAP_FLAG,&sensor_data);
 for (cycle_idx=0;cycle_idx<n_simul_cycles;cycle_idx++)
 {
     #ifdef ADE_CONFIGURATION_INTERACTIVE

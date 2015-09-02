@@ -51,7 +51,7 @@ ADE_Blow_Configure_params(p_blow,Fs_i,Fs_i/dec_fact);
             return -1;
          }
      //    ADE_Blow_Print(p_blow, stderr,"Blow", "TB");
-         memcpy(p_global_outbuff+i*Frame_len_o,p_cycle_outbuff,p_blow->buff_len_o*sizeof(ADE_FLOATING_T));
+         memcpy(p_global_outbuff+i*Frame_len_o,p_cycle_outbuff,p_blow->buff_len_i/dec_fact*sizeof(ADE_FLOATING_T));
     }
     ADE_Matlab_PutVarintoWorkspace(p_blow->p_mat, p_global_outbuff, "outt", 1, Frame_len_o*n_iterations, ADE_MATH_REAL);
     ADE_Matlab_launch_script_segment(p_blow->p_mat,"Blow");

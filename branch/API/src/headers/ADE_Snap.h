@@ -82,9 +82,7 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap);
 /************************ Configuration Methods **************************************/
 ADE_API_RET_T ADE_Snap_Configure(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff,ADE_INT32_T buff_len,ADE_FLOATING_T Fs_i,ADE_INT32_T n_pow_slots_i,
                                 ADE_INT32_T n_actual_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,ADE_INT32_T fft_len_i);
-ADE_API_RET_T ADE_Snap_Configure_params(ADE_SNAP_T *p_snap,ADE_INT32_T buff_len,ADE_FLOATING_T Fs_i,ADE_INT32_T n_pow_slots_i,
-                                        ADE_INT32_T n_actual_indexes_i,ADE_FLOATING_T time_left_i,ADE_FLOATING_T time_right_i,
-                                        ADE_INT32_T fft_len_i);
+
 ADE_API_RET_T ADE_Snap_Configure_inout(ADE_SNAP_T *p_snap, ADE_FLOATING_T *p_buff);
 /************************** Processing Methods *******************************/
 ADE_API_RET_T ADE_Snap_Step(ADE_SNAP_T *p_snap);

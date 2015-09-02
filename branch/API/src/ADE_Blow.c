@@ -34,7 +34,7 @@ static ADE_API_RET_T ADE_Blow_Configuration(ADE_BLOW_T* p_blow);
 /*************** Blow Set Methods ********************************/
 static ADE_API_RET_T ADE_Blow_SetInBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_buff);
 static ADE_API_RET_T ADE_Blow_SetInBuffLength (ADE_BLOW_T* p_blow,ADE_INT32_T buff_len);
-static ADE_API_RET_T ADE_Blow_SetOutBuffLength (ADE_BLOW_T* p_blow,ADE_INT32_T buff_len);
+//static ADE_API_RET_T ADE_Blow_SetOutBuffLength (ADE_BLOW_T* p_blow,ADE_INT32_T buff_len);
 static ADE_API_RET_T ADE_Blow_SetFsIn (ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i);
 static ADE_API_RET_T ADE_Blow_SetFsOut (ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_o);
 static ADE_API_RET_T ADE_Blow_SetFirOrder (ADE_BLOW_T* p_blow,ADE_INT32_T order);
@@ -93,7 +93,7 @@ ADE_API_RET_T ADE_Blow_Init(ADE_BLOW_T** dp_this)//,ADE_UINT32_T buff_len,ADE_FL
     pthis->buff_len_i=0;
     pthis->max_internal_buff_len=max_internal_buff_len;
     pthis->Fs_o=0;//Fs_o_i;
-    pthis->buff_len_o=0;//ceil(buff_len/downsamp_fact);
+   // pthis->buff_len_o=0;//ceil(buff_len/downsamp_fact);
     pthis->pow_thresh_high=0.0;
     pthis->pow_thresh_low=0.0;
     pthis->sat_thresh=0.0;
@@ -260,7 +260,7 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow)
 
 /******************* Configure Methods ************************/
 
-ADE_API_RET_T ADE_Blow_Configure_bufflength(ADE_BLOW_T* p_blow,ADE_INT32_T in_buff_len,ADE_INT32_T out_buff_len)
+ADE_API_RET_T ADE_Blow_Configure_bufflength(ADE_BLOW_T* p_blow,ADE_INT32_T in_buff_len)
 {
     ADE_API_RET_T ret_inbufflen=ADE_RET_ERROR;
     ADE_API_RET_T ret_outbufflen=ADE_RET_ERROR;
@@ -273,8 +273,8 @@ ADE_API_RET_T ADE_Blow_Configure_bufflength(ADE_BLOW_T* p_blow,ADE_INT32_T in_bu
     ret_inbufflen=ADE_Blow_SetInBuffLength ( p_blow, in_buff_len);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_bufflength,ret_inbufflen);
 
-    ret_outbufflen=ADE_Blow_SetOutBuffLength (p_blow, out_buff_len);
-    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_bufflength,ret_outbufflen);
+//    ret_outbufflen=ADE_Blow_SetOutBuffLength (p_blow, out_buff_len);
+//    ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_bufflength,ret_outbufflen);
 
     ret_firbufflen= ADE_Fir_Configure_bufflength(p_blow->p_fir,in_buff_len);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure_bufflength,ret_outbufflen);
@@ -383,14 +383,14 @@ ADE_API_RET_T ADE_Blow_Configure_inout(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_inb
     return ADE_RET_SUCCESS;
 }
 
-ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o,ADE_INT32_T in_buff_len,ADE_INT32_T out_buff_len)
+ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow, ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o,ADE_INT32_T in_buff_len)
 {
 
     ADE_API_RET_T ret_params=ADE_RET_ERROR;
     ADE_API_RET_T ret_inout=ADE_RET_ERROR;
     ADE_API_RET_T ret_bufflen=ADE_RET_ERROR;
 
-    ret_bufflen=ADE_Blow_Configure_bufflength(p_blow,in_buff_len,out_buff_len);
+    ret_bufflen=ADE_Blow_Configure_bufflength(p_blow,in_buff_len);
      ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Configure,ret_bufflen);
 
     ret_params=ADE_Blow_Configure_params(p_blow,Fs_i,Fs_o);
@@ -496,8 +496,8 @@ len_str=strlen(fixed_str);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"Fs_o = %*.*f\n"),ADE_BLOW_PRINT_FLOAT_WIDTH,ADE_BLOW_PRINT_FLOAT_PRECISION,p_blow->Fs_o);
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"buff_len_o = %u\n"),p_blow->buff_len_o);
-        strcpy(pri_str,fixed_str);
+//        ADE_LOG(p_fid,strcat(pri_str,"buff_len_o = %u\n"),p_blow->buff_len_o);
+//        strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"fir_order = %u\n"),p_blow->fir_order);
         strncpy(temp_str,fixed_str,len_str-2);
         ADE_Fir_Print(p_blow->p_fir,p_fid,"p_fir",temp_str);
@@ -912,9 +912,14 @@ static ADE_API_RET_T ADE_Blow_Downsampler_Configure(ADE_BLOW_T* p_blow)
 {
 
     ADE_API_RET_T  ret=ADE_RET_ERROR;
-    ADE_INT32_T downfact = p_blow->Fs_i/p_blow->Fs_o;
+    ADE_FLOATING_T downfact = p_blow->Fs_i/p_blow->Fs_o;
+    ADE_INT32_T downfact_int = (ADE_INT32_T)downfact;
+    ADE_FLOATING_T check = fmod(downfact,downfact_int);
+    ADE_FLOATING_T val_min = 0.0,val_max=1e-5;
 
-    ret=ADE_Downsampler_Configure(p_blow->p_downsampler, p_blow->buff_len_o,downfact,p_blow->p_pow_slow,p_blow->p_pow_slow_downsampled);
+    ADE_CHECK_INTERVAL_GE_MIN_LE_MAX(ADE_CLASS_BLOW,ADE_METHOD_Downsampler_Configure,check,"%f",val_min,val_max);
+
+    ret=ADE_Downsampler_Configure(p_blow->p_downsampler, p_blow->buff_len_i/downfact_int,downfact_int,p_blow->p_pow_slow,p_blow->p_pow_slow_downsampled);
     ADE_CHECK_ADERETVAL(ADE_CLASS_BLOW,ADE_METHOD_Downsampler_Configure,ret) ;
 
      return ADE_RET_SUCCESS;
@@ -1074,18 +1079,18 @@ static ADE_API_RET_T ADE_Blow_SetInBuffLength (ADE_BLOW_T* p_blow,ADE_INT32_T bu
 
     return ADE_RET_SUCCESS;
 }
-
-static ADE_API_RET_T ADE_Blow_SetOutBuffLength (ADE_BLOW_T* p_blow,ADE_INT32_T buff_len)
-{
-    ADE_INT32_T val0 = 0;
-
-     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_SetOutBuffLength,p_blow);
-     ADE_CHECK_VALUE_MAJOR(ADE_CLASS_BLOW,ADE_METHOD_SetOutBuffLength,buff_len,"%d",val0);
-
-     p_blow->buff_len_o=buff_len;
-
-    return ADE_RET_SUCCESS;
-}
+//
+//static ADE_API_RET_T ADE_Blow_SetOutBuffLength (ADE_BLOW_T* p_blow,ADE_INT32_T buff_len)
+//{
+//    ADE_INT32_T val0 = 0;
+//
+//     ADE_CHECK_INPUTPOINTER(ADE_CLASS_BLOW,ADE_METHOD_SetOutBuffLength,p_blow);
+//     ADE_CHECK_VALUE_MAJOR(ADE_CLASS_BLOW,ADE_METHOD_SetOutBuffLength,buff_len,"%d",val0);
+//
+//     p_blow->buff_len_o=buff_len;
+//
+//    return ADE_RET_SUCCESS;
+//}
 
 static ADE_API_RET_T ADE_Blow_SetFsIn (ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i)
 {

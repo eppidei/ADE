@@ -13,7 +13,7 @@ struct ADE_BLOW_S
     ADE_INT32_T max_internal_buff_len;
     ADE_INT32_T buff_len_i;
     ADE_FLOATING_T Fs_o;
-    ADE_INT32_T buff_len_o;
+    //ADE_INT32_T buff_len_o;
     ADE_INT32_T fir_order;
     ADE_FIR_T *p_fir;
     ADE_IIR_T *p_iir;
@@ -63,10 +63,10 @@ ADE_VOID_T ADE_Blow_Release(ADE_BLOW_T* p_blow);
 /************* Get Methods *************************/
 ADE_API_RET_T ADE_Blow_GetOutBuff(ADE_BLOW_T* p_blow, ADE_FLOATING_T **dp_buff);
 /******************* Configure Methods ************************/
-ADE_API_RET_T ADE_Blow_Configure_bufflength(ADE_BLOW_T* p_blow,ADE_INT32_T in_buff_len,ADE_INT32_T out_buff_len);
+ADE_API_RET_T ADE_Blow_Configure_bufflength(ADE_BLOW_T* p_blow,ADE_INT32_T in_buff_len);
 ADE_API_RET_T ADE_Blow_Configure_params(ADE_BLOW_T* p_blow,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o);
 ADE_API_RET_T ADE_Blow_Configure_inout(ADE_BLOW_T* p_blow,ADE_FLOATING_T *p_inbuff);
-ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o,ADE_INT32_T in_buff_len,ADE_INT32_T out_buff_len);
+ADE_API_RET_T ADE_Blow_Configure(ADE_BLOW_T* p_blow,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T Fs_i,ADE_FLOATING_T Fs_o,ADE_INT32_T in_buff_len);
 /************ Processing methods ***********************/
 ADE_API_RET_T ADE_Blow_Step(ADE_BLOW_T* p_blow);
 /************ Utils methods ***********************/
