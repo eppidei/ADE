@@ -11,3 +11,11 @@
 10) Aggiungere con #ifdef CHECK_INPUT solo valori non permessi delle funzioni doSomething
 11) testare la differenza tra 2 cicli for su operazioni ottimizzate ed un unico con non ottimizzate ma inglobate in un unico ciclo.
 12) Separa Init da variabili che dipendono da configurazione e inizializzare con valori max defined
+13) Metodi di Set e doSet tutti static con controllo valoti input
+14) Aggiungere classi sources,TestClass,TestBenchmark
+15) I metodi di Set nel caso in cui ricevano una struttura devono avere un doSet che prenda esplicitamente
+    i parametri in ingresso e controllino i ranges
+ 16) I configure methods possono non controllare gli input se sono una serie di Set che devono controllarli tassativamente
+ 
+ 
+ 17) I metodi doStep controllano i parametri nel caso qualche configurazione non sia stata fatta 
