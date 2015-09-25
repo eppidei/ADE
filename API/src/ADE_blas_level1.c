@@ -1529,7 +1529,7 @@ static ADE_FLOATING_SP_T sdot_custom_gp_par5(ADE_INT32_T N,ADE_FLOATING_SP_T *SX
 
     if (N<=0)
     {
-        return;
+        return 0.0;
     }
     if (INCX==1 && INCY==1)
     {
@@ -1586,7 +1586,7 @@ static ADE_FLOATING_SP_T sdot_custom_gp_par4(ADE_INT32_T N,ADE_FLOATING_SP_T *SX
 
     if (N<=0)
     {
-        return;
+        return 0.0;
     }
     if (INCX==1 && INCY==1)
     {
@@ -1645,7 +1645,7 @@ static ADE_FLOATING_SP_T sdot_custom_gp_par1(ADE_INT32_T N,ADE_FLOATING_SP_T *SX
 
     if (N<=0)
     {
-        return;
+        return 0.0;
     }
     if (INCX==1 && INCY==1)
     {
