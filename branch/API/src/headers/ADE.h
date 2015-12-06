@@ -10,7 +10,6 @@ struct ADE_S
     ADE_BLOW_T *p_blow;
     ADE_SCDF_Input_Int_T *p_blow_in_struct;
     ADE_SCDF_Output_Int_T *p_blow_out_struct;
-   // ADE_DOWNSAMPLER_T *p_blow_downsampler;
     /*Snap*/
     ADE_SNAP_T *p_snap;
     ADE_SCDF_Input_Int_T *p_snap_in_struct;

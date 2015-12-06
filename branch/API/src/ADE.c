@@ -21,6 +21,10 @@ static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
 static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
 
+/*******************************************************************/
+/************************* PUBLIC METHODS ***********************/
+/*******************************************************************/
+
 ADE_API_RET_T ADE_Init(ADE_T **dp_ADE_Handle, ADE_UINT32_T Sel_Flag_i)//,ADE_UINT32_T in_buff_len,ADE_FLOATING_T input_rate)
 {
 

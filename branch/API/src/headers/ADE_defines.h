@@ -236,8 +236,15 @@
 #define ADE_SNAP_MAX_N_POW_SLOTS (4)
 #define ADE_SNAP_MAX_EXTRACT_LEN (1024)
 #define ADE_SNAP_MAX_FFT_LEN (ADE_FFT_MAX_BUFF_LEN)
+/*********** SOURCES ***************/
 
-
+#define ADE_SOURCES_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
+/* Period parameters Marsenne twister*/
+#define MT_N 624
+#define MT_M 397
+#define MT_MATRIX_A 0x9908b0dfUL   /* constant vector a */
+#define MT_UPPER_MASK 0x80000000UL /* most significant w-r bits */
+#define MT_LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
 
 

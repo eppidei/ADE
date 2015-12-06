@@ -198,6 +198,13 @@ typedef enum {ADE_ERROR_HANDLER_CHECKVALUE_MAJOR,ADE_ERROR_HANDLER_CHECKVALUE_MA
                 ADE_ERROR_HANDLER_CHECKVALUE_UNDEF=-1} ADE_ERROR_HANDLER_CHECKVALUE_T;
 
 
-/********** Decimator *****************/
+///********** Decimator *****************/
 typedef struct ADE_PROXIMITY_S ADE_PROXIMITY_T;
+///************ Sources *****************/
+typedef enum {ADE_SOURCES_SINE,ADE_SOURCES_COSINE,ADE_SOURCES_RAND,ADE_SOURCES_NOTYPE} ADE_SOURCES_TYPE_T;
+typedef struct ADE_SOURCES_S ADE_SOURCES_T;
+/************ ADE TEST BENCH **************/
+typedef struct ADE_TESTBENCH_S ADE_TESTBENCH_T;
+
+
 #endif //_ADE_TYPEDEFS_H
