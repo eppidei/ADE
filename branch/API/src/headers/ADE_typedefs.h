@@ -9,6 +9,12 @@
 #include <stdbool.h>
 
 
+typedef struct ADE_BUFF_DESCRIPTOR_S
+{
+    void * p_Buff;
+    size_t BuffSize;
+  //  ADE_BOOL_T IsInternal;
+} ADE_BUFF_DESCRIPTOR_T;
 
 typedef struct fcomplex_S
 {
@@ -205,6 +211,11 @@ typedef enum {ADE_SOURCES_SINE,ADE_SOURCES_COSINE,ADE_SOURCES_RAND,ADE_SOURCES_N
 typedef struct ADE_SOURCES_S ADE_SOURCES_T;
 /************ ADE TEST BENCH **************/
 typedef struct ADE_TESTBENCH_S ADE_TESTBENCH_T;
+/************* UDP SENDER ****************/
+typedef struct ADE_UDP_SENDER_S ADE_UDPSENDER_T;
+/************* UDP RECEIVER ****************/
+typedef struct ADE_UDP_RECEIVER_S ADE_UDPRECEIVER_T;
+
 
 
 #endif //_ADE_TYPEDEFS_H

@@ -3,6 +3,7 @@
 
 #include "headers/ADE_typedefs.h"
 #include "headers/ADE_errors.h"
+#include <errno.h>
 #include <stdio.h>
 
 
@@ -16,6 +17,7 @@ static ADE_Error_Handler_T ade_error_handler;
 #define ADE_CHECK_ADERETVAL(class,met,var) if(ADE_Error_Handler_CheckReturn(class,met,"%d",&(var),#var)==ADE_RET_ERROR) return ADE_RET_ERROR
 #define ADE_CHECK_VALUE_EQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_EQUAL,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
 #define ADE_CHECK_VALUE_NOTEQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
+#define ADE_CHECK_VALUE_NOTEQUAL_ERRNO(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,#var)==ADE_RET_ERROR) { fprintf(stderr,"ERRNO %d\n",errno);return ADE_RET_ERROR; }
 #define ADE_CHECK_VALUE_MAJOR(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_MAJOR,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
 #define ADE_CHECK_VALUE_MAJOREQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
 #define ADE_CHECK_INTERVAL_L_MIN_G_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX,#var)==ADE_RET_ERROR) return ADE_RET_ERROR

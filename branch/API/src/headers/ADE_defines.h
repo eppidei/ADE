@@ -246,6 +246,12 @@
 #define MT_UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define MT_LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
+/**************** UDP SENDER ********************/
+#define ADE_UDP_SENDER_MAX_BUFFER_BYTES (1522)
+/**************** UDP RECEIVER ********************/
+#define ADE_UDP_RECEIVER_MAX_BUFFER_BYTES (1522)
+
+
 
 
 

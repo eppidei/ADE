@@ -1,0 +1,63 @@
+#ifndef _APPLE_MIDI_H
+#define _APPLE_MIDI_H
+#include "headers/ADE_typedefs.h"
+
+
+/****************** ADE APPLE MIDI ********************/
+typedef enum {EndSession = 0x4259, /*   "BY"   */
+        Synchronization = 0x434b, /*   "CK"   */
+        Invitation = 0x494e, /*   "IN"   */
+        InvitationRejected = 0x4e4f, /*   "NO"   */
+        InvitationAccepted = 0x4f4b, /*   "OK"   */
+        BitRateReceiveLimit = 0x524c, /*   "RL"   */
+        ReceiverFeedback = 0x5253} APPLEMIDI_COMMAND_T;
+
+        typedef struct APPLE_MIDI_HEADER_S
+        {
+         short Signature;
+         short Command;
+        } APPLE_MIDI_HEADER_T;
+
+typedef struct APPLE_MIDI_INVITATION_PCKT_S
+{
+
+ int ProtVersion;
+ int IniziatorToken;
+ unsigned int SenderSource;
+ char name[256];
+ int name_length;
+
+}APPLE_MIDI_INVITATION_PCKT_T;
+
+typedef struct APPLE_MIDI_SYNC_PCKT_S
+{
+
+
+ int SenderSSRC;
+ int Count:8;
+ int Padding :24;
+ ADE_INT64_T TimeStamp1;
+ ADE_INT64_T TimeStamp2;
+ ADE_INT64_T TimeStamp3;
+ }APPLE_MIDI_SYNC_PCKT_T;
+
+typedef struct APPLE_MIDI_RECVFB_PCKT_S
+{
+
+    int SenderSSRC;
+    ADE_INT64_T SequenceNumber;
+}APPLE_MIDI_RECVFB_PCKT_T;
+
+
+
+typedef union APPLEMIDI_U
+{
+  APPLE_MIDI_HEADER_T header;
+ APPLE_MIDI_RECVFB_PCKT_T RecvFeedBack;
+ APPLE_MIDI_SYNC_PCKT_T Synchronization;
+ APPLE_MIDI_INVITATION_PCKT_T Invitation;
+
+} APPLEMIDI_T;
+
+
+#endif //_ADE_APPLE_MIDI_H

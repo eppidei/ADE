@@ -1,4 +1,6 @@
 #include "headers/ADE_TestBench.h"
+#include "headers/ADE_errors.h"
+#include <strings.h>
 
 
 
