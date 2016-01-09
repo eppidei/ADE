@@ -12,11 +12,11 @@ typedef enum {EndSession = 0x4259, /*   "BY"   */
         BitRateReceiveLimit = 0x524c, /*   "RL"   */
         ReceiverFeedback = 0x5253} APPLEMIDI_COMMAND_T;
 
-        typedef struct APPLE_MIDI_HEADER_S
-        {
-         short Signature;
-         short Command;
-        } APPLE_MIDI_HEADER_T;
+typedef struct APPLE_MIDI_HEADER_S
+{
+ short Signature;
+ short Command;
+} APPLE_MIDI_HEADER_T;
 
 typedef struct APPLE_MIDI_INVITATION_PCKT_S
 {
@@ -34,8 +34,11 @@ typedef struct APPLE_MIDI_SYNC_PCKT_S
 
 
  int SenderSSRC;
+ union {
  int Count:8;
  int Padding :24;
+ int word;
+ };
  ADE_INT64_T TimeStamp1;
  ADE_INT64_T TimeStamp2;
  ADE_INT64_T TimeStamp3;
@@ -50,14 +53,16 @@ typedef struct APPLE_MIDI_RECVFB_PCKT_S
 
 
 
-typedef union APPLEMIDI_U
+typedef struct APPLEMIDI_S
 {
   APPLE_MIDI_HEADER_T header;
+ union {
  APPLE_MIDI_RECVFB_PCKT_T RecvFeedBack;
  APPLE_MIDI_SYNC_PCKT_T Synchronization;
  APPLE_MIDI_INVITATION_PCKT_T Invitation;
+ };
 
-} APPLEMIDI_T;
+} __attribute__ ((__packed__))  APPLEMIDI_T;
 
 
 #endif //_ADE_APPLE_MIDI_H
