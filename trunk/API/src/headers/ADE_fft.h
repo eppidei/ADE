@@ -11,7 +11,8 @@
 #endif
 
 struct ADE_FFT_S {
-        ADE_UINT32_T buff_len;
+        ADE_INT32_T buff_len;
+        ADE_INT32_T max_buff_len;
          ADE_FFT_TYPE_T type;
         ADE_VOID_T *p_in;//allocati fuori con ffttw_malloc
         ADE_VOID_T *p_out;//allocati fuori con ffttw_malloc
