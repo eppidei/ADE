@@ -3,12 +3,18 @@
 #include <stdint.h>
 #include "headers/ADE_defines.h"
 #include <stdio.h>
-#if defined (ADE_FFT_IMP) && (ADE_FFT_IMP==ADE_USE_FFTW)
+#if (ADE_FFT_IMP==ADE_USE_FFTW)
 #include "fftw3.h"
 #endif
 #include <stdbool.h>
 
 
+typedef struct ADE_BUFF_DESCRIPTOR_S
+{
+    void * p_Buff;
+    size_t BuffSize;
+  //  ADE_BOOL_T IsInternal;
+} ADE_BUFF_DESCRIPTOR_T;
 
 typedef struct fcomplex_S
 {
@@ -72,7 +78,7 @@ typedef ADE_FLOATING_SP_T ADE_FLOATING_T;
 typedef ADE_CPLX_SP_T ADE_CPLX_T;
 typedef ADE_DSPSplitComplex ADE_SplitComplex_T;
 typedef ADE_FFTSetup ADE_FFTSetup_T;
-    #if defined(ADE_FFT_IMP) && (ADE_FFT_IMP==ADE_USE_FFTW)
+    #if (ADE_FFT_IMP==ADE_USE_FFTW)
     typedef fftwf_complex ADE_FFTCPLX_T;
     #else
     typedef ADE_CPLX_T ADE_FFTCPLX_T;
@@ -110,7 +116,7 @@ typedef ADE_API_RET_T (*ADE_BLAS_LEVEL3_FCN_TYPE1_T)(ADE_blas_level3_T*);
 /******************************* IIR **************************/
 typedef struct ADE_IIR_S ADE_IIR_T;
 typedef ADE_API_RET_T (*ADE_FILTER_IMPLEMENTATION_T)(ADE_IIR_T*);
-typedef enum  {ADE_IIR_TRASP_II_B} ADE_IIR_IMP_CHOICE_T;
+typedef enum  {ADE_IIR_TRASP_II_B,ADE_IIR_IMP_UNDEF=-1} ADE_IIR_IMP_CHOICE_T;
 /******************************* FIR **************************/
 typedef struct ADE_FIR_S ADE_FIR_T;
 typedef ADE_API_RET_T (*ADE_FIR_FILTER_IMPLEMENTATION_T)(ADE_FIR_T*);
@@ -131,8 +137,15 @@ typedef struct ADE_FFT_S ADE_FFT_T;
 typedef enum {ADE_FFT_C2C=1,ADE_FFT_R2C=2,ADE_FFT_C2R=3,ADE_FFT_R2R=4,ADE_FFT_INVALID_TYPE=-1} ADE_FFT_TYPE_T;
 typedef enum {ADE_FFT_FORWARD=1,ADE_FFT_BACKWARD=-1,ADE_FFT_INVALID_DIR=0} ADE_FFT_DIRECTION_T;
 /****************** FFTW *****************************/
-#if defined(ADE_FFT_IMP) && (ADE_FFT_IMP==ADE_USE_FFTW)
+#if (ADE_FFT_IMP==ADE_USE_FFTW)
 typedef enum {ADE_FFTW_FORWARD=FFTW_FORWARD,ADE_FFTW_BACKWARD=FFTW_BACKWARD} ADE_FFTW_DIRECTION_T;
+#endif
+#if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
+typedef fftw_plan ADE_FFTW_PLAN_T;
+#elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
+typedef fftwf_plan ADE_FFTW_PLAN_T;
+#else
+ #error (ADE_FP_PRECISION in typedef.h)
 #endif
 /**************************** UTILS *************************/
 typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_ROW_INFO_T;
@@ -185,9 +198,24 @@ typedef enum {ADE_ERROR_HANDLER_CHECKVALUE_MAJOR,ADE_ERROR_HANDLER_CHECKVALUE_MA
               ADE_ERROR_HANDLER_CHECKVALUE_MINOR,ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL,
                ADE_ERROR_HANDLER_CHECKVALUE_INRANGE,ADE_ERROR_HANDLER_CHECKVALUE_OUTRANGE,
                ADE_ERROR_HANDLER_CHECKVALUE_EQUAL,ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,
+               ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX,ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_L_MAX,
+               ADE_ERROR_HANDLER_CHECKVALUE_LE_MIN_GE_MAX,ADE_ERROR_HANDLER_CHECKVALUE_GE_MIN_LE_MAX,
+               ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_LE_MAX,
                 ADE_ERROR_HANDLER_CHECKVALUE_UNDEF=-1} ADE_ERROR_HANDLER_CHECKVALUE_T;
 
 
-/********** Decimator *****************/
+///********** Decimator *****************/
 typedef struct ADE_PROXIMITY_S ADE_PROXIMITY_T;
+///************ Sources *****************/
+typedef enum {ADE_SOURCES_SINE,ADE_SOURCES_COSINE,ADE_SOURCES_RAND,ADE_SOURCES_NOTYPE} ADE_SOURCES_TYPE_T;
+typedef struct ADE_SOURCES_S ADE_SOURCES_T;
+/************ ADE TEST BENCH **************/
+typedef struct ADE_TESTBENCH_S ADE_TESTBENCH_T;
+/************* UDP SENDER ****************/
+typedef struct ADE_UDP_SENDER_S ADE_UDPSENDER_T;
+/************* UDP RECEIVER ****************/
+typedef struct ADE_UDP_RECEIVER_S ADE_UDPRECEIVER_T;
+
+
+
 #endif //_ADE_TYPEDEFS_H

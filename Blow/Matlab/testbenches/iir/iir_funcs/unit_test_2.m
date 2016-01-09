@@ -9,7 +9,7 @@ for i=1:n_iterations
     indexes = (i-1)*frame_len+1:i*frame_len;
     frame=input_vector(indexes );
 
-
+frame(1)
         out(indexes) = filter(IIR_test,frame);
   
 end
