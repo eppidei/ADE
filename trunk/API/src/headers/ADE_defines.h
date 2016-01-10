@@ -1,6 +1,10 @@
 #ifndef _ADE_DEFINES_H
 #define _ADE_DEFINES_H
 
+#ifndef ADE_GENERAL_MALLOC_BUFF_LEN
+#define ADE_GENERAL_MALLOC_BUFF_LEN (4096)
+#endif
+
 
 /****************** Macros **************************/
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
@@ -144,6 +148,9 @@
 #define ADE_LOG(...) mexPrintf(__VA_ARGS__)
 #endif
 
+#define ADE_PRINT_FLOAT_WIDTH (20)
+#define ADE_PRINT_FLOAT_PRECISION (18)
+
 
 /*************************** VERBOSITY LEVELS ***********************/
 
@@ -163,12 +170,20 @@
 
 /************************** FIR ********************************/
 #define ADE_FIR_MAX_ORDER (1024)
+/************************** IIR ********************************/
+#define ADE_IIR_MAX_N_SECTIONS (5)
+#define ADE_IIR_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
 /************************** POLYFIT ********************************/
 #define ADE_POLYFIT_MAX_N_BREAKS (64)
 #define ADE_POLYFIT_MAX_POLY_ORDER (5)
 /************************ DOWNSAMPLER ****************************/
 #define ADE_DOWNSAMPLER_PRINT_FLOAT_WIDTH (20)
 #define ADE_DOWNSAMPLER_PRINT_FLOAT_PRECISION (18)
+//#define ADE_DOWNSAMPLER_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
+/************************ UPSAMPLER ****************************/
+#define ADE_UPSAMPLER_PRINT_FLOAT_WIDTH (20)
+#define ADE_UPSAMPLER_PRINT_FLOAT_PRECISION (18)
+//#define ADE_UPSAMPLER_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
 
 /****************************** BLOW ***********************************/
 #define IIR1_N_SECTIONS (4)
@@ -189,6 +204,8 @@
 #define ADE_MATLAB_EXE "/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab"
 #define ADE_SNAP_SCRIPT "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Main_scripts/impulse_frame.m"
 #define ADE_SNAP_WS "./snap_config_ws.mat"
+/****** FFT ******/
+#define ADE_FFT_MAX_BUFF_LEN (1024)
 /**************************** FFTW **********************************/
 #define ADE_FFTW_PLAN_FLAGS FFTW_ESTIMATE //FFTW_MEASURE //FFTW_PATIENT // //read manual pg.18
 #define ADE_FLOAT_SIZE (4)
@@ -201,8 +218,8 @@
 /******************************* UTILS ******************************/
 #define PLUS_ONE(x) (x+1)
 #define PRINT_IDX(x) PLUS_ONE(x)
-#define ADE_UTILS_PRINTF_FLOAT_WIDTH (14)
-#define ADE_UTILS_PRINTF_FLOAT_PRECISION (5)
+#define ADE_UTILS_PRINTF_FLOAT_WIDTH (24)
+#define ADE_UTILS_PRINTF_FLOAT_PRECISION (16)
 /* Period parameters Marsenne twister*/
 #define MT_N 624
 #define MT_M 397
@@ -219,6 +236,30 @@
 #define NR_STACK 50
 /********************* PROXIMITY *********************/
 #define ADE_PROXIMITY_MAX_BUFF_LEN (1024)
+
+/***** DECIMATOR ********/
+
+
+/**** SNAP ****/
+#define ADE_SNAP_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
+#define ADE_SNAP_MAX_INDEXES (4)
+#define ADE_SNAP_MAX_N_POW_SLOTS (4)
+#define ADE_SNAP_MAX_EXTRACT_LEN (1024)
+#define ADE_SNAP_MAX_FFT_LEN (ADE_FFT_MAX_BUFF_LEN)
+/*********** SOURCES ***************/
+
+#define ADE_SOURCES_MAX_BUFF_LEN (ADE_GENERAL_MALLOC_BUFF_LEN)
+/* Period parameters Marsenne twister*/
+#define MT_N 624
+#define MT_M 397
+#define MT_MATRIX_A 0x9908b0dfUL   /* constant vector a */
+#define MT_UPPER_MASK 0x80000000UL /* most significant w-r bits */
+#define MT_LOWER_MASK 0x7fffffffUL /* least significant r bits */
+
+/**************** UDP SENDER ********************/
+#define ADE_UDP_SENDER_MAX_BUFFER_BYTES (1522)
+/**************** UDP RECEIVER ********************/
+#define ADE_UDP_RECEIVER_MAX_BUFFER_BYTES (1522)
 
 
 
