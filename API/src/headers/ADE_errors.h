@@ -349,4 +349,4 @@ typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;
 static char *ADE_ERRMETHODSStrings[] = { ERRMETHODS };
 #undef X_ERRMETHODS
 
-
+#endif

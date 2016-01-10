@@ -139,13 +139,14 @@ typedef enum {ADE_FFT_FORWARD=1,ADE_FFT_BACKWARD=-1,ADE_FFT_INVALID_DIR=0} ADE_F
 /****************** FFTW *****************************/
 #if (ADE_FFT_IMP==ADE_USE_FFTW)
 typedef enum {ADE_FFTW_FORWARD=FFTW_FORWARD,ADE_FFTW_BACKWARD=FFTW_BACKWARD} ADE_FFTW_DIRECTION_T;
-#endif
+
 #if (ADE_FP_PRECISION==ADE_USE_DOUBLE_PREC)
 typedef fftw_plan ADE_FFTW_PLAN_T;
 #elif (ADE_FP_PRECISION==ADE_USE_SINGLE_PREC)
 typedef fftwf_plan ADE_FFTW_PLAN_T;
 #else
  #error (ADE_FP_PRECISION in typedef.h)
+#endif
 #endif
 /**************************** UTILS *************************/
 typedef enum {ADE_UTILS_FIRST_PRINT_ROW,ADE_UTILS_NOTFIRST_PRINT_ROW} ADE_UTILS_ROW_INFO_T;
