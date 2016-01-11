@@ -35,6 +35,7 @@ ADE_API_RET_T ADE_UdpReceiver_GetDescriptor(ADE_UDPRECEIVER_T *p_UdpReceiver,int
 ADE_API_RET_T ADE_UdpReceiver_SetReusePort(ADE_UDPRECEIVER_T *p_UdpReceiver);
 ADE_API_RET_T ADE_UdpReceiver_SetReuseAddress(ADE_UDPRECEIVER_T *p_UdpReceiver);
 ADE_API_RET_T ADE_UdpReceiver_SetRemoteAnyIP(ADE_UDPRECEIVER_T *p_UdpReceiver,int srcport);
+ADE_API_RET_T ADE_UdpReceiver_SetLocalAnyAddress(ADE_UDPRECEIVER_T *p_UdpReceiver,int dstport);
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

@@ -78,10 +78,24 @@ ADE_API_RET_T ADE_UdpReceiver_SetRemoteAnyIP(ADE_UDPRECEIVER_T *p_UdpReceiver,in
     ADE_INT32_T valm1=-1;
 
     p_UdpReceiver->SocketAddressRemote.sin_family = AF_INET;
-    p_UdpReceiver->SocketAddressRemote.sin_addr.s_addr = htonl(INADDR_ANY);
+    p_UdpReceiver->SocketAddressRemote.sin_addr.s_addr = INADDR_ANY;
     p_UdpReceiver->SocketAddressRemote.sin_port = htons(srcport);
     ret = connect(p_UdpReceiver->SocketDesc, (const struct sockaddr*)&(p_UdpReceiver->SocketAddressRemote),sizeof(p_UdpReceiver->SocketAddressRemote));
      ADE_CHECK_VALUE_NOTEQUAL_ERRNO(ADE_CLASS_UDPRECEIVER,ADE_METHOD_Connect,ret,"%d",valm1);
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_UdpReceiver_SetLocalAnyAddress(ADE_UDPRECEIVER_T *p_UdpReceiver,int dstport)
+{
+    ADE_INT32_T ret;
+    ADE_INT32_T valm1=-1;
+
+    p_UdpReceiver->SocketAddressLocal.sin_family = AF_INET;
+    p_UdpReceiver->SocketAddressLocal.sin_addr.s_addr = INADDR_ANY;
+    p_UdpReceiver->SocketAddressLocal.sin_port = htons(dstport);
+    ret = bind(p_UdpReceiver->SocketDesc, (const struct sockaddr*)&(p_UdpReceiver->SocketAddressLocal),sizeof(p_UdpReceiver->SocketAddressLocal));
+    ADE_CHECK_VALUE_NOTEQUAL_ERRNO(ADE_CLASS_UDPRECEIVER,ADE_METHOD_SetLocal,ret,"%d",valm1);
 
     return ADE_RET_SUCCESS;
 }
