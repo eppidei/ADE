@@ -11,7 +11,7 @@
 #define PROXY_FLAG (1<<PROXY_BIT)
 
 typedef enum ADE_SensorType_S{
-    ADE_Invalid=-1,
+    ADE_NoType=-1,
     ADE_Accelerometer,
     ADE_Gyroscope,
     ADE_Magnetometer,

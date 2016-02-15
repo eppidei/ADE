@@ -4,6 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+struct ADE_DOWNSAMPLER_S
+{
+    ADE_FLOATING_T* p_in;
+    ADE_FLOATING_T* p_out;
+    ADE_INT32_T out_buff_len;
+  //  ADE_INT32_T max_in_buff_len;
+    ADE_INT32_T down_fact;
+    ADE_blas_level1_T *p_blas_l1_memcpy;
+};
+
 static ADE_API_RET_T ADE_Downsampler_doStep_blas(ADE_blas_level1_T *p_b1);
 static ADE_API_RET_T ADE_Downsampler_doStep_custom (ADE_UINT32_T out_buff_len,ADE_FLOATING_T *p_out,ADE_FLOATING_T *p_in,ADE_UINT32_T downfact);
 static ADE_API_RET_T ADE_Downsampler_doStep(ADE_blas_level1_T *p_blas_l1_memcpy, ADE_INT32_T out_buff_len,ADE_FLOATING_T *p_out,ADE_FLOATING_T *p_in,ADE_INT32_T downfact);
@@ -175,7 +185,9 @@ static ADE_API_RET_T ADE_Downsampler_SetDownfact(ADE_DOWNSAMPLER_T *p_downsample
     ADE_INT32_T int_mult;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetDownfact,p_downsampler);
-    ADE_CHECK_INTERVAL_G_MIN_LE_MAX(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetDownfact,downfact,"%d",val0,p_downsampler->out_buff_len);
+    ADE_CHECK_VALUE_MAJOR(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetDownfact,downfact,"%d",val0);
+    /* wrong check it should be done againt input buff len : decide if 2 add in strcture*/
+   // ADE_CHECK_INTERVAL_G_MIN_LE_MAX(ADE_CLASS_DOWNSAMPLER,ADE_METHOD_SetDownfact,downfact,"%d",val0,p_downsampler->out_buff_len);
 
     /*Condition buffer multiple*/
     //int_mult=p_downsampler->out_buff_len%downfact;
@@ -283,6 +295,7 @@ ADE_API_RET_T ADE_Downsampler_Print(ADE_DOWNSAMPLER_T* p_downsampler, ADE_FILE_T
     ADE_CHAR_T pri_str[128];
     ADE_SIZE_T len_str;
      ADE_CHAR_T temp_str[64];
+     ADE_API_RET_T ret=ADE_RET_ERROR;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_downsampler);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_fid);
@@ -308,7 +321,8 @@ len_str=strlen(fixed_str);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"p_out = %p(%*.*f)\n"),p_downsampler->p_out,ADE_DOWNSAMPLER_PRINT_FLOAT_WIDTH,ADE_DOWNSAMPLER_PRINT_FLOAT_PRECISION,p_downsampler->p_out[0]);
         strncpy(temp_str,fixed_str,len_str-2);
-        ADE_Blas_level1_Print(p_downsampler->p_blas_l1_memcpy,p_fid,"p_blas_l1_memcpy",temp_str);
+        ret=ADE_Blas_level1_Print(p_downsampler->p_blas_l1_memcpy,p_fid,"p_blas_l1_memcpy",temp_str);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Print,ret);
         strcpy(pri_str,fixed_str);
     }
 

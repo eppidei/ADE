@@ -2,6 +2,7 @@
 #define _ADE_FIR_H
 #include "headers/ADE_typedefs.h"
 
+
 struct ADE_FIR_S
 {
     ADE_INT32_T buff_len;
@@ -17,7 +18,6 @@ struct ADE_FIR_S
     ADE_FIR_IMP_CHOICE_T filt_imp_type;
     ADE_FIR_FILTER_IMPLEMENTATION_T filter_func;
 };
-
 #ifdef __cplusplus
     extern "C" {
 #endif

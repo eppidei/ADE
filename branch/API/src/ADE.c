@@ -9,6 +9,23 @@
 #include <stdlib.h>
 #include "headers/ADE_Error_Handler.h"
 
+struct ADE_S
+{
+    ADE_UINT32_T active_algs_flag;
+    /*Blow*/
+    ADE_BLOW_T *p_blow;
+    ADE_SCDF_Input_Int_T *p_blow_in_struct;
+    ADE_SCDF_Output_Int_T *p_blow_out_struct;
+    /*Snap*/
+    ADE_SNAP_T *p_snap;
+    ADE_SCDF_Input_Int_T *p_snap_in_struct;
+    ADE_SCDF_Output_Int_T *p_snap_out_struct;
+    /*Proxy*/
+    ADE_PROXIMITY_T *p_proxy;
+    ADE_SCDF_Input_Int_T *p_proxy_in_struct;
+    ADE_SCDF_Output_Int_T *p_proxy_out_struct;
+};
+
 static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff);
 static ADE_API_RET_T ADE_Configure_bufflength(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T buff_len);
 
@@ -18,8 +35,8 @@ static ADE_BOOL_T ADE_IsActiveAlg(ADE_UINT32_T active_algs_flag, ADE_UINT32_T Se
 static ADE_BOOL_T ADE_IsOneFlag(ADE_UINT32_T Sel_Flag_i);
 static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i);
 //static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff);
-static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
-static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
+static ADE_API_RET_T ADE_ToggleLogic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
+static ADE_API_RET_T ADE_StateLogic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state);
 
 /*******************************************************************/
 /************************* PUBLIC METHODS ***********************/
@@ -143,6 +160,49 @@ ADE_VOID_T ADE_Release(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 
 }
 
+/***************************** GET METHODS *******************************/
+
+ADE_API_RET_T ADE_GetActiveAlgos(ADE_T* p_ADE,ADE_UINT32_T *p_ActiveFlags)
+{
+
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetActiveAlgos,p_ActiveFlags);
+ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetActiveAlgos,p_ADE);
+
+
+*p_ActiveFlags=p_ADE->active_algs_flag;
+
+return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_GetBlow(ADE_T* p_ADE,ADE_BLOW_T **dp_blow)
+{
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetBlow,p_ADE);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetBlow,dp_blow);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetBlow,p_ADE->p_blow);
+
+    *dp_blow=p_ADE->p_blow;
+    return ADE_RET_SUCCESS;
+}
+ADE_API_RET_T ADE_GetSnap(ADE_T* p_ADE,ADE_SNAP_T **dp_snap)
+{
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetSnap,p_ADE);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetSnap,dp_snap);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetSnap,p_ADE->p_snap);
+
+    *dp_snap=p_ADE->p_snap;
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_GetProxy(ADE_T* p_ADE,ADE_PROXIMITY_T **dp_proxy)
+{
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetProxy,p_ADE);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetProxy,dp_proxy);
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_GetProxy,p_ADE->p_proxy);
+
+    *dp_proxy=p_ADE->p_proxy;
+    return ADE_RET_SUCCESS;
+}
 ADE_API_RET_T ADE_Configure(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T *p_in_struct)
 {
     ADE_UINT32_T blow_flag = BLOW_FLAG;
@@ -173,7 +233,7 @@ ADE_API_RET_T ADE_Configure(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_
     if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
     {
 
-        ret_snap = ADE_Snap_Configure( p_ADE->p_snap,p_in_struct->rate,p_in_struct->num_frames,p_in_struct->rate,n_pow_slots_i,n_used_indexes_i,
+        ret_snap = ADE_Snap_Configure( p_ADE->p_snap,p_in_struct->data,p_in_struct->num_frames,p_in_struct->rate,n_pow_slots_i,n_used_indexes_i,
                                      time_left_i,time_right_i,fft_len_i);
         ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure,ret_snap);
 
@@ -192,76 +252,7 @@ ADE_API_RET_T ADE_Configure(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_
 
 
 
-static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff)
-{
-    ADE_UINT32_T blow_flag = BLOW_FLAG;
-     ADE_UINT32_T snap_flag = SNAP_FLAG;
-    ADE_API_RET_T ret_blow=ADE_RET_ERROR;
-     ADE_API_RET_T ret_snap=ADE_RET_ERROR;
-      ADE_UINT32_T proxy_flag = PROXY_FLAG;
-    ADE_API_RET_T ret_proxy=ADE_RET_ERROR;
 
-    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
-    {
-
-        ret_blow = ADE_Blow_Configure_inout( p_ADE->p_blow,p_inbuff);
-        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_blow);
-
-    }
-    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
-    {
-
-        ret_snap = ADE_Snap_Configure_inout( p_ADE->p_snap,p_inbuff);
-        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_snap);
-
-    }
-    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,proxy_flag ))
-    {
-
-        ret_proxy = ADE_Proximity_Configure_inout( p_ADE->p_proxy,p_inbuff);
-        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_proxy);
-
-    }
-
-    return ADE_RET_SUCCESS;
-
-}
-
-static ADE_API_RET_T ADE_Configure_bufflength(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T buff_len)
-{
-    ADE_UINT32_T blow_flag = BLOW_FLAG;
-     ADE_UINT32_T snap_flag = SNAP_FLAG;
-    ADE_API_RET_T ret_blow=ADE_RET_ERROR;
-     ADE_API_RET_T ret_snap=ADE_RET_ERROR;
-      ADE_UINT32_T proxy_flag = PROXY_FLAG;
-    ADE_API_RET_T ret_proxy=ADE_RET_ERROR;
-    ADE_INT32_T snap_bufflen = p_ADE->p_snap->buff_len;
-
-
-    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
-    {
-
-        ret_blow = ADE_Blow_Configure_bufflength( p_ADE->p_blow,buff_len);
-        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret_blow);
-
-    }
-    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
-    {
-           ADE_CHECK_VALUE_EQUAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,buff_len,"%d",snap_bufflen);
-            fprintf(ADE_STDERR_STREAM," SNAP BUFF LEN CANNOT BE DINAMICALLY CHANGED \n");
-
-    }
-    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,proxy_flag ))
-    {
-
-        ret_proxy = ADE_Proximity_Configure_bufflength( p_ADE->p_proxy,buff_len);
-        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret_proxy);
-
-    }
-
-    return ADE_RET_SUCCESS;
-
-}
 
 
 //
@@ -336,12 +327,50 @@ ADE_API_RET_T ADE_Step(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_SCDF_Input_Int_T
 
 }
 
+ADE_BOOL_T ADE_IsBlow(ADE_UINT32_T active_algs_flag)
+{
+
+    if  ( (active_algs_flag&BLOW_FLAG)>>BLOW_BIT == 1)
+    {
+        return ADE_TRUE;
+    }
+    else
+    {
+         return ADE_FALSE;
+    }
+
+}
+
+ADE_BOOL_T ADE_IsSnap(ADE_UINT32_T active_algs_flag)
+{
+
+    if  ( (active_algs_flag&SNAP_FLAG)>>SNAP_BIT == 1)
+    {
+        return ADE_TRUE;
+    }
+    else
+    {
+         return ADE_FALSE;
+    }
+
+}
+
 ADE_SCDF_Output_Int_T* ADE_GetOutBuff(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i)
 {
 
 
-
+ADE_BLOW_T *p_blow=NULL;
+ADE_PROXIMITY_T *p_proxy=NULL;
+ADE_SNAP_T *p_snap=NULL;
 ADE_SCDF_Output_Int_T* p_out=NULL;
+ADE_API_RET_T ret=ADE_RET_ERROR;
+ADE_INT32_T blow_buff_len=0;
+ADE_BOOL_T blow_state;
+ADE_BOOL_T proxy_state;
+ADE_BOOL_T snap_state;
+ADE_FLOATING_T *p_blow_out=NULL;
+ADE_FLOATING_T FsIn,FsOut;
+
 
 #if (ADE_CHECK_INPUTS==ADE_CHECK_INPUTS_TRUE)
 
@@ -357,38 +386,78 @@ if (Sel_Flag_i==BLOW_FLAG) /*vale se i flag sono esclusivi*/
 {
    // ADE_Downsampler_Configure(ADE_DOWNSAMPLER_T *p_downsampler,ADE_FLOATING_T *p_inbuff,ADE_FLOATING_T *p_outbuff, ADE_SIZE_T out_buff_size);
 /************** Processing Methods ***************/
+ret=ADE_GetBlow(p_ADE,&p_blow);
+ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
 
+ret= ADE_Blow_GetBuffLen(p_blow, &blow_buff_len);
+ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+ret=ADE_Blow_GetState(p_blow, &blow_state);
+ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+ret= ADE_Blow_GetOut(p_blow, &p_blow_out);
+ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+ret=  ADE_Blow_GetFs(p_blow, &FsIn);
+ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+ret=  ADE_Blow_GetFsOut(p_blow, &FsOut);
+ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
 //ADE_API_RET_T ADE_Downsampler_Step(ADE_DOWNSAMPLER_T *p_downsampler);
     p_out=(p_ADE->p_blow_out_struct);
-    p_out->Fs_data=p_ADE->p_blow->Fs_o;
-    p_out->p_data=p_ADE->p_blow->p_out;
-    p_out->n_data=p_ADE->p_blow->buff_len_i*p_ADE->p_blow->Fs_o/p_ADE->p_blow->Fs_i;
+    p_out->Fs_data=FsOut;
+    p_out->p_data=p_blow_out;
+    p_out->n_data=blow_buff_len*FsOut/FsIn;
    // p_out->state=p_ADE->p_blow->state;
-    ADE_state_logic(p_out,p_ADE->p_blow->state);
-    ADE_toggle_logic(p_out,p_ADE->p_blow->state);
+    ret=  ADE_StateLogic(p_out,blow_state);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+   ret=   ADE_ToggleLogic(p_out,blow_state);
+   ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
 
 
 }
 else if (Sel_Flag_i==SNAP_FLAG)
 {
     p_out=(p_ADE->p_snap_out_struct);
-    p_out->Fs_data=p_ADE->p_snap->Fs;
+
+    ret=ADE_GetSnap(p_ADE,&p_snap);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+    ret=ADE_Snap_GetFs(p_snap,&FsIn);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+    p_out->Fs_data=FsIn;
     //p_out->p_data=p_ADE->p_snap->p_out;
     //p_out->n_data=p_ADE->p_snap->buff_len_o;
-    p_out->state=p_ADE->p_snap->state;
-   // ADE_state_logic(p_out,p_ADE->p_snap->state);
-    ADE_toggle_logic(p_out,p_ADE->p_snap->state);
+     ret=ADE_Snap_GetState(p_snap,&snap_state);
+     ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+    p_out->state=snap_state;
+   // ADE_StateLogic(p_out,p_ADE->p_snap->state);
+    ret=  ADE_ToggleLogic(p_out,snap_state);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
 
 }
 else if (Sel_Flag_i==PROXY_FLAG)
 {
+    ret=  ADE_GetProxy(p_ADE,&p_proxy);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+    ret=  ADE_Proximity_GetFsOut(p_proxy,&FsOut);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
+
+ ret=  ADE_Proximity_GetState(p_proxy,&proxy_state);
+ ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
+
     p_out=(p_ADE->p_proxy_out_struct);
-    p_out->Fs_data=p_ADE->p_proxy->Fs_o;
+    p_out->Fs_data=FsOut;
     //p_out->p_data=p_ADE->p_snap->p_out;
     //p_out->n_data=p_ADE->p_snap->buff_len_o;
-    p_out->state=p_ADE->p_proxy->state;
-   // ADE_state_logic(p_out,p_ADE->p_snap->state);
-    ADE_toggle_logic(p_out,p_ADE->p_proxy->state);
+    p_out->state=proxy_state;
+   // ADE_StateLogic(p_out,p_ADE->p_snap->state);
+    ret=  ADE_ToggleLogic(p_out,proxy_state);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_GetOutBuff,ret);
 
 }
 
@@ -479,9 +548,12 @@ static ADE_BOOL_T ADE_IsEmptyFlag(ADE_UINT32_T Sel_Flag_i)
 }
 
 
-static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
+static ADE_API_RET_T ADE_ToggleLogic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
 {
     ADE_UINT32_T antibouncing_counter = 10;
+
+
+     ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_ToggleLogic,p_out);
 
 
         if  ( (p_out->n_calls_toggle_logic==0) && (ADE_state==ADE_TRUE) )
@@ -508,10 +580,11 @@ static ADE_API_RET_T ADE_toggle_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T AD
 
 }
 
-static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
+static ADE_API_RET_T ADE_StateLogic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE_state)
 {
     ADE_UINT32_T antibouncing_counter = 10;
 
+ ADE_CHECK_INPUTPOINTER(ADE_CLASS_ADE,ADE_METHOD_StateLogic,p_out);
 
         if   (p_out->n_calls_state_logic==0)
         {
@@ -532,6 +605,93 @@ static ADE_API_RET_T ADE_state_logic(ADE_SCDF_Output_Int_T* p_out,ADE_BOOL_T ADE
             }
         }
 
+
+    return ADE_RET_SUCCESS;
+
+}
+
+static ADE_API_RET_T ADE_Configure_inout(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_FLOATING_T *p_inbuff)
+{
+    ADE_UINT32_T blow_flag = BLOW_FLAG;
+     ADE_UINT32_T snap_flag = SNAP_FLAG;
+    ADE_API_RET_T ret_blow=ADE_RET_ERROR;
+     ADE_API_RET_T ret_snap=ADE_RET_ERROR;
+      ADE_UINT32_T proxy_flag = PROXY_FLAG;
+    ADE_API_RET_T ret_proxy=ADE_RET_ERROR;
+
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,blow_flag ))
+    {
+
+        ret_blow = ADE_Blow_Configure_inout( p_ADE->p_blow,p_inbuff);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_blow);
+
+    }
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,snap_flag ))
+    {
+
+        ret_snap = ADE_Snap_Configure_inout( p_ADE->p_snap,p_inbuff);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_snap);
+
+    }
+    if (  ADE_IsActiveAlg( p_ADE->active_algs_flag,Sel_Flag_i,proxy_flag ))
+    {
+
+        ret_proxy = ADE_Proximity_Configure_inout( p_ADE->p_proxy,p_inbuff);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_inout,ret_proxy);
+
+    }
+
+    return ADE_RET_SUCCESS;
+
+}
+
+static ADE_API_RET_T ADE_Configure_bufflength(ADE_T* p_ADE,ADE_UINT32_T Sel_Flag_i,ADE_UINT32_T buff_len)
+{
+    ADE_UINT32_T blow_flag = BLOW_FLAG;
+     ADE_UINT32_T snap_flag = SNAP_FLAG;
+    ADE_API_RET_T ret_blow=ADE_RET_ERROR;
+     ADE_API_RET_T ret_snap=ADE_RET_ERROR;
+      ADE_UINT32_T proxy_flag = PROXY_FLAG;
+    ADE_API_RET_T ret_proxy=ADE_RET_ERROR;
+    ADE_API_RET_T ret=ADE_RET_ERROR;
+    ADE_SNAP_T *p_snap=NULL;
+    ADE_BLOW_T *p_blow=NULL;
+    ADE_UINT32_T active_flags=0;
+    ADE_INT32_T snap_bufflen=0;
+
+
+
+
+ret=  ADE_GetActiveAlgos(p_ADE,&active_flags);
+ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret);
+
+    if (  ADE_IsActiveAlg( active_flags,Sel_Flag_i,blow_flag ))
+    {
+        ret= ADE_GetBlow(p_ADE,&p_blow);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret);
+        ret_blow = ADE_Blow_Configure_bufflength( p_blow,buff_len);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret_blow);
+
+    }
+    if (  ADE_IsActiveAlg( active_flags,Sel_Flag_i,snap_flag ))
+    {
+            ret= ADE_GetSnap(p_ADE,&p_snap);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret);
+
+            ret=ADE_Snap_GetBuffLength(p_snap,&snap_bufflen);
+             ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret);
+
+           ADE_CHECK_VALUE_EQUAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,buff_len,"%d",snap_bufflen);
+            fprintf(ADE_STDERR_STREAM," SNAP BUFF LEN CANNOT BE DINAMICALLY CHANGED \n");
+
+    }
+    if (  ADE_IsActiveAlg( active_flags,Sel_Flag_i,proxy_flag ))
+    {
+
+        ret_proxy = ADE_Proximity_Configure_bufflength( p_ADE->p_proxy,buff_len);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_ADE,ADE_METHOD_Configure_bufflength,ret_proxy);
+
+    }
 
     return ADE_RET_SUCCESS;
 

@@ -2,29 +2,6 @@
 #define _ADE_BLAS_LEVEL1_H
 #include "headers/ADE_typedefs.h"
 
-struct ADE_blas_level1_S
-{
-    //parameters
-    ADE_MATH_ATTRIBUTE_T math_type;
-    ADE_INT32_T N;
-    ADE_FLOATING_T *p_ALPHA; //pointer for possible complex
-    ADE_FLOATING_T *p_X;
-    ADE_INT32_T INCX;
-    ADE_FLOATING_T *p_Y;
-    ADE_INT32_T INCY;
-    ADE_FLOATING_T *p_D1;
-    ADE_FLOATING_T *p_D2;
-    ADE_FLOATING_T *p_A;
-    ADE_FLOATING_T *p_B;
-    ADE_FLOATING_T *p_C;
-    ADE_FLOATING_T *p_S;
-    ADE_FLOATING_T *p_PARAM;
-    //ADE_FLOATING_T *p_out;
-    ADE_BLAS_LEVEL1_FCN_TYPE1_T blas_level1_fcn_type1;
-    ADE_BLAS_LEVEL1_FCN_TYPE2_T blas_level1_fcn_type2;
-    ADE_BLAS_LEVEL1_FCN_TYPE3_T blas_level1_fcn_type3;
-};
-
 #ifdef __cplusplus
     extern "C" {
 #endif

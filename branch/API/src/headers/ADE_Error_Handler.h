@@ -11,22 +11,22 @@ static ADE_Error_Handler_T ade_error_handler;
 
 
 #define ADE_PRINT_ERRORS(sev,type,class,met,var,format,stream)  ADE_Error_Handler_SetError(sev,type,class,met,format,&(var),#var,(FILE*)stream)
-#define ADE_CHECK_MEMALLOC(class,met,var) if(ADE_Error_Handler_CheckMemAlloc(class,met,"%p",&(var),#var)==ADE_RET_ERROR) return ADE_RET_ERROR
+#define ADE_CHECK_MEMALLOC(class,met,var) if(ADE_Error_Handler_CheckMemAlloc(class,met,"%p",&(var),#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
 #define ADE_CHECK_INPUTPOINTER(class,met,var) if(ADE_Error_Handler_CheckInputPointer(class,met,"%p",var,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
 #define ADE_CHECK_INPUTPOINTER_NORET(class,met,var) ADE_Error_Handler_CheckInputPointer(class,met,"%p",var,#var)
-#define ADE_CHECK_ADERETVAL(class,met,var) if(ADE_Error_Handler_CheckReturn(class,met,"%d",&(var),#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_VALUE_EQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_EQUAL,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_VALUE_NOTEQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_VALUE_NOTEQUAL_ERRNO(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,#var)==ADE_RET_ERROR) { fprintf(stderr,"ERRNO %d\n",errno);return ADE_RET_ERROR; }
-#define ADE_CHECK_VALUE_MAJOR(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_MAJOR,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_VALUE_MAJOREQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_INTERVAL_L_MIN_G_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_INTERVAL_LE_MIN_GE_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_LE_MIN_GE_MAX,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_INTERVAL_G_MIN_L_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_L_MAX,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_INTERVAL_GE_MIN_LE_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_GE_MIN_LE_MAX,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_INTERVAL_G_MIN_LE_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_LE_MAX,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-#define ADE_CHECK_VALUE_LIST(class,met,var,format,p_list,n_ele) if(ADE_Error_Handler_CheckList(class,met,format,&(var),p_list,n_ele,#var)==ADE_RET_ERROR) return ADE_RET_ERROR
-
+#define ADE_CHECK_ADERETVAL(class,met,var) if(ADE_Error_Handler_CheckReturn(class,met,"%d",&(var),#var)==ADE_RET_ERROR)  { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;} else if (ADE_Error_Handler_CheckReturn(class,met,"%d",&(var),#var)==ADE_RET_WARNING)  { fprintf(stderr," Warning : File %s Line %d\n\n",__FILE__,__LINE__);}
+#define ADE_CHECK_VALUE_EQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_EQUAL,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_VALUE_NOTEQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_VALUE_NOTEQUAL_ERRNO(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL,#var)==ADE_RET_ERROR) { fprintf(stderr,"ERRNO %d\n",errno);{ fprintf(stderr,"Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}}
+#define ADE_CHECK_VALUE_MAJOR(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_MAJOR,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_VALUE_MAJOREQUAL(class,met,var,format,val) if(ADE_Error_Handler_CheckValue(class,met,format,&(var),&(val),ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_INTERVAL_L_MIN_G_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_L_MIN_G_MAX,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_INTERVAL_LE_MIN_GE_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_LE_MIN_GE_MAX,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_INTERVAL_G_MIN_L_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_L_MAX,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_INTERVAL_GE_MIN_LE_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_GE_MIN_LE_MAX,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_INTERVAL_G_MIN_LE_MAX(class,met,var,format,val1,val2) if(ADE_Error_Handler_CheckInterval(class,met,format,&(var),&(val1),&(val2),ADE_ERROR_HANDLER_CHECKVALUE_G_MIN_LE_MAX,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_VALUE_LIST(class,met,var,format,p_list,n_ele) if(ADE_Error_Handler_CheckList(class,met,format,&(var),p_list,n_ele,#var)==ADE_RET_ERROR) { fprintf(stderr," Error : File %s Line %d\n\n",__FILE__,__LINE__);return ADE_RET_ERROR;}
+#define ADE_CHECK_RET_FAST(s) if (s<0) return -11111
 
 #ifdef __cplusplus
     extern "C" {

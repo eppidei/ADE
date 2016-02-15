@@ -12,140 +12,91 @@
 #include "headers/ADE_Blow.h"
 #include "headers/ADE_Snap.h"
 #include "headers/ADE_SCDF_Interface.h"
+#include "headers/ADE_TestBench.h"
+#include "headers/ADE_Error_Handler.h"
+#include "headers/ADE_TestBench.h"
 #include <math.h>
 
 
 
 int main()
 {
-
-ADE_T *p_ade_handle=NULL;
-ADE_UINT32_T audio_buff_len = 0;
-ADE_FLOATING_T audio_fs=0;
-ADE_SCDF_Input_Int_T sensor_data;
-ADE_FLOATING_T *p_data=NULL,*p_global_outbuff=NULL;
-ADE_UINT32_T n_simul_cycles = 1024,cycle_idx=0;
-ADE_SCDF_Output_Int_T *p_out=NULL;
-ADE_API_RET_T ret_blow_step=ADE_RET_ERROR;
-
-/*********** SNAP CASE **************/
-ADE_UINT32_T n_pow_slots_i = 2,n_pow_slots_mat;
-ADE_UINT32_T n_max_indexes_i = 1,n_max_indexes_mat;
-ADE_FLOATING_T time_left_i =0.5e-3,time_left_mat;
-ADE_FLOATING_T time_right_i = 6e-3,time_right_mat;
-ADE_UINT32_T fft_len_i = 256,fft_len_mat;
-ADE_API_RET_T ret_blow_snap=ADE_RET_ERROR;
-ADE_FLOATING_T frame_time_len = 300e-3;
-ADE_UINT32_T Fs_i=22050;
-ADE_UINT32_T frame_len = 256;//floor(frame_time_len*Fs_i+0.5)-1;
-ADE_UINT32_T frame_len_mat = 0,n_frames=0;
-ADE_FLOATING_T *p_pos_event_idx=NULL,*p_neg_event_idx=NULL;
-ADE_UINT32_T pos_cnt=0,neg_cnt=0,i=0;
-
+FILE *p_fid=NULL;
+ADE_UINT32_T algo_flag=BLOW_FLAG;
+ADE_T *p_ade=NULL;
+ADE_BLOW_T *p_blow=NULL;
+ADE_SNAP_T *p_snap=NULL;
+ADE_MATLAB_T *p_mat=NULL;
+ADE_INT32_T audio_buff_len,n_simul_cycles;
+ADE_FLOATING_T audio_fs;
+ADE_CHAR_T frame_len_name[32];
+ADE_CHAR_T fs_name[32];
+ADE_CHAR_T gain_varname[32];
+#ifdef ADE_CONFIGURATION_INTERACTIVE
+ADE_SOURCES_TYPE_T SrcType=ADE_SOURCES_MATLAB;
+char* BlowScriptPath="/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Blow/Matlab/Main_scripts/blow_fine_control_swlike.m";
+char* BlowWsPath="./blow_config_ws.mat";
+char* SnapScriptPath=ADE_SNAP_SCRIPT;
+char* SnapWsPath=ADE_SNAP_WS;
+char *MatExePath=ADE_MATLAB_EXE;
+char *BlowInBuffName="audio_left";
+char *Blowlenname="Frame_len";
+char *BlowFsname="Fs";
+char *SnapInBuffName="actual_samples";
+char *Snaplenname="frame_len";
+char *SnapFsname="Fs";
+#else
+ADE_SOURCES_TYPE_T SrcType=ADE_SOURCES_SINE;
 audio_buff_len=256;
 audio_fs=44100;
-n_simul_cycles=8192;
-//ADE_Init(&p_ade_handle,BLOW_FLAG,audio_buff_len,audio_fs);
-ADE_Init(&p_ade_handle,SNAP_FLAG);//,audio_buff_len,audio_fs);
+n_simul_cycles=100;
+#endif
+
+ADE_API_RET_T ret;
+ADE_TESTBENCH_T *p_tb;
+
+p_fid=fopen("debug.txt","w");
+
+ret=ADE_TestBench_Init(&p_tb);
+ADE_CHECK_RET_FAST(ret);
 
 #ifdef ADE_CONFIGURATION_INTERACTIVE
-/*************** BLOW CASE *****************/
-//audio_buff_len=ADE_Matlab_GetScalar(p_ade_handle->p_blow->p_mat,"Frame_len");
-//audio_fs=ADE_Matlab_GetScalar(p_ade_handle->p_blow->p_mat,"Fs");
-//n_simul_cycles=ADE_Matlab_GetScalar(p_ade_handle->p_blow->p_mat,"n_iterations");
-//ADE_Release(p_ade_handle,BLOW_FLAG);
-//p_ade_handle=NULL;
-//ADE_Init(&p_ade_handle,BLOW_FLAG,audio_buff_len,audio_fs);
-/*********** SNAP CASE **************/
-audio_buff_len=ADE_Matlab_GetScalar(p_ade_handle->p_snap->p_mat,"frame_len");
-audio_fs=ADE_Matlab_GetScalar(p_ade_handle->p_snap->p_mat,"Fs");
-n_simul_cycles=ADE_Matlab_GetScalar(p_ade_handle->p_snap->p_mat,"n_frames");
-ADE_Release(p_ade_handle,SNAP_FLAG);
-p_ade_handle=NULL;
-ADE_Init(&p_ade_handle,SNAP_FLAG);//,audio_buff_len,audio_fs);
-#endif
-
-
-
-//ADE_Configure_params(p_ade_handle,BLOW_FLAG);
-
-#ifndef ADE_CONFIGURATION_INTERACTIVE
-p_data=(ADE_FLOATING_T*)calloc(audio_buff_len,sizeof(ADE_FLOATING_T));
-#endif
-p_global_outbuff=(ADE_FLOATING_T*)calloc(audio_buff_len*n_simul_cycles,sizeof(ADE_FLOATING_T));
-
-p_pos_event_idx=(ADE_FLOATING_T *)calloc(frame_len*n_max_indexes_i,sizeof(ADE_FLOATING_T));
-p_neg_event_idx=(ADE_FLOATING_T *)calloc(frame_len*n_max_indexes_i,sizeof(ADE_FLOATING_T));
-
-
-sensor_data.num_channels=1;
-sensor_data.num_frames=audio_buff_len;
-sensor_data.rate=audio_fs;
-sensor_data.type=ADE_AudioInput;
-ADE_Configure(p_ade_handle,SNAP_FLAG,&sensor_data);
-for (cycle_idx=0;cycle_idx<n_simul_cycles;cycle_idx++)
+if (algo_flag==BLOW_FLAG)
 {
-    #ifdef ADE_CONFIGURATION_INTERACTIVE
-    //p_data=ADE_Matlab_GetDataPointer(p_ade_handle->p_blow->p_mat,"audio_left")+cycle_idx*audio_buff_len;
-    p_data=ADE_Matlab_GetDataPointer(p_ade_handle->p_snap->p_mat,"actual_samples")+cycle_idx*audio_buff_len;
-    #else
-    fill_buffer(p_data,audio_buff_len);
-    #endif
+ret= ADE_TestBench_ConfigureMatlab(p_tb,SrcType,algo_flag,BlowScriptPath, BlowWsPath,MatExePath ,BlowInBuffName,Blowlenname,BlowFsname);
+ADE_CHECK_RET_FAST(ret);
+}
+else if (algo_flag==SNAP_FLAG)
+{
+ret= ADE_TestBench_ConfigureMatlab(p_tb,SrcType,algo_flag,SnapScriptPath, SnapWsPath,MatExePath ,SnapInBuffName,Snaplenname,SnapFsname);
+ADE_CHECK_RET_FAST(ret);
+}
+#else
+ret= ADE_TestBench_Configure(p_tb,SrcType,algo_flag, audio_buff_len, audio_fs,(double)1.0 );
+ADE_CHECK_RET_FAST(ret);
+ret=ADE_TestBench_SetIterations(p_tb,n_simul_cycles);
+ADE_CHECK_RET_FAST(ret);
+#endif
 
-    sensor_data.data=p_data;
-   // ret_blow_step=ADE_Step(p_ade_handle,BLOW_FLAG,&sensor_data);
-    ret_blow_snap=ADE_Step(p_ade_handle,SNAP_FLAG,&sensor_data);
-  //  ADE_Blow_Print(p_ade_handle->p_blow,stdout,"p_blow","p_ade_handle");
-   // if (ret_blow_step==ADE_RET_ERROR) return -2;
-   if (ret_blow_snap==ADE_RET_ERROR) return -2;
 
-   // p_out=ADE_GetOutBuff(p_ade_handle,BLOW_FLAG);
-   p_out=ADE_GetOutBuff(p_ade_handle,SNAP_FLAG);
 
-  //  memcpy(p_global_outbuff+cycle_idx*audio_buff_len,p_out->p_data,p_out->n_data*sizeof(ADE_FLOATING_T));
-    /*********SNAP CASE *************/
-    for (i=0;i<n_max_indexes_i;i++)
-    {
-        if (p_ade_handle->p_snap->n_found_indexes>0)
-        {
-            if (p_ade_handle->p_snap->p_snaps[i]==true)
-            {
-                p_pos_event_idx[pos_cnt]=p_ade_handle->p_snap->p_indexes[i]+cycle_idx*p_ade_handle->p_snap->buff_len;
-                pos_cnt++;
-            }
-            else if (p_ade_handle->p_snap->p_snaps[i]==false)
-            {
-                p_neg_event_idx[neg_cnt]=p_ade_handle->p_snap->p_indexes[i]+cycle_idx*p_ade_handle->p_snap->buff_len;
-                neg_cnt++;
-            }
-        }
-    }
+ret=ADE_TestBench_RunTest(p_tb);
+ADE_CHECK_RET_FAST(ret);
+ret=ADE_TestBench_Verify(p_tb);
+ADE_CHECK_RET_FAST(ret);
 
+if (algo_flag==BLOW_FLAG)
+{
+ret=ADE_TestBench_GetAdeHandle(p_tb,&p_ade);
+ADE_CHECK_RET_FAST(ret);
+ret=ADE_GetBlow(p_ade,&p_blow);
+ADE_CHECK_RET_FAST(ret);
+ ret=ADE_Blow_Print(p_blow, p_fid,"BLOW", "TB");
+ ADE_CHECK_RET_FAST(ret);
 }
 
-ADE_Snap_Print(p_ade_handle->p_snap,stdout,"p_snap","p_ade_handle");
-
-#ifdef ADE_CONFIGURATION_INTERACTIVE
-// ADE_Matlab_PutVarintoWorkspace(p_ade_handle->p_blow->p_mat, p_global_outbuff, "outt", 1, audio_buff_len*n_simul_cycles, ADE_MATH_REAL);
-//ADE_Matlab_launch_script_segment(p_ade_handle->p_blow->p_mat,"Blow");
-//ADE_Matlab_Evaluate_StringnWait(p_ade_handle->p_blow->p_mat, "figure;hold on;plot(outt,'or');plot(expanded_pow_iir,'+b');hold off;");
-ADE_Matlab_PutVarintoWorkspace(p_ade_handle->p_snap->p_mat, p_pos_event_idx, "pos_event_idx_C", 1, n_max_indexes_i*n_simul_cycles, ADE_MATH_REAL);
-ADE_Matlab_PutVarintoWorkspace(p_ade_handle->p_snap->p_mat, p_neg_event_idx, "neg_event_idx_C", 1, n_max_indexes_i*n_simul_cycles, ADE_MATH_REAL);
-/*** Run Matlab algorithm****/
-ADE_Matlab_launch_script_segment(p_ade_handle->p_snap->p_mat,"Snap");
-/* Compare Results */
-ADE_Matlab_Evaluate_StringnWait(p_ade_handle->p_snap->p_mat, "figure;hold on;plot(pos_event_idx_C,'or');plot(positive_events_idx,'+b');hold off;");
-ADE_Matlab_Evaluate_StringnWait(p_ade_handle->p_snap->p_mat, "figure;hold on;plot(neg_event_idx_C,'or');plot(negative_events_idx,'+b');hold off;");
-#endif // ADE_CONFIGURATION_INTERACTIVE
-
-//ADE_Release(p_ade_handle,BLOW_FLAG);
-ADE_Release(p_ade_handle,SNAP_FLAG);
-free(p_global_outbuff);
-#ifndef ADE_CONFIGURATION_INTERACTIVE
-free(p_data);
-#endif
-
-
+ADE_TestBench_Release(p_tb);
+fclose(p_fid);
 
 return 0;
 }

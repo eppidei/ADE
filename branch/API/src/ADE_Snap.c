@@ -16,6 +16,68 @@
 #include "mex.h"
 #endif
 
+
+struct ADE_SNAP_S
+{
+    ADE_FLOATING_T Fs;
+    ADE_INT32_T buff_len;
+    ADE_INT32_T n_pow_est_slots;/* slots to divide the frame for power estimation into smaller time*/
+    ADE_INT32_T n_max_pow_est_slots;
+  // ADE_FLOATING_T threshold;
+    ADE_FLOATING_T frame_time_len;
+   // ADE_UINT32_T frame_len;
+    ADE_FLOATING_T freq_left;
+    ADE_FLOATING_T freq_right;
+    ADE_FLOATING_T spectral_threshold_schiocco ;
+    ADE_FLOATING_T thresh_gain;
+    ADE_FLOATING_T thresh_bias;
+    ADE_FLOATING_T at;
+    ADE_FLOATING_T rt;
+    ADE_FLOATING_T time_left;
+    ADE_FLOATING_T time_right;
+    ADE_FLOATING_T samp_range_search_time ;
+    ADE_FLOATING_T max_range[2];
+    ADE_INT32_T samp_range_search;
+    ADE_INT32_T search_step ;
+    ADE_INT32_T look_ahead_step;
+    ADE_INT32_T n_max_indexes;
+    ADE_INT32_T n_actual_indexes;
+    ADE_INT32_T n_found_indexes;
+    ADE_INT32_T extract_len;
+    ADE_INT32_T fft_len;
+    ADE_INT32_T max_extract_len;
+    ADE_INT32_T max_fft_len;
+    /*in out buffers*/ //allocati fuori
+    ADE_FLOATING_T *p_in;
+    //ADE_FLOATING_T *p_out;
+    /*Internal buffers*/ //allocati internamente
+    ADE_FLOATING_T *p_pow_est;//lungo buff_len
+    ADE_FLOATING_T *p_dot_vals;//lungo n_slots
+    ADE_FLOATING_T *p_thresh;//lungo buff_len
+    ADE_FLOATING_T *p_tgk;//lungo buff_len usato per tgk e cc
+    ADE_INT32_T *p_indexes;//lungo n_max_indexes
+    ADE_ULONG_T *p_sort_indexes;
+    ADE_FLOATING_T *p_index_vals;//lungo n_max_indexes
+    ADE_FLOATING_T **dp_segments;//lungo n_max_indexes*extract_len
+    ADE_VOID_T **dp_spectrum;//lungo n_max_indexes*extract_len*2
+    ADE_FLOATING_T *p_percent_pow;
+    ADE_BOOL_T *p_snaps;
+    ADE_BOOL_T state;
+  //  ADE_FLOATING_T *p_tgk_temp;
+    /*Friend Classes*/
+    ADE_IIR_T *p_iir;
+    ADE_blas_level1_T **dp_blas_l1_pow_est;
+    ADE_blas_level1_T *p_blas_l1_threshold;
+    ADE_blas_level2_T *p_blas_l2_tgk1;
+    ADE_blas_level2_T *p_blas_l2_tgk2;
+    ADE_blas_level1_T **dp_blas_l1_pow_spect_whole;
+    ADE_blas_level1_T **dp_blas_l1_pow_spect_band;
+    ADE_FFT_T** dp_fft;
+ /*   #ifdef ADE_CONFIGURATION_INTERACTIVE*/
+    ADE_MATLAB_T *p_mat;
+ /*   #endif*/
+
+};
 /*******************************************************************/
 /************************* PRIVATE METHODS PROTOTYPES***********************/
 /*******************************************************************/
@@ -76,14 +138,14 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap)//,ADE_UINT32_T buff_len,ADE_UIN
     ADE_INT32_T max_extract_len = ADE_SNAP_MAX_EXTRACT_LEN;
     ADE_INT32_T max_fft_len = ADE_SNAP_MAX_FFT_LEN;
 
-    #ifdef ADE_CONFIGURATION_INTERACTIVE
+   /* #ifdef ADE_CONFIGURATION_INTERACTIVE
      char *p_matpath = ADE_MATLAB_EXE ;
 	 char *p_scriptpath=ADE_SNAP_SCRIPT;
 	 char *p_matfilepath=ADE_SNAP_WS;
 	 ADE_API_RET_T mat_ret=0;
 	// ADE_MATLAB_T* p_mat=NULL;
      Engine *p_mateng=NULL;
-	#endif
+	#endif*/
 
     p_this=calloc(1,sizeof(ADE_SNAP_T));
     ADE_CHECK_MEMALLOC(ADE_CLASS_SNAP,ADE_METHOD_Init,p_this);
@@ -108,14 +170,7 @@ ADE_API_RET_T ADE_Snap_Init(ADE_SNAP_T **p_snap)//,ADE_UINT32_T buff_len,ADE_UIN
 //             return ADE_RET_ERROR;
 //        }
 
-         /******** MATLAB ALLOC ********/
 
-            #ifdef ADE_CONFIGURATION_INTERACTIVE
-
-            mat_ret = ADE_Matlab_Init(&(p_this->p_mat),p_mateng,p_scriptpath, p_matfilepath,p_matpath);
-            ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Init,mat_ret);
-
-            #endif
 
         /****** ALLOC OUT BUFF TGK ******/
         p_this->p_tgk=calloc(n_max_int_buff_len,sizeof(ADE_FLOATING_T));
@@ -374,15 +429,103 @@ ADE_VOID_T ADE_Snap_Release(ADE_SNAP_T *p_snap)
     }
     ADE_CHECKNFREE(p_snap->dp_fft);
 
-     #ifdef ADE_CONFIGURATION_INTERACTIVE
-     ADE_Matlab_Release(p_snap->p_mat);
-     #endif
+
     //
     ADE_CHECKNFREE(p_snap);
 
 
 
 }
+/*************************GET Methdos *****************************/
+ADE_API_RET_T ADE_Snap_GetIndexes(ADE_SNAP_T *p_snap,ADE_INT32_T **dp_idx)
+{
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetIndexes,p_snap);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetIndexes,dp_idx);
+
+    *dp_idx=p_snap->p_indexes;
+
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Snap_GetMatlab(ADE_SNAP_T* p_snap, ADE_MATLAB_T **dp_mat)
+{
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetMatlab,dp_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetMatlab,p_snap);
+
+
+    *dp_mat=p_snap->p_mat;
+
+    return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_Snap_GetBuffLength(ADE_SNAP_T *p_snap,ADE_INT32_T *p_blen)
+{
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetBuffLength,p_snap);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetBuffLength,p_blen);
+
+    *p_blen=p_snap->buff_len;
+
+    return ADE_RET_SUCCESS;
+}
+ADE_API_RET_T ADE_Snap_GetNoFoundIndexes(ADE_SNAP_T *p_snap,ADE_INT32_T *p_NoFoundIdx)
+{
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetNoFoundIndexes,p_snap);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetNoFoundIndexes,p_NoFoundIdx);
+
+    *p_NoFoundIdx=p_snap->n_found_indexes;
+
+    return ADE_RET_SUCCESS;
+}
+ADE_API_RET_T ADE_Snap_GetSnaps(ADE_SNAP_T *p_snap,ADE_BOOL_T **dp_snaps)
+{
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetSnaps,p_snap);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetSnaps,dp_snaps);
+
+    *dp_snaps=p_snap->p_snaps;
+    return ADE_RET_SUCCESS;
+}
+ADE_API_RET_T ADE_Snap_GetFs(ADE_SNAP_T *p_snap,ADE_FLOATING_T *p_Fs)
+{
+    ADE_FLOATING_T val0 = 0;
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetSnaps,p_snap);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetSnaps,p_Fs);
+    ADE_CHECK_VALUE_MAJOR(ADE_CLASS_SNAP,ADE_METHOD_GetSnaps,p_snap->Fs,"%f",val0);
+
+    *p_Fs=p_snap->Fs;
+    return ADE_RET_SUCCESS;
+}
+
+ADE_API_RET_T ADE_Snap_GetState(ADE_SNAP_T *p_snap,ADE_BOOL_T *p_state)
+{
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetState,p_snap);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_GetState,p_state);
+
+    *p_state=p_snap->state;
+
+    return ADE_RET_SUCCESS;
+}
+
+/******************** Set Methods **************************/
+
+ADE_API_RET_T ADE_Snap_SetMatlab(ADE_SNAP_T* p_snap, ADE_MATLAB_T *p_mat)
+{
+
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_SetMatlab,p_mat);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_SNAP,ADE_METHOD_SetMatlab,p_snap);
+
+
+    p_snap->p_mat=p_mat;
+
+    return ADE_RET_SUCCESS;
+
+}
+
 /******* Configure methods  ***********************/
 
 ADE_API_RET_T ADE_Snap_Configure_inout(ADE_SNAP_T *p_snap,ADE_FLOATING_T *p_buff)
@@ -789,6 +932,7 @@ ADE_FLOATING_SP_T slot_len=0, mod_res=0;
 ADE_UINT32_T uslot_len=0;
 FILE *p_stream=ADE_STDERR_STREAM;
 ADE_CPLX_T *p_init_bin=NULL;
+ADE_API_RET_T ret=ADE_RET_ERROR;
 ADE_API_RET_T ret_fsin=ADE_RET_ERROR;
 ADE_API_RET_T ret_n_slots=ADE_RET_ERROR;
 ADE_API_RET_T ret_n_idxs=ADE_RET_ERROR;
@@ -824,16 +968,26 @@ ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_fft_len);
  #ifdef ADE_CONFIGURATION_INTERACTIVE
  double  *p_max_array=NULL;
 
-    freq_left=ADE_Matlab_GetScalar(p_snap->p_mat,"freq_left");
-    freq_right=ADE_Matlab_GetScalar(p_snap->p_mat,"freq_right");
-    spectral_threshold_schiocco=ADE_Matlab_GetScalar(p_snap->p_mat,"spectral_threshold_schiocco");
-    thresh_gain=ADE_Matlab_GetScalar(p_snap->p_mat,"thresh_gain");
-    thresh_bias=ADE_Matlab_GetScalar(p_snap->p_mat,"thresh_bias");
-    attack_time=ADE_Matlab_GetScalar(p_snap->p_mat,"at");
-    release_time=ADE_Matlab_GetScalar(p_snap->p_mat,"rt");
-    samp_range_search_time=ADE_Matlab_GetScalar(p_snap->p_mat,"samp_range_search_time");
-    samp_range_search=ADE_Matlab_GetScalar(p_snap->p_mat,"samp_range_search");
-    p_max_array= ADE_Matlab_GetDataPointer(p_snap->p_mat, "max_range");
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"freq_left",&freq_left);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"freq_right",&freq_right);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"spectral_threshold_schiocco",&spectral_threshold_schiocco);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"thresh_gain",&thresh_gain);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"thresh_bias",&thresh_bias);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"at",&attack_time);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"rt",&release_time);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"samp_range_search_time",&samp_range_search_time);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"samp_range_search",&samp_range_search);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret= ADE_Matlab_GetDataPointer(p_snap->p_mat, "max_range",&p_max_array);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
     if (p_max_array!=NULL)
     {
         max_range[0]  = p_max_array[0];
@@ -844,10 +998,14 @@ ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret_fft_len);
         ADE_PRINT_ERRORS(ADE_ERROR,ADE_RETCHECKS,ADE_CLASS_SNAP,ADE_METHOD_Configure_params,p_max_array,"%p",(FILE*)ADE_STD_STREAM);
         return ADE_RET_ERROR;
     }
-    search_step=ADE_Matlab_GetScalar(p_snap->p_mat,"search_step");
-    look_ahead_step=ADE_Matlab_GetScalar(p_snap->p_mat,"look_ahead_step");
-    time_left=ADE_Matlab_GetScalar(p_snap->p_mat,"time_left");
-    time_right=ADE_Matlab_GetScalar(p_snap->p_mat,"time_right");
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"search_step",&search_step);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"look_ahead_step",&look_ahead_step);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"time_left",&time_left);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
+    ret=ADE_Matlab_GetScalar(p_snap->p_mat,"time_right",&time_right);
+    ADE_CHECK_ADERETVAL(ADE_CLASS_SNAP,ADE_METHOD_Configure_params,ret);
 #else
 
 freq_left=1800;

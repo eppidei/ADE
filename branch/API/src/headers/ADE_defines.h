@@ -5,6 +5,8 @@
 #define ADE_GENERAL_MALLOC_BUFF_LEN (4096)
 #endif
 
+#define _2POW16 (65536)
+#define _2POW18 (262144)
 
 /****************** Macros **************************/
 #define ADE_CHECKNFREE(x)  if(x!=NULL) { free(x); }
@@ -194,6 +196,7 @@
 #define ADE_MATLAB_EXE "/home/leonardo/Ubuntu_home/leonardo/Programmi/MATLAB/R2013A/bin/matlab"
 #define ADE_SNAP_SCRIPT "/home/leonardo/Windows_home/WCPYS_win/ADE_wcpy2/Snap/Matlab/Main_scripts/impulse_frame.m"
 #define ADE_SNAP_WS "./snap_config_ws.mat"
+#define ADE_MATLAB_MAX_N_ARRAYS (64)
 /****** FFT ******/
 #define ADE_FFT_MAX_BUFF_LEN (1024)
 /**************************** FFTW **********************************/
@@ -250,6 +253,8 @@
 #define ADE_UDP_SENDER_MAX_BUFFER_BYTES (1522)
 /**************** UDP RECEIVER ********************/
 #define ADE_UDP_RECEIVER_MAX_BUFFER_BYTES (1522)
+/*****************TESTBENCH *********************/
+#define ADE_TB_MAX_OUT_TOTAL_BUFFER (_2POW18)
 
 
 

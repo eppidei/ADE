@@ -4,6 +4,7 @@
 #include "headers/ADE_Error_Handler.h"
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 
 

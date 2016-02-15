@@ -17,6 +17,27 @@
 #include "mex.h"
 #endif
 
+struct ADE_blas_level2_S
+{
+    ADE_MATH_ATTRIBUTE_T math_type;
+    ADE_CHAR_T UPLO;
+    ADE_CHAR_T TRANS;
+    ADE_CHAR_T DIAG;
+    ADE_INT32_T M;
+    ADE_INT32_T N;
+    ADE_INT32_T K;
+    ADE_INT32_T KL;
+    ADE_INT32_T KU;
+    ADE_FLOATING_T *p_ALPHA;
+    ADE_FLOATING_T *p_A;
+    ADE_INT32_T LDA;
+    ADE_FLOATING_T *p_X;
+    ADE_INT32_T INCX;
+    ADE_FLOATING_T *p_BETA;
+    ADE_FLOATING_T *p_Y;
+    ADE_INT32_T INCY;
+    ADE_BLAS_LEVEL2_FCN_TYPE1_T blas_level2_fcn_type1;
+};
 /***************** Private methods prototypes *********************/
 
 /*************************** Set Methods ***************************************/

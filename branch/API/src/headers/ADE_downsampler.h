@@ -2,15 +2,7 @@
 #define _ADE_DOWNSAMPLER_H
 #include "headers/ADE_typedefs.h"
 
-struct ADE_DOWNSAMPLER_S
-{
-    ADE_FLOATING_T* p_in;
-    ADE_FLOATING_T* p_out;
-    ADE_INT32_T out_buff_len;
-  //  ADE_INT32_T max_in_buff_len;
-    ADE_INT32_T down_fact;
-    ADE_blas_level1_T *p_blas_l1_memcpy;
-};
+
 #ifdef __cplusplus
     extern "C" {
 #endif

@@ -333,6 +333,7 @@ ADE_API_RET_T ADE_Iir_Print(ADE_IIR_T* p_iir, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_
     ADE_CHAR_T temp_str2[16];
     ADE_CHAR_T pri_str[128];
     ADE_SIZE_T len_str;
+    ADE_API_RET_T ret;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Print,p_iir);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_IIR,ADE_METHOD_Print,p_fid);
@@ -350,7 +351,7 @@ len_str=strlen(fixed_str);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"buff_len = %u\n"),p_iir->buff_len);
         strcpy(pri_str,fixed_str);
-        ADE_LOG(p_fid,strcat(pri_str,"max_buff_len = %*.*u\n"),p_iir->max_buff_len);
+        ADE_LOG(p_fid,strcat(pri_str,"max_buff_len = %u\n"),p_iir->max_buff_len);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"p_in = %p(%*.*f)\n"),p_iir->p_in,ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,p_iir->p_in[0]);
         strcpy(pri_str,fixed_str);
@@ -383,7 +384,8 @@ len_str=strlen(fixed_str);
             strncpy(temp_str,fixed_str,len_str-2);
             sprintf(temp_str2,"dp_Blas_L1[%d]",i);
             #if ADE_IIR_IMP==ADE_IIR_USE_BLAS
-            ADE_Blas_level1_Print(p_iir->dp_Blas_L1[i],p_fid,temp_str2,temp_str);
+            ret=ADE_Blas_level1_Print(p_iir->dp_Blas_L1[i],p_fid,temp_str2,temp_str);
+            ADE_CHECK_ADERETVAL(ADE_CLASS_IIR,ADE_METHOD_Print,ret);
             #endif
         }
         ADE_LOG(p_fid,strcat(pri_str,"filt_imp_type = %d\n"),p_iir->filt_imp_type);

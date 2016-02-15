@@ -6,10 +6,13 @@
 /*************************** ERROR DEFINES ***************************/
 #define ADE_MISSING_IMPLEMENTATION(fcn_name) ADE_LOG(stderr," MISSING IMPLEMENTATION IN fcn ->  " #fcn_name " \n");
 
-#define ADE_NBITS_SEVERITY (8)
-#define ADE_NBITS_TYPE (8)
+/* REMEMBER::::: */
+/* IF ERROR PRINTS REFERS TO WRONG CLASSES OR METHODS PROBABLY NUMBER OF THEM OVERFLOWED BITS AVALIBLE */
+
+#define ADE_NBITS_SEVERITY (4)
+#define ADE_NBITS_TYPE (4)
 #define ADE_NBITS_CLASS (8)
-#define ADE_NBITS_METHOD (8)
+#define ADE_NBITS_METHOD (16)
 
 #define ADE_NBITS_METHOD_SHIFT (0)
 #define ADE_NBITS_CLASS_SHIFT (ADE_NBITS_METHOD+ADE_NBITS_METHOD_SHIFT)
@@ -21,12 +24,14 @@
 X_ERRSEVERITY(ADE_ERROR) \
 X_ERRSEVERITY(ADE_WARNING)
 
+/* the attribute unused is hereafter used to make build log clearer */
+
 #define X_ERRSEVERITY(a) a,
-typedef enum  { ERRSEVERITY } ADE_ERRSEVERITY_T;
+typedef enum   __attribute__((unused))  { ERRSEVERITY } ADE_ERRSEVERITY_T;
 #undef X_ERRSEVERITY
 
 #define X_ERRSEVERITY(a) #a,
-static char *ADE_ERRSEVERITYStrings[] = { ERRSEVERITY };
+static char __attribute__((unused)) *ADE_ERRSEVERITYStrings[] = { ERRSEVERITY };
 #undef X_ERRSEVERITY
 
 /*************************** ERROR TYPES ***************************/
@@ -37,11 +42,11 @@ X_ERRTYPE(ADE_MEM) \
 X_ERRTYPE(ADE_RETCHECKS)
 
 #define X_ERRTYPE(a) a,
-typedef enum  { ERRTYPE } ADE_ERRTYPE_T;
+typedef enum   __attribute__((unused))  { ERRTYPE } ADE_ERRTYPE_T;
 #undef X_ERRTYPE
 
 #define X_ERRTYPE(a) #a,
-static char *ADE_ERRTYPEStrings[] = { ERRTYPE };
+static char  __attribute__((unused)) *ADE_ERRTYPEStrings[] = { ERRTYPE };
 #undef X_ERRTYPE
 
 
@@ -73,12 +78,13 @@ X_ERRCLASS(ADE_CLASS_TESTBENCH) \
 X_ERRCLASS(ADE_CLASS_UDPSENDER) \
 X_ERRCLASS(ADE_CLASS_UDPRECEIVER)
 
+
 #define X_ERRCLASS(a) a,
-typedef enum  { ERRCLASS } ADE_ERRCLASS_T;
+typedef enum  __attribute__((unused)) { ERRCLASS } ADE_ERRCLASS_T;
 #undef X_ERRCLASS
 
 #define X_ERRCLASS(a) #a,
-static char *ADE_ERRCLASSStrings[] = { ERRCLASS };
+static char  __attribute__((unused)) *ADE_ERRCLASSStrings[] = { ERRCLASS };
 #undef X_ERRCLASS
 
 /******************ERROR METHODS********************/
@@ -339,16 +345,70 @@ X_ERRMETHODS(ADE_METHOD_Connect) \
 X_ERRMETHODS(ADE_METHOD_SetBuffDim) \
 X_ERRMETHODS(ADE_METHOD_SetTimeOut) \
 X_ERRMETHODS(ADE_METHOD_SetReusePort) \
-X_ERRMETHODS(ADE_METHOD_SetReuseAddress)
+X_ERRMETHODS(ADE_METHOD_SetReuseAddress) \
+X_ERRMETHODS(ADE_METHOD_GetActiveAlgos) \
+X_ERRMETHODS(ADE_METHOD_GetBlow) \
+X_ERRMETHODS(ADE_METHOD_GetSnap) \
+X_ERRMETHODS(ADE_METHOD_GetMatlab) \
+X_ERRMETHODS(ADE_METHOD_GetIndexes) \
+X_ERRMETHODS(ADE_METHOD_GetNoFoundIndexes) \
+X_ERRMETHODS(ADE_METHOD_GetSnaps) \
+X_ERRMETHODS(ADE_METHOD_GetBuffLength) \
+X_ERRMETHODS(ADE_METHOD_SetConfigFromMatlab) \
+X_ERRMETHODS(ADE_METHOD_FillSensorData) \
+X_ERRMETHODS(ADE_METHOD_GetSensorData) \
+X_ERRMETHODS(ADE_METHOD_GetAdeHandle) \
+X_ERRMETHODS(ADE_METHOD_GetNoIterations) \
+X_ERRMETHODS(ADE_METHOD_GetSource) \
+X_ERRMETHODS(ADE_METHOD_SetAdeAlgo) \
+X_ERRMETHODS(ADE_METHOD_SetStimulusFromMatlab) \
+X_ERRMETHODS(ADE_METHOD_Verify) \
+X_ERRMETHODS(ADE_METHOD_SnapPostProc) \
+X_ERRMETHODS(ADE_METHOD_GetSensorDataPointer) \
+X_ERRMETHODS(ADE_METHOD_GetData) \
+X_ERRMETHODS(ADE_METHOD_GetNoCols) \
+X_ERRMETHODS(ADE_METHOD_SetStimulus) \
+X_ERRMETHODS(ADE_METHOD_RunTest) \
+X_ERRMETHODS(ADE_METHOD_GetFs) \
+X_ERRMETHODS(ADE_METHOD_GetFsOut) \
+X_ERRMETHODS(ADE_METHOD_GetNoRows) \
+X_ERRMETHODS(ADE_METHOD_GetOffsetRadians) \
+X_ERRMETHODS(ADE_METHOD_GetLastPhase) \
+X_ERRMETHODS(ADE_METHOD_GetFc) \
+X_ERRMETHODS(ADE_METHOD_GetGain) \
+X_ERRMETHODS(ADE_METHOD_GetSrcType) \
+X_ERRMETHODS(ADE_METHOD_GetMt) \
+X_ERRMETHODS(ADE_METHOD_SetLastPhase) \
+X_ERRMETHODS(ADE_METHOD_GetBuffLen) \
+X_ERRMETHODS(ADE_METHOD_GetOut) \
+X_ERRMETHODS(ADE_METHOD_GetState) \
+X_ERRMETHODS(ADE_METHOD_GetProxy) \
+X_ERRMETHODS(ADE_METHOD_ToggleLogic) \
+X_ERRMETHODS(ADE_METHOD_StateLogic) \
+X_ERRMETHODS(ADE_METHOD_SetMatExePath) \
+X_ERRMETHODS(ADE_METHOD_SetMatScriptPath) \
+X_ERRMETHODS(ADE_METHOD_SetMatWsPath) \
+X_ERRMETHODS(ADE_METHOD_SetMatlab) \
+X_ERRMETHODS(ADE_METHOD_SetMatlabInBuffName) \
+X_ERRMETHODS(ADE_METHOD_SetMatlabFsamplingVarName) \
+X_ERRMETHODS(ADE_METHOD_SetMatlabInLenVarname) \
+X_ERRMETHODS(ADE_METHOD_SetAlgo2Test) \
+X_ERRMETHODS(ADE_METHOD_SetIterations) \
+X_ERRMETHODS(ADE_METHOD_SetSrcType) \
+X_ERRMETHODS(ADE_METHOD_SetMatlabInputVarname) \
+X_ERRMETHODS(ADE_METHOD_SetMatlabNoColsVarname) \
+X_ERRMETHODS(ADE_METHOD_SetMatlabFsVarname) \
+X_ERRMETHODS(ADE_METHOD_ConfigureMatlab)
 
 #define X_ERRMETHODS(a) a,
-typedef enum { ERRMETHODS } ADE_ERRMETHODS_T;
+
+typedef enum  __attribute__((unused)) { ERRMETHODS } ADE_ERRMETHODS_T;
+
 #undef X_ERRMETHODS
 
 #define X_ERRMETHODS(a) #a,
-static char *ADE_ERRMETHODSStrings[] = { ERRMETHODS };
+static char  __attribute__((unused)) *ADE_ERRMETHODSStrings[] = { ERRMETHODS };
 #undef X_ERRMETHODS
-
 
 
 #endif

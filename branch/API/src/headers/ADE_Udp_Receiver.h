@@ -30,9 +30,11 @@ ADE_API_RET_T ADE_UdpReceiver_SetTimeOut(ADE_UDPRECEIVER_T *p_UdpReceiver,unsign
 ADE_API_RET_T ADE_UdpReceiver_SetBuffDim(ADE_UDPRECEIVER_T *p_UdpReceiver,unsigned int buffdim);
 ADE_API_RET_T ADE_UdpReceiver_SetNonBlocking(ADE_UDPRECEIVER_T *p_UdpReceiver);
 ADE_API_RET_T ADE_UdpReceiver_Recv(ADE_UDPRECEIVER_T *p_UdpReceiver,ssize_t *p_NumBytesRecv);
+ADE_API_RET_T ADE_UdpReceiver_Recvfrom(ADE_UDPRECEIVER_T *p_UdpReceiver,ssize_t *p_NumBytesRecv,struct sockaddr *src_addr, socklen_t *addrlen);
 ADE_API_RET_T ADE_UdpReceiver_GetDescriptor(ADE_UDPRECEIVER_T *p_UdpReceiver,int *p_SocketDesc);
 ADE_API_RET_T ADE_UdpReceiver_SetReusePort(ADE_UDPRECEIVER_T *p_UdpReceiver);
 ADE_API_RET_T ADE_UdpReceiver_SetReuseAddress(ADE_UDPRECEIVER_T *p_UdpReceiver);
+ADE_API_RET_T ADE_UdpReceiver_SetRemoteAnyIP(ADE_UDPRECEIVER_T *p_UdpReceiver,int srcport);
 #ifdef __cplusplus
     }   /* extern "C" */
 #endif

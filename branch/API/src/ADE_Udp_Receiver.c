@@ -72,6 +72,20 @@ ADE_API_RET_T ADE_UdpReceiver_SetRemote(ADE_UDPRECEIVER_T *p_UdpReceiver,char* a
     return ADE_RET_SUCCESS;
 }
 
+ADE_API_RET_T ADE_UdpReceiver_SetRemoteAnyIP(ADE_UDPRECEIVER_T *p_UdpReceiver,int srcport)
+{
+    ADE_INT32_T ret;
+    ADE_INT32_T valm1=-1;
+
+    p_UdpReceiver->SocketAddressRemote.sin_family = AF_INET;
+    p_UdpReceiver->SocketAddressRemote.sin_addr.s_addr = htonl(INADDR_ANY);
+    p_UdpReceiver->SocketAddressRemote.sin_port = htons(srcport);
+    ret = connect(p_UdpReceiver->SocketDesc, (const struct sockaddr*)&(p_UdpReceiver->SocketAddressRemote),sizeof(p_UdpReceiver->SocketAddressRemote));
+     ADE_CHECK_VALUE_NOTEQUAL_ERRNO(ADE_CLASS_UDPRECEIVER,ADE_METHOD_Connect,ret,"%d",valm1);
+
+    return ADE_RET_SUCCESS;
+}
+
 
 ADE_API_RET_T ADE_UdpReceiver_SetLocal(ADE_UDPRECEIVER_T *p_UdpReceiver,char* address,int dstport)
 {
@@ -150,7 +164,18 @@ ADE_API_RET_T ADE_UdpReceiver_SetNonBlocking(ADE_UDPRECEIVER_T *p_UdpReceiver)
 ADE_API_RET_T ADE_UdpReceiver_Recv(ADE_UDPRECEIVER_T *p_UdpReceiver,ssize_t *p_NumBytesRecv)
 {
 
+
+
 *p_NumBytesRecv= recv(p_UdpReceiver->SocketDesc, p_UdpReceiver->RecvBuff.p_Buff, p_UdpReceiver->RecvBuff.BuffSize, NULL);
+
+return ADE_RET_SUCCESS;
+
+}
+
+ADE_API_RET_T ADE_UdpReceiver_Recvfrom(ADE_UDPRECEIVER_T *p_UdpReceiver,ssize_t *p_NumBytesRecv,struct sockaddr *src_addr, socklen_t *addrlen)
+{
+
+*p_NumBytesRecv= recvfrom(p_UdpReceiver->SocketDesc, p_UdpReceiver->RecvBuff.p_Buff, p_UdpReceiver->RecvBuff.BuffSize, NULL,src_addr,addrlen);
 
 return ADE_RET_SUCCESS;
 

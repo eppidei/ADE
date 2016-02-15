@@ -55,6 +55,21 @@ ADE_UdpReceiver_SetReuseAddress(p_ch->p_Receiver);
 //}
 ADE_UdpReceiver_SetLocal(p_ch->p_Receiver,p_LocalIp,DstPort);
 ADE_UdpReceiver_SetRemote(p_ch->p_Receiver,p_RemoteIp,SrcPort);
+//ADE_UdpReceiver_SetRemoteAnyIP(p_ch->p_Receiver,SrcPort);
+//ADE_UdpReceiver_SetNonBlocking(p_ch->p_Receiver);
+}
+
+void AppleMidiCh_ConfigUDPCtrlChReceiver(APPLEMIDI_CH_T *p_ch,char *p_LocalIp, int DstPort)
+{
+ADE_UdpReceiver_CreateSocket(p_ch->p_Receiver);
+ADE_UdpReceiver_SetReuseAddress(p_ch->p_Receiver);
+//if (ADE_UdpReceiver_SetReusePort(p_ch->p_Receiver)==-1)
+//{
+//
+//}
+ADE_UdpReceiver_SetLocal(p_ch->p_Receiver,p_LocalIp,DstPort);
+//ADE_UdpReceiver_SetRemote(p_ch->p_Receiver,p_RemoteIp,SrcPort);
+//ADE_UdpReceiver_SetRemoteAnyIP(p_ch->p_Receiver,SrcPort);
 //ADE_UdpReceiver_SetNonBlocking(p_ch->p_Receiver);
 }
 
@@ -132,12 +147,29 @@ int temp=( count << 24 | (0x00FFFFFF & padding) );
      *p_actual_len=4+4+4+8+8+8;
 
 }
+void AppleMidiCh_ParsePacketAndGetRemoteInfo(APPLEMIDI_CH_T *p_ch)
+{
+    ssize_t n_recv_bytes;
+    struct sockaddr_in src_addr;
+     socklen_t addrlen;
+
+    ADE_UdpReceiver_Recvfrom(p_ch->p_Receiver,&n_recv_bytes,&src_addr,&addrlen);
+    AppleMidiCh_doParsePacket(p_ch->p_Receiver->RecvBuff.p_Buff,&(p_ch->AppleMidiRx));
+    if (p_ch->AppleMidiRx.header.Signature=0xffff)
+    {
+        strcpy(p_ch->Invitator_ip,src_addr.sin_addr);
+        p_ch->Invitator_port=src_addr.sin_port;
+        }
+}
 void AppleMidiCh_ParsePacket(APPLEMIDI_CH_T *p_ch)
 {
     ssize_t n_recv_bytes;
+    struct sockaddr src_addr;
+     socklen_t addrlen;
 
-    ADE_UdpReceiver_Recv(p_ch->p_Receiver,&n_recv_bytes);
+    ADE_UdpReceiver_Recvfrom(p_ch->p_Receiver,&n_recv_bytes,&src_addr,&addrlen);
     AppleMidiCh_doParsePacket(p_ch->p_Receiver->RecvBuff.p_Buff,&(p_ch->AppleMidiRx));
+
 
 }
 

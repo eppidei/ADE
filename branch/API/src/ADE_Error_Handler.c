@@ -164,6 +164,10 @@ ADE_API_RET_T ADE_Error_Handler_CheckReturn(ADE_ERRCLASS_T _class,ADE_ERRMETHODS
             ADE_Error_Handler_SetError(ADE_ERROR,ADE_RETCHECKS,_class,method,format,p_ret_val, var_name_str,p_stream);
              return ADE_RET_ERROR;
         }
+        else if (*p_ret_val==ADE_RET_WARNING)
+        {
+            return ADE_RET_WARNING;
+        }
     #elif (ADE_CHECK_RETURNS==ADE_CHECK_RETURNS_FALSE)
 
         ;
@@ -186,13 +190,14 @@ ADE_API_RET_T ADE_Error_Handler_CheckValue(ADE_ERRCLASS_T _class,ADE_ERRMETHODS_
         ADE_API_RET_T ret=0;
 
          if (type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOR || type==ADE_ERROR_HANDLER_CHECKVALUE_MAJOREQUAL ||
-           type==ADE_ERROR_HANDLER_CHECKVALUE_MINOR || type==ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL || type==ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL )
+           type==ADE_ERROR_HANDLER_CHECKVALUE_MINOR || type==ADE_ERROR_HANDLER_CHECKVALUE_MINOREQUAL ||
+           type==ADE_ERROR_HANDLER_CHECKVALUE_NOTEQUAL || type==ADE_ERROR_HANDLER_CHECKVALUE_EQUAL)
            {
                 ret=ADE_Error_Handler_CheckCondition(format,p_value, p_limit,&limit2_dummy,type,&condition);
                  ADE_CHECK_ADERETVAL(ADE_CLASS_ERROR_HANDLER,ADE_METHOD_CheckValue,ret);
            }
         else{
-            ADE_LOG(stderr,"type not handled in ADE_Error_Handler_CheckValue\n");
+            ADE_LOG(stderr,"!!!!!!!!!!!!!!!!type not handled in ADE_Error_Handler_CheckValue : please add the code or remove the check\n");
         }
 
         if (condition)

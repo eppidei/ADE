@@ -3,6 +3,17 @@
 #include "headers/ADE_Error_Handler.h"
 #include <stdlib.h>
 
+struct ADE_PROXIMITY_S
+{
+    ADE_FLOATING_T Fs_i;
+    ADE_UINT32_T buff_len_i;
+    ADE_FLOATING_T Fs_o;
+    ADE_UINT32_T buff_len_o;
+    ADE_FLOATING_T * p_in;
+    ADE_BOOL_T state;
+};
+
+
 ADE_API_RET_T ADE_Proximity_Init(ADE_PROXIMITY_T **dp_proxy)
 {
 
@@ -47,6 +58,40 @@ ADE_API_RET_T ADE_Proximity_Configure_inout(ADE_PROXIMITY_T *p_proxy,ADE_FLOATIN
     return ADE_RET_SUCCESS;
 
 }
+/**************************** Get Methods ********************************************/
+
+
+ADE_API_RET_T ADE_Proximity_GetFsOut(ADE_PROXIMITY_T *p_proxy,ADE_FLOATING_T *p_Fs)
+{
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_PROXIMITY,ADE_METHOD_GetFsOut,p_proxy);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_PROXIMITY,ADE_METHOD_GetFsOut,p_Fs);
+
+    *p_Fs=p_proxy->Fs_o;
+
+return ADE_RET_SUCCESS;
+}
+ADE_API_RET_T ADE_Proximity_GetState(ADE_PROXIMITY_T *p_proxy,ADE_BOOL_T *p_state)
+{
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_PROXIMITY,ADE_METHOD_GetState,p_proxy);
+    ADE_CHECK_INPUTPOINTER(ADE_CLASS_PROXIMITY,ADE_METHOD_GetState,p_state);
+
+     *p_state=p_proxy->state;
+
+return ADE_RET_SUCCESS;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************end Get Methods******************************/
 
 ADE_API_RET_T ADE_Proximity_Configure_bufflength(ADE_PROXIMITY_T *p_proxy,ADE_UINT32_T buff_len_i)
 {

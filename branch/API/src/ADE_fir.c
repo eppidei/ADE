@@ -11,6 +11,8 @@
 #include "mex.h"
 #endif
 
+
+
 static ADE_API_RET_T ADE_Fir_SetInBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
 static ADE_API_RET_T ADE_Fir_SetOutBuff(ADE_FIR_T* p_fir, ADE_FLOATING_T* p_buff);
 static ADE_API_RET_T ADE_Fir_setOrder(ADE_FIR_T* p_fir, ADE_INT32_T order);
@@ -217,6 +219,7 @@ ADE_API_RET_T ADE_Fir_Print(ADE_FIR_T* p_fir, ADE_FILE_T *p_fid,ADE_CHAR_T *obj_
     ADE_CHAR_T pri_str[128];
     ADE_SIZE_T len_str;
      ADE_CHAR_T temp_str[64];
+     ADE_API_RET_T ret;
 
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_fir);
     ADE_CHECK_INPUTPOINTER(ADE_CLASS_FIR,ADE_METHOD_Print,p_fid);
@@ -250,7 +253,8 @@ len_str=strlen(fixed_str);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"gain = %f\n"),ADE_PRINT_FLOAT_WIDTH,ADE_PRINT_FLOAT_PRECISION,p_fir->gain);
          strncpy(temp_str,fixed_str,len_str-2);
-        ADE_Blas_level1_Print(p_fir->p_Blas_L1,p_fid,"p_Blas_L1",temp_str);
+        ret=ADE_Blas_level1_Print(p_fir->p_Blas_L1,p_fid,"p_Blas_L1",temp_str);
+        ADE_CHECK_ADERETVAL(ADE_CLASS_FIR,ADE_METHOD_Print,ret);
         strcpy(pri_str,fixed_str);
         ADE_LOG(p_fid,strcat(pri_str,"filt_imp_type = %d\n"),p_fir->filt_imp_type);
         strcpy(pri_str,fixed_str);

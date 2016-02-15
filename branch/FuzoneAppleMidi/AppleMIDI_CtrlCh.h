@@ -13,6 +13,8 @@ struct APPLEMIDI_CH_S
     unsigned int SenderSource;
     ADE_INT64_T Timestamp;
     char name[40];
+    char Invitator_ip[40];
+    int Invitator_port;
 };
 
 typedef struct APPLEMIDI_CH_S APPLEMIDI_CH_T;
