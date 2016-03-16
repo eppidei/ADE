@@ -133,7 +133,7 @@ ADE_API_RET_T ADE_UdpReceiver_SetReusePort(ADE_UDPRECEIVER_T *p_UdpReceiver)
     ADE_INT32_T valm1=-1;
     int kOn=1;
 
-     ret = setsockopt(p_UdpReceiver->SocketDesc, SOL_SOCKET, SO_REUSEPORT, &kOn,sizeof(kOn));
+     ret = setsockopt(p_UdpReceiver->SocketDesc, SOL_SOCKET, SO_REUSEADDR, &kOn,sizeof(kOn));
      ADE_CHECK_VALUE_NOTEQUAL_ERRNO(ADE_CLASS_UDPRECEIVER,ADE_METHOD_SetReusePort,ret,"%d",valm1);
 
      return ADE_RET_SUCCESS;
