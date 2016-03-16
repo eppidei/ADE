@@ -396,7 +396,7 @@ ADE_API_RET_T ADE_Blas_Level3_SetBeta(ADE_blas_level3_T* p_Blas_l3, ADE_FLOATING
      return ADE_RET_SUCCESS;
 }
 /*****************Configure Methods **************************/
-ADE_API_RET_T ADE_Blas_level3_configure_gemm_params(ADE_blas_level3_T* p_blas_l3,ADE_CHAR_T TRANSA,ADE_CHAR_T TRANSB,
+/*ADE_API_RET_T ADE_Blas_level3_configure_gemm_params(ADE_blas_level3_T* p_blas_l3,ADE_CHAR_T TRANSA,ADE_CHAR_T TRANSB,
                                                     ADE_INT32_T M,ADE_INT32_T N, ADE_INT32_T K,ADE_FLOATING_T *p_ALPHA,
                                                     ADE_INT32_T LDA,ADE_INT32_T LDB,ADE_FLOATING_T *p_BETA,ADE_INT32_T LDC)
 {
@@ -470,7 +470,7 @@ ADE_API_RET_T ADE_Blas_level3_configure_gemm_inout(ADE_blas_level3_T* p_blas_l3,
 
 
     return ADE_RET_SUCCESS;
-}
+}*/
 
 /**************** Processing methods *************************/
 
